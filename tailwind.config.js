@@ -115,11 +115,15 @@ const config = {
             flex: {
                 '0': '0 0 auto'
             },
+            // fontFamily: {
+            //     // sans: ['SukhumvitSet', ...defaultTheme.fontFamily.sans],
+            //     // sans: `"Inter var", ${defaultTheme.fontFamily.sans.join(',')}`,
+            //     // mono: `"IBM Plex Mono", ${defaultTheme.fontFamily.mono.join(',')}`
+            //     sans: `"Noto Sans Thai", ${defaultTheme.fontFamily.sans.join(',')}`,
+            // },
             fontFamily: {
-                // sans: ['SukhumvitSet', ...defaultTheme.fontFamily.sans],
-                // sans: `"Inter var", ${defaultTheme.fontFamily.sans.join(',')}`,
-                // mono: `"IBM Plex Mono", ${defaultTheme.fontFamily.mono.join(',')}`
-                sans: `"Noto Sans Thai", ${defaultTheme.fontFamily.sans.join(',')}`,
+                sans: `"Sarabun", ${defaultTheme.fontFamily.sans.join(',')}`,
+                mono: `"IBM Plex Sans Thai", ${defaultTheme.fontFamily.mono.join(',')}`,
             },
             opacity: {
                 12: '0.12',

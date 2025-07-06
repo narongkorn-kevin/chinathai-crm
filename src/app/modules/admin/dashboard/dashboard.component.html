@@ -1,94 +1,301 @@
-<div class="flex flex-row flex-auto w-full min-w-0">
-    <div class="flex-auto p-6 sm:p-10">
-
-     
-
-      <div class="grid justify-center w-full min-w-0 grid-cols-1 gap-6 sm:grid-cols-3 md:grid-cols-3">
-        <div class="flex flex-col flex-auto p-6 overflow-hidden shadow bg-card rounded-2xl">
-          <div class="flex items-start justify-between">
-            <div class="text-lg font-medium leading-6 tracking-tight truncate">ยอดรวม</div>
-          </div>
-          <div class="flex flex-col items-center mt-2">
-            <div class="font-bold leading-none tracking-tight text-blue-500 text-7xl sm:text-8xl">{{ total }}</div>
-            <div class="text-lg font-medium text-blue-600 dark:text-blue-500">ยอด</div>
-          </div>
+<div class="p-6 space-y-6 w-full bg-gray-50">
+  <!-- ส่วนหัวพร้อมตัวกรองวันที่ -->
+  <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-6">
+    <div>
+      <h1 class="text-2xl font-bold text-gray-800">ภาพรวมระบบ</h1>
+      <p class="text-md text-gray-500">อัปเดตล่าสุด: วันนี้, 19:45 น.</p>
+    </div>
+    <div class="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
+      <div class="flex gap-2">
+        <div class="relative">
+          <input type="date"
+            class="border border-gray-300 rounded-md px-4 py-2 pr-8 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            placeholder="จากวันที่" />
+          <span class="absolute right-3 top-2.5 text-gray-400">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd"
+                d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z"
+                clip-rule="evenodd" />
+            </svg>
+          </span>
         </div>
-
-        <div class="flex flex-col flex-auto p-6 overflow-hidden shadow bg-card rounded-2xl">
-          <div class="flex items-start justify-between">
-            <div class="text-lg font-medium leading-6 tracking-tight truncate">จำนวนบิล</div>
-          </div>
-          <div class="flex flex-col items-center mt-2">
-            <div class="font-bold leading-none tracking-tight text-red-500 text-7xl sm:text-8xl">{{ bill }}</div>
-            <div class="text-lg font-medium text-red-600 dark:text-red-500">ยอด</div>
-          </div>
-        </div>
-
-        <div class="flex flex-col flex-auto p-6 overflow-hidden shadow bg-card rounded-2xl">
-          <div class="flex items-start justify-between">
-            <div class="text-lg font-medium leading-6 tracking-tight truncate">เฉลี่ย/บิล</div>
-          </div>
-          <div class="flex flex-col items-center mt-2">
-            <div class="font-bold leading-none tracking-tight text-red-500 text-7xl sm:text-8xl">{{ avg }}</div>
-            <div class="text-lg font-medium text-red-600 dark:text-red-500">ยอด</div>
-          </div>
+        <div class="relative">
+          <input type="date"
+            class="border border-gray-300 rounded-md px-4 py-2 pr-8 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            placeholder="ถึงวันที่" />
+          <span class="absolute right-3 top-2.5 text-gray-400">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd"
+                d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z"
+                clip-rule="evenodd" />
+            </svg>
+          </span>
         </div>
       </div>
+      <button
+        class="bg-blue-600 hover:bg-blue-700 text-white font-medium px-4 py-2 rounded-md transition-colors duration-200 flex items-center justify-center gap-2">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd"
+            d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
+            clip-rule="evenodd" />
+        </svg>
+        ค้นหา
+      </button>
+    </div>
+  </div>
 
-      <div class="flex flex-col flex-auto w-full p-6 mt-3 overflow-hidden shadow bg-card rounded-2xl">
-        <div class="flex items-start justify-between w-full mt-3">
-          <div id="chart" class="w-full mt-3">
-            <!-- Replace 'apx-chart' with your actual chart component -->
-            <apx-chart class="w-full gap-3 mt-3"
-                       [series]="chartOptions.series"
-                       [chart]="chartOptions.chart"
-                       [xaxis]="chartOptions.xaxis"
-                       [stroke]="chartOptions.stroke"
-                       [tooltip]="chartOptions.tooltip"
-                       [dataLabels]="chartOptions.dataLabels">
-            </apx-chart>
-          </div>
+  <!-- การ์ดสรุปข้อมูล -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+    <!-- ข้อมูลลูกค้า -->
+    <div class="bg-white p-5 rounded-lg shadow-sm border border-gray-100">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-md font-medium text-gray-500">ลูกค้าใหม่</p>
+          <p class="text-2xl font-bold mt-1 text-gray-800">1</p>
+        </div>
+        <div class="p-3 rounded-full bg-blue-50 text-blue-600">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+          </svg>
         </div>
       </div>
+      <p class="text-md text-gray-500 mt-3">+0.5% จากเมื่อวาน</p>
+    </div>
 
-      <div class="flex flex-row w-full mt-3">
-        <div class="flex flex-col flex-auto w-full p-6 mr-3 overflow-hidden shadow bg-card rounded-2xl">
-          <div class="flex items-start justify-between w-full">
-            <a class="w-full">5 อันดับสินค้าขายดี
-              <!-- Replace 'apx-chart' with your actual chart component -->
-              <apx-chart class="w-full"
-                         [series]="chartOptions2.series"
-                         [chart]="chartOptions2.chart"
-                         [dataLabels]="chartOptions2.dataLabels"
-                         [plotOptions]="chartOptions2.plotOptions"
-                         [yaxis]="chartOptions2.yaxis"
-                         [xaxis]="chartOptions2.xaxis"
-                         [legend]="chartOptions2.legend"
-                         [colors]="chartOptions2.colors"
-                         [grid]="chartOptions2.grid">
-              </apx-chart>
-            </a>
-          </div>
+    <!-- ข้อมูลบริการ -->
+    <div class="bg-white p-5 rounded-lg shadow-sm border border-gray-100">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-md font-medium text-gray-500">บริการที่เสร็จสิ้น</p>
+          <p class="text-2xl font-bold mt-1 text-gray-800">66</p>
         </div>
+        <div class="p-3 rounded-full bg-green-50 text-green-600">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+          </svg>
+        </div>
+      </div>
+      <p class="text-md text-gray-500 mt-3">+12.3% จากสัปดาห์ที่แล้ว</p>
+    </div>
 
-        <div class="flex flex-col flex-auto w-full p-6 overflow-hidden shadow bg-card rounded-2xl">
-          <div class="flex items-start justify-between w-full">
-            <a class="w-full">วิธีการชำระเงิน
-              <!-- Replace 'apx-chart' with your actual chart component -->
-              <apx-chart class="w-full"
-                         [series]="chartOptions3.series"
-                         [chart]="chartOptions3.chart"
-                         [dataLabels]="chartOptions3.dataLabels"
-                         [plotOptions]="chartOptions3.plotOptions"
-                         [yaxis]="chartOptions3.yaxis"
-                         [xaxis]="chartOptions3.xaxis"
-                         [legend]="chartOptions3.legend"
-                         [colors]="chartOptions3.colors"
-                         [grid]="chartOptions3.grid">
-              </apx-chart>
-            </a>
+    <!-- ข้อมูลคำสั่งซื้อ -->
+    <div class="bg-white p-5 rounded-lg shadow-sm border border-gray-100">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-md font-medium text-gray-500">คำสั่งซื้อทั้งหมด</p>
+          <p class="text-2xl font-bold mt-1 text-gray-800">5</p>
+        </div>
+        <div class="p-3 rounded-full bg-purple-50 text-purple-600">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+          </svg>
+        </div>
+      </div>
+      <p class="text-md text-gray-500 mt-3">เฉลี่ย: ¥7,359.36 ต่อใบ</p>
+    </div>
+
+    <!-- ข้อมูลรายได้ -->
+    <div class="bg-white p-5 rounded-lg shadow-sm border border-gray-100">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-md font-medium text-gray-500">รายได้รวม</p>
+          <p class="text-2xl font-bold mt-1 text-gray-800">฿30,610.15</p>
+        </div>
+        <div class="p-3 rounded-full bg-yellow-50 text-yellow-600">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+        </div>
+      </div>
+      <div class="flex justify-between mt-3">
+        <span class="text-md text-green-600 font-medium">฿177,725.86 ชำระแล้ว</span>
+        <span class="text-md text-red-600 font-medium">฿147,115.71 ค้างชำระ</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ส่วนคลังสินค้า -->
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <!-- การเคลื่อนไหวคลังสินค้า -->
+    <div class="bg-white p-5 rounded-lg shadow-sm border border-gray-100">
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="text-lg font-semibold text-gray-800">การเคลื่อนไหวคลังสินค้า</h2>
+        <span class="text-md bg-blue-100 text-blue-800 px-2 py-1 rounded-full">วันนี้</span>
+      </div>
+      <div class="grid grid-cols-2 gap-4">
+        <div class="p-3 border border-gray-100 rounded-lg">
+          <div class="flex items-center gap-2 mb-2">
+            <div class="p-1.5 rounded-full bg-blue-100 text-blue-600">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24"
+                stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18" />
+              </svg>
+            </div>
+            <h3 class="font-medium text-md text-gray-700">สินค้าเข้า</h3>
           </div>
+          <ul class="text-md text-gray-600 space-y-1.5">
+            <li class="flex justify-between"><span>รถบรรทุก:</span> <span class="font-medium">0</span></li>
+            <li class="flex justify-between"><span>เรือ:</span> <span class="font-medium">0</span></li>
+            <li class="flex justify-between"><span>น้ำหนัก:</span> <span class="font-medium">0 กก.</span></li>
+            <li class="flex justify-between"><span>ปริมาตร:</span> <span class="font-medium">0 ลบ.ม.</span></li>
+          </ul>
+        </div>
+        <div class="p-3 border border-gray-100 rounded-lg">
+          <div class="flex items-center gap-2 mb-2">
+            <div class="p-1.5 rounded-full bg-red-100 text-red-600">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24"
+                stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+              </svg>
+            </div>
+            <h3 class="font-medium text-md text-gray-700">สินค้าออก</h3>
+          </div>
+          <ul class="text-md text-gray-600 space-y-1.5">
+            <li class="flex justify-between"><span>รถบรรทุก:</span> <span class="font-medium">0</span></li>
+            <li class="flex justify-between"><span>เรือ:</span> <span class="font-medium">0</span></li>
+            <li class="flex justify-between"><span>น้ำหนัก:</span> <span class="font-medium">0 กก.</span></li>
+            <li class="flex justify-between"><span>ปริมาตร:</span> <span class="font-medium">0 ลบ.ม.</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- การจัดการสินค้า -->
+    <div class="bg-white p-5 rounded-lg shadow-sm border border-gray-100">
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="text-lg font-semibold text-gray-800">การจัดการสินค้า</h2>
+        <span class="text-md bg-purple-100 text-purple-800 px-2 py-1 rounded-full">วันนี้</span>
+      </div>
+      <div class="grid grid-cols-2 gap-4">
+        <div class="p-3 border border-gray-100 rounded-lg">
+          <div class="flex items-center gap-2 mb-2">
+            <div class="p-1.5 rounded-full bg-purple-100 text-purple-600">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24"
+                stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+              </svg>
+            </div>
+            <h3 class="font-medium text-md text-gray-700">สินค้าใหม่</h3>
+          </div>
+          <ul class="text-md text-gray-600 space-y-1.5">
+            <li class="flex justify-between"><span>รถบรรทุก:</span> <span class="font-medium">0</span></li>
+            <li class="flex justify-between"><span>เรือ:</span> <span class="font-medium">0</span></li>
+            <li class="flex justify-between"><span>น้ำหนัก:</span> <span class="font-medium">0 กก.</span></li>
+            <li class="flex justify-between"><span>ปริมาตร:</span> <span class="font-medium">0 ลบ.ม.</span></li>
+          </ul>
+        </div>
+        <div class="p-3 border border-gray-100 rounded-lg">
+          <div class="flex items-center gap-2 mb-2">
+            <div class="p-1.5 rounded-full bg-green-100 text-green-600">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24"
+                stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+              </svg>
+            </div>
+            <h3 class="font-medium text-md text-gray-700">จัดส่งลูกค้า</h3>
+          </div>
+          <ul class="text-md text-gray-600 space-y-1.5">
+            <li class="flex justify-between"><span>รถบรรทุก:</span> <span class="font-medium">0</span></li>
+            <li class="flex justify-between"><span>เรือ:</span> <span class="font-medium">0</span></li>
+            <li class="flex justify-between"><span>น้ำหนัก:</span> <span class="font-medium">0 กก.</span></li>
+            <li class="flex justify-between"><span>ปริมาตร:</span> <span class="font-medium">0 ลบ.ม.</span></li>
+          </ul>
         </div>
       </div>
     </div>
   </div>
+
+  <!-- ตารางบันทึกการเข้าใช้งาน -->
+  <div class="bg-white p-5 rounded-lg shadow-sm border border-gray-100">
+    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-5 gap-3">
+      <div>
+        <h2 class="text-lg font-semibold text-gray-800">บันทึกการเข้าใช้งาน</h2>
+        <p class="text-md text-gray-500">กิจกรรมการเข้าใช้งานระบบล่าสุด</p>
+      </div>
+      <div class="relative w-full sm:w-64">
+        <input type="text" placeholder="ค้นหาผู้ใช้..."
+          class="w-full pl-9 pr-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-md" />
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 absolute left-3 top-2.5 text-gray-400" fill="none"
+          viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+        </svg>
+      </div>
+    </div>
+
+    <div class="overflow-x-auto rounded-lg border border-gray-200">
+      <table class="min-w-full divide-y divide-gray-200">
+        <thead class="bg-gray-50">
+          <tr>
+            <th scope="col" class="px-6 py-3 text-left text-md font-medium text-gray-500 uppercase tracking-wider">
+              วันเวลา</th>
+            <th scope="col" class="px-6 py-3 text-left text-md font-medium text-gray-500 uppercase tracking-wider">
+              กิจกรรม</th>
+            <th scope="col" class="px-6 py-3 text-left text-md font-medium text-gray-500 uppercase tracking-wider">
+              ผู้ใช้</th>
+            <th scope="col" class="px-6 py-3 text-left text-md font-medium text-gray-500 uppercase tracking-wider">
+              ไอพีแอดเดรส</th>
+          </tr>
+        </thead>
+        <tbody class="bg-white divide-y divide-gray-200">
+          <tr>
+            <td class="px-6 py-4 whitespace-nowrap text-md text-gray-800">2025-07-06 19:29:39</td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <span
+                class="px-2 py-1 inline-flex text-md leading-5 font-semibold rounded-full bg-green-100 text-green-800">เข้าสู่ระบบ</span>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-md font-medium text-gray-800">Ronnapkrit</td>
+            <td class="px-6 py-4 whitespace-nowrap text-md text-gray-500">192.168.1.45</td>
+          </tr>
+          <tr>
+            <td class="px-6 py-4 whitespace-nowrap text-md text-gray-800">2025-07-06 18:15:22</td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <span
+                class="px-2 py-1 inline-flex text-md leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">ออกจากระบบ</span>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-md font-medium text-gray-800">ผู้ดูแลระบบ</td>
+            <td class="px-6 py-4 whitespace-nowrap text-md text-gray-500">192.168.1.1</td>
+          </tr>
+          <!-- เพิ่มแถวข้อมูลอื่นๆ ที่นี่ -->
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ตัวแบ่งหน้า -->
+    <div
+      class="mt-4 flex flex-col sm:flex-row items-center justify-between text-md text-gray-600 border-t border-gray-200 pt-4">
+      <div class="mb-3 sm:mb-0">
+        แสดง <span class="font-medium">1</span> ถึง <span class="font-medium">10</span> จาก <span
+          class="font-medium">6,408</span> รายการ
+      </div>
+      <div class="inline-flex rounded-md shadow-sm">
+        <button
+          class="relative inline-flex items-center px-3 py-2 rounded-l-md border border-gray-300 bg-white text-md font-medium text-gray-700 hover:bg-gray-50">
+          ก่อนหน้า
+        </button>
+        <button
+          class="relative inline-flex items-center px-3 py-2 border border-gray-300 bg-blue-50 text-md font-medium text-blue-600">
+          1
+        </button>
+        <button
+          class="relative inline-flex items-center px-3 py-2 border border-gray-300 bg-white text-md font-medium text-gray-700 hover:bg-gray-50">
+          2
+        </button>
+        <button
+          class="relative inline-flex items-center px-3 py-2 border border-gray-300 bg-white text-md font-medium text-gray-700 hover:bg-gray-50">
+          3
+        </button>
+        <button
+          class="relative inline-flex items-center px-3 py-2 rounded-r-md border border-gray-300 bg-white text-md font-medium text-gray-700 hover:bg-gray-50">
+          ถัดไป
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

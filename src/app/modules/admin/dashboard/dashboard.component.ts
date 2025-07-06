@@ -69,7 +69,7 @@ export type ChartOptions = {
     ],
 })
 export class DashboardComponent {
-
+accessLogs: any[] = [];
     value1: any;
     value2: string = '';
     value3: string = '';
