@@ -1,0 +1,82 @@
+<div class="flex flex-col items-center justify-start flex-auto ">
+    <div class="flex flex-col items-center justify-between w-full overflow-hidden">
+        <div class="flex flex-col items-start justify-start w-full">
+            <div class="w-full px-10 pt-5 pb-2.5 bg-white justify-between items-center flex">
+                <div class="flex flex-col">
+                    <p class="md:text-2xl text-black font-bold tracking-tight leading-7 sm:leading-10 truncate">
+                        ตั้งค่าข้อมูลบริษัท
+                    </p>
+                </div>
+                <div class="flex items-center justify-end gap-2">
+                    <button mat-flat-button [color]="'warn'" (click)="backTo()">
+                        <span class="">ยกเลิก</span>
+                    </button>
+                    <button mat-flat-button [color]="'primary'" (click)="Submit()">
+                        <span class="">บันทึก</span>
+                    </button>
+                </div>
+            </div>
+            <div class="flex flex-col w-full px-10 bg-white h-screen" [formGroup]="form">
+                <div class="w-full">
+                    <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                        <mat-label>รายละเอียด</mat-label>
+                        <textarea matInput [placeholder]="'รายละเอียด'" formControlName="detail" [rows]="2"></textarea>
+                    </mat-form-field>
+                </div>
+                <div class="w-full">
+                    <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                        <mat-label>หัวเรื่อง</mat-label>
+                        <input matInput [placeholder]="'หัวเรือง'" formControlName="title_box">
+                    </mat-form-field>
+                </div>
+                <div class="w-full">
+                    <div class="flex flex-col w-full gap-x-2 mt-2">
+                        <mat-label>กลางเรื่อง</mat-label>
+                        <quill-editor class="w-full" formControlName="body_box" [modules]="editorModules"
+                            placeholder="เขียนข้อความของคุณที่นี่...">
+                        </quill-editor>
+                    </div>
+                </div>
+
+                <div class="w-full mt-2">
+                    <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                        <mat-label>ท้ายเรื่อง</mat-label>
+                        <input matInput [placeholder]="'ท้ายเรื่อง'" formControlName="footer_box">
+                    </mat-form-field>
+                </div>
+                <div class="grid w-full grid-flow-row md:grid-cols-3 gap-x-2 ">
+                    <div class="w-full">
+                        <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                            <mat-label>เบอร์</mat-label>
+                            <input matInput [placeholder]="'ท้ายเรื่อง'" formControlName="phone">
+                        </mat-form-field>
+                    </div>
+                    <div class="w-full">
+                        <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                            <mat-label>email</mat-label>
+                            <input matInput [placeholder]="'ท้ายเรื่อง'" formControlName="email">
+                        </mat-form-field>
+                    </div>
+                    <div class="w-full">
+                        <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                            <mat-label>wechat</mat-label>
+                            <input matInput [placeholder]="'wechat'" formControlName="wechat">
+                        </mat-form-field>
+                    </div>
+                    <div class="w-full">
+                        <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                            <mat-label>line</mat-label>
+                            <input matInput [placeholder]="'line'" formControlName="line">
+                        </mat-form-field>
+                    </div>
+                    <div class="w-full">
+                        <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                            <mat-label>facebook</mat-label>
+                            <input matInput [placeholder]="'facebook'" formControlName="facebook">
+                        </mat-form-field>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

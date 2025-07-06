@@ -1,0 +1,55 @@
+<div class="w-full">
+    <h1 mat-dialog-title class="text-xl font-semibold mb-4" *ngIf="this.data?.type === 'NEW'">เพิ่มข้อมูล</h1>
+    <h1 mat-dialog-title class="text-xl font-semibold mb-4" *ngIf="this.data?.type === 'EDIT'">แก้ไขข้อมูล</h1>
+    <form [formGroup]="form">
+        <div mat-dialog-content class="overflow-y-auto md:max-h-180">
+            <div class="flex-auto">
+                <div class="flex flex-col md:flex mb-6">
+                    <div class="md:w-full">
+                        <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                            <mat-label>ประเภทข่าว</mat-label>
+                            <mat-select formControlName="category_newss_id">
+                                <mat-option value="" disabled>
+                                    เลือกประเภทข่าว
+                                </mat-option>
+                                <mat-option *ngFor="let item of category_news | async" [value]="item.id">
+                                    {{item.name}}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+                    <div class="md:w-full">
+                        <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                            <mat-label>หัวข้อ</mat-label>
+                            <input matInput [placeholder]="'กรุณาระบุหัวข้อ'" formControlName="name">
+                        </mat-form-field>
+                    </div>
+                    <div class="md:w-full">
+                        <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                            <mat-label>รายอะเอียด</mat-label>
+                            <textarea matInput rows="5" [placeholder]="'รายละเอียด'" formControlName="description"></textarea>
+                        </mat-form-field>
+                    </div>
+                    <div class="flex w-full flex-row justify-center gap-2">
+                        <div class="flex w-full justify-center">
+                            <asha-image-upload [initial]="null" (uploadSuccess)="uploadSuccess($event)" accept="image/*"></asha-image-upload>
+                        </div>
+
+                        <div class="flex justify-center w-full">
+                            <img [src]="imageUrl" alt="" class="w-auto">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- <div> check : {{this.form.value | json}}</div> -->
+        <div mat-dialog-actions class="flex justify-end">
+            <button class="px-6 ml-3" mat-flat-button [color]="'primary'" (click)="Submit()">
+                ตกลง
+            </button>
+            <button class="px-6 ml-3" mat-flat-button [color]="'warn'" (click)="onClose()">
+                ยกเลิก
+            </button>
+        </div>
+    </form>
+</div>

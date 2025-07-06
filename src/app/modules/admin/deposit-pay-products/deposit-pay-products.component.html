@@ -1,0 +1,224 @@
+<div class="flex flex-col flex-auto min-w-0">
+    <div class="flex-auto p-4 m-4 rounded-md sm:p-10 bg-card">
+        <div class="flex flex-row justify-between pb-2 my-5">
+            <div class="flex flex-col">
+                <div class="flex space-x-2">
+                    <p class="md:text-sm font-medium tracking-tight leading-7 sm:leading-10 truncate">
+                        บริการ
+                    </p>
+                </div>
+
+                <p class="md:text-2xl text-[#DF0B12] font-bold tracking-tight leading-7 sm:leading-10 truncate">
+                    ฝากชำระสินค้า
+                </p>
+            </div>
+            <div class="flex ml-auto space-x-4">
+                <!-- <button mat-flat-button [color]="'accent'" (click)="opendialogdelete()" [disabled]="!this.multiSelect.length">
+                    <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:trash'"></mat-icon>
+                    <span class="ml-2">ลบรายการ</span>
+                </button> -->
+
+
+                <button mat-flat-button [color]="'primary'" (click)="openDialogForm()" >
+                    <mat-icon class="icon-size-5"[svgIcon]="'heroicons_solid:plus'" ></mat-icon>
+                    <span>เพิ่มรายการ</span>
+                </button>
+                <button [cdkMenuTriggerFor]="menu" mat-flat-button class="!text-white" [color]="'primary'">
+                    <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:shopping-bag'"></mat-icon>
+                    <div class="flex items-center gap-2">
+                        <span class="ml-2"> การจัดการข้อมูล </span>
+                        <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:chevron-up'"></mat-icon>
+                    </div>
+                </button>
+                <ng-template #menu>
+                    <div class="manage-menu bg-primary" cdkMenu>
+                        <button class="manage-menu-item text-white" cdkMenuItem>
+                            <mat-icon class="icon-size-5 text-white"
+                                [svgIcon]="'heroicons_solid:document-duplicate'"></mat-icon>
+                            <span class="ml-2">Copy to Clipboard</span>
+                        </button>
+                        <button class="manage-menu-item text-white" cdkMenuItem>
+                            <mat-icon class="icon-size-5 text-white"
+                                [svgIcon]="'heroicons_solid:table-cells'"></mat-icon>
+                            <span class="ml-2">CSV</span>
+                        </button>
+                        <button class="manage-menu-item text-white" cdkMenuItem>
+                            <mat-icon class="icon-size-5 text-white"
+                                [svgIcon]="'heroicons_solid:table-cells'"></mat-icon>
+                            <span class="ml-2">Excel</span>
+                        </button>
+                        <button class="manage-menu-item text-white" cdkMenuItem>
+                            <mat-icon class="icon-size-5 text-white" [svgIcon]="'heroicons_solid:printer'"></mat-icon>
+                            <span class="ml-2">Print</span>
+                        </button>
+                    </div>
+                </ng-template>
+            </div>
+        </div>
+        <form *ngIf="!showFilterForm" [formGroup]="filterForm">
+            <div class="flex flex-col md:flex-row w-full gap-2 items-end">
+                <div class="w-full">
+                    <mat-form-field class="w-full" [ngClass]="formFieldHelpers">
+                        <mat-label>วันที่</mat-label>
+                        <mat-date-range-input [rangePicker]="picker">
+                            <input matStartDate formControlName="start_date">
+                            <input matEndDate formControlName="end_date">
+                        </mat-date-range-input>
+                        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                        <mat-date-range-picker #picker></mat-date-range-picker>
+                    </mat-form-field>
+                </div>
+                <div class="w-full">
+                    <mat-form-field [ngClass]="formFieldHelpers" class="w-full" formControlName="name">
+                        <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:magnifying-glass'"></mat-icon>
+                        <input matInput [placeholder]="'ค้นหาด้วย รหัสฝากชำระ'">
+                    </mat-form-field>
+                </div>
+                <div>
+                    <button mat-flat-button [color]="'primary'" (click)="openfillter()" class="mb-5">
+                        <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:bars-3'"></mat-icon>
+                        <span class="ml-2">ค้นหาโดยใช้ตัวกรอง</span>
+                    </button>
+                </div>
+                <div>
+                    <button mat-flat-button [color]="'primary'" class="mb-5">
+                        <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:cog-6-tooth'"></mat-icon>
+                    </button>
+                </div>
+            </div>
+        </form>
+        <form [formGroup]="filterForm" class="p-4 rounded-md" [@slideToggleFilter]="showFilterForm ? 'open' : 'closed'">
+            <div>
+                <h2 class="text-xl font-extrabold leading-7 tracking-tight truncate md:text-xl sm:leading-10">
+                    ตัวกรองขั้นสูง
+                </h2>
+                <mat-divider></mat-divider>
+            </div>
+            <div class="grid grid-cols-2 md:flex-row w-full gap-x-2 mt-2">
+                <mat-form-field class="w-full" [ngClass]="formFieldHelpers">
+                    <mat-label>วันที่</mat-label>
+                    <mat-date-range-input [rangePicker]="picker">
+                        <input matStartDate formControlName="start_date">
+                        <input matEndDate formControlName="end_date">
+                    </mat-date-range-input>
+                    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                    <mat-date-range-picker #picker></mat-date-range-picker>
+                </mat-form-field>
+                <div class="w-full">
+                    <mat-form-field class="w-full">
+                        <mat-label>รหัสฝากชำระ</mat-label>
+                        <mat-select placeholder="" formControlName="code">
+                            <mat-option [value]=""></mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+                <div class="w-full">
+                    <mat-form-field class="w-full">
+                        <mat-label>ลูกค้า</mat-label>
+                        <mat-select placeholder="" formControlName="name">
+                            <mat-option [value]=""></mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+                <div class="w-full">
+                    <mat-form-field class="w-full">
+                        <mat-label>สถานะ</mat-label>
+                        <mat-select placeholder="" formControlName="status">
+                            <mat-option [value]=""></mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+            </div>
+            <div class="w-full flex justify-end gap-2">
+                <button mat-flat-button [color]="'primary'" (click)="openfillter()">
+                    <span class="ml-2">ปิดตัวกรอง</span>
+                </button>
+                <button mat-flat-button [color]="'primary'" (click)="clearFilter()">
+                    <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:bars-3'"></mat-icon>
+                    <span class="ml-2">ล้างตั้งค่าตัวกรอง</span>
+                </button>
+                <button mat-flat-button [color]="'primary'" (click)="rerender()">
+                    <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:magnifying-glass'"></mat-icon>
+                    <span class="ml-2">ค้นหา</span>
+                </button>
+            </div>
+        </form>
+        <!-- <button class="mb-2" mat-flat-button [color]="'accent'" (click)="toggleSelectAll(!isAllSelected)">
+            {{ isAllSelected ? 'Unselect All' : 'Select All' }}
+        </button> -->
+        <table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger"
+            class="table w-full bg-white row-border hover whitespace-nowrap overflow-auto">
+        </table>
+    </div>
+</div>
+
+
+<ng-template #btNg let-data="adtData">
+    <button mat-icon-button color="primary" [matMenuTriggerFor]="menu">
+        <mat-icon class="icon-size-5" svgIcon="heroicons_solid:cog-8-tooth"></mat-icon>
+    </button>
+    <mat-menu #menu="matMenu">
+        <button mat-menu-item (click)="openDialogEdit(data)">
+            <mat-icon svgIcon="heroicons_solid:pencil-square"></mat-icon>
+            <span>แก้ไข</span>
+        </button>
+        <mat-divider></mat-divider>
+        <button mat-menu-item (click)="clickDelete(data.id)">
+            <mat-icon svgIcon="heroicons_solid:trash"></mat-icon>
+            <span>ลบ</span>
+        </button>
+    </mat-menu>
+</ng-template>
+
+<!-- <ng-template #checkbox_head let-data="adtData">
+    <mat-checkbox [checked]="isAllSelected()" [indeterminate]="isSomeSelected()"
+        (click)="$event.stopPropagation()"
+        (change)="toggleSelectAll($event.checked)">
+    </mat-checkbox>
+</ng-template> -->
+
+<ng-template #checkbox let-data="adtData">
+    <mat-checkbox [checked]="data.selected" (change)="onCheckboxChange($event, data.id)"></mat-checkbox>
+</ng-template>
+
+<ng-template #gotoRoute let-data="adtData">
+	<a class="text-[#DF0B12CC]" [routerLink]="['/member/view', data.id]"
+		routerLinkActive="router-link-active">{{data?.code}}</a>
+</ng-template>
+
+<ng-template #full_name let-data="adtData">
+    <div > {{data.fname}} {{data.lname}}</div>
+</ng-template>
+
+<ng-template #date let-data="adtData">
+    <div > {{data.birth_date | date: 'dd/MM/yyyy'}}</div>
+</ng-template>
+
+<ng-template #option let-data="adtData">
+    <button [cdkMenuTriggerFor]="menuoption" mat-flat-button class="!text-white" [color]="'primary'">
+        <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:shopping-bag'"></mat-icon>
+        <div class="flex items-center gap-2">
+            <span class="ml-2"> ตัวเลือก </span>
+            <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:chevron-up'"></mat-icon>
+        </div>
+    </button>
+    <ng-template #menuoption>
+        <div class="manage-menu bg-primary" cdkMenu>
+            <button class="manage-menu-item text-white" cdkMenuItem (click)="openDialogview(data)">
+                <mat-icon class="icon-size-5 text-white"
+                    [svgIcon]="'heroicons_solid:banknotes'"></mat-icon>
+                <span class="ml-2">บันทึกชำระเงิน</span>
+            </button>
+            <button class="manage-menu-item text-white" cdkMenuItem (click)="openDialogviewQR(data)">
+                <mat-icon class="icon-size-5 text-white"
+                    [svgIcon]="'heroicons_solid:plus'"></mat-icon>
+                <span class="ml-2">เติม ALIPLAY</span>
+            </button>
+            <button class="manage-menu-item text-white" cdkMenuItem (click)="openDialogStatus(data)">
+                <mat-icon class="icon-size-5 text-white"
+                    [svgIcon]="'heroicons_solid:table-cells'"></mat-icon>
+                <span class="ml-2">อัปเดตสถานะ</span>
+            </button>
+        </div>
+    </ng-template>
+</ng-template>

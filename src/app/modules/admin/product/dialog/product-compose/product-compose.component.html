@@ -1,0 +1,179 @@
+<div class="flex flex-col overflow-y-auto">
+    <mat-toolbar class="flex justify-between">
+        <span class="example-spacer"></span>
+
+        <div>
+            <span class="font-bold text-[20px]">{{title}}</span>
+        </div>
+
+        <button mat-icon-button mat-dialog-close class="example-icon " aria-label="Example icon-button with menu icon">
+            <mat-icon svgIcon="heroicons_outline:x-mark"></mat-icon>
+        </button>
+    </mat-toolbar>
+
+    <mat-tab-group>
+        <mat-tab label="ข้อมูลพื้นฐาน">
+            <div class="flex justify-center">
+                <form class="flex flex-col h-fit mt-8 p-8 pb-4 bg-card rounded-2xl w-full"
+                    [formGroup]="form">
+                    <div class="flex items-center gap-5">
+                        <div class="grid w-full grid-cols-2 gap-3">
+                            <div class="w-full">
+                                <mat-form-field class="flex-auto w-full" subscriptSizing="fixed">
+                                    <mat-label>รหัสสินค้า</mat-label>
+                                    <input matInput [formControlName]="'code'" required
+                                        [placeholder]="'ระบุรหัสสินค้า'">
+                                    <mat-error>Required field!</mat-error>
+                                </mat-form-field>
+                            </div>
+                            <div class="w-full">
+                                <mat-form-field class="flex-auto w-full" subscriptSizing="fixed">
+                                    <mat-label>ชื่อสินค้า</mat-label>
+                                    <input matInput [formControlName]="'name'" required
+                                        [placeholder]="'ระบุชื่อสินค้า'">
+                                    <mat-error>Required field!</mat-error>
+                                </mat-form-field>
+                            </div>
+                            <div class="w-full">
+                                <mat-form-field class="flex-auto w-full " subscriptSizing="fixed">
+                                    <mat-label>ราคาสินค้า</mat-label>
+                                    <input matInput mask="separator.2" thousandSeparator="," separatorLimit="99999999"
+                                        [allowNegativeNumbers]="false" [formControlName]="'price'" required
+                                        [placeholder]="'ระบุราคาสินค้า'">
+                                    <mat-error>Required field!</mat-error>
+                                </mat-form-field>
+                            </div>
+                            <div class="w-full">
+                                <mat-form-field class="flex-auto w-full">
+                                    <mat-label>หมวดหมู่</mat-label>
+                                    <mat-select [formControlName]="'categoryId'" [placeholder]="'ระบุหมวดหมู่'">
+                                        <mat-option *ngFor="let item of catagories; let i = index;"
+                                            [value]="item.id">{{item.name}}</mat-option>
+                                    </mat-select>
+                                    <mat-error>Required field!</mat-error>
+                                </mat-form-field>
+                            </div>
+                            <div class="w-full">
+                                <mat-form-field class="flex-auto w-full">
+                                    <mat-label>หน่วยนับ</mat-label>
+                                    <mat-select [formControlName]="'unitId'" [placeholder]="'ระบุหน่วย'">
+                                        <mat-option *ngFor="let item of units; let i = index;"
+                                            [value]="item.id">{{item.name}}</mat-option>
+                                    </mat-select>
+                                    <mat-error>Required field!</mat-error>
+                                </mat-form-field>
+                            </div>
+                            <div class="w-full">
+                                <mat-form-field class="flex-auto w-full">
+                                    <mat-label>สาขา</mat-label>
+                                    <mat-select [formControlName]="'branchId'" [placeholder]="'ระบุสาขา'">
+                                        <mat-option *ngFor="let item of branch; let i = index;"
+                                            [value]="item.id">{{item.name}}</mat-option>
+                                    </mat-select>
+                                    <mat-error>Required field!</mat-error>
+                                </mat-form-field>
+                            </div>
+                            <!-- <div *ngIf="delete_toggle" class="relative group" (click)="deleteImgToInsert()">
+                                <img [src]="form.value.image" alt="Uploaded Image"
+                                    class="opacity-100 group-hover:opacity-50">
+                                <div class="absolute inset-0 flex items-center justify-center">
+                                    <button
+                                        class="px-4 py-2 font-semibold text-white bg-transparent border opacity-0 group-hover:opacity-100 group-hover:bg-red-200 group-hover:text-red-500 border-white-500 group-hover:border-transparent rounded-xl">
+                                        ลบรูปภาพ
+                                    </button>
+                                </div>
+                            </div> -->
+
+                        </div>
+                        <div class="mb-3">
+                            <asha-image-upload [initial]="item?.imageUrl" (uploadSuccess)="uploadSuccess($event)"></asha-image-upload>
+                            <!-- <ngx-awesome-uploader [adapter]="adapter" [accept]="'image/*'" [uploadType]="'single'" class="w-full"
+                                [fileMaxSize]="200" (uploadSuccess)="uploadSuccess($event)">
+                            </ngx-awesome-uploader> -->
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </mat-tab>
+
+        <mat-tab label="ข้อมูลเพิ่มเติม">
+            <form [formGroup]="attForm">
+                <div formArrayName="attributes">
+                    @for (attribute of attributes().controls; track attribute.value.name; let i = $index) {
+                    <div class="w-full" [formGroupName]="i">
+                        <div class="flex w-full gap-3 items-center" [ngClass]="{'mt-3': i === 0, 'mt-8': i !== 0}">
+                            <div class="flex w-1/2">
+                                <mat-form-field class="flex-auto w-full" subscriptSizing="fixed">
+                                    <mat-label>ชื่อตัวเลือก</mat-label>
+                                    <input matInput [formControlName]="'name'" required
+                                        [placeholder]="'ระบุชื่อตัวเลือก'">
+                                    <mat-error>Required field!</mat-error>
+                                </mat-form-field>
+                            </div>
+                            <div class="flex">
+                                <mat-form-field class="m-0">
+                                    <mat-label>รูปแบบ</mat-label>
+                                    <mat-select placeholder="Select an option" [formControlName]="'type'"
+                                        (selectionChange)="onSelectChange($event)">
+                                        <mat-option value="single">ตัวเลือกเดียว</mat-option>
+                                        <mat-option value="quantity">จำนวน</mat-option>
+                                        <mat-option value="multiple">หลายตัวเลือก</mat-option>
+                                    </mat-select>
+                                </mat-form-field>
+                            </div>
+                            <button mat-icon-button (click)="removeAttribute(i)">
+                                <mat-icon [svgIcon]="'heroicons_solid:trash'"></mat-icon>
+                            </button>
+                        </div>
+                        <div class="flex w-full mb-4">
+                            @if (!!attribute.value.type) {
+                            <button mat-flat-button [color]="'primary'" (click)="addAttValue(attribute)">
+                                <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:plus-circle'"></mat-icon>
+                                <span class="ml-2 "> เพิ่มตัวเลือก</span>
+                            </button>
+                            }
+                        </div>
+                        <div formArrayName="attributeValues">
+                            @for (attributeValue of attributeValues(i).controls; track attributeValue.value.name; let j
+                            = $index) {
+                            <div class="flex flex-row gap-3 items-center" [formGroupName]="j">
+                                <mat-form-field class="flex">
+                                    <mat-label>ชื่อสินค้า</mat-label>
+                                    <input matInput formControlName="name" [placeholder]="'ระบุชื่อสินค้า'">
+                                </mat-form-field>
+                                <mat-form-field class="flex">
+                                    <mat-label>ราคา</mat-label>
+                                    <input matInput formControlName="price" [placeholder]="'ระบุราคา'">
+                                </mat-form-field>
+                                <button mat-icon-button (click)="removeAttValue(i,j)" class="my-auto">
+                                    <mat-icon [svgIcon]="'heroicons_solid:trash'"></mat-icon>
+                                </button>
+                            </div>
+                            }
+                        </div>
+                    </div>
+                    <mat-divider></mat-divider>
+                    }
+                </div>
+            </form>
+
+            <button mat-flat-button [color]="'primary'" (click)="addAttribute()" [ngClass]="{'translate-y-1': attributes().controls.length === 0, 'translate-y-4': attributes().controls.length !== 0}">
+                <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:plus-circle'"></mat-icon>
+                <span class="ml-2 "> เพิ่มรายการ</span>
+            </button>
+        </mat-tab>
+
+    </mat-tab-group>
+
+    <div class="bottom-0 flex justify-between w-full px-8 py-5 mt-2 bg-white border-t dark:bg-gray-700 ">
+        <div></div>
+        <div mat-dialog-actions class="flex justify-end">
+            <button class="px-6 ml-3" mat-flat-button [color]="'primary'" (click)="Submit()">
+                ตกลง
+            </button>
+            <button class="px-6 ml-3" mat-flat-button [color]="'warn'" mat-dialog-close>
+                ยกเลิก
+            </button>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,18 @@
+<div class="Barcode">
+    <div class="w-full border-2 rounded mb-4">
+        <div class="p-4">
+            <div class="flex justify-between">
+                <p class="font-semibold pb-4">PO Barcode</p>
+                <button class="w-[150px] h-[32px] bg-[#DF0B12] rounded flex items-center justify-center space-x-2">
+                    <mat-icon svgIcon="heroicons_outline:printer" class="text-white icon-size-4"></mat-icon>
+                    <p class="text-white text-xs font-medium pt-[3px]">ถ่ายเอกสาร</p>
+                </button>
+            </div>
+            <div class="w-full">
+                <table datatable [dtOptions]="dtOptions_3" [dtTrigger]="dtTrigger_3" class="w-full row-border hover whitespace-nowrap overflow-auto">
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+

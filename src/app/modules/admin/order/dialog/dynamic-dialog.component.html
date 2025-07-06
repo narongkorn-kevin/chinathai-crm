@@ -1,0 +1,75 @@
+<!-- dynamic-dialog.component.html -->
+<h2 mat-dialog-title class="text-2xl font-bold px-5 rounded-t-lg">
+    {{ data?.title || 'Confirmation' }}
+</h2>
+
+<mat-dialog-content class="p-6 space-y-4">
+    <!-- <p *ngIf="data?.message" class="text-gray-700">{{ data.message }}</p> -->
+
+    <ng-container [ngSwitch]="data?.type">
+        <!-- Cancel Order -->
+        <div *ngSwitchCase="'cancel_order'" class="space-y-3">
+            <div *ngIf="data?.error" class="bg-red-50 text-red-600 text-md p-3 rounded border border-red-100">
+                <mat-icon svgIcon="heroicons_solid:information-circle" class="icon-size-3 text-red-500"></mat-icon>
+                {{ data.error }}
+            </div>
+            <div class="flex flex-col space-y-1">
+                <label for="cancel-reason" class="text-md font-medium text-gray-700">หมายเหตุ</label>
+                <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                    <textarea matInput id="cancel-reason" [(ngModel)]="data.reason" rows="3"
+                        placeholder="Please specify the reason..."></textarea>
+                </mat-form-field>
+            </div>
+
+        </div>
+
+        <!-- Change PO -->
+        <div *ngSwitchCase="'change_po'" class="space-y-3">
+            <div class="flex flex-col space-y-1">
+                <label for="po-select" class="text-sm font-medium text-gray-700">ชื่อผู้รับผิดชอบ PO</label>
+                <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                    <mat-select id="po-select" [(ngModel)]="data.selectedUser" placeholder="เลือกผู้รับผิดชอบ">
+                        <mat-option *ngFor="let u of data?.userList" [value]="u">{{ u }}</mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+
+        </div>
+          <!-- return PO -->
+        <div *ngSwitchCase="'return_po'" class="space-y-3">
+            <div class="flex flex-col space-y-1">
+               <p class="text-black">คุณต้องการ <span class="text-primary">{{data?.message}}</span> ใช่หรือไม่ ?</p>
+            </div>
+        </div>
+
+            <!-- return PO -->
+        <div *ngSwitchCase="'return_order'" class="space-y-3">
+            <div class="flex flex-col space-y-1">
+               <p class="text-black">ยืนยันตีกลับออร์เดอร์นี้ไปยังสถานะ <span class="text-primary">{{data?.message}}</span> ใช่หรือไม่ ?</p>
+            </div>
+        </div>
+
+              <!-- order -->
+        <div *ngSwitchCase="'order'" class="space-y-3">
+            <div class="flex flex-col space-y-1">
+               <p class="text-black">คุณต้องการจัดการออร์เดอร์ <span class="text-primary">{{data?.message}}</span> ใช่หรือไม่ ?</p>
+            </div>
+        </div>
+              <!-- order -->
+        <div *ngSwitchCase="'confirm_order'" class="space-y-3">
+            <div class="flex flex-col space-y-1">
+               <p class="text-black">คุณต้องการ <span class="text-primary">{{data?.message}}</span> ใช่หรือไม่ ?</p>
+            </div>
+        </div>
+
+        <!-- Default Confirmation -->
+        <div *ngSwitchDefault class="text-gray-700">
+            <p>Are you sure you want to proceed?</p>
+        </div>
+    </ng-container>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end" class="rounded-b-lg space-x-3 border-t border-slate-300">
+    <button mat-stroked-button (click)="onCancel()" class="!text-gray-700">ยกเลิก</button>
+    <button mat-flat-button color="primary" (click)="onConfirm()" class="!bg-teal-500 !text-white">ยืนยัน</button>
+</mat-dialog-actions>

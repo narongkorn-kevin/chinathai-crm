@@ -1,0 +1,209 @@
+<div class="flex flex-col flex-auto min-w-0">
+    <div class="flex flex-row justify-between pb-2 items-center">
+        <div class="w-full px-5 pt-5 pb-2.5  justify-between items-center flex">
+            <div class="flex flex-col">
+                <div class="flex space-x-2">
+                    <button class="md:text-lg font-medium tracking-tight leading-7 sm:leading-10 truncate"
+                        [routerLink]="['/delivery_orders']" routerLinkActive="router-link-active">
+                        โกดังจีน
+                    </button>
+                    <p class="md:text-sm font-medium tracking-tight leading-7 sm:leading-10 truncate">></p>
+                    <button class="md:text-sm font-medium tracking-tight leading-7 sm:leading-10 truncate text-primary"
+                        [routerLink]="['/delivery_orders']" routerLinkActive="router-link-active">
+                        รายการสินค้าทั้งหมด
+                    </button>
+                </div>
+                <div class="flex space-x-2 items-center">
+                    <p class="md:text-3xl font-medium tracking-tight leading-7 sm:leading-10 truncate text-black">
+                        แก้ไขรายการ
+                    </p>
+
+                </div>
+            </div>
+            <div class="justify-start items-center gap-2 flex">
+
+                <!-- ยกเลิก -->
+                <button mat-stroked-button class="bg-red-600 text-white">
+                    <mat-icon svgIcon="feather:trash" class="text-white"></mat-icon>&nbsp;ยกเลิก
+                </button>
+                <!-- ยืนยัน -->
+                <button mat-stroked-button class="bg-teal-500 text-white">&nbsp;ยืนยัน
+                </button>
+            </div>
+        </div>
+    </div>
+    <mat-divider class="w-full p-1 mx-5 flex border-t-[1px] border-slate-300"></mat-divider>
+    <div class="flex-auto p-10 m-4 rounded-md  bg-card">
+        <form  [formGroup]="form">
+            <div class="flex flex-col md:flex-row w-full gap-2 items-end">
+                <mat-form-field class="w-full" [ngClass]="formFieldHelpers">
+                    <mat-label>Receive Date</mat-label>
+                    <mat-date-range-input [rangePicker]="picker">
+                        <input matStartDate formControlName="start_date">
+                        <input matEndDate formControlName="end_date">
+                    </mat-date-range-input>
+                    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                    <mat-date-range-picker #picker></mat-date-range-picker>
+                </mat-form-field>
+                <div class="w-full">
+                    <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                        <mat-label>ค้นหาจากแทรคกิ้ง</mat-label>
+                        <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:magnifying-glass'"></mat-icon>
+                        <input matInput [placeholder]="'ค้นหาจากแทรคกิ้ง'" formControlName="tracking">
+                    </mat-form-field>
+                </div>
+                <div class="">
+                    <button mat-flat-button [color]="'primary'"  class="">
+                        <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:bars-3'"></mat-icon>
+                        <span class="ml-2">ค้นหาโดยใช้ตัวกรอง</span>
+                    </button>
+                </div>
+            </div>
+        </form>
+        <div class="overflow-x-auto whitespace-nowrap mt-4 max-w-full">
+            <form [formGroup]="form">
+                <div class="overflow-x-auto">
+                    <table class="min-w-[2000px] border text-lg text-left">
+                        <thead class="bg-gray-100 sticky top-0 z-10">
+                            <tr>
+                                <th class="border p-2">รูปภาพสินค้า</th>
+                                <th class="border p-2">WH</th>
+                                <th class="border p-2">LOT No.</th>
+                                <th class="border p-2">สถานะรับสินค้า</th>
+                                <th class="border p-2">วิธีขนส่ง</th>
+                                <th class="border p-2">Carton No</th>
+                                <th class="border p-2">หมายเลขแทรค</th>
+                                <th class="border p-2">Barcode</th>
+                                <th class="border p-2">Tracking Ext</th>
+                                <th class="border p-2">Receive Date</th>
+                                <th class="border p-2">Order No</th>
+                                <th class="border p-2">Qty</th>
+                                <th class="border p-2">ค่าขนส่งจีนสำรองจ่าย</th>
+                                <th class="border p-2">ค่าตีลังไม้</th>
+                                <th class="border p-2">ค่าทำพาเลท</th>
+                                <th class="border p-2">ค่าใช้จ่ายอื่น ๆ</th>
+                                <th class="border p-2">รหัสลูกค้าหน้ากล่อง</th>
+                                <th class="border p-2">รหัสลูกค้า 2 ตามระบบ</th>
+                                <th class="border p-2">รหัสจากลูกค้า</th>
+                                <th class="border p-2">ชื่อลูกค้า</th>
+                                <th class="border p-2">IMP/PRE</th>
+                                <th class="border p-2">สินค้า</th>
+                                <th class="border p-2">น้ำหนัก</th>
+                                <th class="border p-2">กว้าง</th>
+                                <th class="border p-2">ยาว</th>
+                                <th class="border p-2">สูง</th>
+                                <th class="border p-2">ปริมาตร (CBM)</th>
+                                <th class="border p-2">หมายเหตุโปรไฟล์</th>
+                                <th class="border p-2">หมายเหตุ (ใส่เองได้)</th>
+                                <th class="border p-2">Ship out date</th>
+                                <th class="border p-2">วันที่ Update ล่าสุด</th>
+                                <th class="border p-2">รายละเอียด (คำแปลสินค้า)</th>
+                            </tr>
+                        </thead>
+                        <tbody formArrayName="items">
+                            <tr *ngFor="let row of items.controls; let i = index" [formGroupName]="i">
+                                <td class="border p-2">
+                                    <button mat-flat-button color="primary">
+                                        <mat-icon>photo_camera</mat-icon> รูปภาพ
+                                    </button>
+                                </td>
+                                <td class="border p-2"><mat-form-field [ngClass]="formFieldHelpers"
+                                        class="w-full"><input matInput formControlName="warehouse"></mat-form-field>
+                                </td>
+                                <td class="border p-2"><mat-form-field [ngClass]="formFieldHelpers"
+                                        class="w-full"><input matInput formControlName="lotNo"></mat-form-field></td>
+                                <td class="border p-2"><mat-form-field [ngClass]="formFieldHelpers"
+                                        class="w-full"><input matInput formControlName="receiveStatus"></mat-form-field>
+                                </td>
+                                <td class="border p-2"><mat-form-field [ngClass]="formFieldHelpers"
+                                        class="w-full"><input matInput
+                                            formControlName="transportMethod"></mat-form-field></td>
+                                <td class="border p-2"><mat-form-field [ngClass]="formFieldHelpers"
+                                        class="w-full"><input matInput formControlName="cartonNo"></mat-form-field></td>
+                                <td class="border p-2"><mat-form-field [ngClass]="formFieldHelpers"
+                                        class="w-full"><input matInput formControlName="trackingNo"></mat-form-field>
+                                </td>
+                                <td class="border p-2"><mat-form-field [ngClass]="formFieldHelpers"
+                                        class="w-full"><input matInput formControlName="barcode"></mat-form-field></td>
+                                <td class="border p-2"><mat-form-field [ngClass]="formFieldHelpers"
+                                        class="w-full"><input matInput formControlName="trackingExt"></mat-form-field>
+                                </td>
+                                <td class="border p-2"><mat-form-field [ngClass]="formFieldHelpers"
+                                        class="w-full"><input matInput type="date"
+                                            formControlName="receiveDate"></mat-form-field></td>
+                                <td class="border p-2"><mat-form-field [ngClass]="formFieldHelpers"
+                                        class="w-full"><input matInput formControlName="orderNo"></mat-form-field></td>
+                                <td class="border p-2"><mat-form-field [ngClass]="formFieldHelpers"
+                                        class="w-full"><input matInput type="number"
+                                            formControlName="qty"></mat-form-field></td>
+                                <td class="border p-2"><mat-form-field [ngClass]="formFieldHelpers"
+                                        class="w-full"><input matInput type="number"
+                                            formControlName="chinaFreightCost"></mat-form-field></td>
+                                <td class="border p-2"><mat-form-field [ngClass]="formFieldHelpers"
+                                        class="w-full"><input matInput type="number"
+                                            formControlName="woodenBoxCost"></mat-form-field></td>
+                                <td class="border p-2"><mat-form-field [ngClass]="formFieldHelpers"
+                                        class="w-full"><input matInput type="number"
+                                            formControlName="palletCost"></mat-form-field></td>
+                                <td class="border p-2"><mat-form-field [ngClass]="formFieldHelpers"
+                                        class="w-full"><input matInput type="number"
+                                            formControlName="otherCost"></mat-form-field></td>
+                                <td class="border p-2"><mat-form-field [ngClass]="formFieldHelpers"
+                                        class="w-full"><input matInput
+                                            formControlName="customerCodeOnBox"></mat-form-field></td>
+                                <td class="border p-2"><mat-form-field [ngClass]="formFieldHelpers"
+                                        class="w-full"><input matInput
+                                            formControlName="customerCodeSystem"></mat-form-field></td>
+                                <td class="border p-2"><mat-form-field [ngClass]="formFieldHelpers"
+                                        class="w-full"><input matInput
+                                            formControlName="customerReferenceCode"></mat-form-field></td>
+                                <td class="border p-2"><mat-form-field [ngClass]="formFieldHelpers"
+                                        class="w-full"><input matInput formControlName="customerName"></mat-form-field>
+                                </td>
+                                <td class="border p-2"><mat-form-field [ngClass]="formFieldHelpers"
+                                        class="w-full"><input matInput formControlName="impPre"></mat-form-field></td>
+                                <td class="border p-2"><mat-form-field [ngClass]="formFieldHelpers"
+                                        class="w-full"><input matInput formControlName="productName"></mat-form-field>
+                                </td>
+                                <td class="border p-2"><mat-form-field [ngClass]="formFieldHelpers"
+                                        class="w-full"><input matInput type="number"
+                                            formControlName="weight"></mat-form-field></td>
+                                <td class="border p-2"><mat-form-field [ngClass]="formFieldHelpers"
+                                        class="w-full"><input matInput type="number"
+                                            formControlName="width"></mat-form-field></td>
+                                <td class="border p-2"><mat-form-field [ngClass]="formFieldHelpers"
+                                        class="w-full"><input matInput type="number"
+                                            formControlName="length"></mat-form-field></td>
+                                <td class="border p-2"><mat-form-field [ngClass]="formFieldHelpers"
+                                        class="w-full"><input matInput type="number"
+                                            formControlName="height"></mat-form-field></td>
+                                <td class="border p-2"><mat-form-field [ngClass]="formFieldHelpers"
+                                        class="w-full"><input matInput type="number"
+                                            formControlName="cbm"></mat-form-field></td>
+                                <td class="border p-2"><mat-form-field [ngClass]="formFieldHelpers"
+                                        class="w-full"><input matInput formControlName="profileRemark"></mat-form-field>
+                                </td>
+                                <td class="border p-2"><mat-form-field [ngClass]="formFieldHelpers"
+                                        class="w-full"><input matInput formControlName="customRemark"></mat-form-field>
+                                </td>
+                                <td class="border p-2"><mat-form-field [ngClass]="formFieldHelpers"
+                                        class="w-full"><input matInput type="date"
+                                            formControlName="shipOutDate"></mat-form-field></td>
+                                <td class="border p-2"><mat-form-field [ngClass]="formFieldHelpers"
+                                        class="w-full"><input matInput type="date"
+                                            formControlName="lastUpdate"></mat-form-field></td>
+                                <td class="border p-2"><mat-form-field [ngClass]="formFieldHelpers"
+                                        class="w-full"><input matInput formControlName="productDetail"></mat-form-field>
+                                </td>
+                            </tr>
+
+                        </tbody>
+                    </table>
+                </div>
+            </form>
+
+
+        </div>
+
+    </div>
+</div>

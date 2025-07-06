@@ -1,0 +1,29 @@
+<div class="overflow-auto md:max-w-lg" *ngIf="this.data?.type === 'NEW'">
+    <div class="grid items-center w-full grid-cols-2 "><h1 mat-dialog-title class="mb-4 text-xl font-semibold" *ngIf="this.data?.type === 'NEW'">นำเข้าข้อมูลผู้ใช้</h1>
+        <a class="ml-auto mr-5 cursor-pointer" (click)="exportTemplate()">Export Template</a></div>
+    <div mat-dialog-content class="overflow-y-auto md:max-h-180">
+        <form [formGroup]="form">
+            <div class="px-3 mb-6 md:w-full md:mb-0">
+                <mat-form-field class="w-full">
+                    <!-- <mat-label>รูปเอกสาร</mat-label> -->
+                    <button mat-icon-button matPrefix (click)="file_name.click()">
+                        <mat-icon>attach_file</mat-icon>
+                    </button>
+                    <input type="text" readonly matInput [formControlName]="'file_name'" />
+                    <input type="file" hidden #file_name (change)="onSelect(file_name.files,'addfile')"
+                        accept=".xls,.xlsx" />
+                    <mat-error>กรุณาเลือกไฟล์</mat-error>
+                </mat-form-field>
+            </div>
+        </form>
+    </div>
+    <!-- <div> check : {{this.form.value | json}}</div> -->
+    <div mat-dialog-actions class="flex justify-end">
+        <button class="px-6 ml-3" mat-flat-button [color]="'primary'" (click)="Submit()">
+            ตกลง
+        </button>
+        <button class="px-6 ml-3" mat-flat-button [color]="'warn'" (click)="onClose()">
+            ยกเลิก
+        </button>
+    </div>
+</div>

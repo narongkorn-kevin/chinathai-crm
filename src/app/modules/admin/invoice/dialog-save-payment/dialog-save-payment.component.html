@@ -1,0 +1,99 @@
+<div class="p-4">
+    <h2 class="text-2xl font-semibold mb-4">บันทึกรับชำระเงิน</h2>
+    <form [formGroup]="form" class="overflow-y-auto">
+        <div>ประเภทลูกค้า</div>
+        <div class="grid grid-cols-2 gap-4">
+            <!-- ตัวเลือก "มารับเอง" -->
+            <label class="flex flex-col border rounded-lg p-2 cursor-pointer" [class.border-red-500]="form.value.type === 'self'">
+                <div class="flex justify-between items-center">
+                    <span class="text-lg">นิติบุคคล</span>
+                    <mat-checkbox color="warn" [checked]="form.value.type === 'self'" (change)="form.patchValue({ type: 'self' })"></mat-checkbox>
+                </div>
+                <span class="text-sm text-gray-500">ประเภทลูกค้า</span>
+            </label>
+
+            <!-- ตัวเลือก "บริษัทนำส่งหรือรถร่วม" -->
+            <label class="flex flex-col border rounded-lg p-2 cursor-pointer" [class.border-red-500]="form.value.type === 'company'">
+                <div class="flex justify-between items-center">
+                    <span class="text-lg">บุคคลธรรมดา</span>
+                    <mat-checkbox color="warn" [checked]="form.value.type === 'company'" (change)="form.patchValue({ type: 'company' })"></mat-checkbox>
+                </div>
+                <span class="text-sm text-gray-500">ประเภทลูกค้า</span>
+            </label>
+        </div>
+        <!-- ส่วนคำนวณ -->
+        <div class="grid grid-cols-2 gap-4 mt-4 justify-between">
+            <div>จำนวนเงิน</div>
+            <div class="text-right">0</div>
+
+            <div>VAT 7%</div>
+            <div class="text-right">0</div>
+
+            <div>ยอกรวมหลังคำนวณ VAT 7%</div>
+            <div class="text-right">0</div>
+
+            <div>หัก ณ ที่จ่าย(TAX 1%)</div>
+            <div class="text-right">0</div>
+
+            <div>ยอดสุทธิหลัง หัก ณ ที่จ่าย</div>
+            <div class="text-right">0</div>
+        </div>
+
+        <div class="w-full my-2 mt-4">
+            <span class="my-2">ตัวเลือกขนส่ง</span> 
+            <div class="w-full">
+                <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                    <mat-select formControlName="transport_type" placeholder="">
+                        <mat-option [value]="">เข้ารับที่โกดัง</mat-option>
+                        <mat-option [value]="">ขนส่งบริษัท</mat-option>
+                        <mat-option [value]="">ขนส่งเอกชน</mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+            <div class="w-full">
+                <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                    <mat-select formControlName="transport" required>
+                        <mat-option *ngFor="let transport of transports" [value]="transport.id">
+                            {{ transport.name }}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+        </div>
+        <div class="grid grid-cols-2 gap-4 justify-between mb-2">
+            <div>ค่าขนส่งในไทย</div>
+            <div class="text-right">0</div>
+
+            <div>ค่าบริการจีน + ค่าตีลัง</div>
+            <div class="text-right">0</div>
+        </div>
+
+        <div class="w-full my-4">
+            <span class="mb-1">วันและเวลาที่ทำการโอนเงิน</span>
+            <div class="w-full">
+                <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                    <input matInput [matDatepicker]="picker" [placeholder]="''" formControlName="date">
+                    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                    <mat-datepicker #picker></mat-datepicker>
+                </mat-form-field>
+            </div>
+        </div>
+        <div>
+            <span>แนบรูปหลักฐานการโอน</span>
+            <asha-upload-file></asha-upload-file>
+        </div>
+    </form>
+    <div mat-dialog-actions class="flex justify-between border-t-2 py-2">
+        <div class="w-full">
+            ยอดชำระสุทธิ
+        </div>
+        <div class="w-full flex justify-end">
+            <button class="px-6 ml-3" mat-flat-button (click)="onClose()">
+                ยกเลิก
+            </button>
+            <button class="px-6 ml-3" mat-flat-button [color]="'primary'" (click)="Submit()">
+                บันทึก
+            </button>
+        </div>
+    </div>
+</div>

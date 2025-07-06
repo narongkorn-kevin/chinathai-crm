@@ -1,0 +1,665 @@
+<div class="flex flex-col flex-auto min-w-0">
+    <div class="flex flex-row justify-between pb-2 items-center">
+        <div class="w-full px-5 pt-5 pb-2.5  justify-between items-center flex">
+            <div class="flex flex-col">
+                <div class="flex space-x-2">
+                    <button class="md:text-lg font-medium tracking-tight leading-7 sm:leading-10 truncate"
+                        [routerLink]="['/claim']" routerLinkActive="router-link-active">
+                        รายการฝากสั่งสินค้า
+                    </button>
+                    <p class="md:text-lg font-medium tracking-tight leading-7 sm:leading-10 truncate">></p>
+                    <p class="md:text-klg font-medium tracking-tight leading-7 sm:leading-10 truncate text-primary-600">
+                        รายละเอียดรายการ
+                    </p>
+                </div>
+                <div class="flex space-x-2 items-center">
+                    <p class="md:text-3xl font-medium tracking-tight leading-7 sm:leading-10 truncate text-black">
+                        เลขที่ออร์เดอร์ : AZ909090
+                    </p>
+                    <app-status-badge [status]="orderStatus"></app-status-badge>
+                </div>
+            </div>
+            <div class="justify-start items-center gap-2 flex">
+                <!-- ขอคืนเงิน -->
+                <button *ngIf="['wait_payment', 'wait_approve', 'approved'].includes(orderStatus)" mat-stroked-button
+                    class="bg-orange-600 text-white">
+                    <mat-icon svgIcon="save_money"></mat-icon>&nbsp;ขอคืนเงิน
+                </button>
+
+
+                <!-- ตีกลับ -->
+                <button *ngIf="orderStatus === 'wait_customer'" mat-stroked-button (click)="openReturnOrderShowDialog()"
+                    class="border-[1px] border-slate-400 text-slate-700 bg-white">
+                    <mat-icon svgIcon="vector"></mat-icon>&nbsp;ตีกลับ
+                </button>
+
+                <!-- เปลี่ยน PO -->
+                <button *ngIf="['pending', 'wait_customer', 'wait_payment', 'wait_approve'].includes(orderStatus)"
+                    mat-stroked-button class="bg-[#6C6DF2] text-white" (click)="openChangePODialog()">
+                    <mat-icon svgIcon="change"></mat-icon>&nbsp;เปลี่ยน PO
+                </button>
+
+                <!-- ยกเลิก -->
+                <button *ngIf="['pending', 'wait_customer'].includes(orderStatus)" mat-stroked-button
+                    (click)="openCancelOrderDialog()" class="bg-red-600 text-white">
+                    <mat-icon svgIcon="feather:trash" class="text-white"></mat-icon>&nbsp;ยกเลิก
+                </button>
+
+                <!-- บันทึก -->
+                <button *ngIf="['pending', 'wait_payment'].includes(orderStatus)" mat-stroked-button
+                    class="bg-primary text-white">
+                    <mat-icon svgIcon="feather:save" class="text-white"></mat-icon>&nbsp;บันทึก
+                </button>
+
+                <!-- ยืนยัน -->
+                <button *ngIf="['pending', 'wait_approve'].includes(orderStatus)" mat-stroked-button
+                    class="bg-teal-500 text-white">
+                    <mat-icon svgIcon="heroicons_outline:check-badge" class="text-white"></mat-icon>&nbsp;ยืนยัน
+                </button>
+            </div>
+
+        </div>
+    </div>
+    <mat-divider class="w-full p-1 mx-5 flex border-t-[1px] border-slate-300"></mat-divider>
+    <mat-tab-group mat-stretch-tabs="false" mat-align-tabs="start">
+        <mat-tab label="รายละเอียดการสั่งซื้อสินค้า">
+            <div class="flex-auto p-10 bg-card rounded-md"
+                *ngIf="orderStatus === 'wait_approve' || orderStatus === 'wait_customer' || orderStatus === 'approved'">
+                <div class="p-0 space-y-6">
+                    <!-- ส่วนหัวเรื่อง -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- ฝั่งซ้าย -->
+                        <div class=" p-4 rounded-md space-y-2">
+                            <div class="flex justify-between items-center border-b pb-2">
+                                <h3 class="font-bold text-gray-700 text-2xl">รายละเอียดออร์เดอร์สินค้าที่ลูกค้าสั่งซื้อ
+                                </h3>
+                            </div>
+                            <div class="flex">
+                                <span class="w-40 font-semibold">ชื่อลูกค้า :</span>
+                                <a href="#" class="text-blue-600 underline">CT00,china thai</a>
+                            </div>
+                            <div class="flex">
+                                <span class="w-40 font-semibold">ประเภทการขนส่ง :</span>
+                                <span>ทางรถ</span>
+                            </div>
+                            <div class="flex">
+                                <span class="w-40 font-semibold">วันเวลาที่สั่งซื้อ :</span>
+                                <span>YYYY-MM-DD,00:00</span>
+                            </div>
+                            <div class="flex">
+                                <span class="w-40 font-semibold">โดย PO :</span>
+                                <span>admin-china</span>
+                            </div>
+                            <div class="flex items-start">
+                                <span class="w-40 font-semibold">รายละเอียดเพิ่มเติม :</span>
+                                <div class="flex-1 flex flex-wrap gap-x-2">
+                                    <span>รายละเอียดเพิ่มเติม</span>
+                                    <span>รายละเอียดเพิ่มเติม</span>
+                                    <span>รายละเอียดเพิ่มเติม</span>
+                                    <span>รายละเอียดเพิ่มเติม</span>
+                                    <span>รายละเอียดเพิ่มเติม</span>
+                                    <span>รายละเอียดเพิ่มเติม</span>
+                                    <span>รายละเอียดเพิ่มเติม</span>
+                                    <span>รายละเอียดเพิ่มเติม</span>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- ฝั่งขวา -->
+                        <div class="bg-blue-50 p-4 rounded-md space-y-2">
+                            <div class="flex justify-between items-center border-b pb-2 text-xl">
+                                <h3 class="font-semibold text-gray-700 ">รวมรายการ</h3>
+                                <span class="text-blue-600 font-normal">เรทการสั่งซื้อ : 3.00</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>จำนวนสั่งซื้อ (ชิ้น) :</span>
+                                <span>0.00</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>ราคารวมค่าสินค้า (฿) :</span>
+                                <span>0.00</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>ค่าบริการสั่งซื้อสินค้า (฿) :</span>
+                                <span>0.00</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>รวมค่านำส่งจีน - จีน (฿) :</span>
+                                <span>0.00</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>รวมค่าใช้จ่ายอื่น ๆ (¥) :</span>
+                                <span>0.00</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>ราคารวม (¥) :</span>
+                                <span>0.00</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>ราคารวม (฿) :</span>
+                                <span>0.00</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>ค่ามัดจำเปิดใบสั่งซื้อ :</span>
+                                <span class="text-green-600">0.00</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex flex-row px-6 py-4 rounded-md font-normal text-xl text-right gap-4 justify-end">
+                        <p>รอคืนเงินลูกค้า (฿) : <span class="font-normal  ">0.00</span></p>
+                        <p> คืนเงินลูกค้าแล้ว (฿) : <span class="text-green-500 font-normal  ">0.00</span></p>
+                    </div>
+                    <!-- สรุปราคารวม -->
+                    <div class="bg-blue-50 px-6 py-4 rounded-md font-semibold text-3xl text-center">
+                        ราคาทั้งหมด (฿) : <span class="text-blue-500 font-normal  ">0.00</span>
+                    </div>
+                </div>
+
+                <div class="p-4 bg-white rounded-md mt-4 border-[1px] border-slate-300">
+                    <!-- Header -->
+                    <div class="flex justify-between items-center bg-blue-100 px-4 py-2 rounded-t-md">
+                        <h2 class="text-3xl font-semibold">รายละเอียดร้านค้าที 1 : 1688</h2>
+                        <div class="flex gap-2 items-center">
+                            <p>ประเภทสินค้า A |</p>
+
+                            <span class="text-lg text-red-500">(ไม่ตีลังไม้)</span>
+                        </div>
+                    </div>
+
+                    <form [formGroup]="form" class="py-6 px-4 bg-gray-50 rounded-lg shadow-sm"
+                        *ngIf="orderStatus === 'wait_approve' || orderStatus === 'approved'">
+
+                        <div class="grid grid-cols-3 gap-6">
+
+                            <!-- Sale Order List -->
+                            <div class="bg-white p-4 rounded-lg shadow-xs border border-gray-200">
+                                <h3
+                                    class="text-lg font-semibold text-gray-700 mb-3 pb-2 border-b border-gray-200 flex items-center">
+                                    <mat-icon class="mr-2 text-blue-500">list_alt</mat-icon>
+                                    เลข Sale Order
+                                </h3>
+
+
+
+                                <div formArrayName="saleOrders" class="overflow-x-auto">
+                                    <table class="min-w-full border-collapse">
+                                        <thead>
+                                            <tr class="bg-blue-50 text-black-800 text-sm">
+                                                <th class="px-3 py-2 w-10 rounded-tl-md">ลบ</th>
+                                                <th class="px-3 py-2 rounded-tr-md">เลข Sale Order</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="divide-y divide-gray-200">
+                                            <tr *ngFor="let order of saleOrders?.controls; let i = index"
+                                                [formGroupName]="i" class="hover:bg-gray-50 transition-colors">
+                                                <td class="px-3 py-2 text-center">
+                                                    <button type="button" (click)="removeSaleOrder(i)"
+                                                        class="text-red-500 hover:text-red-700 transition-colors">
+                                                        <mat-icon svgIcon="heroicons_solid:minus-circle"
+                                                            class="text-red-500"></mat-icon>
+
+                                                    </button>
+                                                </td>
+                                                <td class="px-3 py-2">
+                                                    <input formControlName="saleOrder"
+                                                        class="w-full text-center border border-gray-300 rounded-md px-3 py-1.5 text-sm focus:ring-2 focus:ring-blue-200 focus:border-blue-500 outline-none transition-all" />
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                                <button type="button" (click)="addSaleOrder()"
+                                    class="mt-3 text-primary-600 hover:text-blue-800 flex items-center gap-1.5 text-sm font-medium transition-colors px-3 py-1.5 rounded-md hover:bg-blue-50">
+                                    <mat-icon svgIcon="heroicons_outline:plus-circle" class="text-primary"></mat-icon>
+                                    เพิ่มเลข Sale Order
+                                </button>
+                            </div>
+
+
+                            <!-- Tracking List -->
+                            <div class="col-span-2 bg-white p-4 rounded-lg shadow-xs border border-gray-200">
+                                <h3
+                                    class="text-lg font-semibold text-gray-700 mb-3 pb-2 border-b border-gray-200 flex items-center">
+                                    <mat-icon class="mr-2 text-blue-500">local_shipping</mat-icon>
+                                    เลข Tracking จีน
+                                </h3>
+
+                                <div class="overflow-x-auto">
+                                    <table class="min-w-full border-collapse">
+                                        <thead>
+                                            <tr class="bg-blue-50 text-black-800 text-sm">
+                                                <th class="px-3 py-2 rounded-tl-md">สถานะ</th>
+                                                <th class="px-3 py-2">เลข Tracking จีน</th>
+                                                <th class="px-3 py-2">Barcode</th>
+                                                <th class="px-3 py-2">Tracking Ext</th>
+                                                <th class="px-3 py-2">วันที่ส่งของ</th>
+                                                <th class="px-3 py-2">ประเภทสินค้า</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody formArrayName="trackings" class="divide-y divide-gray-200">
+                                            <tr *ngFor="let group of trackings.controls; let i = index"
+                                                [formGroupName]="i" class="hover:bg-gray-50 transition-colors">
+                                                <td class="px-3 py-2 text-center">
+                                                    <div class="flex items-center justify-center gap-1.5">
+                                                        <button type="button" (click)="removeTracking(i)"
+                                                            class="text-red-500 hover:text-red-700 transition-colors">
+                                                            <mat-icon svgIcon="heroicons_solid:minus-circle"
+                                                                class="text-red-500"></mat-icon>
+
+                                                        </button>
+                                                        <span class="text-black font-medium text-sm">{{
+                                                            group.get('status')?.value }}</span>
+                                                    </div>
+                                                </td>
+                                                <td class="px-3 py-2">
+                                                    <input formControlName="trackingNo"
+                                                        class="w-full text-center border border-gray-300 rounded-md px-2 py-1.5 text-sm focus:ring-2 focus:ring-blue-200 focus:border-blue-500 outline-none transition-all">
+                                                </td>
+                                                <td class="px-3 py-2 text-sm font-mono">{{ group.get('barcode')?.value
+                                                    }}</td>
+                                                <td class="px-3 py-2 text-sm font-mono">{{ group.get('ext')?.value }}
+                                                </td>
+                                                <td class="px-3 py-2 text-sm">{{ group.get('deliveryDate')?.value }}
+                                                </td>
+                                                <td class="px-3 py-2 text-sm">
+                                                    <span
+                                                        class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                                        {{ group.get('productType')?.value }}
+                                                    </span>
+                                                </td>
+
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                                <button type="button"
+                                    (click)="addTracking({ saleOrder: '', trackingNo: '', barcode: '', ext: '', deliveryDate: '-', productType: 'C' })"
+                                    class="mt-3 text-primary hover:text-blue-800 flex items-center gap-1.5 text-sm font-medium transition-colors px-3 py-1.5 rounded-md hover:bg-blue-50">
+                                    <mat-icon svgIcon="heroicons_outline:plus-circle" class="text-primary"></mat-icon>
+                                    เพิ่มเลข Tracking จีน
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="mt-6 text-right">
+                            <button mat-raised-button color="primary" type="submit"
+                                class="px-6 py-2 bg-gradient-to-r from-teal-600 to-teal-500 hover:from-teal-700 hover:to-teal-600 text-white font-medium rounded-md shadow-sm transition-all transform hover:scale-[1.02]">
+                                ยืนยัน
+                            </button>
+                        </div>
+                    </form>
+
+                    <!-- รายละเอียดเพิ่มเติม -->
+                    <div class="flex justify-between">
+                        <div class="mt-2 text-lg px-2">รายละเอียดเพิ่มเติม -</div>
+                        <div
+                            class="flex flex-row px-6 py-4 rounded-md font-normal text-lg text-right gap-4 justify-end">
+                            <p>ค่าใช้จ่ายอื่น ๆ (฿) : <span class="font-normal  ">0.00</span></p>
+                            <p>ค่าขนส่ง - จีน (฿) : <span class="text-green-500 font-normal  ">0.00</span></p>
+                        </div>
+                    </div>
+
+                    <!-- ตาราง -->
+                    <div class="overflow-x-auto mt-2">
+                        <table class="min-w-full border border-gray-300 text-lg">
+                            <thead class="bg-gray-100 text-center">
+                                <tr>
+                                    <th class="border px-2 py-1">#</th>
+                                    <th class="border px-2 py-1">ชื่อสินค้า</th>
+                                    <th class="border px-2 py-1">รูปภาพสินค้า</th>
+                                    <th class="border px-2 py-1">รูปแบบ / สี</th>
+                                    <th class="border px-2 py-1">ราคาต่อชิ้น (¥)</th>
+                                    <th class="border px-2 py-1">จำนวนสั่งซื้อ (ชิ้น)</th>
+                                    <th class="border px-2 py-1">ราคาสินค้ารวม (¥)</th>
+                                    <th class="border px-2 py-1">ราคาสินค้ารวม (฿)</th>
+                                    <th class="border px-2 py-1">ค่าบริการสั่งซื้อสินค้า (฿)</th>
+                                    <th class="border px-2 py-1">หมายเหตุ</th>
+                                </tr>
+                            </thead>
+                            <tbody class="text-center">
+                                <tr class="border" *ngFor="let item of [1,2,3,4]">
+                                    <td class="border px-2 py-1">3</td>
+                                    <td class="border px-2 py-1">กระเป๋า<br><a href="#"
+                                            class="text-blue-500 underline">view</a>
+                                    </td>
+                                    <td class="border px-2 py-1">
+                                        <img src="https://jptravelstore.com/upload-img/LW/5524/LW5524_60_PK_01.jpg"
+                                            alt="item" class="mx-auto w-12 h-12 object-cover rounded" />
+                                    </td>
+                                    <td class="border px-2 py-1">-</td>
+                                    <td class="border px-2 py-1">100</td>
+                                    <td class="border px-2 py-1">1</td>
+                                    <td class="border px-2 py-1">100</td>
+                                    <td class="border px-2 py-1">100</td>
+                                    <td class="border px-2 py-1">100</td>
+                                    <td class="border px-2 py-1">-</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- รวมรายการ -->
+                    <div class="mt-4 border border-gray-300 rounded-md p-4">
+                        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 items-start">
+                            <!-- ฝั่งซ้าย -->
+                            <div class="text-2xl font-semibold col-span-1">
+                                รวมรายการ : 4 รายการ
+                            </div>
+                            <!-- รายการราคากลาง -->
+                            <div class="text-lg text-right space-y-1 col-span-1">
+                                <div>ราคารวมสินค้า (฿) : <span class="ml-2">100</span></div>
+                                <div>รวมค่านำส่งจีน - จีน (¥) : <span class="ml-2">100</span></div>
+                                <div>รวมค่าใช้จ่ายอื่น ๆ (¥) : <span class="ml-2">100</span></div>
+                                <div>ราคารวม (¥) : <span class="ml-2">100</span></div>
+                                <div>ราคารวม (฿) : <span class="ml-2">100</span></div>
+                            </div>
+                            <!-- กล่องราคารวม -->
+                            <div class="col-span-2 text-center">
+                                <div
+                                    class="flex justify-center bg-gray-700 text-white px-8 py-6 rounded-lg text-4xl font-bold text-center w-full min-h-[125px] items-center">
+                                    ราคารวม (฿): <span class="text-5xl">100.00</span>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <div class="flex-auto p-10 bg-card rounded-md"
+                *ngIf="orderStatus === 'pending' || orderStatus === 'wait_payment'">
+                <div class="p-0 space-y-6">
+                    <!-- ส่วนหัวเรื่อง -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- ฝั่งซ้าย -->
+                        <div class=" p-4 rounded-md space-y-2">
+                            <div class="flex justify-between items-center border-b pb-2">
+                                <h3 class="font-bold text-gray-700 text-2xl">รายละเอียดออร์เดอร์สินค้าที่ลูกค้าสั่งซื้อ
+                                </h3>
+                            </div>
+                            <div class="flex">
+                                <span class="w-40 font-semibold">ชื่อลูกค้า :</span>
+                                <a href="#" class="text-blue-600 underline">CT00,china thai</a>
+                            </div>
+                            <div class="flex">
+                                <span class="w-40 font-semibold">ประเภทการขนส่ง :</span>
+                                <app-status-shipment [shipment]="'car'" class="text-red-500"></app-status-shipment>
+                            </div>
+                            <div class="flex">
+                                <span class="w-40 font-semibold">วันเวลาที่สั่งซื้อ :</span>
+                                <span>YYYY-MM-DD,00:00</span>
+                            </div>
+                            <div class="flex">
+                                <span class="w-40 font-semibold">โดย PO :</span>
+                                <span>admin-china</span>
+                            </div>
+                            <div class="flex">
+                                <span class="w-40 font-semibold">จำนวนครั้งที่ตีกลับ :</span>
+                                <span class="text-md text-red-500">2</span>
+                            </div>
+                            <div class="flex items-start">
+                                <span class="w-40 font-semibold">รายละเอียดเพิ่มเติม :</span>
+                                <div class="flex-1 flex flex-wrap gap-x-2">
+                                    <mat-form-field class="w-full fuse-mat-dense">
+                                        <textarea matInput rows="5"
+                                            placeholder="กรอกรายละเอียดเพิ่มเติม (ถ้ามี)"></textarea>
+                                    </mat-form-field>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- ฝั่งขวา -->
+                        <div class="bg-blue-50 p-4 rounded-md space-y-2">
+                            <div class="flex justify-between items-center border-b pb-2 text-xl">
+                                <h3 class="font-semibold text-gray-700 ">รวมรายการ</h3>
+                                <span class="text-blue-600 font-normal">เรทการสั่งซื้อ : 3.00</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>จำนวนสั่งซื้อ (ชิ้น) :</span>
+                                <span>0.00</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>ราคารวมค่าสินค้า (฿) :</span>
+                                <span>0.00</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>ค่าบริการสั่งซื้อสินค้า (฿) :</span>
+                                <span>0.00</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>รวมค่านำส่งจีน - จีน (฿) :</span>
+                                <span>0.00</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>รวมค่าใช้จ่ายอื่น ๆ (¥) :</span>
+                                <span>0.00</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>ราคารวม (¥) :</span>
+                                <span>0.00</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>ราคารวม (฿) :</span>
+                                <span>0.00</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>ค่ามัดจำเปิดใบสั่งซื้อ :</span>
+                                <span class="text-green-600">0.00</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- สรุปราคารวม -->
+                    <div class="bg-blue-50 px-6 py-4 rounded-md font-semibold text-3xl text-center">
+                        ราคาทั้งหมด (฿) : <span class="text-blue-500 font-normal  ">0.00</span>
+                    </div>
+                </div>
+
+                <div class="p-4 bg-white rounded-md mt-4 border-[1px] border-slate-300">
+                    <!-- Header -->
+                    <div class="flex justify-between items-center px-4 py-2 rounded-t-md bg-blue-100">
+                        <h2 class="text-3xl font-semibold">รายละเอียดร้านค้าที 1 : 1688</h2>
+                        <div class="flex gap-2 items-center">
+                            <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+
+                                <mat-select [(ngModel)]="selectedValue" placeholder="เลือกประเภท">
+                                    <mat-option value="A">A</mat-option>
+                                    <mat-option value="B">B</mat-option>
+                                    <mat-option value="C">C</mat-option>
+                                    <mat-option value="CB">CB</mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                            <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                                <mat-select [(ngModel)]="selectedValue" placeholder="ตีลังไม้">
+                                    <mat-option value="A">ตีลังไม้</mat-option>
+                                    <mat-option value="B">ห่อบับเบิ้ล</mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                            <button type="button" mat-icon-button (click)="openCancelAllProductDialog()">
+                                <mat-icon class="text-red-500">delete</mat-icon>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- รายละเอียดเพิ่มเติม -->
+                    <div class="flex flex-row justify-between mt-2 text-lg px-2">
+                        <div>รายละเอียดเพิ่มเติม -</div>
+                        <div class="flex gap-2 items-center">
+                            <p>ค่าใช้จ่ายอื่น ๆ (¥) : </p>
+                            <mat-form-field [ngClass]="formFieldHelpers" class="w-24">
+                                <input matInput type="number" [value]="0" />
+                            </mat-form-field>
+                            <p>ค่าขนส่ง - จีน (¥) : </p>
+                            <mat-form-field [ngClass]="formFieldHelpers" class="w-24">
+                                <input matInput type="number" [value]="0" />
+                            </mat-form-field>
+                        </div>
+                    </div>
+
+                    <!-- ตาราง -->
+                    <div class="overflow-x-auto mt-2">
+                        <form [formGroup]="form">
+                            <div formArrayName="items">
+                                <table class="min-w-full border border-gray-300 text-md">
+                                    <thead class="bg-gray-100 text-center">
+                                        <tr>
+                                            <th>#</th>
+                                            <th>ชื่อสินค้า</th>
+                                            <th>รูปภาพสินค้า</th>
+                                            <th>รูปแบบ / สี</th>
+                                            <th>ราคาต่อชิ้น (¥)</th>
+                                            <th>จำนวนสั่งซื้อ (ชิ้น)</th>
+                                            <th>ราคาสินค้ารวม (¥)</th>
+                                            <th>ราคาสินค้ารวม (฿)</th>
+                                            <th>ค่าบริการสั่งซื้อสินค้า (฿)</th>
+                                            <th>หมายเหตุ</th>
+                                            <th>จัดการ</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr *ngFor="let item of items.controls; let i = index" [formGroupName]="i"
+                                            class="text-center">
+                                            <td>{{ i + 1 }}</td>
+                                            <td>
+                                                {{ item.get('name')?.value }}
+                                                <br /><a href="#" class="text-blue-500 underline">view</a>
+                                            </td>
+                                            <td>
+                                                <img [src]="item.get('image')?.value"
+                                                    class="w-12 h-12 object-cover rounded mx-auto" />
+                                            </td>
+                                            <td>{{ item.get('color')?.value }}</td>
+
+                                            <!-- ราคาต่อชิ้น -->
+                                            <td>
+                                                <mat-form-field [ngClass]="formFieldHelpers" class="w-24">
+                                                    <input matInput type="number" formControlName="price_yuan"
+                                                        (input)="onQtyOrPriceChange(i)" />
+                                                </mat-form-field>
+                                            </td>
+
+                                            <!-- จำนวน -->
+                                            <td>
+                                                <mat-form-field [ngClass]="formFieldHelpers" class="w-24">
+                                                    <input matInput type="number" formControlName="qty"
+                                                        (input)="onQtyOrPriceChange(i)" />
+                                                </mat-form-field>
+                                            </td>
+
+                                            <!-- รวม (¥) -->
+                                            <td>
+                                                <mat-form-field [ngClass]="formFieldHelpers" class="w-24">
+                                                    <input matInput type="number" formControlName="total_yuan"
+                                                        disabled />
+                                                </mat-form-field>
+                                            </td>
+
+                                            <!-- รวม (฿) -->
+                                            <td>
+                                                <mat-form-field [ngClass]="formFieldHelpers" class="w-24">
+                                                    <input matInput type="number" formControlName="total_baht"
+                                                        disabled />
+                                                </mat-form-field>
+                                            </td>
+
+                                            <!-- ค่าบริการ -->
+                                            <td>
+                                                <mat-form-field [ngClass]="formFieldHelpers" class="w-24">
+                                                    <input matInput type="number" formControlName="service_fee" />
+                                                </mat-form-field>
+                                            </td>
+
+                                            <!-- หมายเหตุ -->
+                                            <td>
+                                                <mat-form-field [ngClass]="formFieldHelpers" class="w-32">
+                                                    <input matInput type="text" formControlName="remark" />
+                                                </mat-form-field>
+                                            </td>
+
+                                            <!-- ปุ่มลบ -->
+                                            <td>
+                                                <button type="button" mat-icon-button (click)="removeItem(i)"
+                                                    (click)="openCancelProductDialog()">
+                                                    <mat-icon class="text-red-500">delete</mat-icon>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <!-- ปุ่มเพิ่มรายการ -->
+                            <!-- <div class="mt-4">
+                                <button type="button" mat-flat-button color="primary" (click)="addItem()">
+                                    + เพิ่มรายการ
+                                </button>
+                            </div> -->
+                        </form>
+
+
+                    </div>
+
+                    <!-- รวมรายการ -->
+                    <div class="mt-4 border border-gray-300 rounded-md p-4">
+                        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 items-start">
+                            <!-- ฝั่งซ้าย -->
+                            <div class="text-2xl font-semibold col-span-1">
+                                รวมรายการ : 4 รายการ
+                            </div>
+                            <!-- รายการราคากลาง -->
+                            <div class="text-lg text-right space-y-1 col-span-1">
+                                <div>ราคารวมสินค้า (฿) : <span class="ml-2">100</span></div>
+                                <div>รวมค่านำส่งจีน - จีน (¥) : <span class="ml-2">100</span></div>
+                                <div>รวมค่าใช้จ่ายอื่น ๆ (¥) : <span class="ml-2">100</span></div>
+                                <div>ราคารวม (¥) : <span class="ml-2">100</span></div>
+                                <div>ราคารวม (฿) : <span class="ml-2">100</span></div>
+                            </div>
+                            <!-- กล่องราคารวม -->
+                            <div class="col-span-2 text-center">
+                                <div
+                                    class="flex justify-center bg-gray-700 text-white px-8 py-6 rounded-lg text-4xl font-bold text-center w-full min-h-[125px] items-center">
+                                    ราคารวม (฿): <span class="text-5xl">100.00</span>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </mat-tab>
+        <mat-tab label="ประวัติการจัดการฝากสั่ง" *ngIf="this.orderStatus !== 'waiting'">
+            <div class="flex-auto p-10 bg-card rounded-md">
+                <div class="overflow-x-auto mt-2">
+                    <table class="min-w-full divide-y divide-gray-300 border border-gray-200 text-lg">
+                        <thead class="bg-gray-100 text-gray-700 font-semibold text-center">
+                            <tr>
+                                <th class="px-4 py-2 border">#</th>
+                                <th class="px-4 py-2 border">การจัดการ</th>
+                                <th class="px-4 py-2 border">รายละเอียด</th>
+                                <th class="px-4 py-2 border">ในสถานะ</th>
+                                <th class="px-4 py-2 border">วัน/เวลาทำรายการ</th>
+                                <th class="px-4 py-2 border">โดย</th>
+                                <th class="px-4 py-2 border">เลขอ้างอิง</th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-center">
+                            <tr class="hover:bg-gray-50" *ngFor="let item of [1,2,3,4]">
+                                <td class="px-4 py-2 border">1</td>
+                                <td class="px-4 py-2 border">ยืนยันออร์เดอร์</td>
+                                <td class="px-4 py-2 border">ยืนยันออร์เดอร์ เปลี่ยนสถานะจาก รอตรวจสอบ เป็น
+                                    รอลูกค้าจ่ายเงิน
+                                </td>
+                                <td class="px-4 py-2 border">
+                                    <app-status-badge [status]="'waiting'"></app-status-badge>
+                                </td>
+                                <td class="px-4 py-2 border">2025-12-31 12:09</td>
+                                <td class="px-4 py-2 border">admin_china</td>
+                                <td class="px-4 py-2 border">-</td>
+                            </tr>
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </mat-tab>
+    </mat-tab-group>
+</div>

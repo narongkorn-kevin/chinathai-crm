@@ -1,0 +1,119 @@
+<div class="flex flex-col flex-auto min-w-0">
+    <div class="flex flex-row justify-between pb-2 items-center">
+        <div class="w-full px-5 pt-5 pb-2.5  justify-between items-center flex">
+            <div class="flex flex-col">
+                <div class="flex space-x-2">
+                    <button class="md:text-xl font-medium tracking-tight leading-7 sm:leading-10 truncate"
+                        [routerLink]="['/claim']" routerLinkActive="router-link-active">
+                        รายการฝากซื้อ
+                    </button>
+                    <p class="md:text-sm font-medium tracking-tight leading-7 sm:leading-10 truncate">></p>
+                    <p class="md:text-sm font-medium tracking-tight leading-7 sm:leading-10 truncate text-primary-600">
+                        เคลมออร์เดอร์
+                    </p>
+                </div>
+                <div class="flex space-x-2">
+                    <p class="md:text-3xl font-medium tracking-tight leading-7 sm:leading-10 truncate text-black">
+                        เพิ่มรายการ
+                    </p>
+                </div>
+            </div>
+            <div class="justify-end items-center gap-2 flex">
+                <div class="justify-start items-center gap-2 flex">
+                    <button mat-stroked-button class="border-[1px] border-slate-500">
+                        ยกเลิก
+                    </button>
+                </div>
+                <div class="justify-start items-center gap-2 flex">
+                    <button mat-flat-button [color]="'primary'">
+                        ยืนยัน
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <mat-divider class="w-full p-1 mx-5 flex border-t-[1px] border-slate-300"></mat-divider>
+    <div class="flex-auto p-10 bg-card m-5 rounded-md text-2xl">
+        <div class="flex items-center gap-2 p-4 text-red-600 bg-red-100 rounded-md">
+            <mat-icon svgIcon="heroicons_solid:information-circle" class="text-red-500"></mat-icon>
+            <span class="text-2xl">
+                ตรวจพบรายการ <span class="font-semibold">“ เลขแทรคกิ้ง, เลขออร์เดอร์ ”</span> ซ้ำ
+                คุณต้องการเพิ่มข้อมูลนี้อีกครั้งใช่หรือไม่
+            </span>
+        </div>
+
+        <form [formGroup]="form">
+            <div class="flex flex-col mt-4">
+                <h3 class="text-2xl font-bold mb-2">ข้อมูล Case ใหม่</h3>
+                <mat-divider class="w-full p-1 flex border-t-[1px] border-slate-300"></mat-divider>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 w-full md:w-1/2">
+                    <div class="flex items-center text-gray-600 font-semibold text-lg">
+                        <p>รหัสลูกค้า</p>
+                    </div>
+                    <mat-form-field class="w-full" [ngClass]="formFieldHelpers">
+                        <input matInput formControlName="customerCode" placeholder="กรอกรหัสลูกค้า">
+                    </mat-form-field>
+
+                    <div class="flex items-center text-gray-600 font-semibold text-lg">
+                        <p>ชื่อลูกค้า</p>
+                    </div>
+                    <mat-form-field class="w-full" [ngClass]="formFieldHelpers">
+                        <input matInput formControlName="customerName" placeholder="กรอกชื่อลูกค้า">
+                    </mat-form-field>
+
+                    <div class="flex items-center text-gray-600 font-semibold text-lg">
+                        <p>เลขแทรคกิ้งจีน</p>
+                    </div>
+                    <mat-form-field class="w-full" [ngClass]="formFieldHelpers">
+                        <input matInput formControlName="trackingChina" placeholder="0000000000">
+                    </mat-form-field>
+
+                    <div class="flex items-center text-gray-600 font-semibold text-lg">
+                        <p>เลขแทรคกิ้งไทย</p>
+                    </div>
+                    <mat-form-field class="w-full" [ngClass]="formFieldHelpers">
+                        <input matInput formControlName="trackingThai" placeholder="0000000000">
+                    </mat-form-field>
+
+                    <div class="flex items-center text-gray-600 font-semibold text-lg">
+                        <p>เลขออร์เดอร์</p>
+                    </div>
+                    <mat-form-field class="w-full" [ngClass]="formFieldHelpers">
+                        <input matInput formControlName="orderNo" placeholder="0000000000">
+                    </mat-form-field>
+
+                    <div class="flex items-center text-gray-600 font-semibold text-lg">
+                        <p>หัวข้อ Case</p>
+                    </div>
+                    <mat-form-field class="w-full" [ngClass]="formFieldHelpers">
+                        <input matInput formControlName="caseTitle" placeholder="กรอกหัวข้อ">
+                    </mat-form-field>
+
+                    <div class="flex items-start text-gray-600 font-semibold text-lg">
+                        <p>รายละเอียด Case</p>
+                    </div>
+                    <mat-form-field class="w-full" [ngClass]="formFieldHelpers">
+                        <textarea matInput rows="5" formControlName="caseDetail"
+                            placeholder="ระบุรายละเอียด"></textarea>
+                    </mat-form-field>
+                </div>
+
+                <div class="mt-6 w-full md:w-1/2">
+                    <p class="text-lg font-normal">ไฟล์แนบ</p>
+                    <span class="text-slate-400 font-light text-sm">อัปโหลดรูปภาพ (.png, .jpg)</span>
+                    <div class="mt-2">
+                        <asha-upload-file id="file1" (filesChanged)="selectFileInvoice($event)"></asha-upload-file>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+
+</div>
+
+<ng-template #pic let-data="adtData">
+    <div class="flex flex-row justify-center">
+        <img [src]="data?.product_image" alt="Image" class="rounded-md w-20 text-center" />
+    </div>
+</ng-template>

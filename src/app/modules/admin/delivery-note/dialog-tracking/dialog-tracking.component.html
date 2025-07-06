@@ -1,0 +1,29 @@
+<div class="p-6">
+    <h2 class="text-2xl font-semibold mb-4">เพิ่มเลข tracking ขนส่ง</h2>
+    <form [formGroup]="form">
+        <div class="flex flex-col w-full gap-2 items-end">
+            <div class="w-full">
+                <mat-form-field [ngClass]="formFieldHelpers" class="w-full" >
+                    <mat-label>ใบส่งของเลขที่</mat-label>
+                    <mat-select formControlName="tracking_id" >
+                        <mat-option [value]="'test01'">test01</mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+            <div class="w-full">
+                <mat-form-field [ngClass]="formFieldHelpers" class="w-full" >
+                    <mat-label>Packing List</mat-label>
+                    <input matInput formControlName="tracking" >
+                </mat-form-field>
+            </div>
+        </div>
+    </form>
+    <div mat-dialog-actions class="flex justify-end border-t-2 mt-2 p-2">
+        <button class="px-6 ml-3" mat-flat-button (click)="onClose()">
+            ยกเลิก
+        </button>
+        <button class="px-6 ml-3" mat-flat-button [color]="'primary'" (click)="Submit()">
+            บันทึก
+        </button>
+    </div>
+</div>

@@ -1,0 +1,40 @@
+<div class="flex flex-col flex-auto min-w-0">
+  <div class="flex-auto p-6 sm:p-10 bg-card m-4 rounded-md">
+      <div class="flex flex-row items-center justify-between p-3 bg-card dark:bg-transparent">
+          <div class="flex flex-row gap-4 items-center justify-between">
+              <h2 class="text-2xl md:text-2xl tracking-tight leading-7 sm:leading-10 truncate">
+                  รายงานยอดขายแยกตามสินค้า
+              </h2>
+          </div>
+          <form action="" [formGroup]="form">
+              <div class="flex flex-row gap-4">
+                <mat-form-field class="w-full min-w-90">
+                  <mat-date-range-input [formGroup]="range" [rangePicker]="picker">
+                    <input matStartDate formControlName="start" placeholder="วันที่เริ่ม">
+                    <input matEndDate formControlName="end" placeholder="วันสุดท้าย">
+                  </mat-date-range-input>
+                  <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+                  <mat-date-range-picker #picker></mat-date-range-picker>
+                </mat-form-field>
+                <mat-form-field class="w-full min-w-48">
+                  <mat-select formControlName="product_type">
+                      <mat-option [value]="''">
+                        เลือกประเภทสินค้า
+                      </mat-option>
+                      <mat-option *ngFor="let item of productType;" [value]="item.id">
+                        {{item.name}}
+                      </mat-option>
+                  </mat-select>
+                </mat-form-field>
+              </div>
+              <div class="flex justify-end">
+                <button mat-flat-button class="bg-green-800 text-white" (click)="exportExcel()">
+                    <mat-icon class="icon-size-5" [svgIcon]="'heroicons_mini:document'"></mat-icon>
+                    <span class="ml-2">Excel</span>
+                </button>
+              </div>
+          </form>
+      </div>
+      <table datatable [dtOptions]="dtOptions" class="row-border hover w-full"></table>
+  </div>
+</div>

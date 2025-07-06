@@ -1,0 +1,42 @@
+<div class="p-6">
+    <h2 class="text-2xl font-semibold mb-4">เปลี่ยนตู้</h2>
+    <div class="flex flex-row w-full gap-2 items-center">
+        <div class="w-full">
+            <mat-form-field [ngClass]="formFieldHelpers" class="w-full md:w-4/4">
+                <mat-label>Packing List เดิม</mat-label>
+                <input matInput [formControl]="packinglistFilter" [matAutocomplete]="AutoComplete"
+                    placeholder="ค้นหา packing list" />
+                <mat-autocomplete #AutoComplete="matAutocomplete"
+                    (optionSelected)="onSelectpackinglist_main($event.option.value)">
+                    <mat-option *ngFor="let item of filterpackinglist | async" [value]="item">
+                        {{item.code}}
+                    </mat-option>
+                </mat-autocomplete>
+            </mat-form-field>
+        </div>
+        <div class="flex items-center justify-center mx-2">
+            <mat-icon svgIcon="heroicons_outline:arrow-right"></mat-icon>
+        </div>
+        <div class="w-full">
+            <mat-form-field [ngClass]="formFieldHelpers" class="w-full md:w-4/4">
+                <mat-label>Packing List ใหม่</mat-label>
+                <input matInput [formControl]="newPackinglistFilter" [matAutocomplete]="newAutoComplete"
+                    placeholder="ค้นหา packing list" />
+                <mat-autocomplete #newAutoComplete="matAutocomplete"
+                    (optionSelected)="onSelectpackinglist($event.option.value)">
+                    <mat-option *ngFor="let item of filterNewPackinglist | async" [value]="item">
+                        {{item.code}}
+                    </mat-option>
+                </mat-autocomplete>
+            </mat-form-field>
+        </div>
+    </div>
+    <div mat-dialog-actions class="flex justify-end border-t-2 mt-2 p-2">
+        <button class="px-6 ml-3" mat-flat-button [color]="'primary'" (click)="Submit()">
+            ตกลง
+        </button>
+        <button class="px-6 ml-3" mat-flat-button [color]="'warn'" (click)="onClose()">
+            ยกเลิก
+        </button>
+    </div>
+</div>

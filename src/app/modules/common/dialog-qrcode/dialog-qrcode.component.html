@@ -1,0 +1,26 @@
+<mat-dialog-content class="p-4 text-center">
+    <div class="flex w-full items-center justify-end">
+        <button mat-icon-button class="close-button" (click)="onClose()">
+            <mat-icon>close</mat-icon>
+        </button>
+    </div>
+    <div class="flex w-full items-center justify-center">
+        <qrcode
+            [qrdata]="qrCodeValue"
+            [width]="192"
+            [errorCorrectionLevel]="'M'"
+            class="mx-auto"
+        ></qrcode>
+    </div>
+    <p class="text-lg font-semibold mt-4">{{ qrCodeValue }}</p>
+    <p class="text-gray-500 text-sm">สแกน QR หรือเลือกดาวน์โหลด</p>
+    <div class="flex w-full items-center justify-center">
+        <button
+        mat-button
+        class="mt-4 bg-red-600 text-white px-4 py-2 rounded-lg flex items-center justify-center"
+        (click)="downloadQRCode()"
+      >
+        <mat-icon class="mr-2">download</mat-icon> ดาวน์โหลด QR Code
+      </button>
+    </div>
+</mat-dialog-content>

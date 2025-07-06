@@ -1,0 +1,336 @@
+<div class="flex flex-col flex-auto justify-start items-center w-full overflow-auto">
+    <div class="w-full flex-col justify-between items-center flex overflow-hidden">
+        <div class="w-full flex-col justify-start items-start flex">
+            <div class="w-full px-10 pt-5 pb-2.5 bg-white justify-between items-center flex">
+                <div class="flex flex-col">
+                    <div class="flex space-x-2">
+                        <button class="md:text-xl font-medium tracking-tight leading-7 sm:leading-10 truncate"
+                            [routerLink]="['/lot']" routerLinkActive="router-link-active">
+                            รายการรวมพัสดุ
+                        </button>
+                        <p class="md:text-sm font-medium tracking-tight leading-7 sm:leading-10 truncate">></p>
+                        <button
+                            class="md:text-sm font-medium tracking-tight leading-7 sm:leading-10 truncate text-[#DF0B12]"
+                            [routerLink]="['/lot']" routerLinkActive="router-link-active">
+                            Packing List
+                        </button>
+                        <p class="md:text-sm font-medium tracking-tight leading-7 sm:leading-10 truncate">></p>
+                        <button
+                            class="md:text-sm font-medium tracking-tight leading-7 sm:leading-10 truncate text-[#DF0B12]"
+                            [routerLink]="['/lot/view/' + Id]" routerLinkActive="router-link-active">
+                            Packing List: {{ data.code }}
+                        </button>
+                    </div>
+
+                    <p class="md:text-2xl text-[#DF0B12] font-bold tracking-tight leading-7 sm:leading-10 truncate">
+                        DRAFT
+                    </p>
+                </div>
+                <div class="flex ml-auto space-x-4">
+                    <button mat-flat-button [cdkMenuTriggerFor]="optionsMenu" [color]="'primary'">
+                        <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:bars-3'"></mat-icon>
+                        <span class="ml-2">ตัวเลือก</span>
+                    </button>
+                    <ng-template #optionsMenu>
+                        <div class="manage-menu bg-primary" cdkMenu>
+                            <button class="manage-menu-item text-white" (click)="sacnpo()" cdkMenuItem>
+                                <mat-icon class="icon-size-5 text-white" [svgIcon]="'heroicons_solid:qr-code'"></mat-icon>
+                                <span class="ml-2">Scan Po ขึ้นตู้</span>
+                            </button>
+                            <button class="manage-menu-item text-white" (click)="draft()" cdkMenuItem>
+                                <mat-icon class="icon-size-5 text-white"
+                                    [svgIcon]="'feather:file-text'"></mat-icon>
+                                <span class="ml-2">Draft</span>
+                            </button>
+                            <button class="manage-menu-item text-white" (click)="lotedit()" cdkMenuItem>
+                                <mat-icon class="icon-size-5 text-white"
+                                    [svgIcon]="'heroicons_solid:pencil-square'"></mat-icon>
+                                <span class="ml-2">แก้ไขข้อมูล</span>
+                            </button>
+                        </div>
+                    </ng-template>
+
+                    <button [cdkMenuTriggerFor]="menu" mat-flat-button class="!text-white" [color]="'primary'">
+                        <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:shopping-bag'"></mat-icon>
+                        <div class="flex items-center gap-2">
+                            <span class="ml-2"> การจัดการข้อมูล </span>
+                            <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:chevron-up'"></mat-icon>
+                        </div>
+                    </button>
+
+                    <ng-template #menu>
+                        <div class="manage-menu bg-primary" cdkMenu>
+                            <button class="manage-menu-item text-white" cdkMenuItem>
+                                <mat-icon class="icon-size-5 text-white"
+                                    [svgIcon]="'heroicons_solid:document-duplicate'"></mat-icon>
+                                <span class="ml-2">Copy to Clipboard</span>
+                            </button>
+                            <button class="manage-menu-item text-white" cdkMenuItem>
+                                <mat-icon class="icon-size-5 text-white"
+                                    [svgIcon]="'heroicons_solid:table-cells'"></mat-icon>
+                                <span class="ml-2">CSV</span>
+                            </button>
+                            <button class="manage-menu-item text-white" cdkMenuItem>
+                                <mat-icon class="icon-size-5 text-white"
+                                    [svgIcon]="'heroicons_solid:table-cells'"></mat-icon>
+                                <span class="ml-2">Excel</span>
+                            </button>
+                            <button class="manage-menu-item text-white" cdkMenuItem>
+                                <mat-icon class="icon-size-5 text-white" [svgIcon]="'heroicons_solid:printer'"></mat-icon>
+                                <span class="ml-2">Print</span>
+                            </button>
+                        </div>
+                    </ng-template>
+                </div>
+            </div>
+            <div class="w-full px-10 flex flex-col gap-2 bg-white">
+                <div class="flex flex-col gap-2 w-full mb-4">
+                    <h2 class="font-semibold text-lg">รายละเอียดรายการ Packing list</h2>
+                    <mat-divider class="mb-3"></mat-divider>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-2 w-full ">
+                        <div class="flex justify-between w-full">
+                            <div class="w-full font-bold">ลำดับตู้:</div>
+                            <div class="w-full text-left">{{ data.code ?? '-' }}</div>
+                        </div>
+                        <div class="flex justify-between w-full">
+                            <div class="w-full font-bold">หมายเลขตู้:</div>
+                            <div class="w-full text-left">{{ data.container_no ?? '-' }}</div>
+                        </div>
+                        <div class="flex justify-between w-full">
+                            <div class="w-full font-bold">ป้ายทะเบียนรถ:</div>
+                            <div class="w-full text-left">{{ data.truck_license_plate ?? '-' }}</div>
+                        </div>
+                        <div class="flex justify-between w-full">
+                            <div class="w-full font-bold">วันที่เข้าโกดัง:</div>
+                            <div class="w-full text-left">{{ data.closing_date ?? '-' }}</div>
+                        </div>
+                        <div class="flex justify-between w-full">
+                            <div class="w-full font-bold">SHIPPING จีน:</div>
+                            <div class="w-full text-left">{{ data.shipping_china ?? '-' }}</div>
+                        </div>
+                        <div class="flex justify-between w-full">
+                            <div class="w-full font-bold">SHIPPING ไทย:</div>
+                            <div class="w-full text-left">{{ data.shipping_thailand ?? '-' }}</div>
+                        </div>
+                        <div class="flex justify-between w-full">
+                            <div class="w-full font-bold">วันที่เข้าไทย:</div>
+                            <div class="w-full text-left">{{ data.estimated_arrival_date ?? '-' }}</div>
+                        </div>
+                        <div class="flex justify-between w-full">
+                            <div class="w-full font-bold">ขนส่งโดย:</div>
+                            <div class="w-full text-left">{{ data.transport_by ?? '-' }}</div>
+                        </div>
+                        <div class="flex justify-between w-full">
+                            <div class="w-full font-bold">ปลายทาง:</div>
+                            <div class="w-full text-left">{{ data.destination ?? '-' }}</div>
+                        </div>
+                        <div class="col-span-2 bg-[#fdeaeb] rounded-md p-4">
+                            <p class="font-bold text-red-600">หมายเหตุ</p>
+                            <p class="text-red-600"> {{ data.remark ?? '-' }} </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="w-full p-4 my-4 border border-gray-300 rounded-lg min-h-[300px] overflow-y-auto flex flex-col">
+                    <div class="flex flex-row w-full gap-2 mb-6">
+                        <div class="w-full text-3xl font-bold">รายการพัสดุเข้าคลัง/PO</div>
+                    </div>
+                    <div class="flex flex-col md:flex-row w-full gap-4 mb-4">
+                        <!-- กล่องซ้าย: รายการประเภทและกราฟ -->
+                         <div class="w-7/12">
+                            <div class="w-full text-xl font-bold mb-1">ประเภทรายการ</div>
+                            <div class="rounded-lg border-gray-300 border p-4 w-full flex flex-col md:flex-row">
+                                <div class="grid grid-cols-1 md:grid-cols-5 gap-6 w-full">
+                                    <!-- ประเภทสินค้า -->
+                                    <div class="flex flex-col gap-4">
+                                        <div class="flex flex-col items-end">
+                                            <div class="text-2xl font-normal">รายการทั้งหมด</div>
+                                            <div class="text-xl font-bold">{{ sumdashbord.total_items }} <span
+                                                    class="text-2xl font-normal">รายการ</span></div>
+                                        </div>
+                                        <div *ngFor="let category of sumdashbord?.categories.slice(0,3)" class="flex flex-col items-end">
+                                            <div class="text-xl font-semibold">{{ category.name }}</div>
+                                            <div class="text-lg">{{ category.boxes }} กล่อง</div>
+                                            <div class="text-md text-red-500">{{ category.cbm }} CBM</div>
+                                        </div>
+                                    </div>
+
+                                    <!-- กราฟ -->
+                                    <div class="flex justify-center items-center w-full col-span-3 ">
+                                        <apx-chart [series]="chartOptions.n_series" [chart]="chartOptions.chart"
+                                            [labels]="chartOptions.labels" [colors]="chartOptions.colors"
+                                            [responsive]="chartOptions.responsive" [legend]="chartOptions.legend"
+                                            [dataLabels]="chartOptions.dataLabels"></apx-chart>
+                                    </div>
+                                    <!-- ประเภทสินค้า (อีกครึ่ง) -->
+                                    <div class="flex flex-col gap-4">
+                                        <div *ngFor="let category of sumdashbord?.categories.slice(3,7)" class="flex flex-col items-end">
+                                            <div class="text-xl font-semibold">{{ category.name }}</div>
+                                            <div class="text-lg">{{ category.boxes }} กล่อง</div>
+                                            <div class="text-md text-red-500">{{ category.cbm }} CBM</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                         </div>
+
+
+                        <!-- กล่องขวา: สรุปข้อมูล -->
+                         <div class="w-5/12">
+                            <div class="w-full text-xl font-bold ml-1 mb-1">ยอดรวม</div>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-2 w-full">
+                                <div class="rounded-lg border-gray-300 border p-6 py-8 flex justify-around items-center col-span-2 flex-col">
+                                    <div class="flex flex-row w-full items-center mt-4">
+                                        <img class="flex w-14 mr-2" src="assets/images/item/kg.png" alt="Logo image">
+                                        <div class="text-lg font-normal w-full">น้ำหนักรวม (Kg.)</div>
+                                    </div>
+                                    <mat-divider class="my-2"></mat-divider>
+                                    <div class="w-full flex flex-row justify-between items-center">
+                                        <div>ยอดรวมจากรายการในสินค้าใน Packing List</div>
+                                        <div class="text-4xl font-bold text-blue-900">{{ sumdashbord?.total_items | number }}</div>
+                                    </div>
+                                </div>
+                                <div class="rounded-lg border-gray-300 border p-6 py-8 flex justify-around items-center col-span-2 flex-col">
+                                    <div class="flex flex-row w-full items-center mt-4">
+                                        <img class="flex w-14 mr-2" src="assets/images/item/cube.png" alt="Logo image">
+                                        <div class="text-lg font-normal w-full">CBM รวม</div>
+                                    </div>
+                                    <mat-divider class="my-2"></mat-divider>
+                                    <div class="w-full flex flex-row justify-between items-center">
+                                        <div>ยอดรวมจากรายการในสินค้าใน Packing List</div>
+                                        <div class="text-4xl font-bold text-blue-900">{{ sumdashbord?.total_items | number }}</div>
+                                    </div>
+                                </div>
+                            </div>
+                         </div>
+                    </div>
+                    <form *ngIf="!showFilterForm" [formGroup]="filterForm">
+                        <div class="flex flex-col md:flex-row w-full gap-2 items-end">
+                            <div class="w-full">
+                                <mat-form-field [ngClass]="formFieldHelpers" class="w-full" >
+                                    <mat-icon class="icon-size-5 mr-2" [svgIcon]="'heroicons_solid:magnifying-glass'"></mat-icon>
+                                    <input matInput formControlName="in_store" [placeholder]="'ค้นหาด้วยรหัสใบรับของคลังสินค้า'">
+                                </mat-form-field>
+                            </div>
+                            <div>
+                                <button mat-flat-button [color]="'primary'" (click)="openfillter()" class="mb-5">
+                                    <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:bars-3'"></mat-icon>
+                                    <span class="ml-2">ค้นหาโดยใช้ตัวกรอง</span>
+                                </button>
+                            </div>
+                            <div>
+                                <button mat-flat-button [color]="'primary'" class="mb-5">
+                                    <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:cog-6-tooth'"></mat-icon>
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                    <form [formGroup]="filterForm" class="p-4 rounded-md"
+                        [@slideToggleFilter]="showFilterForm ? 'open' : 'closed'">
+                        <div>
+                            <h2 class="text-xl font-extrabold leading-7 tracking-tight truncate md:text-xl sm:leading-10">
+                                ตัวกรองขั้นสูง
+                            </h2>
+                            <mat-divider></mat-divider>
+                        </div>
+                        <div class="flex flex-col w-full gap-x-2 mt-2">
+                            <div class="flex flex-col md:flex:row w-full gap-x-2">
+                                <div class="w-full">
+                                    <mat-form-field class="w-full" [ngClass]="formFieldHelpers">
+                                        <mat-label>วันที่รับเข้าคลัง</mat-label>
+                                        <input matInput formControlName="date">
+                                    </mat-form-field>
+                                </div>
+                                <div class="w-full">
+                                    <mat-form-field class="w-full" [ngClass]="formFieldHelpers">
+                                        <mat-label>PO / Tracking</mat-label>
+                                        <input matInput formControlName="code">
+                                    </mat-form-field>
+                                </div>
+                                <div class="w-full">
+                                    <asha-select-member (change)="selectMember($event)" class="w-full"></asha-select-member>
+                                </div>
+                            </div>
+                            <div class="flex flex-col md:flex:row w-full gap-x-2">
+                                <div class="w-full">
+                                    <mat-form-field class="w-full" [ngClass]="formFieldHelpers">
+                                        <mat-label>ขนส่งโดย</mat-label>
+                                        <input matInput formControlName="date">
+                                    </mat-form-field>
+                                </div>
+                                <div class="w-full">
+                                    <mat-form-field class="w-full" [ngClass]="formFieldHelpers">
+                                        <mat-label>ประเภท</mat-label>
+                                        <input matInput formControlName="code">
+                                    </mat-form-field>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="w-full flex justify-end gap-2">
+                            <button mat-flat-button [color]="'primary'" (click)="openfillter()">
+                                <span class="ml-2">ปิดตัวกรอง</span>
+                            </button>
+                            <button mat-flat-button [color]="'primary'" (click)="clearFilter()">
+                                <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:bars-3'"></mat-icon>
+                                <span class="ml-2">ล้างตั้งค่าตัวกรอง</span>
+                            </button>
+                            <button mat-flat-button [color]="'primary'" (click)="applyFilter()">
+                                <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:magnifying-glass'"></mat-icon>
+                                <span class="ml-2">ค้นหา</span>
+                            </button>
+                        </div>
+                    </form>
+                    <table class="whitespace-nowrap w-full">
+                        <thead>
+                            <tr >
+                                <th rowspan="2" class="sticky left-0 z-10 bg-white w-5 px-4 py-3 border border-x-0 items-center">
+                                    <mat-checkbox [checked]="selectAll" [indeterminate]="someSelect()"
+                                    (change)="SelectAll($event.checked)"></mat-checkbox>
+                                </th>
+                                <th rowspan="2" class="sticky left-12 z-10 bg-white w-10 px-6 py-3 border border-l-0">#</th>
+                                <th rowspan="2" class="px-6 py-3 border border-x-0">วันที่สร้าง</th>
+                                <th rowspan="2" class="px-6 py-3 border border-x-0">รหัสใบรับเข้าคลัง</th>
+                                <th rowspan="2" class="px-6 py-3 border border-x-0">รหัสพาเลท</th>
+                                <th rowspan="2" class="px-6 py-3 border border-x-0">รหัสกระสอบ</th>
+                                <th rowspan="2" class="px-6 py-3 border border-x-0">ลูกค้า</th>
+                                <th rowspan="2" class="px-6 py-3 border border-x-0">ประเภท</th>
+                                <th rowspan="2" class="px-6 py-3 border border-x-0">ช่องทางขนส่ง</th>
+                                <th rowspan="2" class="px-6 py-3 border border-x-0">ชื่อผลิตภัณฑ์</th>
+                                <th rowspan="2" class="px-6 py-3 border border-x-0">จำนวนชิ้น</th>
+                                <th rowspan="2" class="px-6 py-3 border border-x-0">น้ำหนัก (Kg.)</th>
+                                <th colspan="3" class="px-6 py-3 border border-x-0">ขนาน (ลบ.ม)</th>
+                            </tr>
+                            <tr>
+                                <th class="px-6 py-3 border border-x-0">ยาว</th>
+                                <th class="px-6 py-3 border border-x-0">กว้าง</th>
+                                <th class="px-6 py-3 border border-x-0">สูง</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let list of filteredDeliveryOrders; let i = index" class="text-center">
+                                <td class="sticky left-0 z-10 bg-white py-3 border border-x-0 items-center">
+                                    <mat-checkbox [(ngModel)]="list.IsChecked" (ngModelChange)="updateAllselect()"
+                                    [ngModelOptions]="{standalone: true}"></mat-checkbox>
+                                </td>
+                                <td class="sticky left-12 z-10 bg-white py-3 border border-l-0">{{ i + 1 }}</td>
+                                <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order?.member_id ?? '-' }}</td>
+                                <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order?.order_id ?? '-' }}</td>
+                                <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order?.order_id ?? '-' }}</td>
+                                <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order?.order_id ?? '-' }}</td>
+                                <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order?.order_id ?? '-' }}</td>
+                                <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order?.order_id ?? '-' }}</td>
+                                <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order?.order_id ?? '-' }}</td>
+                                <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order?.order_id ?? '-' }}</td>
+                                <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order?.order_id ?? '-' }}</td>
+                                <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order?.order_id ?? '-' }}</td>
+                                <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order?.order_id ?? '-' }}</td>
+                                <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order?.order_id ?? '-' }}</td>
+                                <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order?.order_id ?? '-' }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,11 @@
+<mat-form-field class="w-full md:w-4/4 fuse-mat-dense">
+    <mat-label>ลูกค้า</mat-label>
+    <input matInput [formControl]="memberFilter" [matAutocomplete]="memberAutoComplete"
+        placeholder="ค้นหาลูกค้า" />
+    <mat-autocomplete #memberAutoComplete="matAutocomplete"
+        (optionSelected)="onSelectMember($event.option.value)">
+        <mat-option *ngFor="let item of filterMember | async" [value]="item">
+            {{item.fullname}}
+        </mat-option>
+    </mat-autocomplete>
+</mat-form-field>

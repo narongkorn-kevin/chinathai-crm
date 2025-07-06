@@ -1,0 +1,130 @@
+<div class="รายละเอียดใบรับเข้าคลัง/PO">
+    <div class="w-full border-2 rounded mb-4">
+        <div class="p-4">
+            <p class="font-semibold">รายละเอียดทั่วไป</p>
+            <div class="grid grid-cols-12 gap-8 mb-4">
+                <div class="col-span-3">
+                    <p class="md:text-sm font-medium tracking-tight leading-7 sm:leading-10 truncate">เลขที่ PO</p>
+                    <div class="h-[32px] w-full bg-gray-100 rounded"></div>
+                </div>
+                <div class="col-span-3">
+                    <p class="md:text-sm font-medium tracking-tight leading-7 sm:leading-10 truncate">วันที่เข้าโกดัง</p>
+                    <div class="h-[32px] w-full bg-gray-100 rounded"></div>
+                </div>
+                <div class="col-span-3">
+                    <p class="md:text-sm font-medium tracking-tight leading-7 sm:leading-10 truncate">รหัสลูกค้า</p>
+                    <div class="h-[32px] w-full bg-gray-100 rounded"></div>
+                </div>
+                <div class="col-span-3">
+                    <p class="md:text-sm font-medium tracking-tight leading-7 sm:leading-10 truncate">รหัสลูกตัวแทน</p>
+                    <div class="h-[32px] w-full bg-gray-100 rounded"></div>
+                </div>
+            </div>
+            <div class="grid grid-cols-12 gap-8 mb-4">
+                <div class="col-span-3">
+                    <p class="md:text-sm font-medium tracking-tight leading-7 sm:leading-10 truncate">โกดัง</p>
+                    <div class="h-[32px] w-full bg-gray-100 rounded"></div>
+                </div>
+                <div class="col-span-3">
+                    <p class="md:text-sm font-medium tracking-tight leading-7 sm:leading-10 truncate">ขนส่งโดย</p>
+                    <div class="h-[32px] w-full bg-gray-100 rounded"></div>
+                </div>
+                <div class="col-span-3">
+                    <p class="md:text-sm font-medium tracking-tight leading-7 sm:leading-10 truncate">ขนส่งจีน</p>
+                    <div class="h-[32px] w-full bg-gray-100 rounded"></div>
+                </div>
+                <div class="col-span-3">
+                    <p class="md:text-sm font-medium tracking-tight leading-7 sm:leading-10 truncate">Ref. Order No.</p>
+                    <div class="h-[32px] w-full bg-gray-100 rounded"></div>
+                </div>
+            </div>
+            <div class="grid grid-cols-12 gap-8 mb-4">
+                <div class="col-span-6">
+                    <p class="md:text-sm font-medium tracking-tight leading-7 sm:leading-10 truncate">คนส่งของ</p>
+                    <div class="h-[32px] w-full bg-gray-100 rounded"></div>
+                </div>
+                <div class="col-span-6">
+                    <p class="md:text-sm font-medium tracking-tight leading-7 sm:leading-10 truncate">เบอร์โทร</p>
+                    <div class="h-[32px] w-full bg-gray-100 rounded"></div>
+                </div>
+            </div>
+            <div class="grid grid-cols-12 gap-8 mb-4">
+                <div class="col-span-12">
+                    <p class="md:text-sm font-medium tracking-tight leading-7 sm:leading-10 truncate">หมายเหตุ</p>
+                    <div class="h-[32px] w-full bg-gray-100 rounded"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="grid grid-cols-12 gap-4 mb-4">
+        <div class="col-span-8 border-2 rounded">
+            <div class="p-4">
+                <p class="font-semibold">รายละเอียด Tracking</p>
+                <table datatable [dtOptions]="dtOptions_1" [dtTrigger]="dtTrigger_1" class="row-border hover whitespace-nowrap overflow-auto">
+                </table>
+            </div>
+        </div>
+        <div class="col-span-4 border-2 rounded h-fit">
+            <div class="p-4">
+                <p class="font-semibold">ค่าใช้จ่ายเพิ่มเติม</p>
+                <div class=" flex flex-col">
+                    <p class="md:text-sm font-medium tracking-tight leading-7 sm:leading-10 truncate">ค่าตีลัง</p>
+                    <div class="h-[32px] w-full bg-gray-100 rounded"></div>
+                </div>
+                <div class=" flex flex-col">
+                    <p class="md:text-sm font-medium tracking-tight leading-7 sm:leading-10 truncate">เก็บเงินปลายทาง</p>
+                    <div class="h-[32px] w-full bg-gray-100 rounded"></div>
+                </div>
+                <div class=" flex flex-col">
+                    <p class="md:text-sm font-medium tracking-tight leading-7 sm:leading-10 truncate">ค่าใช้จ่ายอื่นๆ</p>
+                    <div class="h-[32px] w-full bg-gray-100 rounded"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="w-full border-2 rounded mb-4">
+        <div class="p-4">
+            <p class="font-semibold pb-4">รายการผลิตภัณฑ์ใบรับเข้าคลัง / PO</p>
+            <div>
+                <p class="font-semibold">ตัวกรอง</p>
+                <div class="grid grid-cols-8 gap-4 mb-8">
+                    <div class="col-span-2">
+                        <p class="md:text-sm font-medium tracking-tight leading-7 sm:leading-10 truncate">ประเภท</p>
+                        <input class="border-2 rounded w-full h-[32px] px-2 text-sm placeholder:text-sm" placeholder="">
+                    </div>
+                    <div class="col-span-2">
+                        <p class="md:text-sm font-medium tracking-tight leading-7 sm:leading-10 truncate">ชื่อผลิตภัณฑ์</p>
+                        <input class="border-2 rounded w-full h-[32px] px-2 text-sm placeholder:text-sm" placeholder="">
+                    </div>
+                    <div class="col-span-2">
+                        <p class="md:text-sm font-medium tracking-tight leading-7 sm:leading-10 truncate">รูปแบบบรรจุภัณฑ์</p>
+                        <input class="border-2 rounded w-full h-[32px] px-2 text-sm placeholder:text-sm" placeholder="">
+                    </div>
+                    <div class="col-span-1">
+                        <p class="md:text-sm font-medium tracking-tight leading-7 sm:leading-10 truncate">น้ำหนักรวม (Kg.)</p>
+                        <div class="w-full h-[32px] bg-gray-100 border-2 rounded flex items-center justify-center"></div>
+                    </div>
+                    <div class="col-span-1">
+                        <p class="md:text-sm font-medium tracking-tight leading-7 sm:leading-10 truncate">CBM รวม</p>
+                        <div class="w-full h-[32px] bg-gray-100 border-2 rounded flex items-center justify-center"></div>
+                    </div>
+                </div>
+                <table datatable [dtOptions]="dtOptions_2" [dtTrigger]="dtTrigger_2" class="row-border hover whitespace-nowrap overflow-auto">
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<ng-template #btNg let-data="adtData">
+    <button mat-icon-button [matMenuTriggerFor]="menu">
+      <mat-icon class="icon-size-5 text-[#DF0B12]" [svgIcon]="'heroicons_outline:trash'"></mat-icon>
+    </button>
+    <mat-menu #menu="matMenu">
+      <button mat-menu-item (click)="clickDelete(data.id)">
+        <mat-icon [svgIcon]="'heroicons_outline:trash'"></mat-icon>
+        <span>ลบ</span>
+      </button>
+    </mat-menu>
+  </ng-template>
+

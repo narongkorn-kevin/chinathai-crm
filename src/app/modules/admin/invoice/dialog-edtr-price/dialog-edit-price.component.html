@@ -1,0 +1,38 @@
+<div class="p-6">
+    <h2 class="text-2xl font-semibold mb-4">แก้ไขราคา</h2>
+    <mat-divider></mat-divider>
+    <form [formGroup]="form">
+        <div class="flex flex-col gap-2 items-end mt-2">
+            <div class="w-full">
+                <mat-form-field [ngClass]="formFieldHelpers" class="w-full" >
+                    <mat-label>ราคาต่อหน่วย</mat-label>
+                    <input matInput formControlName="price" type="number" placeholder="ราคาต่อหน่วย" />
+                </mat-form-field>
+            </div>
+            <div class="w-full">
+                <mat-form-field [ngClass]="formFieldHelpers" class="w-full" >
+                    <mat-label>คำนวณด้วย</mat-label>
+                    <mat-select formControlName="payment_status" >
+                        <mat-option [value]="'cbm'">CBM(M3)</mat-option>
+                        <mat-option [value]="'kg'">KG</mat-option>
+                        <mat-option [value]="'rent_container'">เหมาตู้</mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+            <div class="w-full">
+                <mat-form-field [ngClass]="formFieldHelpers" class="w-full" >
+                    <mat-label>ค่านำเข้าขั้นต่ำ</mat-label>
+                    <input matInput formControlName="min_price" type="number" placeholder="ค่านำเข้าขั้นต่ำ" />
+                </mat-form-field>
+            </div>
+        </div>
+    </form>
+    <div mat-dialog-actions class="flex justify-end border-t-2 mt-2 p-2">
+        <button class="px-6 ml-3" mat-flat-button (click)="onClose()">
+            ยกเลิก
+        </button>
+        <button class="px-6 ml-3" mat-flat-button [color]="'primary'" (click)="Submit()">
+            ตกลง
+        </button>
+    </div>
+</div>

@@ -1,0 +1,81 @@
+<div class="flex flex-col flex-auto min-w-0">
+    <div class="flex flex-row justify-between pb-2 items-center">
+        <div class="w-full px-5 pt-5 pb-2.5  justify-between items-center flex">
+            <div class="flex flex-col">
+                <div class="flex space-x-2">
+                    <button class="md:text-xl font-medium tracking-tight leading-7 sm:leading-10 truncate"
+                        [routerLink]="['/claim']" routerLinkActive="router-link-active">
+                        รายการฝากซื้อ
+                    </button>
+                    <p class="md:text-sm font-medium tracking-tight leading-7 sm:leading-10 truncate">></p>
+                    <p class="md:text-sm font-medium tracking-tight leading-7 sm:leading-10 truncate text-primary-600">
+                        เคลมออร์เดอร์
+                    </p>
+                </div>
+                <div class="flex space-x-2">
+                    <p class="md:text-3xl font-medium tracking-tight leading-7 sm:leading-10 truncate text-black">
+                        เพิ่มรายการ
+                    </p>
+                </div>
+            </div>
+            <div class="justify-end items-center gap-2 flex">
+                <div class="justify-start items-center gap-2 flex">
+                    <button mat-stroked-button class="border-[1px] border-slate-500">
+                        ยกเลิก
+                    </button>
+                </div>
+                <div class="justify-start items-center gap-2 flex">
+                    <button mat-flat-button [color]="'primary'">
+                        ยืนยัน
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <mat-divider class="w-full p-1 mx-5 flex border-t-[1px] border-slate-300"></mat-divider>
+    <div class="flex-auto  p-10 bg-card m-5 rounded-md">
+        <form [formGroup]="form">
+            <div class="flex flex-col">
+                <h3 class="text-2xl font-bold">รายละเอียดรายการ</h3>
+                <div class="border-b-2 w-full my-4"></div>
+                <div class="flex-auto">
+                    <div class="flex flex-row w-full gap-2">
+                        <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                            <mat-label>เรื่องร้องเรียน</mat-label>
+                            <input matInput [placeholder]="'หัวข้อเรื่องร้อบเรียน'" type="email">
+                        </mat-form-field>
+                    </div>
+                    <div class="flex flex-row w-full gap-2">
+                        <mat-form-field class="w-full fuse-mat-dense">
+                            <mat-label>เลขที่ออร์เดอร์</mat-label>
+                            <input matInput type="text" formControlName="searchText" placeholder="ค้นหาเลที่ออร์เดอร์">
+                        </mat-form-field>
+                    </div>
+                    <div class="flex flex-row w-full gap-2">
+                        <mat-form-field class="w-full fuse-mat-dense">
+                            <mat-label>รายละเอียดเพิ่มเติม</mat-label>
+                            <textarea matInput rows="5" [formControlName]="'note'"></textarea>
+                        </mat-form-field>
+                    </div>
+                </div>
+            </div>
+            <div class="flex flex-col mt-2">
+                <p class="text-lg font-normal">หลักฐารการขอคืนเงิน</p>
+                <span class="text-slate-400 font-light text-sm">อัปโหลดรูปภาพ (.png, .jpg)</span>
+                <div class="flex-auto mt-2">
+                    <div class="flex-auto">
+                        <!-- <div class="font-semibold mb-2">แนบเอกสาร Invoice</div> -->
+                        <asha-upload-file id="file1" (filesChanged)="selectFileInvoice($event)"></asha-upload-file>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<ng-template #pic let-data="adtData">
+    <div class="flex flex-row justify-center">
+        <img [src]="data?.product_image" alt="Image" class="rounded-md w-20 text-center" />
+    </div>
+</ng-template>

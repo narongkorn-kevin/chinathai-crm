@@ -1,0 +1,78 @@
+<div class="flex flex-col flex-auto min-w-0">
+	<div class="flex-auto p-6 sm:p-10 bg-card m-4 rounded-md">
+		<div class="flex flex-row items-center justify-between p-3 bg-card dark:bg-transparent">
+			<div class="flex flex-row gap-4 items-center justify-between">
+				<h2 class="text-2xl md:text-2xl tracking-tight leading-7 sm:leading-10 truncate">
+					รายงานยอดขายแยกตามแคชเชียร์
+				</h2>
+			</div>
+			<form action="" [formGroup]="form">
+				<div class="flex flex-row gap-4 ">
+					<mat-form-field class="w-full min-w-90">
+						<mat-date-range-input [rangePicker]="picker">
+						  <input matStartDate placeholder="Start date">
+						  <input matEndDate placeholder="End date">
+						</mat-date-range-input>
+						<mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+						<mat-date-range-picker #picker></mat-date-range-picker>
+					  </mat-form-field>
+					<mat-form-field class="w-full min-w-48">
+						<mat-select formControlName="cashier">
+							<mat-option [value]="''">
+								เลือกประเภทสินค้า
+							</mat-option>
+							<mat-option *ngFor="let item of cashiers;" [value]="item.id">
+								{{item.username}}
+							</mat-option>
+						</mat-select>
+					</mat-form-field>
+				</div>
+                <div class="flex justify-end">
+                    <button mat-flat-button class="bg-green-800 text-white" (click)="exportExcel()">
+                        <mat-icon class="icon-size-5" [svgIcon]="'heroicons_mini:document'"></mat-icon>
+                        <span class="ml-2">Excel</span>
+                    </button>
+                </div>
+			</form>
+		</div>
+		<table datatable [dtOptions]="dtOptions" class="row-border hover w-full"></table>
+	</div>
+  </div>
+<!--<div class="flex flex-col flex-auto min-w-0">
+    <div class="flex-auto p-6 sm:p-10 bg-card m-4 rounded-md">
+        <div class="flex flex-row items-center p-3 bg-card dark:bg-transparent">
+            <div class="flex flex-row gap-4 items-center justify-between">
+                <h2 class="text-2xl md:text-2xl tracking-tight leading-7 sm:leading-10 truncate">
+                    รายงานยอดขายแยกตามแคชเชียร์
+                </h2>
+            </div>
+            <form action="" [formGroup]="form">
+				<div class="flex flex-row gap-4">
+					<div class="w-full">
+						<mat-form-field class="">
+
+							<input matInput [matDatepicker]="picker" placeholder="Choose a date">
+
+							<mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+							<mat-datepicker #picker></mat-datepicker>
+						</mat-form-field>
+					</div>
+					<div class="w-full">
+						<mat-form-field class="w-full ">
+							<mat-select formControlName="cashier">
+								<mat-option [value]="''">
+									เลือกแคชเชียร์
+								</mat-option>
+								<mat-option *ngFor="let item of cashiers;" [value]="item.id">
+									{{item.username}}
+								</mat-option>
+							</mat-select>
+						</mat-form-field>
+					</div>
+				</div>
+
+            </form>
+        </div>
+        <table datatable [dtOptions]="dtOptions" class="row-border hover w-full"></table>
+    </div>
+</div>-->

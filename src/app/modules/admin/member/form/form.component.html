@@ -1,0 +1,431 @@
+<div class="flex flex-col flex-auto justify-start items-center p-5 w-full">
+    <div class="w-full flex-col justify-between items-start flex overflow-hidden ">
+        <div class="flex space-x-2">
+            <button class="md:text-sm font-medium tracking-tight leading-7 truncate"
+                [routerLink]="['/member']" routerLinkActive="router-link-active">
+                รายการรวมพัสดุ
+            </button>
+            <p class="md:text-sm font-medium tracking-tight leading-7  truncate">></p>
+            <p
+                class="md:text-sm font-medium tracking-tight leading-7  truncate text-[#DF0B12]">
+                สมาชิก
+            </p>
+        </div>
+        <div class="w-full pb-2.5 justify-between items-center flex flex-col sm:flex-row border-b-2 mb-5">
+            <div class="flex flex-col justify-start w-full mb-3 sm:mb-0">
+                <p class="text-2xl place-self-start self-start text-[#DF0B12] font-bold tracking-tight leading-7 sm:leading-10 truncate" *ngIf="this.type !== 'EDIT'">
+                    สร้างรายชื่อสมาชิก
+                </p>
+                <p class="text-2xl text-[#DF0B12] font-bold tracking-tight leading-7 sm:leading-10 truncate" *ngIf="this.type === 'EDIT'">
+                    รหัสสมาชิก: {{data.code}}
+                </p>
+            </div>
+            <div class="justify-end items-center gap-2 flex w-full">
+                <button mat-flat-button [color]="'warn'" (click)="Close()">
+                    <mat-icon>delete</mat-icon>
+                    <span class="ml-2">ยกเลิก</span>
+                </button>
+                <button mat-flat-button [color]="'primary'" (click)="Submit()">
+                    <mat-icon>save</mat-icon>
+                    <span class="ml-2">บันทึก</span>
+                </button>
+            </div>
+        </div>
+
+        <div class="w-full flex-col justify-start items-start flex bg-card">
+            <div class="w-full px-10 flex flex-col gap-2 bg-white " [formGroup]="form">
+                <div class="w-full flex-col gap-2 flex mt-5">
+                    <div class="w-full flex-col flex">
+                        <div class="text-lg font-bold">รายละเอียดสมาชิก</div>
+                        <mat-divider></mat-divider>
+                    </div>
+                    <div class="w-full grid grid-flow-row grid-cols-1 sm:grid-cols-3 gap-x-2 ">
+                        <!-- <div class="w-full">
+                            <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                                <mat-label>รหัสผู้นำเข้า (ใช้สำหรับ Login เข้าระบ)</mat-label>
+                                <input matInput [placeholder]="'รหัสผู้นำเข้า'" formControlName="importer_code">
+                            </mat-form-field>
+                        </div> -->
+                        <div class="w-full">
+                            <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                                <mat-label>รหัสลูกค้าจากระบบ 2</mat-label>
+                                <input matInput [placeholder]="'รหัสลูกค้า'" formControlName="customer_code">
+                            </mat-form-field>
+                        </div>
+                        <div class="w-full" >
+                            <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                                <mat-label>ชื่อบัญชีผู้ใช้ (Username)</mat-label>
+                                <input matInput formControlName="username" placeholder="ชื่อบัญชีผู้ใช้">
+                            </mat-form-field>
+                        </div>
+                        <div class="w-full" >
+                            <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                                <mat-label>รหัสผ่าน (Password)</mat-label>
+                                <input matInput [type]="hidePassword ? 'password' : 'text'" formControlName="password" placeholder="รหัสผ่าน">
+                                <button mat-icon-button matSuffix (click)="togglePasswordVisibility('password')">
+                                    <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+                                </button>
+                            </mat-form-field>
+                        </div>
+                        <!-- <div class="w-full" *ngIf="this.type === 'NEW'">
+                            <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                                <mat-label>ยืนยันรหัสผ่าน</mat-label>
+                                <input matInput [type]="hideConfirmPassword ? 'password' : 'text'"
+                                    formControlName="confirmPassword">
+                                <button mat-icon-button matSuffix (click)="togglePasswordVisibility('confirmPassword')">
+                                    <mat-icon>{{ hideConfirmPassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+                                </button>
+                            </mat-form-field>
+                        </div> -->
+                        <!-- <div class="w-full">
+                            <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                                <mat-label>ประเภทลูกค้า</mat-label>
+                                <mat-select formControlName="member_type">
+                                    <mat-option value="บุคคลทั่วไป">บุคคลทั่วไป</mat-option>
+                                    <mat-option value="นิติบุคคล">นิติบุคคล</mat-option>
+                                    <mat-option value="ตัวแทน">ตัวแทน</mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </div> -->
+                        <div class="w-full">
+                            <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                                <mat-label>ชื่อ</mat-label>
+                                <input matInput [placeholder]="'ชื่อ'" formControlName="fname">
+                            </mat-form-field>
+                        </div>
+                        <div class="w-full">
+                            <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                                <mat-label>นามสกุล</mat-label>
+                                <input matInput [placeholder]="'นามสกุล'" formControlName="lname">
+                            </mat-form-field>
+                        </div>
+                        <div class="w-full">
+                            <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                                <mat-label>เพศ</mat-label>
+                                <mat-select formControlName="gender">
+                                    <mat-option value="male">ชาย</mat-option>
+                                    <mat-option value="female">หญิง</mat-option>
+                                    <mat-option value="other">อื่นๆ</mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </div>
+                        <!-- <div class="w-full">
+                            <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                                <mat-label>Member ภายใต้ Agent</mat-label>
+                                <input matInput [placeholder]="''" formControlName="referrer">
+                            </mat-form-field>
+                        </div> -->
+                        <div class="w-full">
+                            <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                                <mat-label>Agent Group </mat-label>
+                                <input matInput formControlName="referrer" placeholder="agent group">
+                            </mat-form-field>
+                        </div>
+                        <div class="w-full">
+                            <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                                <mat-label>ภาษา</mat-label>
+                                <input matInput [placeholder]="'ภาษา'" placeholder="ภาษา">
+                            </mat-form-field>
+                        </div>
+                        <div class="w-full">
+                            <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                                <mat-label>วันเดือนปีเกิด</mat-label>
+                                <input matInput [matDatepicker]="picker" formControlName="birth_date">
+                                <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                                <mat-datepicker #picker></mat-datepicker>
+                            </mat-form-field>
+                        </div>
+                        <!-- <div class="w-full">
+                            <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                                <mat-label>กลุ่มลูกค้า</mat-label>
+                                <mat-select >
+                                    <mat-option value="in">นำเข้า</mat-option>
+                                    <mat-option value="deposit">ฝากส่ง</mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </div> -->
+                        <!-- <div class="w-full">
+                            <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                                <mat-label>ค่าขนส่ง</mat-label>
+                                <mat-select >
+                                    <mat-option value="transpot1">transpot1</mat-option>
+                                    <mat-option value="transpot2">transpot2</mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </div> -->
+                        <div class="w-full">
+                            <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                                <mat-label>บัญชีธนาคาร</mat-label>
+                                <input matInput formControlName="bank" placeholder="บัญชีธนาคาร">
+                            </mat-form-field>
+                        </div>
+                        <div class="w-full">
+                            <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                                <mat-label>ชื่อบัญชีธนาคาร</mat-label>
+                                <input matInput formControlName="bank_name" placeholder="ชื่อบัญชีธนาคาร">
+                            </mat-form-field>
+                        </div>
+                        <div class="w-full">
+                            <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                                <mat-label>เลขบัญชีธนาคาร</mat-label>
+                                <input matInput formControlName="bank_no" placeholder="เลขบัญชีธนาคาร">
+                            </mat-form-field>
+                        </div>
+                        <div class="w-full">
+                            <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                                <mat-label>ขนส่งไทย</mat-label>
+                                <mat-select formControlName="transport_thai_master_id">
+                                    <mat-option *ngFor="let transport of transport" [value]="transport.id">
+                                        {{transport.name }}</mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </div>
+                        <!-- <div class="w-full">
+                            <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                                <mat-label>สายรถ</mat-label>
+                                <input matInput [placeholder]="'สายรถ'" formControlName="bus_route">
+                            </mat-form-field>
+                        </div> -->
+                    </div>
+                <div class="w-full flex-col flex mt-5">
+                    <div class="w-full flex-col flex mb-2">
+                        <div class="text-lg font-bold">ข้อมูลการติดต่อ</div>
+                        <mat-divider></mat-divider>
+                    </div>
+                    <div class="w-full grid grid-flow-row grid-cols-2 gap-x-2 ">
+                        <div class="w-full">
+                            <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                                <mat-label>เบอร์โทร</mat-label>
+                                <input matInput [placeholder]="'เบอร์โทร'" formControlName="phone">
+                            </mat-form-field>
+                        </div>
+                        <div class="w-full">
+                            <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                                <mat-label>เบอร์โทร(สำรอง)</mat-label>
+                                <input matInput [placeholder]="'เบอร์โทร(สำรอง)'">
+                            </mat-form-field>
+                        </div>
+                        <div class="w-full">
+                            <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                                <mat-label>Email</mat-label>
+                                <input matInput [placeholder]="'Email'" formControlName="email">
+                            </mat-form-field>
+                        </div>
+                        <div class="w-full">
+                            <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                                <mat-label>Line ID</mat-label>
+                                <input matInput [placeholder]="'Line ID'" formControlName="line_id">
+                            </mat-form-field>
+                        </div>
+                        <!-- <div class="w-full">
+                            <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                                <mat-label>Facebook</mat-label>
+                                <input matInput [placeholder]="'Facebook'" formControlName="facebook">
+                            </mat-form-field>
+                        </div>
+
+                        <div class="w-full">
+                            <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                                <mat-label>WeChat</mat-label>
+                                <input matInput [placeholder]="'WeChat'" formControlName="wechat">
+                            </mat-form-field>
+                        </div> -->
+                        <div class="w-full">
+                            <mat-label>การแจ้งเตือน</mat-label>
+                            <div class="flex flex-row gap-2">
+                                <!-- <div class="border rounded-lg flex items-center">
+                                    <mat-checkbox formControlName="notify_sms">SMS</mat-checkbox>
+                                </div> -->
+                                <div class="border rounded-lg flex items-center">
+                                    <mat-checkbox formControlName="notify_line">Line</mat-checkbox>
+                                </div>
+                                <div class="border rounded-lg flex items-center">
+                                    <mat-checkbox formControlName="notify_email">Email</mat-checkbox>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="w-full mt-4" >
+                        <div class="flex flex-row justify-between mb-2 items-end">
+                            <mat-label class="font-semibold text-lg">ที่อยู่ <span class="text-red-500 text-md">เพิ่มที่อยู่ได้มากสุด 3 รายการ</span></mat-label>
+                            <button mat-flat-button [color]="'primary'" (click)="openDialogNew()">
+                                <span class="">เพิ่มที่อยู่</span>
+                            </button>
+                        </div>
+                        <mat-divider></mat-divider>
+                        <div class="w-full overflow-x-scroll h-fit pb-1 mt-3">
+                            <table class=" whitespace-nowrap w-full ">
+                                <thead class="">
+                                    <tr>
+                                        <th class="px-6 py-3 tracking-wider border border-l w-10">#</th>
+                                        <th class="px-6 py-3 text-left tracking-wider border border-r-0">รายละเอียดที่อยู่
+                                        </th>
+                                        <th class="px-6 py-3 text-left tracking-wider border border-r-0">ตำบล</th>
+                                        <th class="px-6 py-3 text-left tracking-wider border border-r-0">อำเภอ</th>
+                                        <th class="px-6 py-3 text-left tracking-wider border border-r-0">จังหวัด</th>
+                                        <th class="px-6 py-3 text-left tracking-wider border border-r-0">รหัสไปรษณีย์</th>
+                                        <th class="px-6 py-3 text-left tracking-wider border border-r-0">จัดการ</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="">
+                                    <tr *ngFor="let item of this.data?.ship_address; let i = index">
+                                        <td class="px-6  text-center border border-l w-1/12">{{ i+ 1}}</td>
+                                        <td class="px-6  border border-r-0 w-2/12">{{item?.address}}</td>
+                                        <td class="px-6  border border-r-0 w-2/12">{{item?.sub_district}}</td>
+                                        <td class="px-6  border border-r-0 w-2/12">{{item?.district}}</td>
+                                        <td class="px-6  border border-r-0 w-2/12">{{item?.province}}</td>
+                                        <td class="px-6  border border-r-0 w-2/12">{{item?.postal_code}}</td>
+                                        <td class="px-6  border border-r-0 w-1/12 text center">
+                                            <button mat-icon-button [color]="'primary'" [matMenuTriggerFor]="menu">
+                                                <mat-icon class="icon-size-5"
+                                                    [svgIcon]="'heroicons_solid:cog-8-tooth'"></mat-icon>
+                                            </button>
+                                            <mat-menu #menu="matMenu">
+                                                <button mat-menu-item (click)="openDialogEdit(item)">
+                                                    <mat-icon [svgIcon]="'heroicons_solid:pencil-square'"></mat-icon>
+                                                    <span>แก้ไข</span>
+                                                </button>
+                                                <mat-divider></mat-divider>
+                                                <button mat-menu-item (click)="clickDeleteAddress(item.id)">
+                                                    <mat-icon [svgIcon]="'heroicons_solid:trash'"></mat-icon>
+                                                    <span>ลบ</span>
+                                                </button>
+                                            </mat-menu>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="7" class="border border-t-0 text-center py-3 align-middle text-gray-500">
+                                            ไม่มีที่อยู่
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- <div class="w-full" *ngIf="this.type === 'NEW'">
+                        <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                            <mat-label>รายละเอียดที่อยู่</mat-label>
+                            <textarea matInput [placeholder]="'กรุณาระบุที่อยู่'" formControlName="address"></textarea>
+                        </mat-form-field>
+                    </div>
+                    <div class="w-full grid grid-flow-row grid-cols-2 gap-2 " *ngIf="this.type !== 'EDIT'">
+                        <div class="w-full">
+                            <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                                <mat-label>จังหวัด</mat-label>
+                                <mat-select formControlName="province_code" (selectionChange)="onProvinceChange()">
+                                    <mat-option *ngFor="let province of provinces" [value]="province.provinceCode">
+                                        {{ province.provinceNameTh }}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </div>
+                        <div class="w-full">
+                            <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                                <mat-label>อำเภอ</mat-label>
+                                <mat-select formControlName="district_code" (selectionChange)="onDistrictChange()">
+                                    <mat-option *ngFor="let district of districts" [value]="district.districtCode">
+                                        {{ district.districtNameTh }}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </div>
+                        <div class="w-full">
+                            <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                                <mat-label>ตำบล</mat-label>
+                                <mat-select formControlName="sub_district" (selectionChange)="onSubDistrictChange()">
+                                    <mat-option *ngFor="let subdistrict of subdistricts"
+                                        [value]="subdistrict.subdistrictNameTh">
+                                        {{ subdistrict.subdistrictNameTh }}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </div>
+                        <div class="w-full">
+                            <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                                <mat-label>รหัสไปรษณีย์</mat-label>
+                                <input matInput [placeholder]="'รหัสไปรษณีย์'" formControlName="postal_code">
+                            </mat-form-field>
+                        </div>
+                    </div> -->
+                </div>
+                </div>
+                <div class="w-full flex-col gap-2 flex mt-5">
+                    <div class="w-full flex-col flex">
+                        <div class="text-lg font-bold">เงื่อนไขการบริการลูกค้า</div>
+                        <mat-divider></mat-divider>
+                    </div>
+                    <div class="w-full flex flex-col justify-start items-start sm:grid sm:grid-cols-[auto_1fr] gap-x-5 sm:items-center">
+                        <mat-label class="sm:mb-5">บัญชีรับเงินค่าขนส่ง (พนักงาน)</mat-label>
+                        <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                            <mat-select formControlName="bookbank">
+                                <mat-option value="morning">เช้า</mat-option>
+                                <mat-option value="afternoon">เย็น</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                        <mat-label class="sm:mb-5">บัญชีรับเงินสำรองจ่ายค่าสินค้า (พนักงาน)</mat-label>
+                        <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                            <mat-select formControlName="second_bookbank">
+                                <mat-option value="morning">เช้า</mat-option>
+                                <mat-option value="afternoon">เย็น</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                        <mat-label>หัก ณ ที่จ่าย</mat-label>
+                        <mat-checkbox formControlName="">ต้องการหัก ณ ที่จ่าย</mat-checkbox>
+                        <mat-label>ใบเสร็จ</mat-label>
+                        <mat-checkbox formControlName="">รับใบเสร็จ</mat-checkbox>
+                        <mat-label>รอรวมสินค้า</mat-label>
+                        <mat-checkbox formControlName="">รอรวมสินค้า (ส่งสินค้าพร้อมกัน)</mat-checkbox>
+                        <mat-label class="self-start sm:py-2.5">การอนุญาตให้ติดเงิน</mat-label>
+                        <div class="flex flex-col sm:flex-row justify-center items-start w-full gap-2">
+                            <mat-checkbox formControlName="">อนุญาต</mat-checkbox>
+                            <div class="flex flex-col w-full">
+                                <mat-label class="sm:pt-2.5">จำนวนวันที่อนุญาตให้ติดเงิน (วัน)</mat-label>
+                                <mat-form-field [ngClass]="formFieldHelpers" class="w-full max-w-60">
+                                    <input matInput type="number" formControlName="">
+                                </mat-form-field>
+                                <mat-label >เงินห้ามเกิน (฿)</mat-label>
+                                <mat-form-field [ngClass]="formFieldHelpers" class="w-full max-w-60">
+                                    <input matInput type="number" formControlName="">
+                                </mat-form-field>
+                            </div>
+                        </div>
+                        <mat-label>การเก็บเงินมัดจำ</mat-label>
+                        <mat-checkbox formControlName="">เก็บเงินมัดจำค่าเปิดใบสั่งซื้อ</mat-checkbox>
+                        <mat-label class="self-start sm:py-2.5">จำกัด PO ผู้รับผิดชอบ</mat-label>
+                        <div class="flex flex-col sm:flex-row justify-center items-start w-full gap-2">
+                            <mat-checkbox formControlName="">อนุญาต</mat-checkbox>
+                            <div class="flex flex-col w-full">
+                                <mat-label class="sm:pt-2.5">PO ผู้รับผิดชอบ</mat-label>
+                                <mat-form-field [ngClass]="formFieldHelpers" class="w-full max-w-60">
+                                    <mat-select formControlName="undertaker" multiple>
+                                        <mat-option value="morning">เช้า</mat-option>
+                                        <mat-option value="afternoon">เย็น</mat-option>
+                                    </mat-select>
+                                </mat-form-field>
+                            </div>
+                        </div>
+                        <div class="sm:col-span-2 w-full">
+                            <mat-label class="sm:pt-2.5">จำนวนวันที่อนุญาตให้ติดเงิน (วัน)</mat-label>
+                            <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                                <textarea matInput formControlName="" rows="1" class="w-full"></textarea>
+                            </mat-form-field>
+                        </div>
+                        <div class="sm:col-span-2 w-full">
+                            <mat-label class="sm:pt-2.5">ข้อควรระวังเกี่ยวกับออเดอร์</mat-label>
+                            <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                                <textarea matInput formControlName="" rows="1" class="w-full"></textarea>
+                            </mat-form-field>
+                        </div>
+                        <div class="sm:col-span-2 w-full">
+                            <mat-label class="sm:pt-2.5">โน๊ตเกี่ยวกับลูกค้า</mat-label>
+                            <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                                <textarea matInput formControlName="" rows="1" class="w-full"></textarea>
+                            </mat-form-field>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

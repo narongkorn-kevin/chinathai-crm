@@ -1,0 +1,175 @@
+<div class="flex flex-col flex-auto min-w-0">
+    <div class="flex-auto  sm:p-10 bg-card m-4 p-4 rounded-md">
+        <form [formGroup]="form">
+            <div class="flex flex-row justify-between pb-2 items-center">
+                <div class="flex flex-col">
+                    <div class="flex space-x-2">
+                        <a [routerLink]="[ '/import-product-order']"
+                            class="md:text-sm font-medium tracking-tight leading-7 sm:leading-10 truncate">
+                            บริการ
+                        </a>
+                        <p class="md:text-sm font-medium tracking-tight leading-7 sm:leading-10 truncate">></p>
+                        <p
+                            class="md:text-sm font-medium tracking-tight leading-7 sm:leading-10 truncate text-[#DF0B12]">
+                            นำเข้าถูกต้อง
+                        </p>
+                    </div>
+
+                    <div class="flex flex-row gap-4">
+                        <p
+                            class="md:text-2xl text-primary-500 font-bold tracking-tight leading-7 sm:leading-10 truncate">
+                            เพิ่มรายการ
+                        </p>
+                    </div>
+
+
+                </div>
+                <div class="flex space-x-2">
+                    <button type="button" mat-stroked-button class="border-primary" [color]="'primary'">
+                        <mat-icon class="icon-size-5" [svgIcon]="'delete_outline'"></mat-icon>
+                        <span class="ml-2"> ยกเลิก</span>
+                    </button>
+
+                    <button type="submit" mat-flat-button class="!text-white" [color]="'primary'" (click)="submit()">
+                        <mat-icon class="icon-size-5" [svgIcon]="'save'"></mat-icon>
+                        <span class="ml-2"> บันทึก</span>
+                    </button>
+
+                </div>
+            </div>
+
+            <div class="border-b-2 w-full"></div>
+
+            <div class="flex flex-col mt-4">
+                <h3 class="text-2xl font-bold">รายละเอียดสมาชิก</h3>
+                <div class="border-b-2 w-full my-4"></div>
+                <div class="flex-auto">
+                    <div class="flex flex-row w-full gap-2">
+                        <asha-select-importer (change)="selectImporter($event)" class="w-1/2"></asha-select-importer>
+
+                        <!-- <asha-select-member (change)="selectMember($event)" class="w-full"></asha-select-member> -->
+                        <mat-form-field class="w-1/2 fuse-mat-dense">
+                            <mat-label>PO</mat-label>
+                            <mat-select placeholder="" formControlName="import_product_order_id">
+                                <mat-option value="">--เลือก--</mat-option>
+                                <mat-option *ngFor="let item of po$ | async" [value]="item.id">
+                                    {{item.code}}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+
+                    <div class="flex flex-row w-full gap-2">
+                        <mat-form-field class="w-1/3 fuse-mat-dense">
+                            <mat-label>คลัง</mat-label>
+                            <mat-select placeholder="" formControlName="store_id">
+                                <mat-option value="">--เลือก--</mat-option>
+                                <mat-option *ngFor="let item of store$ | async" [value]="item.id">
+                                    {{item.name}}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+
+                    </div>
+
+                    <div class="flex flex-row w-full gap-2">
+                        <mat-form-field class="w-full fuse-mat-dense">
+                            <mat-label>หมายเหตุ</mat-label>
+                            <textarea matInput rows="5" [formControlName]="'note'"></textarea>
+                        </mat-form-field>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex flex-col mt-4">
+                <h3 class="text-2xl font-bold">ค่าบริการในการดำเนินการ</h3>
+                <div class="border-b-2 w-full my-4"></div>
+                <div class="flex-auto">
+                    <ng-container *ngIf="categoryFee.length > 0">
+                        @for (item of categoryFee; track $index) {
+                        <div class="flex flex-col w-full gap-2">
+                            <div class="text-lg font-bold">ค่าบริการส่วนที่ {{ $index + 1}}: {{item.name}}</div>
+                            <div class="flex flex-row gap-4">
+                                @for (fee of item.fees; track $index) {
+                                <!-- {{ fee | json }} -->
+                                <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                                    <mat-label>{{fee.name}}</mat-label>
+                                    <input matInput type="number" [(ngModel)]="fee.amount" [ngModelOptions]="{standalone: true}">
+                                </mat-form-field>
+                                }
+                            </div>
+                        </div>
+                        }
+                    </ng-container>
+
+
+                    <div class="text-lg font-bold">ทำ FORM E</div>
+                </div>
+            </div>
+
+            <div class="flex flex-col mt-4">
+                <h3 class="text-2xl font-bold">เอกสาร</h3>
+                <div class="border-b-2 w-full my-4"></div>
+                <div class="flex-auto">
+                    <div class="flex-auto">
+                        <div class="font-semibold mb-2">แนบเอกสาร Invoice</div>
+                        <asha-upload-file id="file1" (filesChanged)="selectFileInvoice($event)"></asha-upload-file>
+                    </div>
+                    <div class="flex-auto">
+                        <div class="font-semibold mb-2">แนบเอกสาร PACKING LIST</div>
+                        <asha-upload-file id="file2" (filesChanged)="selectFilePackingList($event)"></asha-upload-file>
+                    </div>
+                    <div class="flex-auto">
+                        <div class="font-semibold mb-2">แนบเอกสาร เอกสารอื่นๆ</div>
+                        <asha-upload-file id="file3" (filesChanged)="selectFileOther($event)"></asha-upload-file>
+                    </div>
+                </div>
+            </div>
+
+            <div class="border rounded p-4">
+                <h3 class="text-2xl font-bold">รายการผลิตภัณฑ์ใบรับเข้าคลัง / PO</h3>
+                <div class="border-b-2 w-full my-4"></div>
+                <div class="flex-auto">
+                    <table class="w-full table-auto border">
+                        <thead>
+                            <tr>
+                                <th>
+                                    <mat-checkbox [checked]="selectAll" [indeterminate]="someSelect()"
+                                        (change)="SelectAll($event.checked)"></mat-checkbox>
+                                </th>
+                                <th>#</th>
+                                <th>วันที่เข้าโกดัง</th>
+                                <th>รหัสใบรับของคลังสินค้า/PO</th>
+                                <th>เลข Barcode</th>
+                                <th>ลูกค้า</th>
+                                <th>ชื่อสินค้า</th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-center">
+                            @for (orderList of purchaseOrder; track orderList.id;let i = $index) {
+                            <tr>
+                                <td>
+                                    <mat-checkbox [(ngModel)]="orderList.IsChecked" (ngModelChange)="updateAllselect()"
+                                        [ngModelOptions]="{standalone: true}"></mat-checkbox>
+                                </td>
+                                <td>{{i + 1}}</td>
+                                <td>{{orderList?.date}}</td>
+                                <td>{{orderList?.code}}</td>
+                                <td>{{orderList?.barcode ?? '-'}}</td>
+                                <td>{{orderList?.member?.fname ?? '-'}} {{orderList?.member?.lname ?? '-'}}</td>
+                                <td>-</td>
+                            </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<ng-template #pic let-data="adtData">
+    <div class="flex flex-row justify-center">
+        <img [src]="data?.product_image" alt="Image" class="rounded-md w-20 text-center" />
+    </div>
+</ng-template>

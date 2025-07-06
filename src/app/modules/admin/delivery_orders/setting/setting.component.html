@@ -1,0 +1,127 @@
+<div class="flex flex-col flex-auto justify-start items-center">
+    <div class="w-full flex-col justify-between items-center flex overflow-hidden">
+        <div class="w-full flex-col justify-start items-start flex">
+            <div class="w-full px-10 pt-5 pb-2.5 bg-white justify-between items-center flex">
+                <div class="flex flex-col">
+                    <div class="flex space-x-2">
+                        <button class="md:text-xl font-medium tracking-tight leading-7 sm:leading-10 truncate" [routerLink]="['/member']" routerLinkActive="router-link-active">
+                            รายการรวมพัสดุ
+                        </button>
+                        <p class="md:text-sm font-medium tracking-tight leading-7 sm:leading-10 truncate">></p>
+                        <p class="md:text-sm font-medium tracking-tight leading-7 sm:leading-10 truncate text-[#DF0B12]">
+                            รายการพัสดุเข้าคลัง/PO
+                        </p>
+                    </div>
+
+                  <p class="md:text-2xl text-[#DF0B12] font-bold tracking-tight leading-7 sm:leading-10 truncate">
+                      ตั้งค่าขนานมาตรฐาน
+                  </p>
+                </div>
+                <div class="justify-end items-center gap-2 flex" *ngIf="edit">
+                    <button mat-flat-button [color]="'accent'" (click)="openForm()">
+                        <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:pencil-square'"></mat-icon>
+                        <span class="ml-2">แก้ไข</span>
+                    </button>
+                </div>
+                <div class="justify-end items-center gap-2 flex "  *ngIf="!edit">
+                    <button mat-flat-button [color]="'accent'" (click)="openForm()">
+                        <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:pencil-square'"></mat-icon>
+                        <span class="ml-2">ยกเลิก</span>
+                    </button>
+                    <button mat-flat-button [color]="'primary'" (click)="Submit()">
+                        <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:pencil-square'"></mat-icon>
+                        <span class="ml-2">บันทึก</span>
+                    </button>
+                </div>
+            </div>
+            <div class="w-full px-10 pt-5 pb-2.5 bg-white flex flex-col" >
+                <form [formGroup]="filterForm">
+                    <div class="flex flex-col md:flex-row w-full gap-2 items-end ">
+                        <div class="w-full">
+                            <mat-form-field [ngClass]="formFieldHelpers" class="w-full" >
+                                <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:magnifying-glass'"></mat-icon>
+                                <input matInput [placeholder]="'ค้นหาด้วย รายการ'" formControlName="name">
+                            </mat-form-field>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="w-full px-10 pt-5 pb-2.5 bg-white flex flex-col" *ngIf="edit">
+                <table class="whitespace-nowrap w-full" >
+                    <thead>
+                        <tr>
+                            <th class="px-6 py-3 tracking-wider border border-l-0 w-10">#</th>
+                            <th class="px-6 py-3 tracking-wider border border-r-0 border-l-0">รายการ</th>
+                            <th class="px-6 py-3 tracking-wider border border-r-0 border-l-0">กว้าง</th>
+                            <th class="px-6 py-3 tracking-wider border border-r-0 border-l-0">ยาว</th>
+                            <th class="px-6 py-3 tracking-wider border border-r-0 border-l-0">สูง</th>
+                            <th class="px-6 py-3 tracking-wider border border-r-0 border-l-0">น้ำหนัก</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let item of dataRow; let i = index">
+                            <td class="px-6 py-4 text-center border border-l-0">{{ i + 1 }}</td>
+                            <td class="px-6 py-4 text-center border border-r-0 border-l-0">{{ item.name }}</td>
+                            <td class="px-6 py-4 text-center border border-r-0 border-l-0">{{ item.width }}</td>
+                            <td class="px-6 py-4 text-center border border-r-0 border-l-0">{{ item.long }}</td>
+                            <td class="px-6 py-4 text-center border border-r-0 border-l-0">{{ item.height }}</td>
+                            <td class="px-6 py-4 text-center border border-r-0 border-l-0">{{ item.weight }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="w-full px-10 pt-5 pb-2.5 bg-white flex flex-col" *ngIf="!edit">
+                <form [formGroup]="form">
+                    <table class="whitespace-nowrap w-full">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th class="px-6 py-3 tracking-wider border border-l-0 w-10">#</th>
+                                <th class="px-6 py-3 tracking-wider border border-r-0 border-l-0">รายการ</th>
+                                <th class="px-6 py-3 tracking-wider border border-r-0 border-l-0">กว้าง</th>
+                                <th class="px-6 py-3 tracking-wider border border-r-0 border-l-0">ยาว</th>
+                                <th class="px-6 py-3 tracking-wider border border-r-0 border-l-0">สูง</th>
+                                <th class="px-6 py-3 tracking-wider border border-r-0 border-l-0">น้ำหนัก</th>
+                            </tr>
+                        </thead>
+                        <tbody formArrayName="data">
+                            <tr *ngFor="let item of dataFormArray.controls; let i = index" [formGroupName]="i">
+                                <td class="text-center">
+                                    <button mat-icon-button (click)="opendialogdelete(item.get('id').value)">
+                                        <mat-icon [svgIcon]="'heroicons_solid:trash'"></mat-icon>
+                                    </button>
+                                </td>
+                                <td class="px-2 text-center border border-l-0">{{ i + 1 }}</td>
+                                <td class="px-2 text-center border border-r-0 border-l-0 ">
+                                    <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                                        <input matInput formControlName="name" class="text-center">
+                                    </mat-form-field>
+                                </td>
+                                <td class="px-2 text-center border border-r-0 border-l-0">
+                                    <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                                        <input matInput formControlName="width" class="text-center">
+                                    </mat-form-field>
+                                </td>
+                                <td class="px-2 text-center border border-r-0 border-l-0">
+                                    <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                                        <input matInput formControlName="long" class="text-center">
+                                    </mat-form-field>
+                                </td>
+                                <td class="px-2 text-center border border-r-0 border-l-0">
+                                    <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                                        <input matInput formControlName="height" class="text-center">
+                                    </mat-form-field>
+                                </td>
+                                <td class="px-2 text-center border border-r-0 border-l-0">
+                                    <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                                        <input matInput formControlName="weight" class="text-center">
+                                    </mat-form-field>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

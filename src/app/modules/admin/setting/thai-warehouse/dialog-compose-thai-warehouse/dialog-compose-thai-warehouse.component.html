@@ -1,0 +1,61 @@
+<div class="w-full">
+    @if (data.action == 'NEW') {
+    <h1 mat-dialog-title class="mb-4 pb-4 text-xl font-semibold border-b-2">เพิ่มรายการ</h1>
+    }
+    @if (data.action == 'EDIT') {
+    <h1 mat-dialog-title class="mb-4 pb-4 text-xl font-semibold border-b-2">แก้ไขรายการ</h1>
+    }
+    <div mat-dialog-content class="md:max-h-180">
+        <form [formGroup]="form">
+            <div class="flex-auto">
+                <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                    <mat-label>ชื่อรายการ (ไทย)</mat-label>
+                    <input matInput [placeholder]="''">
+                </mat-form-field>
+
+                <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                    <mat-label>ชื่อรายการ (จีน)</mat-label>
+                    <input matInput [placeholder]="''">
+                </mat-form-field>
+
+                <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                    <mat-label>ชื่อรายการ (อังกฤษ)</mat-label>
+                    <input matInput [placeholder]="''">
+                </mat-form-field>
+
+                <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                    <mat-label>ที่อยู่โกดัง (ไทย)</mat-label>
+                    <textarea raw="3" matInput [placeholder]="''"></textarea>
+                </mat-form-field>
+
+                <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                    <mat-label>ที่อยู่โกดัง (จีน)</mat-label>
+                    <textarea raw="3" matInput [placeholder]="''"></textarea>
+                </mat-form-field>
+
+                <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                    <mat-label>ที่อยู่โกดัง (อังกฤษ)</mat-label>
+                    <textarea raw="3" matInput [placeholder]="''"></textarea>
+                </mat-form-field>
+
+                <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                    <mat-label>เบอร์โทรศัพท์</mat-label>
+                    <input matInput [placeholder]="''">
+                </mat-form-field>
+
+                <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                    <mat-label>Google Map</mat-label>
+                    <input matInput [placeholder]="''">
+                </mat-form-field>
+            </div>
+            <div mat-dialog-actions class="flex justify-end border-t-2 pt-4">
+                <button class="px-6 ml-3" mat-flat-button [color]="'warn'" (click)="onClose()">
+                    ยกเลิก
+                </button>
+                <button class="px-6 ml-3" mat-flat-button [color]="'primary'" (click)="Submit()">
+                    บันทึก
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

@@ -1,0 +1,45 @@
+<div class="md:max-w-lg" >
+    <h1 mat-dialog-title class="text-xl font-semibold mb-4" *ngIf="this.data?.type === 'NEW'">เพิ่มข้อมูล</h1>
+    <h1 mat-dialog-title class="text-xl font-semibold mb-4" *ngIf="this.data?.type === 'EDIT'">แก้ไขข้อมูล</h1>
+    <div mat-dialog-content class="overflow-y-auto md:max-h-180">
+        <form [formGroup]="form">
+            <div class="flex-auto">
+                <div class="flex flex-col md:flex mb-6">
+                    <div class="md:w-full">
+                        <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                            <mat-label>รหัสอุปกรณ์</mat-label>
+                            <input matInput [placeholder]="'กรุณาระบุรหัสอุปกรณ์'" formControlName="code">
+                        </mat-form-field>
+                    </div>
+                </div>
+                <div class="flex flex-col md:flex mb-6">
+                    <div class="md:w-full">
+                        <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                            <mat-label>ชื่ออุปกรณ์</mat-label>
+                            <input matInput [placeholder]="'กรุณาระบุชื่ออุปกรณ์'" formControlName="name">
+                        </mat-form-field>
+                    </div>
+                </div>
+                <div class="md:w-full">
+                    <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                        <mat-label>สาขา</mat-label>
+                        <mat-select [formControlName]="'branchId'">
+                            <mat-option *ngFor="let item of this.data.branch;" [value]="item.id">
+                                {{item.name}}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+            </div>
+        </form>
+    </div>
+    <!-- <div> check : {{this.form.value | json}}</div> -->
+    <div mat-dialog-actions class="flex justify-end">
+        <button class="px-6 ml-3" mat-flat-button [color]="'primary'" (click)="Submit()">
+            ตกลง
+        </button>
+        <button class="px-6 ml-3" mat-flat-button [color]="'warn'" (click)="onClose()">
+            ยกเลิก
+        </button>
+    </div>
+</div>

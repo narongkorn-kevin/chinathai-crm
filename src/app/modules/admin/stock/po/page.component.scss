@@ -1,0 +1,12 @@
+// :host {
+//   display: block;
+// }
+
+::ng-deep tr {
+  height: 56px !important;
+}
+
+.dataTable thead th {
+    background-color: #f2f2f2;
+    color: black;
+}

@@ -1,0 +1,78 @@
+<mat-dialog-content class="text-center">
+    <div class="flex items-center">
+        <div class="bg-white rounded-lg w-full">
+            <div class="flex justify-start">
+                <h2 class="text-lg mb-4">เพิ่มรายการ</h2>
+            </div>
+
+            <form [formGroup]="shipmentForm">
+                <div class="border-t border-gray-300 my-2"></div>
+
+                <!-- Table Header -->
+                <div class="grid grid-cols-4 gap-2">
+                    <span>รายการ</span>
+                    <span>วันที่เริ่มต้น</span>
+                    <span>ตั้งค่าใช้งานในอีก (วัน)</span>
+                    <span>ลบรายการ</span>
+                </div>
+
+                <!-- Table Body -->
+                <div formArrayName="shipments">
+                    <div *ngFor="let item of shipmentList.controls; let i = index" [formGroupName]="i"
+                         class="grid grid-cols-4 gap-2 items-center my-2">
+                        <!-- Dropdown -->
+                        <div class="w-full">
+                            <mat-form-field class="w-full" [ngClass]="formFieldHelpers">
+                                <mat-select formControlName="type">
+                                    <mat-option value="Car">ทางรถ</mat-option>
+                                    <mat-option value="Ship">ทางเรือ</mat-option>
+                                    <mat-option value="Train">ทางรถไฟ</mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </div>
+
+                        <!-- Date Range Picker -->
+                        <mat-form-field class="w-full" [ngClass]="formFieldHelpers">
+                            <mat-date-range-input [rangePicker]="picker">
+                                <input matStartDate formControlName="delivery_time_start">
+                                <input matEndDate formControlName="delivery_time_end">
+                            </mat-date-range-input>
+                            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                            <mat-date-range-picker #picker></mat-date-range-picker>
+                        </mat-form-field>
+
+                        <!-- Days Input -->
+                        <div class="w-full">
+                            <mat-form-field class="w-full" [ngClass]="formFieldHelpers">
+                                <input matInput formControlName="day_to_start" type="number" placeholder="0">
+                            </mat-form-field>
+                        </div>
+
+                        <!-- Delete Button -->
+                        <button type="button" (click)="removeItem(i)" class="text-gray-600 hover:text-red-500">
+                            <mat-icon [svgIcon]="'heroicons_solid:trash'"></mat-icon>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Add Button -->
+                <div class="flex justify-start gap-2">
+                    <button type="button" mat-flat-button color="primary" (click)="addItem()">
+                        <mat-icon [svgIcon]="'heroicons_solid:plus'"></mat-icon>
+                        <span class="ml-2">เพิ่มรายการ</span>
+                    </button>
+                </div>
+
+                <!-- Actions -->
+                <div class="flex justify-end gap-2 mt-6">
+                    <button type="button" mat-flat-button (click)="closeDialog()">
+                        <span class="ml-2">ยกเลิก</span>
+                    </button>
+                    <button type="button" mat-flat-button color="primary" (click)="submitData()">
+                        <span class="ml-2">ยืนยัน</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</mat-dialog-content>

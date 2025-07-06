@@ -1,0 +1,219 @@
+<div class="flex flex-col flex-auto justify-start items-center w-full">
+    <div class="w-full flex-col justify-between items-center flex overflow-hidden">
+        <div class="w-full flex-col justify-start items-start flex">
+            <div class="w-full px-10 pt-5 pb-2.5 bg-white justify-between items-center flex">
+                <div class="flex flex-col">
+                    <div class="flex space-x-2">
+                        <button class="md:text-xl font-medium tracking-tight leading-7 sm:leading-10 truncate"
+                            [routerLink]="['/member']" routerLinkActive="router-link-active">
+                            รายการรวมพัสดุ
+                        </button>
+                        <p class="md:text-sm font-medium tracking-tight leading-7 sm:leading-10 truncate">></p>
+                        <p
+                            class="md:text-sm font-medium tracking-tight leading-7 sm:leading-10 truncate text-[#DF0B12]">
+                            รายการพาเลท / Pallet
+                        </p>
+                    </div>
+
+                    <p class="md:text-2xl text-[#DF0B12] font-bold tracking-tight leading-7 sm:leading-10 truncate">
+                        รหัสพาเลท: {{ data.code }}
+                    </p>
+                </div>
+                <div class="justify-end items-center gap-2 flex">
+                    <button mat-flat-button [color]="'primary'" (click)="opendialogdelete()">
+                        <mat-icon [svgIcon]="'heroicons_solid:trash'"></mat-icon>
+                        <span class="ml-2">ลบ</span>
+                    </button>
+                    <button mat-flat-button [color]="'primary'" (click)="palletedit()">
+                        <mat-icon [svgIcon]="'heroicons_solid:pencil-square'" class=""></mat-icon>
+                        <span class="ml-2">แก้ไข</span>
+                    </button>
+                    <button mat-flat-button [color]="'primary'" (click)="opendialogqrcode()">
+                        <mat-icon [svgIcon]="'heroicons_solid:qr-code'"></mat-icon>
+                        <span class="ml-2">QR Code</span>
+                    </button>
+                </div>
+            </div>
+            <div class="w-full px-10 flex flex-col gap-2 bg-white ">
+                <div class="flex flex-col gap-2 w-full mb-4">
+                    <h2 class="font-semibold text-lg">รายละเอียดพาเลท / Pallet</h2>
+                    <mat-divider class="mb-3"></mat-divider>
+
+                    <div class="flex flex-row gap-2 w-full ">
+                        <div class="flex justify-between w-full">
+                            <div class="w-full font-bold">รหัสพาเลท:</div>
+                            <div class="w-full text-left">{{ data.code ?? '-' }}</div>
+                        </div>
+                        <div class="flex justify-between w-full">
+                            <div class="w-full font-bold">วันที่เข้าโกดัง:</div>
+                            <div class="w-full text-left">{{ data.received_date ?? '-' }}</div>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-row gap-2 w-full ">
+                        <div class="flex justify-between w-full">
+                            <div class="w-full font-bold">ขนส่งโดย:</div>
+                            <div class="w-full text-left">{{ getShipmentMethod(data?.shipped_by) ?? '-' }}</div>
+                        </div>
+                        <div class="flex justify-between w-full">
+                            <div class="w-full font-bold">ประเภท:</div>
+                            <div class="w-full text-left">{{ data.product_type?.name  ?? '-' }}</div>
+                        </div>
+                    </div>
+                    <div class="col-span-2 bg-[#fdeaeb] rounded-md p-4">
+                        <p class="font-bold text-red-600">หมายเหตุ</p>
+                        <p class="text-red-600"> {{ data.remark ?? '-' }} </p>
+                    </div>
+                </div>
+                <div
+                class="w-full p-4 my-4 border border-gray-300 rounded-lg min-h-[300px] overflow-y-auto flex flex-col">
+                <div class="flex flex-row w-full gap-2 mb-6">
+                    <div class="w-full text-3xl font-bold">รายการสินค้าในรายการพาเลท / Pallet</div>
+                    <div class="flex flex-row justify-end w-full gap-2">
+                        <button [cdkMenuTriggerFor]="menu" mat-flat-button class="!text-white" [color]="'primary'">
+                            <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:shopping-bag'"></mat-icon>
+                            <div class="flex items-center gap-2">
+                                <span class="ml-2"> การจัดการข้อมูล </span>
+                                <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:chevron-up'"></mat-icon>
+                            </div>
+                        </button>
+                        <ng-template #menu>
+                            <div class="manage-menu bg-primary" cdkMenu>
+                                <button class="manage-menu-item text-white" cdkMenuItem>
+                                    <mat-icon class="icon-size-5 text-white"
+                                        [svgIcon]="'heroicons_solid:document-duplicate'"></mat-icon>
+                                    <span class="ml-2">Copy to Clipboard</span>
+                                </button>
+                                <button class="manage-menu-item text-white" cdkMenuItem>
+                                    <mat-icon class="icon-size-5 text-white"
+                                        [svgIcon]="'heroicons_solid:table-cells'"></mat-icon>
+                                    <span class="ml-2">CSV</span>
+                                </button>
+                                <button class="manage-menu-item text-white" cdkMenuItem>
+                                    <mat-icon class="icon-size-5 text-white"
+                                        [svgIcon]="'heroicons_solid:table-cells'"></mat-icon>
+                                    <span class="ml-2">Excel</span>
+                                </button>
+                                <button class="manage-menu-item text-white" cdkMenuItem>
+                                    <mat-icon class="icon-size-5 text-white" [svgIcon]="'heroicons_solid:printer'"></mat-icon>
+                                    <span class="ml-2">Print</span>
+                                </button>
+                            </div>
+                        </ng-template>
+                    </div>
+                </div>
+                <form *ngIf="!showFilterForm" [formGroup]="filterForm">
+                    <div class="flex flex-col md:flex-row w-full gap-2 items-end">
+                        <div class="w-full">
+                            <mat-form-field [ngClass]="formFieldHelpers" class="w-full" >
+                                <mat-icon class="icon-size-5 mr-2" [svgIcon]="'heroicons_solid:magnifying-glass'"></mat-icon>
+                                <input matInput formControlName="in_store" [placeholder]="'ค้นหาด้วยรหัสใบรับเข้าคลัง'">
+                            </mat-form-field>
+                        </div>
+                        <div>
+                            <button mat-flat-button [color]="'primary'" (click)="openfillter()" class="mb-5">
+                                <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:bars-3'"></mat-icon>
+                                <span class="ml-2">ค้นหาโดยใช้ตัวกรอง</span>
+                            </button>
+                        </div>
+                        <div>
+                            <button mat-flat-button [color]="'primary'" class="mb-5">
+                                <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:cog-6-tooth'"></mat-icon>
+                            </button>
+                        </div>
+                    </div>
+                </form>
+                <form [formGroup]="filterForm" class="p-4 rounded-md"
+                    [@slideToggleFilter]="showFilterForm ? 'open' : 'closed'">
+                    <div>
+                        <h2 class="text-xl font-extrabold leading-7 tracking-tight truncate md:text-xl sm:leading-10">
+                            ตัวกรองขั้นสูง
+                        </h2>
+                        <mat-divider></mat-divider>
+                    </div>
+                    <div class="grid md:grid-cols-3 md:flex-row w-full gap-x-2 mt-2">
+                        <div class="w-full">
+                            <asha-select-member (change)="selectMember($event)" class="w-full"></asha-select-member>
+                        </div>
+                        <div class="w-full">
+                            <mat-form-field class="w-full" [ngClass]="formFieldHelpers">
+                                <mat-label>รหัสใบรับเข้าคลัง</mat-label>
+                                <input matInput formControlName="code">
+                            </mat-form-field>
+                        </div>
+                        <div class="w-full">
+                            <mat-form-field class="w-full" [ngClass]="formFieldHelpers">
+                                <mat-label>หมายเลขกระสอบ</mat-label>
+                                <input matInput formControlName="sack_code">
+                            </mat-form-field>
+                        </div>
+                    </div>
+                    <div class="w-full flex justify-end gap-2">
+                        <button mat-flat-button [color]="'primary'" (click)="openfillter()">
+                            <span class="ml-2">ปิดตัวกรอง</span>
+                        </button>
+                        <button mat-flat-button [color]="'primary'" (click)="clearFilter()">
+                            <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:bars-3'"></mat-icon>
+                            <span class="ml-2">ล้างตั้งค่าตัวกรอง</span>
+                        </button>
+                        <button mat-flat-button [color]="'primary'" (click)="applyFilter()">
+                            <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:magnifying-glass'"></mat-icon>
+                            <span class="ml-2">ค้นหา</span>
+                        </button>
+                    </div>
+                </form>
+                <div class="overflow-x-auto">
+                    <table class="whitespace-nowrap w-full">
+                        <thead>
+                          <tr >
+                            <th class="px-6 py-3 border border-l-0">#</th>
+                            <th class="px-6 py-3 border border-x-0">ลูกค้า</th>
+                            <th class="px-6 py-3 border border-x-0">รหัสกระสอบ</th>
+                            <th class="px-6 py-3 border border-x-0">เลขที่บาร์โค้ด</th>
+                            <th class="px-6 py-3 border border-x-0">รหัสใบรับเข้าคลัง</th>
+                            <th class="px-6 py-3 border border-x-0">ขนส่งโดย</th>
+                            <th class="px-6 py-3 border border-x-0">ตรวจสอบจำนวน</th>
+                            <th class="px-6 py-3 border border-x-0">ประเภทพัสดุ</th>
+                            <th class="px-6 py-3 border border-x-0">น้ำหนัก(Kg.)</th>
+                            <th class="px-6 py-3 border border-x-0">CBM</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let list of lists; let i = index" class="text-center">
+                                <td>{{ i + 1 }}</td>
+                                <td>{{ list.customer }}</td>
+                                <td>{{ list.sack_code }}</td>
+                                <td>{{ list.barcode }}</td>
+                                <td>{{ list.in_store_code }}</td>
+                                <td>{{ list.shipment }}</td>
+                                <td>{{ list.quantity_check }}</td>
+                                <td>{{ list.parcel_type }}</td>
+                                <td>{{ list.weight }}</td>
+                                <td>{{ list.cbm }}</td>
+                            </tr>
+                            <tr *ngFor="let list of filteredDeliveryOrders; let i = index" class="text-center">
+                                <td class="px-6 py-3 border border-l-0">{{ i + 1 }}</td>
+                                <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order_list?.member_id ?? '-' }}</td>
+                                <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order_list?.sack_code ?? '-' }}</td>
+                                <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order_list?.barcode ?? '-' }}</td>
+                                <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order_list?.code ?? '-' }}</td>
+                                <td class="px-6 py-3 border border-x-0">{{ getShipmentMethod(list?.delivery_order_list?.shipped_by) }}</td>
+                                <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order_list?.quantity_check ?? '-' }}</td>
+                                <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order_list?.product_type?.name ?? '-' }}</td>
+                                <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order_list?.weight ?? '-' }}</td>
+                                <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order_list?.cbm ?? '-' }}</td>
+                        </tbody>
+                        <tfoot class="bg-gray-100">
+                          <tr class="text-center">
+                            <td colspan="8" class="px-6 py-3 border border-x-0 text-left"> ผลรวม {{ totallist }} รายการ </td>
+                            <td class="px-6 py-3 border border-x-0"> {{ totalWeight }} </td>
+                            <td class="px-6 py-3 border border-x-0"> {{ totalCBM }} </td>
+                          </tr>
+                        </tfoot>
+                      </table>
+                </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

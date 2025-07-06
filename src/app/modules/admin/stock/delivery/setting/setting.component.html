@@ -1,0 +1,54 @@
+<div class="flex flex-col flex-auto justify-start items-center w-full overflow-auto">
+    <div class="w-full flex-col justify-between items-center flex overflow-hidden">
+        <div class="w-full flex-col justify-start items-start flex">
+            <div class="w-full px-10 pt-5 pb-2.5 bg-white justify-between items-center flex">
+                <div class="flex flex-col">
+                    <div class="flex space-x-2">
+                        <button class="md:text-xl font-medium tracking-tight leading-7 sm:leading-10 truncate"
+                            [routerLink]="['/member']" routerLinkActive="router-link-active">
+                            รายการรวมพัสดุ
+                        </button>
+                        <p class="md:text-sm font-medium tracking-tight leading-7 sm:leading-10 truncate">></p>
+                        <p
+                            class="md:text-sm font-medium tracking-tight leading-7 sm:leading-10 truncate text-[#DF0B12] cursor-pointer" (click)="Close()">
+                            รายการ Shipment
+                        </p>
+                    </div>
+
+                    <p class="md:text-2xl text-[#DF0B12] font-bold tracking-tight leading-7 sm:leading-10 truncate">
+                        ตั้งค่า
+                    </p>
+                </div>
+                <div class="flex ml-auto space-x-4">
+                    <button mat-flat-button [color]="'primary'" (click)="opendialogsetting()">
+                        <mat-icon [svgIcon]="'heroicons_solid:plus'"></mat-icon>
+                        <span class="ml-2">เพิมรายการ</span>
+                    </button>
+                </div>
+            </div>
+            <div class="w-full px-10 flex flex-col gap-2 bg-white">
+                <div class="flex flex-col gap-2 w-full mb-4">
+                    <h2 class="font-semibold text-lg">รายการสร้าง Shipment</h2>
+                    <mat-divider class="mb-3"></mat-divider>
+                    <table class="whitespace-nowrap w-full">
+                        <thead>
+                            <tr >
+                                <th class="sticky left-12 z-10 bg-white w-10 px-6 py-3 border border-l-0">#</th>
+                                <th class="px-6 py-3 border border-x-0">รายการ</th>
+                                <th class="px-6 py-3 border border-x-0">กำหนดการเวลา</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let list of OrderShipment; let i = index" class="text-center">
+                                <td class="sticky left-12 z-10 bg-white py-3 border border-l-0">{{ i + 1 }}</td>
+                                <td class="px-6 py-3 border border-x-0">{{ getShipmentMethod(list?.type) }}</td>
+                                <!-- <td class="px-6 py-3 border border-x-0">{{ list?.delivery_time_end | date: 'dd/MM/yyyy' ?? '-' }}</td> -->
+                                <td class="px-6 py-3 border border-x-0">{{ list?.delivery_time_end | date: 'yyyy/MM/dd hh:mm a' ?? '-' }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

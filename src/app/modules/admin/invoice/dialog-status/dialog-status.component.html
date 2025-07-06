@@ -1,0 +1,31 @@
+<div class="p-6">
+    <h2 class="text-2xl font-semibold mb-4">อัปเดตสถานะ</h2>
+    <mat-divider></mat-divider>
+    <div class="flex flex-row items-center mt-4 mb-6">
+        <span class="w-full">รหัสใบแจ้งหนี้:</span>
+        <div class="w-full text-right"> {{ code ?? '-' }} </div>
+    </div>
+    <form [formGroup]="form">
+        <div class="flex flex-col md:flex-row w-full gap-2 items-end">
+            <div class="w-full">
+                <mat-form-field [ngClass]="formFieldHelpers" class="w-full" >
+                    <mat-label>สถานะการชำระเงิน</mat-label>
+                    <mat-select formControlName="payment_status" >
+                        <mat-option [value]="'unpaid'">ยังไม่ชำระเงิน</mat-option>
+                        <mat-option [value]="'pending'">รอตรวจสอบ</mat-option>
+                        <mat-option [value]="'credit'">เครดิต</mat-option>
+                        <mat-option [value]="'paid'">ชำระเงินแล้ว</mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+        </div>
+    </form>
+    <div mat-dialog-actions class="flex justify-end border-t-2 mt-2 p-2">
+        <button class="px-6 ml-3" mat-flat-button (click)="onClose()">
+            ยกเลิก
+        </button>
+        <button class="px-6 ml-3" mat-flat-button [color]="'primary'" (click)="Submit()">
+            ตกลง
+        </button>
+    </div>
+</div>

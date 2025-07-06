@@ -1,0 +1,25 @@
+<div class="p-4 w-full ">
+    <div class="flex justify-between items-center mb-4">
+        <h2 class="text-lg font-semibold">ค้นหาด้วย barcode</h2>
+        <button mat-icon-button (click)="onClose()">
+            <mat-icon>close</mat-icon>
+        </button>
+    </div>
+    <mat-form-field class="w-full">
+        <input matInput [(ngModel)]="searchValue" (input)="onSearch()" placeholder="พิมพ์หรือสแกนเพื่อค้นหา">
+    </mat-form-field>
+    <div *ngIf="searchValue && filteredItems.length > 0" class="mt-4">
+        <mat-radio-group [(ngModel)]="selectedItem">
+            <mat-list>
+                <mat-list-item *ngFor="let item of filteredItems" (click)="onSelect(item)">
+                    <mat-radio-button *ngIf="type !== 'tracking'" [value]="item">{{ item.code }} - {{ item.product_name }}</mat-radio-button>
+                    <mat-radio-button *ngIf="type === 'tracking'" [value]="item">{{ item.date }} - {{ item.code }}</mat-radio-button>
+                </mat-list-item>
+            </mat-list>
+        </mat-radio-group>
+    </div>
+    <div class="flex justify-end gap-2 mt-4">
+        <button mat-button (click)="onClose()">ยกเลิก</button>
+        <button mat-raised-button color="primary" (click)="onConfirm()" [disabled]="!selectedItem">ยืนยัน</button>
+    </div>
+</div>

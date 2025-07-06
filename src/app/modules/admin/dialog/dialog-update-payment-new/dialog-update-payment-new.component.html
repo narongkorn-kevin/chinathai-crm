@@ -1,0 +1,109 @@
+<div class="mx-auto bg-white rounded-lg w-full">
+    <h2 class="text-lg font-semibold mb-4 border-b-2">บันทึกรับชำระเงิน</h2>
+    <!-- {{ order | json }} -->
+    <form [formGroup]="form">
+        <div class="space-y-3">
+            <!-- Product Price -->
+            @for (item of data?.dataList; track $index) {
+            <div class="flex justify-between font-bold">
+                <span>{{ item?.name }}</span>
+            </div>
+
+            @for (row of item?.list; track $index) {
+            <div class="flex justify-between">
+                <span>{{row?.name }}</span>
+                <span>{{ row?.price | number:'1.2-2' }}</span>
+            </div>
+            }
+            }
+
+            <!-- Date & Time -->
+            <div>
+                <label class="block font-bold">วันและเวลาที่ทำการโอนเงิน</label>
+                <input [formControlName]="'date'" type="datetime-local" class="w-full px-3 py-2 border rounded-lg">
+            </div>
+
+            <!-- Payment Proof -->
+            <div class="flex flex-col justify-center">
+                <label class="w-full block font-bold">แนบรูปหลักฐานการโอน:</label>
+                <!-- <asha-image-upload class="flex w-full justify-center"></asha-image-upload> -->
+                <!-- <div class="flex items-center gap-2">
+                    <input type="text" placeholder="วางลิงก์ของคุณที่นี่"
+                        class="w-full px-3 py-2 border rounded-lg">
+                    <span>หรือ</span>
+                    <input type="file" (change)="onFileSelect($event)" class="border px-3 py-2 rounded-lg">
+                </div> -->
+                <div class="flex flex-row w-full gap-4">
+                    <div class="flex flex-col w-1/2 md:flex">
+                        <div class="md:w-full">
+                            <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                                <!-- <mat-label>วางลิ้งของคุณที่นี่</mat-label> -->
+                                <input matInput [placeholder]="'วางลิ้งของคุณที่นี่'" formControlName="image_url">
+                            </mat-form-field>
+                        </div>
+                    </div>
+                    <div class="flex items-center">
+                        <p>หรือ</p>
+                    </div>
+                    <div class="flex flex-col w-1/2 md:flex">
+                        <div class="md:w-full">
+                            <!-- การลากไฟล์หรือเลือกไฟล์ -->
+                            <label for="fileInput"
+                                class="block p-4 text-sm text-center text-gray-600 bg-gray-100 border-2 border-red-500 border-dashed rounded-lg cursor-pointer">
+                                ลากไฟล์ของคุณมาหรือ
+                                <span class="font-medium text-red-500">เลือกจากไฟล์ที่มี</span>
+                                <input type="file" id="fileInput" class="hidden" (change)="onFilesSelected($event)" />
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex flex-row w-full gap-4">
+                    <div class="flex flex-col w-full md:flex">
+                        <div class="md:w-full">
+                            <!-- แสดงไฟล์ที่เลือก -->
+                            <div *ngIf="uploadedFiles.length > 0" class="space-y-4">
+                                <div *ngFor="let file of uploadedFiles; let i = index"
+                                    class="flex items-center p-4 space-x-4 border border-gray-300 rounded-lg bg-gray-50">
+                                    <!-- รูปตัวอย่าง -->
+                                    <img [src]="file.imagePreview" alt="Preview"
+                                        class="object-cover w-16 h-16 border border-gray-300 rounded-md" />
+
+                                    <!-- รายละเอียดไฟล์ -->
+                                    <div class="flex-1">
+                                        <p class="text-sm font-medium text-gray-700 truncate">{{ file.name }}</p>
+                                        <p class="text-xs text-gray-500">{{ file.size }} kb</p>
+                                    </div>
+
+                                    <!-- ปุ่มลบ -->
+                                    <button
+                                        class="flex items-center justify-center w-8 h-8 text-gray-500 bg-gray-200 rounded-full hover:bg-red-100 hover:text-red-500"
+                                        (click)="removeFile(i)">
+                                        ✕
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Buttons -->
+            <div mat-dialog-actions class="flex justify-between border-t-2 pt-4">
+                <div class="flex justify-between font-bold">
+                    <span class="text-red-500 mr-5">{{ sumPrices | number:'1.2-2' }}</span>
+                    <span>ยอดชำระสุทธิ:</span>
+                </div>
+
+                <div class="flex justify-end">
+                    <button class="px-6 ml-3" mat-flat-button [color]="'primary'" (click)="Submit()">
+                        ตกลง
+                    </button>
+                    <button class="px-6 ml-3" mat-flat-button [color]="'warn'" (click)="onClose()">
+                        ยกเลิก
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    </form>
+</div>

@@ -1,0 +1,71 @@
+<div class="flex flex-col flex-auto min-w-0">
+  <div class="flex-auto p-4 md:p-5 bg-card m-4  rounded-md">
+    <div class="w-full px-10 pt-5 pb-2.5 bg-white justify-between items-center flex">
+        <div class="flex flex-col">
+            <p class="md:text-2xl text-black font-bold tracking-tight leading-7 sm:leading-10 truncate">
+                แก้ไขข้อมูลส่วนตัว
+            </p>
+        </div>
+        <div class="flex items-center justify-end gap-2">
+            <button mat-flat-button [color]="'warn'" (click)="clear()">
+                <mat-icon [svgIcon]="'heroicons_solid:arrow-path-rounded-square'"></mat-icon>
+                <span class="ml-2">รีเซ็ต</span>
+            </button>
+            <button mat-flat-button [color]="'primary'" (click)="Submit()">
+                <span class="">บันทึก</span>
+            </button>
+        </div>
+    </div>
+    <div class="flex-auto p-4 md:p-5">
+      <div class="grid gap-4 w-full sm:grid-cols-1 md:grid-cols-1">
+        <form [formGroup]="form">
+          <div class="flex flex-col">
+            <div class="-mx-3 md:flex ">
+              <div class="md:w-full px-3">
+                <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                  <mat-label>ชื่อ</mat-label>
+                  <input matInput [placeholder]="'กรุณากรอกชื่อ'" formControlName="fname">
+                </mat-form-field>
+              </div>
+              <div class="md:w-full px-3">
+                <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                  <mat-label>นามสกุล</mat-label>
+                  <input matInput [placeholder]="'กรุณากรอกนามสกุล'" formControlName="lname">
+                </mat-form-field>
+              </div>
+            </div>
+            <div class="-mx-3 md:flex">
+              <div class="md:w-full px-3">
+                <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                  <mat-label>เบอร์โทร</mat-label>
+                  <input matInput [placeholder]="'กรอกเบอร์โทร'" formControlName="phone">
+                </mat-form-field>
+              </div>
+              <div class="md:w-full px-3">
+                <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                  <mat-label>อีเมล</mat-label>
+                  <input matInput [placeholder]="'กรุณากรอกอีเมล'" formControlName="email">
+                </mat-form-field>
+              </div>
+            </div>
+            <div class="-mx-3 md:flex">
+              <div class="md:w-full px-3">
+                <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                  <mat-label>ชื่อผู้ใช้</mat-label>
+                  <input matInput [placeholder]="'กรอกชื่อผู้ใช้'" formControlName="username">
+                </mat-form-field>
+              </div>
+              <div class="md:w-full px-3">
+                <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                  <mat-label>รหัสผ่าน</mat-label>
+                  <input matInput [placeholder]="'กรุณากรอกรหัสผ่าน'" formControlName="password">
+                </mat-form-field>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<!--<app-page-branch [storeId]="storeId"></app-page-branch>-->

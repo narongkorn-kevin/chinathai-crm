@@ -1,0 +1,39 @@
+<div class="p-4">
+    <h2 class="text-2xl font-semibold mb-4">อัปเดตสถานะ</h2>
+    <form [formGroup]="form">
+        <div class="flex flex-col md:flex-row w-full gap-2 items-end">
+            <div class="w-full">
+                <mat-form-field [ngClass]="formFieldHelpers" class="w-full" >
+                    <mat-label>สถานะ</mat-label>
+                    <mat-select formControlName="status" >
+                        <mat-option value="warehouse">รับเข้าคลัง</mat-option>
+                        <mat-option value="pallet">ขึ้นพาเลท</mat-option>
+                        <mat-option value="transit_china">พัสดุเดินทางจากโกดังจีนไปหน้าด่าน</mat-option>
+                        <mat-option value="booking">จองตู้</mat-option>
+                        <mat-option value="close_container_china">ปิดตู้</mat-option>
+                        <mat-option value="customs_china">ดำเนินพิธีศุลกากรต้นทางจีน</mat-option>
+                        <mat-option value="inspection_china">ติดตรวจปล่อยพิธีศุลกากรต้นทางจีน</mat-option>
+                        <mat-option value="transit_china_thailand">พัสดุเดินทางระหว่าง จีน-ไทย</mat-option>
+                        <mat-option value="customs_thailand">ดำเนินพิธีศุลกากรปลายทางไทย</mat-option>
+                        <mat-option value="warehouse_arrival">พัสดุถึงโกดัง</mat-option>
+                        <mat-option value="customer_arrival">พัสดุถึงลูกค้าปลายทาง</mat-option>
+                        <mat-option value="customer_received">พัสดุถึงลูกค้าปลายทางเรียบร้อย</mat-option>
+                        <mat-option value="close_container_thai">ปิดตู้</mat-option>
+                    </mat-select>
+                </mat-form-field>
+                <mat-form-field [ngClass]="formFieldHelpers" class="w-full" >
+                    <mat-label>หมายเหตุ</mat-label>
+                    <input type="text" matInput formControlName="remark" />
+                </mat-form-field>
+            </div>
+        </div>
+    </form>
+    <div mat-dialog-actions class="flex justify-end border-t-2 mt-2 p-2">
+        <button class="px-6 ml-3" mat-flat-button [color]="'primary'" (click)="Submit()">
+            ตกลง
+        </button>
+        <button class="px-6 ml-3" mat-flat-button [color]="'warn'" (click)="onClose()">
+            ยกเลิก
+        </button>
+    </div>
+</div>

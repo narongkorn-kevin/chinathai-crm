@@ -1,0 +1,220 @@
+<div class="flex flex-col flex-auto min-w-0">
+    <div class="flex flex-row justify-between pb-2 items-center">
+        <div class="w-full px-5 pt-5 pb-2.5  justify-between items-center flex">
+            <div class="flex flex-col">
+                <div class="flex space-x-2">
+                    <button class="md:text-xl font-medium tracking-tight leading-7 sm:leading-10 truncate"
+                        routerLinkActive="router-link-active">
+                        โกดังไทย
+                    </button>
+
+                </div>
+                <div class="flex space-x-2">
+                    <p class="md:text-3xl font-medium tracking-tight leading-7 sm:leading-10 truncate text-black">
+                        BKK Scan-in (รับสินค้าเข้าไทย)
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="justify-start items-center gap-2 flex mx-4">
+            <button mat-stroked-button class="bg-primary text-white" [routerLink]="['/thai-warehouse/form-new']">
+                <mat-icon class="icon-size-5 text-white" svgIcon="heroicons_outline:plus"></mat-icon>เพิ่มรายการ
+            </button>
+            <!-- แก้ไข -->
+            <button mat-stroked-button class="bg-orange-600 text-white" [routerLink]="['/thai-warehouse/form-new']"
+                routerLinkActive="router-link-active">
+                <mat-icon class="icon-size-5 text-white"
+                    [svgIcon]="'heroicons_solid:pencil-square'"></mat-icon>&nbsp;แก้ไขรายการ
+            </button>
+
+            <!-- เปลี่ยน PO -->
+            <button mat-stroked-button class="bg-[#6C6DF2] text-white">
+                <mat-icon class="icon-size-5 text-white"
+                    svgIcon="heroicons_outline:shopping-bag"></mat-icon>&nbsp;การจัดการข้อมูล
+            </button>
+
+        </div>
+    </div>
+    <mat-divider class="w-full p-1 mx-5 flex border-t-[1px] border-slate-300"></mat-divider>
+    <mat-tab-group [(selectedIndex)]="selectedTabIndex" class="mb-4" mat-stretch-tabs="false" mat-align-tabs="start">
+        <mat-tab *ngFor="let status of statuses" [label]="status.label + ' (' + status.count + ')'"></mat-tab>
+    </mat-tab-group>
+
+    <div class="flex-auto  sm:p-10 bg-card m-4  mt-0 p-4 rounded-md">
+        <div class="rounded-lg border-gray-300 border p-6 flex justify-around items-center col-span-2 flex-col mb-2">
+            <div class="flex flex-row w-full items-center mt-4">
+                <img class="flex w-14 mr-2" src="assets/images/item/scanning.png" alt="Logo image">
+                <div class="text-lg font-normal w-full">Scan Tracking รับเข้าโกดังไทย</div>
+            </div>
+
+            <div class="w-full">
+                <asha-progress-bar [total]="100" [value]="10" color="bg-blue-600"></asha-progress-bar>
+            </div>
+
+            <div class="flex flex-row justify-between items-center w-full">
+                <div>ยอดรวมจากรายการสินค้าใน Packing List</div>
+                <div class="text-4xl font-bold text-blue-900">10/100</div>
+            </div>
+        </div>
+        <div>
+            <form *ngIf="!showFilterForm" [formGroup]="filterForm">
+                <div class="flex flex-col md:flex-row w-full gap-2 items-end">
+                    <mat-form-field class="w-full" [ngClass]="formFieldHelpers">
+                        <mat-label>Ship out date</mat-label>
+                        <input matInput [matDatepicker]="picker" formControlName="date">
+                        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                        <mat-datepicker #picker></mat-datepicker>
+                    </mat-form-field>
+                    <div class="w-full">
+                        <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                            <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:magnifying-glass'"></mat-icon>
+                            <input matInput [placeholder]="'ค้นหาด้วย Packing List / PO / Tracking'"
+                                formControlName="search">
+                        </mat-form-field>
+                    </div>
+                    <div>
+                        <button mat-flat-button [color]="'primary'" (click)="openfillter()" class="mb-5">
+                            <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:bars-3'"></mat-icon>
+                            <span class="ml-2">ค้นหาโดยใช้ตัวกรอง</span>
+                        </button>
+                    </div>
+                    <div>
+                        <button mat-flat-button [color]="'primary'" class="mb-5">
+                            <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:cog-6-tooth'"></mat-icon>
+                        </button>
+                    </div>
+                </div>
+            </form>
+            <form [formGroup]="filterForm" class="p-4 rounded-md"
+                [@slideToggleFilter]="showFilterForm ? 'open' : 'closed'">
+                <div>
+                    <h2 class="text-xl font-extrabold leading-7 tracking-tight truncate md:text-xl sm:leading-10">
+                        ตัวกรองขั้นสูง
+                    </h2>
+                    <mat-divider></mat-divider>
+                </div>
+                <div class="grid md:grid-cols-3 md:flex-row w-full gap-x-2 mt-2">
+                    <mat-form-field class="w-full" [ngClass]="formFieldHelpers">
+                        <mat-label>ช่วงวันเริ่มต้น</mat-label>
+                        <mat-date-range-input [rangePicker]="picker">
+                            <input matStartDate formControlName="start_date">
+                            <input matEndDate formControlName="end_date">
+                        </mat-date-range-input>
+                        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                        <mat-date-range-picker #picker></mat-date-range-picker>
+                    </mat-form-field>
+                    <div class="w-full">
+                        <mat-form-field class="w-full" [ngClass]="formFieldHelpers">
+                            <mat-label>รหัสพาเลท</mat-label>
+                            <input matInput formControlName="code">
+                        </mat-form-field>
+                    </div>
+                    <div class="w-full">
+                        <mat-form-field class="w-full" [ngClass]="formFieldHelpers">
+                            <mat-label>ขนส่งโดย</mat-label>
+                            <mat-select formControlName="shipment">
+                                <mat-option value="Car">ขนส่งทางรถ</mat-option>
+                                <mat-option value="Ship">ขนส่งทางเรือ</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+                </div>
+                <div class="w-full flex justify-end gap-2">
+                    <button mat-flat-button [color]="'primary'" (click)="openfillter()">
+                        <span class="ml-2">ปิดตัวกรอง</span>
+                    </button>
+                    <button mat-flat-button [color]="'primary'" (click)="clearFilter()">
+                        <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:bars-3'"></mat-icon>
+                        <span class="ml-2">ล้างตั้งค่าตัวกรอง</span>
+                    </button>
+                    <button mat-flat-button [color]="'primary'" (click)="applyFilter()">
+                        <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:magnifying-glass'"></mat-icon>
+                        <span class="ml-2">ค้นหา</span>
+                    </button>
+                </div>
+            </form>
+            <!-- <button class="mb-2" mat-flat-button [color]="'accent'" (click)="toggleSelectAll(!isAllSelected)">
+                {{ isAllSelected ? 'Unselect All' : 'Select All' }}
+            </button> -->
+            <div class="overflow-x-auto whitespace-nowrap mt-2 max-w-full">
+                <!-- <table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger"
+                    class="table w-full bg-white row-border hover">
+                </table> -->
+                <div class="p-4 overflow-x-auto">
+
+
+                    <!-- Table -->
+                    <table class="min-w-full text-sm text-left border border-gray-300">
+                        <thead class="bg-gray-100">
+                            <tr>
+                                <th class="border px-2 py-1 text-center">
+                                    <mat-checkbox color="primary"></mat-checkbox>
+                                </th>
+                                <th class="border px-2 py-1 text-center">#</th>
+                                <th class="border px-2 py-1 text-center">รูปภาพสินค้า</th>
+                                <th class="border px-2 py-1 text-center">WH</th>
+                                <th class="border px-2 py-1 text-center">LOT no.</th>
+                                <th class="border px-2 py-1 text-center">วิธีขนส่ง</th>
+                                <th class="border px-2 py-1 text-center">Carton No</th>
+                                <th class="border px-2 py-1 text-center">Receive Date</th>
+                                <th class="border px-2 py-1 text-center">ship out date</th>
+                                <th class="border px-2 py-1 text-center">IMP/PRE</th>
+                                <th class="border px-2 py-1 text-center">สินค้า</th>
+                                <th class="border px-2 py-1 text-center">Order no.</th>
+                                <th class="border px-2 py-1 text-center">หมายเลขแทรค</th>
+                                <th class="border px-2 py-1 text-center">Bar code</th>
+                                <th class="border px-2 py-1 text-center">Tracking Ext</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="border-t" *ngFor="let item of [1, 2, 3]; let i = index">
+                                <td class="border px-2 py-1 text-center">
+                                    <mat-checkbox color="primary"></mat-checkbox>
+                                </td>
+                                <td class="border px-2 py-1 text-center">{{ i + 1 }}</td>
+                                <td class="border px-2 py-1 text-center">
+                                    <button
+                                        class="bg-teal-400 hover:bg-teal-500 text-white text-xs px-2 py-1 rounded flex items-center gap-1 justify-center">
+                                        <mat-icon class="text-white">photo_camera</mat-icon>
+                                        รูปภาพ
+                                    </button>
+                                </td>
+                                <td class="border px-2 py-1 text-center">GZ</td>
+                                <td class="border px-2 py-1 text-center">1090</td>
+                                <td class="border px-2 py-1 text-center">ทางรถ</td>
+                                <td class="border px-2 py-1 text-center">INTRUCK5272{{i + 1}}</td>
+                                <td class="border px-2 py-1 text-center">11/12/2023</td>
+                                <td class="border px-2 py-1 text-center">07/12/2023</td>
+                                <td class="border px-2 py-1 text-center">PRE</td>
+                                <td class="border px-2 py-1 text-center">C</td>
+                                <td class="border px-2 py-1 text-center">OD-00086</td>
+                                <td class="border px-2 py-1 text-center">PH003</td>
+                                <td class="border px-2 py-1 text-center">PH003-00{{ i + 1 }}</td>
+                                <td class="border px-2 py-1 text-center">3/{{i + 1}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <ng-template #btNg let-data="adtData">
+        <button mat-icon-button [matMenuTriggerFor]="menu">
+            <mat-icon class="icon-size-5 text-[#DF0B12]" [svgIcon]="'heroicons_outline:trash'"></mat-icon>
+        </button>
+        <mat-menu #menu="matMenu">
+            <button mat-menu-item (click)="clickDelete(data.id)">
+                <mat-icon [svgIcon]="'heroicons_outline:trash'"></mat-icon>
+                <span>ลบ</span>
+            </button>
+        </mat-menu>
+    </ng-template>
+    <ng-template #checkbox let-data="adtData">
+        <mat-checkbox [checked]="data.selected" (change)="onCheckboxChange($event, data.id)"></mat-checkbox>
+    </ng-template>
+    <ng-template #gotoRoute let-data="adtData">
+        <a class="text-[#DF0B12CC]" [routerLink]="['/sack/view', data.id]"
+            routerLinkActive="router-link-active">{{data?.code}}</a>
+    </ng-template>

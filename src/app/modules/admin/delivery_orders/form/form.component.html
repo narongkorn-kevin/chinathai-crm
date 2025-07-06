@@ -1,0 +1,304 @@
+<div class="flex flex-col items-center justify-start flex-auto">
+    <div class="flex flex-col items-center justify-between w-full overflow-hidden">
+        <div class="flex flex-col items-start justify-start w-full">
+            <div class="w-full px-10 pt-5 pb-2.5 bg-white justify-between items-center flex">
+                <div class="flex flex-col">
+                    <div class="flex space-x-2">
+                        <button class="md:text-xl font-medium tracking-tight leading-7 sm:leading-10 truncate"
+                            [routerLink]="['/delivery_orders']" routerLinkActive="router-link-active">
+                            รายการรวมพัสดุ
+                        </button>
+                        <p class="md:text-sm font-medium tracking-tight leading-7 sm:leading-10 truncate">></p>
+                        <button
+                            class="md:text-sm font-medium tracking-tight leading-7 sm:leading-10 truncate text-[#DF0B12]"
+                            [routerLink]="['/delivery_orders']" routerLinkActive="router-link-active">
+                            รายการพัสดุเข้าคลัง/PO
+                        </button>
+                    </div>
+
+                    <p class="md:text-2xl text-[#DF0B12] font-bold tracking-tight leading-7 sm:leading-10 truncate">
+                        รายการพัสดุเข้าคลัง/PO
+                    </p>
+                </div>
+                <div class="flex items-center justify-end gap-2">
+                    <button mat-flat-button (click)="Close()">
+                        <mat-icon [svgIcon]="'heroicons_solid:trash'"></mat-icon>
+                        <span class="ml-2">ยกเลิก</span>
+                    </button>
+                    <button mat-flat-button [color]="'primary'" (click)="Submit()">
+                        <mat-icon [svgIcon]="'heroicons_solid:pencil-square'"></mat-icon>
+                        <span class="ml-2">บันทึก</span>
+                    </button>
+                </div>
+            </div>
+            <div class="flex flex-col w-full px-10 bg-white " [formGroup]="form">
+                <div class="grid w-full grid-flow-row md:grid-cols-4 gap-x-2 ">
+                    <div class="w-full">
+                        <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                            <mat-label>เลขที่ PO</mat-label>
+                            <input matInput [placeholder]="'เลขที่ PO'" formControlName="track_no">
+                        </mat-form-field>
+                    </div>
+                    <div class="w-full">
+                        <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                            <mat-label>วันที่เข้าโกดัง</mat-label>
+                            <input matInput [matDatepicker]="picker" [placeholder]="'วันที่เข้าโกดัง'"
+                                formControlName="date">
+                            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                            <mat-datepicker #picker></mat-datepicker>
+                        </mat-form-field>
+                    </div>
+                    <div class="w-full">
+                        <!-- <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                            <mat-label>รหัสลูกค้า</mat-label>
+                            <input matInput [placeholder]="'รหัสลูกค้า'" formControlName="member_id">
+                        </mat-form-field> -->
+                        <asha-select-member (change)="selectMember($event)" class="w-full"></asha-select-member>
+                    </div>
+                    <div class="w-full">
+                        <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                            <mat-label>รหัสลูกตัวแทน</mat-label>
+                            <input matInput [placeholder]="'รหัสลูกตัวแทน'">
+                        </mat-form-field>
+                    </div>
+                    <div class="w-full">
+                        <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                            <mat-label>โกดัง</mat-label>
+                            <mat-select >
+                                <mat-option *ngFor="let store of store" [value]="store.id">{{ store.name }}</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+                    <div class="w-full">
+                        <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                            <mat-label>ขนส่งโดย</mat-label>
+                            <mat-select formControlName="shipment_by">
+                                <mat-option value="ship">ขนส่งทางเรือ</mat-option>
+                                <mat-option value="car">ขนส่งทางรถ</mat-option>
+                                <mat-option value="train">ขนส่งทางรถไฟ</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+                    <div class="w-full">
+                        <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                            <mat-label>ขนส่งจีน</mat-label>
+                            <input matInput [placeholder]="'ขนส่งจีน'">
+                        </mat-form-field>
+                    </div>
+                    <div class="w-full">
+                        <mat-form-field [ngClass]="formFieldHelpers" class="w-full md:w-4/4">
+                            <mat-label>Ref. Order No.</mat-label>
+                            <input
+                                matInput
+                                [formControl]="ordersFilter"
+                                [matAutocomplete]="orderAutoComplete"
+                                placeholder="ค้นหา order"
+                            />
+                            <mat-autocomplete
+                                #orderAutoComplete="matAutocomplete"
+                                (optionSelected)="onSelectorder($event.option.value, 'manual')">
+                                <mat-option *ngFor="let item of filterorders | async" [value]="item">
+                                    {{item.code}}
+                                </mat-option>
+                            </mat-autocomplete>
+                        </mat-form-field>
+                    </div>
+                </div>
+                <div class="flex flex-col w-full md:flex-row gap-x-2">
+                    <div class="w-full">
+                        <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                            <mat-label>คนส่งของ</mat-label>
+                            <input matInput [placeholder]="'คนส่งของ'" formControlName="driver_name">
+                        </mat-form-field>
+                    </div>
+                    <div class="w-full">
+                        <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                            <mat-label>เบอร์โทร</mat-label>
+                            <input matInput [placeholder]="'เบอร์โทร'" formControlName="driver_phone">
+                        </mat-form-field>
+                    </div>
+                </div>
+                <div>
+                    <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                        <mat-label>หมายเหตุ</mat-label>
+                        <textarea matInput [placeholder]="'หมายเหตุ'" formControlName="note"></textarea>
+                    </mat-form-field>
+                </div>
+                <div class="flex flex-col w-full gap-6 md:flex-row">
+                    <div class="w-2/3 p-4 border border-gray-300 rounded-lg">
+                        <div class="flex flex-row w-full gap-2 mb-2">
+                            <div class="w-full text-3xl font-bold">รายละเอียด Tracking</div>
+                            <div class="flex flex-row justify-end w-full gap-2">
+                                <div class="flex items-center gap-2">
+                                    <button mat-flat-button [color]="'primary'" (click)="removeSelectedTracks()">
+                                        <mat-icon svgIcon="heroicons_solid:trash"></mat-icon>
+                                        <span class="ml-2">ลบ</span>
+                                    </button>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <button mat-flat-button [color]="'primary'" (click)="openAddimage()">
+                                        <mat-icon [svgIcon]="'heroicons_solid:qr-code'"></mat-icon>
+                                        <span class="ml-2">สแกนผ่านกล้อง</span>
+                                    </button>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <button mat-flat-button [color]="'primary'" (click)="openAddTacking()">
+                                        <mat-icon [svgIcon]="'heroicons_solid:document'"></mat-icon>
+                                        <span class="ml-2">เพิ่ม Tracking</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="w-full mb-2 ">
+                            <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                                <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:magnifying-glass'"></mat-icon>
+                                <input matInput [placeholder]="'ค้นหาด้วย Tracking'" formControlName="name">
+                            </mat-form-field>
+                        </div>
+                        <table class="whitespace-nowrap w-full">
+                            <thead>
+                                <tr>
+                                    <th class="px-6 py-3 border border-x-0 w-10">
+                                        <mat-checkbox [checked]="selectAll" [indeterminate]="someSelect()"
+                                        (change)="SelectAll($event.checked)"></mat-checkbox>
+                                    </th>
+                                    <th class="px-6 py-3 border border-l-0 w-10">#</th>
+                                    <th class="px-6 py-3 border border-r-0">วันที่เพิ่ม Tracking</th>
+                                    <th class="px-6 py-3 border border-x-0">Tracking / เลขพัสดุ</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let track of tracksArray.controls; let i = index" (click)="selectTrack(track)"
+                                    [ngClass]="{'bg-gray-100': isSelectedTrack(track)}" class="hover:bg-gray-100 cursor-pointer">
+                                    <td class="px-6 py-4 text-center border border-x-0">
+                                        <mat-checkbox [(ngModel)]="track.value.IsChecked" (ngModelChange)="updateAllselect()"
+                                        [ngModelOptions]="{standalone: true}"></mat-checkbox>
+                                    </td>
+                                    <td class="px-6 py-4 text-center border border-l-0">{{ i + 1 }}</td>
+                                    <td class="px-6 py-4 text-center border border-r-0">{{ track.get('date')?.value | date: 'yyyy-MM-dd' }}</td>
+                                    <td class="px-6 py-4 text-center border border-x-0">{{ track.get('track_no')?.value }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="flex flex-col w-1/3 gap-2">
+                        <div>
+                            <div class="my-4 text-3xl font-bold">ค่าใช้จ่ายเพิ่มเติม</div>
+                            <mat-divider class="mx-2"></mat-divider>
+                        </div>
+                        <div class="w-full" formArrayName="add_on_services">
+                            <div *ngFor="let service of add_on_servicesArray.controls; let i = index" [formGroupName]="i">
+                                <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                                    <mat-label>{{ service.get('name').value }}</mat-label>
+                                    <input matInput formControlName="price">
+                                    <span matSuffix>หยวน</span>
+                                </mat-form-field>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div
+                    class="w-full p-4 my-4 border border-gray-300 rounded-lg min-h-[300px] overflow-y-auto flex flex-col">
+                    <div class="flex flex-row w-full gap-2 mb-6">
+                        <div class="w-full text-3xl font-bold">รายการผลิตภัณฑ์ใบรับเข้าคลัง / PO</div>
+                        <div class="flex flex-row justify-end w-full gap-2">
+                            <div class="flex items-center gap-2" *ngIf="index_track !== undefined">
+                                <button mat-flat-button [color]="'primary'" (click)="openAddProductWait()">
+                                    <mat-icon [svgIcon]="'heroicons_solid:document'"></mat-icon>
+                                    <span class="ml-2">เพิ่ม Product</span>
+                                </button>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <button mat-flat-button [color]="'primary'" (click)="removeSelectedProducts()">
+                                    <mat-icon svgIcon="heroicons_solid:trash"></mat-icon>
+                                    <span class="ml-2">ลบ</span>
+                                </button>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <button mat-flat-button [color]="'primary'" (click)="openAddProduct()">
+                                    <mat-icon [svgIcon]="'heroicons_solid:plus'"></mat-icon>
+                                    <span class="ml-2">เพิ่มรายการ</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="w-full grid grid-cols-1">
+                        <div class="flex flex-col flex-auto w-full pt-5 overflow-auto bg-card mb-4">
+                            <div class="flex flex-col items-start justify-between w-full">
+                                <table class="whitespace-nowrap w-full">
+                                    <thead>
+                                      <tr >
+                                        <th rowspan="2" class="px-6 py-3 border border-x-0 w-10">
+                                            <mat-checkbox [checked]="selectAllProducts" [indeterminate]="someSelectProducts()"
+                                            (change)="SelectAllProducts($event.checked)"></mat-checkbox>
+                                        </th>
+                                        <th rowspan="2" class="px-6 py-3 border border-x-0 w-10">#</th>
+                                        <th rowspan="2" class="px-6 py-3 border border-x-0">รูปสินค้า</th>
+                                        <th rowspan="2" class="px-6 py-3 border border-x-0">ประเภท</th>
+                                        <th rowspan="2" class="px-6 py-3 border border-x-0">ชื่อผลิตภัณฑ์</th>
+                                        <th rowspan="2" class="px-6 py-3 border border-x-0">รูปแบบบรรจุภัณฑ์</th>
+                                        <th rowspan="2" class="px-6 py-3 border border-x-0">โลโก้</th>
+                                        <th rowspan="2" class="px-6 py-3 border border-x-0">จำนวนลัง</th>
+                                        <th rowspan="2" class="px-6 py-3 border border-x-0">จำนวนชิ้น</th>
+                                        <th rowspan="2" class="px-6 py-3 border border-x-0">น้ำหนัก (Kg.)</th>
+                                        <th colspan="3" class="px-6 py-3 border border-x-0">ขนาด (ลบ.ม)</th>
+                                        <th rowspan="2" class="px-6 py-3 border border-x-0">CBM</th>
+                                      </tr>
+                                      <tr>
+                                        <th class="px-6 py-3 border border-x-0">ยาว</th>
+                                        <th class="px-6 py-3 border border-x-0">กว้าง</th>
+                                        <th class="px-6 py-3 border border-x-0">สูง</th>
+                                      </tr>
+                                    </thead>
+                                    <tbody *ngIf="index_track !== undefined">
+                                      <tr *ngFor="let product of listsArray.controls; let i = index" class="text-center" >
+                                        <td class="px-6 py-3 border border-x-0">
+                                            <mat-checkbox [(ngModel)]="product.value.IsChecked" (ngModelChange)="updateAllSelectProducts()"
+                                            [ngModelOptions]="{standalone: true}"></mat-checkbox>
+                                        </td>
+                                        <td  class="px-6 py-3 border border-l-0"> {{ i+1 }} </td>
+                                        <td class="px-6 py-3 border border-x-0">
+                                          <img *ngIf="product.get('images')?.value; else noImage" [src]="product.get('images')?.value[0]?.image" class="w-16 h-auto rounded">
+                                          <ng-template #noImage>
+                                            <div class="w-16 h-16 bg-[#797979] flex flex-col items-center justify-center text-sm rounded-md text-white">
+                                                <div>
+                                                    <mat-icon class="text-white" [svgIcon]="'heroicons_solid:photo'"></mat-icon>
+                                                </div>
+                                                <div>
+                                                    No Image
+                                                </div>
+                                            </div>
+                                          </ng-template>
+                                        </td>
+                                        <td class="px-6 py-3 border border-x-0">{{ product.get('product_type')?.value }}</td>
+                                        <td class="px-6 py-3 border border-x-0">{{ product.get('product_name')?.value }}</td>
+                                        <td class="px-6 py-3 border border-x-0">{{ product.get('unit_id')?.value }}</td>
+                                        <td class="px-6 py-3 border border-x-0">{{ product.get('product_logo')?.value }}</td>
+                                        <td class="px-6 py-3 border border-x-0">{{ product.get('qty_box')?.value }}</td>
+                                        <td class="px-6 py-3 border border-x-0">{{ product.get('qty')?.value }}</td>
+                                        <td class="px-6 py-3 border border-x-0">{{ product.get('weight')?.value }}</td>
+                                        <td class="px-6 py-3 border border-x-0">{{ product.get('long')?.value }}</td>
+                                        <td class="px-6 py-3 border border-x-0">{{ product.get('width')?.value }}</td>
+                                        <td class="px-6 py-3 border border-x-0">{{ product.get('height')?.value }}</td>
+                                        <td class="px-6 py-3 border border-x-0">{{ product.get('cbm')?.value }}</td>
+                                      </tr>
+                                    </tbody>
+                                    <tfoot class="bg-gray-100">
+                                      <tr class="text-center">
+                                        <td colspan="7" class="px-6 py-3 border border-x-0 text-left"> ผลรวม {{ totallist }} รายการ </td>
+                                        <td class="px-6 py-3 border border-x-0">{{ totalBoxes }}</td>
+                                        <td class="px-6 py-3 border border-x-0">{{ totalUnits }}</td>
+                                        <td class="px-6 py-3 border border-x-0">{{ totalWeight }}</td>
+                                        <td colspan="3" class="px-6 py-3 border border-x-0"></td>
+                                        <td class="px-6 py-3 border border-x-0">{{ totalCBM }}</td>
+                                      </tr>
+                                    </tfoot>
+                                  </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

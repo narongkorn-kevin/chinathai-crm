@@ -1,0 +1,140 @@
+<div class="w-full">
+    <h1 mat-dialog-title class="text-xl font-semibold mb-4" *ngIf="this.data?.type === 'NEW'">เพิ่มข้อมูล</h1>
+    <h1 mat-dialog-title class="text-xl font-semibold mb-4" *ngIf="this.data?.type === 'EDIT'">แก้ไขข้อมูล</h1>
+    <form [formGroup]="form">
+        <div mat-dialog-content class="overflow-y-auto md:max-h-180">
+            <div class="flex-auto">
+                <div class="flex flex-col md:flex mb-6">
+                    <div class="flex md:w-full">
+                        <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                            <mat-label>บริการ</mat-label>
+                            <input matInput [placeholder]="'กรุณาระบุบริการ'" formControlName="name">
+                        </mat-form-field>
+                    </div>
+                    <div class="md:w-full">
+                        <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                            <mat-label>รายอะเอียด</mat-label>
+                            <textarea matInput rows="5" [placeholder]="'รายละเอียด'"
+                                formControlName="description"></textarea>
+                        </mat-form-field>
+                    </div>
+                    <div class="flex md:w-full flex-row gap-2">
+                        <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                            <mat-label>เบอร์ติดต่อ</mat-label>
+                            <input matInput [placeholder]="'กรุณาระบุเบอร์ติดต่อ'" formControlName="phone">
+                        </mat-form-field>
+                        <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                            <mat-label>Line</mat-label>
+                            <input matInput [placeholder]="'กรุณาระบุ Line'" formControlName="line">
+                        </mat-form-field>
+                    </div>
+                    <!-- <div class="flex w-full flex-row justify-center gap-2">
+                        <div class="flex w-full justify-center">
+                            <asha-image-upload [initial]="null" (uploadSuccess)="uploadSuccess($event)"
+                                accept="image/*"></asha-image-upload>
+                        </div>
+
+                        <div class="flex justify-center w-full">
+                            <img [src]="imageUrl" alt="" class="w-auto">
+                        </div>
+                    </div> -->
+                    <hr class="border-t border-gray-300 my-4">
+
+                    <input type="file" (change)="handleFileUpload($event)" accept="image/*">
+
+                    <img *ngIf="imageUrl" class="m-2 w-10 h-10" [src]="imageUrl" alt="" srcset="">
+                </div>
+
+                <hr class="border-t border-gray-300 my-4">
+                <input type="file" multiple (change)="handleFilesUpload($event)" accept="image/*">
+
+                <div class="flex flex-row gap-2">
+                    @for (item of form.value.images; track $index) {
+                    <img class="m-2 w-10 h-10" [src]="item.image" alt="" srcset="">
+                    }
+                </div>
+
+                <hr class="border-t border-gray-300 my-4">
+
+                <div class="flex flex-col">
+                    <div class="flex items-center gap-2">
+                        <h3>Icons</h3>
+                        <button mat-raised-button color="primary" (click)="addIcon()">เพิ่ม</button>
+                    </div>
+
+                    <div class="my-2" formArrayName="icons">
+                        <div class="border-2 p-2 rounded mb-2" *ngFor="let icon of icons.controls; let i = index"
+                            [formGroupName]="i">
+                            <div class="flex gap-2">
+                                <div class="flex flex-col w-11/12">
+                                    <mat-form-field [ngClass]="formFieldHelpers">
+                                        <mat-label>ชื่อ</mat-label>
+                                        <input matInput formControlName="name">
+                                    </mat-form-field>
+
+                                    <input type="file" (change)="handleFileIconUpload($event, icon)" accept="image/*">
+
+                                    <img class="m-2 w-10 h-10" [src]="icon.value.image" alt="" srcset="">
+                                </div>
+
+                                <div class="w-1/12">
+                                    <button mat-icon-button color="warn" (click)="removeIcon(i)">
+                                        <mat-icon>delete</mat-icon>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <hr class="border-t border-gray-300 my-4">
+
+                <div class="flex flex-col">
+                    <div class="flex items-center gap-2">
+                        <h3>Icon Boxes</h3>
+                        <button mat-raised-button color="primary" (click)="addIconBox()">เพิ่ม</button>
+                    </div>
+                    <div class="my-2" formArrayName="icon_boxs">
+                        <div class="border-2 p-2 rounded mb-2" *ngFor="let iconBox of icon_boxs.controls; let i = index"
+                            [formGroupName]="i">
+                            <div class="flex gap-2">
+                                <div class="flex flex-col w-11/12">
+                                    <mat-form-field [ngClass]="formFieldHelpers">
+                                        <mat-label>ชื่อ</mat-label>
+                                        <input matInput formControlName="name">
+                                    </mat-form-field>
+
+                                    <mat-form-field [ngClass]="formFieldHelpers">
+                                        <mat-label>รายละเอียด</mat-label>
+                                        <textarea matInput rows="2" formControlName="description"></textarea>
+                                    </mat-form-field>
+
+                                    <input type="file" (change)="handleFileIconUpload($event, iconBox)"
+                                        accept="image/*">
+
+                                    <img class="m-2 w-10 h-10" [src]="iconBox.value.image" alt="" srcset="">
+                                </div>
+
+                                <div class="w-1/12">
+                                    <button mat-icon-button color="warn" (click)="removeIconBox(i)">
+                                        <mat-icon>delete</mat-icon>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- <div> check : {{this.form.value | json}}</div> -->
+        <div mat-dialog-actions class="flex justify-end">
+            <button class="px-6 ml-3" mat-flat-button [color]="'primary'" (click)="Submit()">
+                ตกลง
+            </button>
+            <button class="px-6 ml-3" mat-flat-button [color]="'warn'" (click)="onClose()">
+                ยกเลิก
+            </button>
+        </div>
+    </form>
+</div>

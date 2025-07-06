@@ -1,0 +1,160 @@
+<div class="flex flex-col m-4 w-full">
+  <div class=" flex flex-col m-5 bg-card shadow rounded-2xl text-center md:w-1/2">
+    <div class="flex flex-row items-center justify-between p-5">
+      <h2 class="text-2xl leading-7 tracking-tight truncate md:text-2xl sm:leading-10">
+        รายงานสรุปยอดรวมการใช้สิทธิ์พนักงานประจำวัน
+      </h2>
+      <div class="flex flex-row items-center justify-between">
+        <button mat-flat-button class="bg-green-800 text-white" (click)="printOriginal()">
+          <mat-icon class="icon-size-5" [svgIcon]="'heroicons_mini:document'"></mat-icon>
+          <span class="ml-2">Excel</span>
+        </button>
+      </div>
+    </div>
+    <div class="flex items-center justify-center px-4">
+      <mat-form-field appearance="fill" class="w-full">
+        <input matInput [matDatepicker]="picker" [(ngModel)]="datePicked" placeholder="วันที่">
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+      </mat-form-field>
+    </div>
+  </div>
+  <div class=" flex flex-col m-5 bg-card shadow rounded-2xl text-center md:w-1/2">
+    <div class="flex flex-row items-center justify-between p-5">
+      <h2 class="text-2xl leading-7 tracking-tight truncate md:text-2xl sm:leading-10 ">
+        รายงานสรุปยอดรวมการใช้สิทธิพนักงาน
+      </h2>
+      <div class="flex flex-row items-center justify-between">
+        <button mat-flat-button class="bg-green-800 text-white" (click)="printSummary()">
+          <mat-icon class="icon-size-5" [svgIcon]="'heroicons_mini:document'"></mat-icon>
+          <span class="ml-2">Excel</span>
+        </button>
+      </div>
+    </div>
+    <div class="flex items-center justify-center px-4">
+      <mat-form-field appearance="fill" class="w-full">
+        <mat-date-range-input [formGroup]="range" [rangePicker]="picker1">
+          <input matStartDate formControlName="start" placeholder="วันที่เริ่มเต้น">
+          <input matEndDate formControlName="end" placeholder="วันที่สิ้นสุด">
+        </mat-date-range-input>
+        <mat-datepicker-toggle matIconSuffix [for]="picker1"></mat-datepicker-toggle>
+        <mat-date-range-picker #picker1></mat-date-range-picker>
+      </mat-form-field>
+    </div>
+  </div>
+  <div class=" flex flex-col m-5 bg-card shadow rounded-2xl text-center md:w-1/2">
+    <div class="flex flex-row items-center justify-between p-5">
+      <h2 class="text-2xl leading-7 tracking-tight truncate md:text-2xl sm:leading-10 ">
+        รายงานสรุปยอดรวมการใช้สิทธิพนักงานแบบละเอียด
+      </h2>
+      <div class="flex flex-row items-center justify-between">
+        <button mat-flat-button class="bg-green-800 text-white" (click)="printSummary3()">
+          <mat-icon class="icon-size-5" [svgIcon]="'heroicons_mini:document'"></mat-icon>
+          <span class="ml-2">Excel</span>
+        </button>
+      </div>
+    </div>
+    <div class="flex items-center justify-center px-4">
+      <mat-form-field appearance="fill" class="w-full">
+        <mat-date-range-input [formGroup]="range" [rangePicker]="picker2">
+          <input matStartDate formControlName="start" placeholder="วันที่เริ่มเต้น">
+          <input matEndDate formControlName="end" placeholder="วันที่สิ้นสุด">
+        </mat-date-range-input>
+        <mat-datepicker-toggle matIconSuffix [for]="picker2"></mat-datepicker-toggle>
+        <mat-date-range-picker #picker2></mat-date-range-picker>
+      </mat-form-field>
+    </div>
+  </div>
+  <div class=" flex flex-col m-5 bg-card shadow rounded-2xl text-center md:w-1/2">
+    <div class="flex flex-row items-center justify-between p-5">
+      <h2 class="text-2xl leading-7 tracking-tight truncate md:text-2xl sm:leading-10 ">
+        รายงานประวัติการเติมเงินของแต่ละบัตร
+      </h2>
+      <div class="flex flex-row items-center justify-between">
+        <button mat-flat-button class="bg-green-800 text-white" (click)="printTopUpSummary()">
+          <mat-icon class="icon-size-5" [svgIcon]="'heroicons_mini:document'"></mat-icon>
+          <span class="ml-2">Excel</span>
+        </button>
+      </div>
+    </div>
+    <div class="flex items-center justify-center px-4">
+      <mat-form-field appearance="fill" class="w-full">
+        <mat-date-range-input [formGroup]="range" [rangePicker]="picker3">
+          <input matStartDate formControlName="start" placeholder="วันที่เริ่มเต้น">
+          <input matEndDate formControlName="end" placeholder="วันที่สิ้นสุด">
+        </mat-date-range-input>
+        <mat-datepicker-toggle matIconSuffix [for]="picker3"></mat-datepicker-toggle>
+        <mat-date-range-picker #picker3></mat-date-range-picker>
+      </mat-form-field>
+    </div>
+  </div>
+  <div class=" flex flex-col m-5 bg-card shadow rounded-2xl text-center md:w-1/2">
+    <div class="flex flex-row items-center justify-between p-5">
+      <h2 class="text-2xl leading-7 tracking-tight truncate md:text-2xl sm:leading-10 ">
+      รายงานยอดรวม Credit รายวัน				
+      </h2>
+      <div class="flex flex-row items-center justify-between">
+        <button mat-flat-button class="bg-green-800 text-white" (click)="printSummaryCreditToday()">
+          <mat-icon class="icon-size-5" [svgIcon]="'heroicons_mini:document'"></mat-icon>
+          <span class="ml-2">Excel</span>
+        </button>
+      </div>
+    </div>
+    <div class="flex items-center justify-center px-4">
+      <mat-form-field appearance="fill" class="w-full">
+        <mat-date-range-input [formGroup]="range" [rangePicker]="picker4">
+          <input matStartDate formControlName="start" placeholder="วันที่เริ่มเต้น">
+          <input matEndDate formControlName="end" placeholder="วันที่สิ้นสุด">
+        </mat-date-range-input>
+        <mat-datepicker-toggle matIconSuffix [for]="picker4"></mat-datepicker-toggle>
+        <mat-date-range-picker #picker4></mat-date-range-picker>
+      </mat-form-field>
+    </div>
+  </div>
+  <div class=" flex flex-col m-5 bg-card shadow rounded-2xl text-center md:w-1/2">
+    <div class="flex flex-row items-center justify-between p-5">
+      <h2 class="text-2xl leading-7 tracking-tight truncate md:text-2xl sm:leading-10 ">
+        รายงานประวัติการใช้จ่ายบัตร			
+      </h2>
+      <div class="flex flex-row items-center justify-between">
+        <button mat-flat-button class="bg-green-800 text-white" (click)="printSummaryPayment()">
+          <mat-icon class="icon-size-5" [svgIcon]="'heroicons_mini:document'"></mat-icon>
+          <span class="ml-2">Excel</span>
+        </button>
+      </div>
+    </div>
+    <div class="flex items-center justify-center px-4">
+      <mat-form-field appearance="fill" class="w-full">
+        <mat-date-range-input [formGroup]="range" [rangePicker]="picker5">
+          <input matStartDate formControlName="start" placeholder="วันที่เริ่มเต้น">
+          <input matEndDate formControlName="end" placeholder="วันที่สิ้นสุด">
+        </mat-date-range-input>
+        <mat-datepicker-toggle matIconSuffix [for]="picker5"></mat-datepicker-toggle>
+        <mat-date-range-picker #picker5></mat-date-range-picker>
+      </mat-form-field>
+    </div>
+  </div>
+  <div class=" flex flex-col m-5 bg-card shadow rounded-2xl text-center md:w-1/2">
+    <div class="flex flex-row items-center justify-between p-5">
+      <h2 class="text-2xl leading-7 tracking-tight truncate md:text-2xl sm:leading-10 ">
+        รายงานประวัติการเติมเงินแต่ละบัตร			
+      </h2>
+      <div class="flex flex-row items-center justify-between">
+        <button mat-flat-button class="bg-green-800 text-white" (click)="printSummaryPayment()">
+          <mat-icon class="icon-size-5" [svgIcon]="'heroicons_mini:document'"></mat-icon>
+          <span class="ml-2">Excel</span>
+        </button>
+      </div>
+    </div>
+    <div class="flex items-center justify-center px-4">
+      <mat-form-field appearance="fill" class="w-full">
+        <mat-date-range-input [formGroup]="range" [rangePicker]="picker6">
+          <input matStartDate formControlName="start" placeholder="วันที่เริ่มเต้น">
+          <input matEndDate formControlName="end" placeholder="วันที่สิ้นสุด">
+        </mat-date-range-input>
+        <mat-datepicker-toggle matIconSuffix [for]="picker6"></mat-datepicker-toggle>
+        <mat-date-range-picker #picker6></mat-date-range-picker>
+      </mat-form-field>
+    </div>
+  </div>
+</div>

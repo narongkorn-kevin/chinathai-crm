@@ -1,0 +1,149 @@
+<div class="flex flex-col flex-auto justify-start items-center w-full">
+    <div class="w-full flex-col justify-between items-center flex overflow-hidden">
+        <div class="w-full flex-col justify-start items-start flex">
+            <div class="w-full px-10 pt-5 pb-2.5 bg-white justify-between items-center flex">
+                <div class="flex flex-col">
+                    <div class="flex space-x-2">
+                        <button class="md:text-xl font-medium tracking-tight leading-7 sm:leading-10 truncate"
+                            [routerLink]="['/delivery-note']" routerLinkActive="router-link-active">
+                            เอกสาร
+                        </button>
+                        <p class="md:text-sm font-medium tracking-tight leading-7 sm:leading-10 truncate">></p>
+                        <button
+                            class="md:text-sm font-medium tracking-tight leading-7 sm:leading-10 truncate text-[#DF0B12]"
+                            [routerLink]="['/delivery-note']" routerLinkActive="router-link-active">
+                            ใบส่งของ
+                        </button>
+                    </div>
+
+                    <p class="md:text-2xl text-[#DF0B12] font-bold tracking-tight leading-7 sm:leading-10 truncate">
+                        หมายเลขจัดส่ง: {{ data?.code }}
+                    </p>
+                </div>
+                <div class="justify-end items-center gap-2 flex">
+                    <button mat-flat-button [color]="'warm'" (click)="print()">
+                        <mat-icon [svgIcon]="'heroicons_solid:trash'"></mat-icon>
+                        <span class="ml-2">พิมพ์</span>
+                    </button>
+                    <button mat-flat-button [color]="'primary'" (click)="edit()">
+                        <mat-icon [svgIcon]="'heroicons_solid:pencil-square'" class=""></mat-icon>
+                        <span class="ml-2">แก้ไข</span>
+                    </button>
+                </div>
+            </div>
+            <div class="w-full px-10 flex flex-col gap-2 bg-white">
+                <div class="grid grid-cols-2 lg:grid-cols-4 gap-2 w-full mb-4">
+                    <div>
+                        <h2 class="font-semibold text-lg">รายละเอียดใบส่งของ</h2>
+                    </div>
+
+                    <div class="flex flex-col w-full">
+                        <div class="w-full font-bold">เลขที่ใบส่งของ:</div>
+                        <div class="w-full text-left">{{ data?.code ?? '-' }}</div>
+                    </div>
+
+                    <div class="flex flex-col w-full">
+                        <div class="w-full font-bold">ช่องทางจัดส่ง:</div>
+                        <div class="w-full text-left">{{ data?.received_date ?? '-' }}</div>
+                    </div>
+
+                    <div class="flex flex-col w-full">
+                        <div class="w-full font-bold">สถานะการชำระ:</div>
+                        <div class="w-full text-left">{{ data?.shipped_by ?? '-' }}</div>
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 lg:grid-cols-4 gap-2 w-full mb-4">
+                    <div>
+                        <h2 class="font-semibold text-lg">ข้อมูลลูกค้า</h2>
+                    </div>
+
+                    <div class="flex flex-col w-full">
+                        <div class="w-full font-bold">รหัสผู้นำเข้า:</div>
+                        <div class="w-full text-left">{{ data?.code ?? '-' }}</div>
+                        <div class="w-full font-bold mt-2">ที่อยู่:</div>
+                        <div class="w-full text-left">{{ data?.code ?? '-' }}</div>
+                    </div>
+
+                    <div class="flex flex-col w-full">
+                        <div class="w-full font-bold">เบอร์โทร:</div>
+                        <div class="w-full text-left">{{ data?.received_date ?? '-' }}</div>
+                    </div>
+
+                    <div class="flex flex-col w-full">
+                        <div class="w-full font-bold">ช่วงเวลาที่สะดวกรับสินค้า:</div>
+                        <div class="w-full text-left">{{ data?.shipped_by ?? '-' }}</div>
+                    </div>
+                </div>
+                <div class="bg-[#fdeaeb] rounded-md p-4 flex flex-row">
+                    <div class="mr-4 ">
+                        <mat-icon [svgIcon]="'heroicons_outline:megaphone'" class="text-red-600"></mat-icon>
+                    </div>
+                    <div>
+                        <p class="text-red-600"> กำหนดการเข้าไทย: {{ data?.time }} </p>
+                        <p class="text-red-600"> หมายเหตุ: ขณะนี้ระยะเวลาขนส่ง 9-12 วัน กำหนดการดังกล่าวเป็นระยะเวลาโดยประมาณ อาจมรการเปลั้ยนแปลงได้หาดกเกิดเหตุสิุวิสัย เรียกตรวจสอบ ภัยพิบัติ และอื่นๆ</p>
+                    </div>
+                </div>
+                <div class="w-full p-4 my-4 border border-gray-300 rounded-lg min-h-[300px] overflow-y-auto flex flex-col">
+                    <div class="flex flex-row w-full gap-2 mb-6">
+                        <div class="w-full text-3xl font-bold">รายการใบส่งของ</div>
+                    </div>
+                    <form *ngIf="!showFilterForm" [formGroup]="filterForm">
+                        <div class="flex flex-col md:flex-row w-full gap-2 items-end">
+                            <div class="w-full">
+                                <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                                    <mat-icon class="icon-size-5 mr-2"
+                                        [svgIcon]="'heroicons_solid:magnifying-glass'"></mat-icon>
+                                    <input matInput formControlName="in_store"
+                                        [placeholder]="'ค้นหาด้วยรหัสใบรับเข้าคลัง'">
+                                </mat-form-field>
+                            </div>
+                            <div>
+                                <button mat-flat-button [color]="'primary'" class="mb-5">
+                                    <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:cog-6-tooth'"></mat-icon>
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                    <div class="overflow-x-auto">
+                        <table class="whitespace-nowrap w-full">
+                            <thead>
+                                <tr>
+                                    <th class="px-6 py-3 border border-l-0 w-10">#</th>
+                                    <th class="px-6 py-3 border border-x-0">รายการ</th>
+                                    <th class="px-6 py-3 border border-x-0">เลขที่ไปรษณีย์จีน</th>
+                                    <th class="px-6 py-3 border border-x-0">โกดัง</th>
+                                    <th class="px-6 py-3 border border-x-0">ประเภท</th>
+                                    <th class="px-6 py-3 border border-x-0">จำนวน</th>
+                                    <th class="px-6 py-3 border border-x-0">CBM</th>
+                                    <th class="px-6 py-3 border border-x-0">Kg.</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let list of filteredDeliveryOrders; let i = index" class="text-center">
+                                    <td class="px-6 py-3 border border-l-0">{{ i + 1 }}</td>
+                                    <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order?.order?.name ?? '-' }}</td>
+                                    <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order?.code ?? '-' }}</td>
+                                    <td class="px-6 py-3 border border-x-0">{{ getShipmentMethod(list?.delivery_order?.shipped_by) }}</td>
+                                    <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order?.quantity_check ?? '-' }}</td>
+                                    <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order?.product_type?.name ?? '-' }}</td>
+                                    <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order?.weight ?? '-' }}</td>
+                                    <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order?.cbm ?? '-' }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="bg-[#fdfaf7] rounded-md p-4 flex flex-row">
+                    <div class="mr-4 !text-yellow-600">
+                        <mat-icon [svgIcon]="'heroicons_outline:exclamation-circle'" class="text-yellow-600"></mat-icon>
+                    </div>
+                    <div>
+                        <p class="text-yellow-600"> หากได้รับสินค้าแล้ว:</p>
+                        <li class="text-yellow-600">กรุณาตรวจสอบรายการสินค้า จำนวนพัสดุ/ขนาน/น้ำหนัก หากพบปัยหากรุณราติดต่อบริษัทภายใน 24 ชั่วโมง <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;มิฉะนั้นทางบริษัทขอสงวนสิทธิ์ในการไม่รับผิดชอบทุกกรณี</li>
+                        <li class="text-yellow-600">กรณีจัดส่งผ่านขนส่งเอกชนต่างๆ พบมีความเสียหาย ทางบริษัทขอสงวนสิทธิ์ไม่รับผิดชอบทุกกรณี</li>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

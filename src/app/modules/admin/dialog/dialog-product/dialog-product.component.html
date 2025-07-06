@@ -1,0 +1,49 @@
+<div class="md:max-w-full">
+    <div class="flex flex-row justify-between">
+        <h1 mat-dialog-title class="text-xl font-semibold mb-4">สินค้า</h1>
+
+        <button class="ml-auto" mat-icon-button mat-dialog-close>
+            <mat-icon class="text-current" [svgIcon]="'heroicons_outline:x-mark'"></mat-icon>
+        </button>
+    </div>
+    <div class="grid grid-cols-2 gap-4">
+        <!-- รูปสินค้า -->
+        <img [src]="product?.pic_url" alt="Product Image" class="rounded-lg w-full h-auto shadow-md">
+
+        <!-- ข้อมูลสินค้า -->
+        <div>
+            <h2 class="text-xl font-bold">{{ product?.title }}</h2>
+            <p class="text-red-500 text-lg font-semibold">฿{{ product?.price }}</p>
+
+            @for (prop of props; track $index) {
+            <label class="block mt-2 text-sm font-medium">{{prop.name}}</label>
+            <select (change)="onSelectChange($event, $index)" class="w-full p-2 border rounded">
+                <option *ngFor="let item of prop?.list" [value]="item">{{ item }}</option>
+            </select>
+            }
+
+            <div class="p-4">
+                <div *ngFor="let item of addOnServices" class="flex items-center mb-2">
+                    <mat-checkbox [id]="'item-' + item.id" [checked]="isSelected(item.id)"
+                        (change)="toggleItem(item.id, item.standard_price)" color="primary">
+                        {{ item.name }} - {{ item.standard_price }} บาท
+                    </mat-checkbox>
+                </div>
+            </div>
+
+            <!-- ปุ่มเพิ่ม-ลด จำนวนสินค้า -->
+            <div class="flex items-center mt-4">
+                <button (click)="decreaseQuantity()" class="bg-gray-200 px-3 py-1 rounded-l text-lg">−</button>
+                <span class="px-4 py-1 border-t border-b">{{ form.value.product_qty }}</span>
+                <button (click)="increaseQuantity()" class="bg-gray-200 px-3 py-1 rounded-r text-lg">+</button>
+            </div>
+
+
+            <!-- ปุ่มเพิ่มลงตะกร้า -->
+            <button (click)="addToCart()"
+                class="mt-4 w-full bg-green-500 text-white py-2 rounded-lg hover:bg-green-600">
+                เพิ่มลงตะกร้า
+            </button>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,91 @@
+<div class="flex flex-col flex-auto min-w-0">
+    <div class="flex-auto  sm:p-10 bg-card m-4 p-4 rounded-md">
+        <div class="flex flex-row justify-between pb-2 items-center">
+            <div class="flex flex-col">
+                <div class="flex space-x-2">
+                    <a [routerLink]="[ '/problem-report']"
+                        class="md:text-sm font-medium tracking-tight leading-7 sm:leading-10 truncate">
+                        บริการ
+                    </a>
+                    <p class="md:text-sm font-medium tracking-tight leading-7 sm:leading-10 truncate">></p>
+                    <p class="md:text-sm font-medium tracking-tight leading-7 sm:leading-10 truncate text-[#DF0B12]">
+                        แจ้งปัญหา
+                    </p>
+
+
+                </div>
+
+                <div class="flex flex-row gap-4">
+                    <p class="md:text-2xl text-[#DF0B12] font-bold tracking-tight leading-7 sm:leading-10 truncate">
+                        รหัสลูกค้า: {{data?.member?.code}}
+                    </p>
+
+                    @if (data?.status) {
+                    <asha-status-chip [status]="data?.status"></asha-status-chip>
+                    }
+                </div>
+
+
+            </div>
+            <div class="flex space-x-2">
+                <button mat-flat-button class="!text-white" [color]="'accent'" (click)="clickUpdateStatus()">
+                    <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:pencil'"></mat-icon>
+                    <span class="ml-2"> อัพเดตสถานะ</span>
+                </button>
+            </div>
+        </div>
+
+        <div class="border-b-2 w-full my-4"></div>
+
+        <div>
+            <p class="md:text-2xl font-bold tracking-tight leading-7 sm:leading-10 truncate">ข้อมูลการแจ้งปัญหา</p>
+        </div>
+        <div class="border-b-2 w-full my-4"></div>
+
+        <div class="w-full grid grid-cols-2 gap-4">
+            <div class="font-semibold">ปัญหาด้าน</div>
+            <div class="">{{data?.master?.name}}</div>
+
+            <div class="font-semibold">หัวข้อ</div>
+            <div class="">{{data?.topic?.name}}</div>
+
+            <div class="font-semibold">รายละเอียด</div>
+            <div class="">{{ data?.description }}</div>
+        </div>
+
+        <div class="overflow-x-auto">
+            <table class="min-w-full border-collapse border border-gray-300 shadow-md">
+                <thead class="bg-gray-100">
+                    <tr>
+                        <th class="border border-gray-300 px-4 py-2 text-left">#</th>
+                        <th class="border border-gray-300 px-4 py-2 text-left">รูปภาพ</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (item of data?.images; track $index) {
+                    <tr class="odd:bg-white even:bg-gray-50 hover:bg-gray-200 transition">
+                        <td class="border border-gray-300 px-4 py-2">{{ $index + 1 }}</td>
+                        <td class="border border-gray-300 px-4 py-2">
+                            <img [src]="item.image" alt="image" class="w-20 h-20 object-cover rounded-lg shadow-sm">
+                        </td>
+                    </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <div class="flex flex-col mt-4">
+            <h3 class="text-2xl font-bold">การตอบกลับจากเจ้าหน้าที่</h3>
+            <div class="border-b-2 w-full my-4"></div>
+            <mat-form-field class="w-full">
+                <textarea matInput name="" id="" rows="4"></textarea>
+            </mat-form-field>
+
+            <div class="text-right">
+                <button mat-flat-button class="!text-white" [color]="'primary'">
+                    <span> ยืนยัน</span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

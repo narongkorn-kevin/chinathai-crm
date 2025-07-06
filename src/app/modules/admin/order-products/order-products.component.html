@@ -1,0 +1,206 @@
+<div class="flex flex-col flex-auto min-w-0">
+    <div class="flex-auto p-4 m-4 rounded-md sm:p-10 bg-card">
+        <div class="flex flex-row justify-between pb-2 my-5">
+            <div>
+                <h2 class="text-2xl font-extrabold leading-7 tracking-tight truncate md:text-xl sm:leading-10">
+                    รายการฝากสั่งสินค้า
+                </h2>
+            </div>
+
+            <div class="flex ml-auto space-x-4">
+                <a mat-flat-button [color]="'primary'" [routerLink]="'create'">
+                    <mat-icon class="icon-size-5" [svgIcon]="'add'"></mat-icon>
+                    <span class="ml-2">เพิ่มรายการ</span>
+                </a>
+                <button [cdkMenuTriggerFor]="menu" mat-flat-button class="!text-white" [color]="'primary'">
+                    <mat-icon class="icon-size-5" [svgIcon]="'work_outline'"></mat-icon>
+                    <div class="flex items-center gap-2">
+                        <span class="ml-2"> การจัดการข้อมูล </span>
+                        <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:chevron-up'"></mat-icon>
+                    </div>
+                </button>
+
+                <ng-template #menu>
+                    <div class="manage-menu bg-primary" cdkMenu>
+                        <button class="manage-menu-item text-white" cdkMenuItem>
+                            <mat-icon class="icon-size-5 text-white"
+                                [svgIcon]="'heroicons_solid:document-duplicate'"></mat-icon>
+                            <span class="ml-2">Copy to Clipboard</span>
+                        </button>
+                        <button class="manage-menu-item text-white" cdkMenuItem>
+                            <mat-icon class="icon-size-5 text-white"
+                                [svgIcon]="'heroicons_solid:table-cells'"></mat-icon>
+                            <span class="ml-2">CSV</span>
+                        </button>
+                        <button class="manage-menu-item text-white" cdkMenuItem>
+                            <mat-icon class="icon-size-5 text-white"
+                                [svgIcon]="'heroicons_solid:table-cells'"></mat-icon>
+                            <span class="ml-2">Excel</span>
+                        </button>
+                        <button class="manage-menu-item text-white" cdkMenuItem>
+                            <mat-icon class="icon-size-5 text-white" [svgIcon]="'heroicons_solid:printer'"></mat-icon>
+                            <span class="ml-2">Print</span>
+                        </button>
+                    </div>
+                </ng-template>
+            </div>
+        </div>
+        <form *ngIf="!showFilterForm" [formGroup]="form">
+            <div class="flex flex-col md:flex-row w-full gap-2 items-end">
+                <div class="w-full">
+                    <mat-form-field class="w-full fuse-mat-dense">
+                        <mat-label>วันที่</mat-label>
+                        <mat-date-range-input [rangePicker]="campaignOnePicker1"
+                            [comparisonStart]="form.value.date_start" [comparisonEnd]="form.value.date_end">
+                            <input matStartDate [formControlName]="'date_start'">
+                            <input matEndDate [formControlName]="'date_end'">
+                        </mat-date-range-input>
+                        <!-- <mat-hint>MM/DD/YYYY – MM/DD/YYYY</mat-hint> -->
+                        <mat-datepicker-toggle matIconSuffix [for]="campaignOnePicker1"></mat-datepicker-toggle>
+                        <mat-date-range-picker #campaignOnePicker1></mat-date-range-picker>
+                    </mat-form-field>
+                </div>
+                <div class="w-full">
+                    <asha-select-importer (change)="selectMember($event)"></asha-select-importer>
+                </div>
+                <div>
+                    <button mat-stroked-button [color]="'primary'" (click)="openfillter()"
+                        class="mb-5 border-primary-600">
+                        <mat-icon class="icon-size-5" [svgIcon]="'filter_list'"></mat-icon>
+                        <span class="ml-2">ค้นหาโดยใช้ตัวกรอง</span>
+                    </button>
+                </div>
+                <div>
+                    <button mat-stroked-button [color]="'primary'" class="mb-5 border-primary-600">
+                        <mat-icon class="icon-size-5" [svgIcon]="'mat_solid:settings'"></mat-icon>
+                        <div class="flex items-center gap-2">
+                            <mat-icon class="icon-size-5" [svgIcon]="'keyboard_arrow_down'"></mat-icon>
+                        </div>
+                    </button>
+                </div>
+            </div>
+        </form>
+        <form *ngIf="showFilterForm" [formGroup]="filterForm" class="p-4 rounded-md">
+            <div>
+                <h2 class="text-xl font-extrabold leading-7 tracking-tight truncate md:text-xl sm:leading-10">
+                    ตัวกรองขั้นสูง
+                </h2>
+                <mat-divider></mat-divider>
+            </div>
+            <div class="grid grid-cols-2 md:flex-row w-full gap-x-2 mt-2">
+                <div class="w-full">
+                    <mat-form-field class="w-full fuse-mat-dense">
+                        <mat-label>วันที่</mat-label>
+                        <mat-date-range-input [rangePicker]="campaignOnePicker"
+                            [comparisonStart]="filterForm.value.date_start" [comparisonEnd]="filterForm.value.date_end">
+                            <input matStartDate [formControlName]="'date_start'">
+                            <input matEndDate [formControlName]="'date_end'">
+                        </mat-date-range-input>
+                        <!-- <mat-hint>MM/DD/YYYY – MM/DD/YYYY</mat-hint> -->
+                        <mat-datepicker-toggle matIconSuffix [for]="campaignOnePicker"></mat-datepicker-toggle>
+                        <mat-date-range-picker #campaignOnePicker></mat-date-range-picker>
+                    </mat-form-field>
+                </div>
+                <div class="w-full">
+                    <mat-form-field class="w-full fuse-mat-dense">
+                        <mat-label>หมายเลขสั่งซื้อ</mat-label>
+                        <input matInput formControlName="code">
+                    </mat-form-field>
+                </div>
+                <div class="w-full">
+                    <asha-select-importer (change)="selectMember($event)"></asha-select-importer>
+                </div>
+                <div class="w-full">
+                    <mat-form-field class="w-full fuse-mat-dense">
+                        <mat-label>สถานะ</mat-label>
+                        <mat-select formControlName="status">
+                            <mat-option value="in_progress">อยู่ระหว่างการสั่งซื้อ</mat-option>
+                            <mat-option value="awaiting_summary">รอสรุปยอด</mat-option>
+                            <mat-option value="awaiting_payment">รอชำระค่าสั่งซื้อ</mat-option>
+                            <mat-option value="payment">ชำระเงินแล้ว</mat-option>
+                            <mat-option value="preparing_shipment">สินค้าเตรียมจัดส่ง</mat-option>
+                            <mat-option value="shipped">ร้านค้าจัดส่งแล้ว</mat-option>
+                            <mat-option value="cancelled">ยกเลิก/ล้มเหลว</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+            </div>
+            <div class="w-full flex justify-end gap-2">
+                <button mat-stroked-button [color]="'primary'" class="border-none" (click)="openfillter()">
+                    <span class="ml-2">ปิดตัวกรอง</span>
+                </button>
+                <button mat-stroked-button [color]="'primary'" (click)="filterForm.reset()" class="border-primary-600">
+                    <mat-icon class="icon-size-5" [svgIcon]="'clear_all'"></mat-icon>
+                    <span class="ml-2">ล้างตั้งค่าตัวกรอง</span>
+                </button>
+                <button mat-flat-button [color]="'primary'" (click)="rerender()">
+                    <mat-icon class="icon-size-5" [svgIcon]="'search'"></mat-icon>
+                    <span class="ml-2">ค้นหา</span>
+                </button>
+            </div>
+        </form>
+        <div class="w-full overflow-auto">
+            <table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger"
+                class="table w-full bg-white row-border hover whitespace-nowrap">
+            </table>
+        </div>
+    </div>
+</div>
+
+<ng-template #checkbox let-data="adtData">
+    <mat-checkbox [checked]="formData.get('ids').value.includes(data.id)"
+        (change)="toggleSelect(data.id, $event.checked)">
+    </mat-checkbox>
+</ng-template>
+
+<ng-template #edit let-data="adtData">
+    <a class="text-[#DF0B12CC]" [routerLink]="[ data.id ]">{{data?.code}}</a>
+</ng-template>
+
+<ng-template #member let-data="adtData">
+    <div> {{data?.member?.fname}} {{data?.member?.lname}}</div>
+</ng-template>
+
+<ng-template #status let-data="adtData">
+    <div>
+        <div *ngIf="data.status == 'payment'"
+            class="px-4 py-1.5 rounded-full text-sm inline-flex items-center justify-center font-medium bg-green-50 text-green-600 border border-green-200">
+            ชำระเงินแล้ว</div>
+        <div *ngIf="data.status == 'awaiting_summary'"
+            class="px-4 py-1.5 rounded-full text-sm inline-flex items-center justify-center font-medium bg-orange-50 text-orange-600 border border-orange-200">
+            รอสรุปยอด</div>
+        <div *ngIf="data.status == 'awaiting_payment'"
+            class="px-4 py-1.5 rounded-full text-sm inline-flex items-center justify-center font-medium bg-yellow-50 text-yellow-600 border border-yellow-200">
+            รอชำระค่าสั่งซื้อ</div>
+        <div *ngIf="data.status == 'in_progress'"
+            class="px-4 py-1.5 rounded-full text-sm inline-flex items-center justify-center font-medium bg-blue-50 text-blue-600 border border-blue-200">
+            อยู่ระหว่างการสั่งซื้อ</div>
+        <div *ngIf="data.status == 'preparing_shipment'"
+            class="px-4 py-1.5 rounded-full text-sm inline-flex items-center justify-center font-medium bg-purple-50 text-purple-600 border border-purple-200">
+            สินค้าเตรียมจัดส่ง</div>
+        <div *ngIf="data.status == 'shipped'"
+            class="px-4 py-1.5 rounded-full text-sm inline-flex items-center justify-center font-medium bg-teal-50 text-teal-600 border border-teal-200">
+            ร้านค้าจัดส่งแล้ว</div>
+        <div *ngIf="data.status == 'cancelled'"
+            class="px-4 py-1.5 rounded-full text-sm inline-flex items-center justify-center font-medium bg-red-50 text-red-500 border border-red-200">
+            ยกเลิก/ล้มเหลว</div>
+    </div>
+</ng-template>
+
+<ng-template #update let-data="adtData">
+    <div class="flex gap-2">
+      <button mat-icon-button (click)="openDialogPayment(data)" class="bg-accent rounded-md p-2 shadow-md">
+        <mat-icon svgIcon="mat_outline:edit_note" class="text-white"></mat-icon>
+      </button>
+      <button mat-icon-button (click)="clickUpdateStatus(data)" class="bg-accent rounded-md p-2 shadow-md">
+        <mat-icon svgIcon="mat_outline:account_balance_wallet" class="text-white"></mat-icon>
+      </button>
+    </div>
+</ng-template>
+
+<ng-template #pic let-data="adtData">
+    <div class="flex flex-row justify-center">
+        <img src="https://www.scb.co.th/content/media/personal-banking/cards/prepaid-cards/images/how-to/transfer/planet-how-to-transfer-img-07.png"
+            alt="Image" class="rounded-md w-10 h-15 text-center" />
+    </div>
+</ng-template>

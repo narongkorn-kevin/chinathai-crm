@@ -1,0 +1,65 @@
+.border {
+    border: 1px solid #ccc;
+    border-radius: 8px;
+  }
+  
+  .text-right {
+    text-align: right;
+  }
+  
+  .text-2xl {
+    font-size: 1.5rem;
+  }
+  
+  .text-xl {
+    font-size: 1.25rem;
+  }
+  
+  .text-lg {
+    font-size: 1rem;
+  }
+  
+  .text-md {
+    font-size: 0.875rem;
+  }
+  
+  .text-red-500 {
+    color: #df0b12;
+  }
+  
+  .flex {
+    display: flex;
+  }
+  
+  .items-center {
+    align-items: center;
+  }
+  
+  .justify-between {
+    justify-content: space-between;
+  }
+  
+  .rounded-lg {
+    border-radius: 8px;
+  }
+  
+  .p-4 {
+    padding: 1rem;
+  }
+  
+  .gap-4 {
+    gap: 1rem;
+  }
+
+  .chart-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  apx-chart {
+    width: 100% !important;
+    max-width: none !important;
+  }
+  

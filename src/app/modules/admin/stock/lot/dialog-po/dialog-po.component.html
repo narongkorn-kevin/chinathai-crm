@@ -1,0 +1,86 @@
+<div class="p-6">
+    <h2 class="text-2xl font-semibold mb-4">เพิ่มรายการ</h2>
+
+    <form *ngIf="!showFilterForm" [formGroup]="filterForm">
+        <div class="flex flex-col md:flex-row w-full gap-2 items-end">
+            <div class="w-full">
+                <mat-form-field [ngClass]="formFieldHelpers" class="w-full" >
+                    <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:magnifying-glass'"></mat-icon>
+                    <input matInput [placeholder]="'ค้นหาด้วย หมายเลขพาเลท'">
+                </mat-form-field>
+            </div>
+            <div>
+                <button mat-flat-button [color]="'primary'" (click)="openfillter()" class="mb-5">
+                    <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:bars-3'"></mat-icon>
+                    <span class="ml-2">ค้นหาโดยใช้ตัวกรอง</span>
+                </button>
+            </div>
+            <div>
+                <button mat-flat-button [color]="'primary'" class="mb-5">
+                    <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:cog-6-tooth'"></mat-icon>
+                </button>
+            </div>
+        </div>
+    </form>
+    <form [formGroup]="filterForm" class="p-4 rounded-md"
+        [@slideToggleFilter]="showFilterForm ? 'open' : 'closed'">
+        <div>
+            <h2 class="text-xl font-extrabold leading-7 tracking-tight truncate md:text-xl sm:leading-10">
+                ตัวกรองขั้นสูง
+            </h2>
+            <mat-divider></mat-divider>
+        </div>
+        <div class="grid md:grid-cols-3 md:flex-row w-full gap-x-2 mt-2">
+            <div class="w-full">
+                <mat-form-field class="w-full" [ngClass]="formFieldHelpers">
+                    <mat-label>หมายเลขกระสอบ</mat-label>
+                    <input matInput formControlName="in_store">
+                </mat-form-field>
+            </div>
+            <div class="w-full">
+                <mat-form-field class="w-full" [ngClass]="formFieldHelpers">
+                    <mat-label>หมายเลขพาเลท</mat-label>
+                    <input matInput formControlName="barcode">
+                </mat-form-field>
+            </div>
+            <div class="w-full">
+                <mat-form-field class="w-full" [ngClass]="formFieldHelpers">
+                    <mat-label>ใบรับเข้าคลัง</mat-label>
+                    <input matInput formControlName="sack_code">
+                </mat-form-field>
+            </div>
+        </div>
+        <div class="w-full flex justify-end gap-2">
+            <button mat-flat-button [color]="'primary'" (click)="openfillter()">
+                <span class="ml-2">ปิดตัวกรอง</span>
+            </button>
+            <button mat-flat-button [color]="'primary'" (click)="clearFilter()">
+                <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:bars-3'"></mat-icon>
+                <span class="ml-2">ล้างตั้งค่าตัวกรอง</span>
+            </button>
+            <button mat-flat-button [color]="'primary'" (click)="applyFilter()">
+                <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:magnifying-glass'"></mat-icon>
+                <span class="ml-2">ค้นหา</span>
+            </button>
+        </div>
+    </form>
+    <button class="mb-2" mat-flat-button [color]="'accent'" (click)="toggleSelectAll(!isAllSelected)">
+        {{ isAllSelected ? 'Unselect All' : 'Select All' }}
+    </button>
+    <div class="overflow-x-auto whitespace-nowrap mt-2 max-w-full">
+        <table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger"
+            class="table w-full bg-white row-border hover">
+        </table>
+    </div>
+    <div mat-dialog-actions class="flex justify-end border-t-2 mt-2 p-2">
+        <button class="px-6 ml-3" mat-flat-button [color]="'primary'" (click)="Submit()">
+            ตกลง
+        </button>
+        <button class="px-6 ml-3" mat-flat-button [color]="'warn'" (click)="onClose()">
+            ยกเลิก
+        </button>
+    </div>
+</div>
+<ng-template #checkbox let-data="adtData">
+    <mat-checkbox [checked]="data.selected" (change)="onCheckboxChange($event, data)"></mat-checkbox>
+</ng-template>

@@ -1,0 +1,46 @@
+<div class="md:max-w-lg overflow-auto" *ngIf="this.data?.type === 'EDIT'">
+    <div class=" w-full grid-cols-2 grid items-center">
+        <h1 mat-dialog-title class="flex justify-center col-span-2 text-xl font-semibold mb-2" *ngIf="this.data?.type === 'EDIT'">
+            รายละเอียดคำสั่งซื้อ
+        </h1>
+        <!-- <a class="ml-auto cursor-pointer" (click)="exportData()">Export Template</a></div> -->
+        <div class="flex flex-col mb-2 md:flex mx-3 col-span-2">
+            <div class="md:w-full">
+                <p class="font-bold text-black mt-2">เลขที่ทำรายการ : <span class="font-normal">{{data.value.orderNo ??
+                        '-'}}</span> </p>
+                <p class="font-bold text-black mt-2">วันที่ทำรายการ : <span class="font-normal">{{data.value.orderDate |
+                        date : 'yyyy-MM-dd HH:mm:ss'}}</span></p>
+                        <div class="flex flex-row justify-between" *ngFor="let item of data.value.orderPayments; let i = index">
+                            <ng-container *ngIf="item.status === 'success'">
+                                <p class="font-bold text-black mt-2"> ช่องทางการชำระเงิน : <span class="font-normal">{{item.paymentMethod.name ?? '-'}}</span></p>
+                                <p class="font-normal text-black mt-2"></p>
+                            </ng-container>
+                        </div>
+            </div>
+            <div class="flex flex-col md:w-full mt-4">
+                <div class="flex flex-row justify-between border-t-2 border-gray-300 mt-2">
+                    <p class="font-bold text-black mt-2"> รายการ</p>
+                    <p class="font-bold text-black mt-2"> ราคา</p>
+                </div>
+                <div class="flex flex-row justify-between" *ngFor="let item of data.value.orderItems; let i = index">
+                    <p class="font-normal text-black mt-2"> {{i+1}}. {{item.product.name ?? '-'}}</p>
+                    <p class="font-normal text-black mt-2"> {{item.product.price ?? '-'}}</p>
+                </div>
+                <div class="flex flex-row justify-between border-t-2 border-gray-300 my-2">
+                    <p class="font-bold text-black mt-2"> รวม</p>
+                    <p class="font-bold text-black mt-2"> {{data.value.grandTotal ?? '-'}}</p>
+                </div>
+             
+            </div>
+
+        </div>
+        <!-- <div> check : {{this.form.value | json}}</div> -->
+        <div mat-dialog-actions class="flex justify-end col-span-2">
+            <!-- <button class="px-6 ml-3" mat-flat-button [color]="'primary'" (click)="Submit()">
+            ตกลง
+        </button> -->
+            <button class="px-6 ml-3" mat-flat-button [color]="'warn'" (click)="onClose()">
+                ปิด
+            </button>
+        </div>
+    </div>

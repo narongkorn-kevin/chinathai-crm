@@ -1,0 +1,30 @@
+{
+    "order_id": 1,
+    "date": "2025-02-06",
+    "track_no": "TRK123456",
+    "driver_name": "John Doe",
+    "driver_phone": "0812345678",
+    "note": "กรุณาจัดส่งสินค้าก่อนเที่ยง",
+    "status": "in_transit",
+    "create_by": "admin",
+    "lists": [
+        {
+            "standard_size_id": 1,
+            "weight": 5.5,
+            "width": 30.0,
+            "height": 20.0,
+            "long": 15.0,
+            "qty": 2,
+            "images": [
+                {
+                    "image_url": "https://example.com/image1.jpg",
+                    "image": "image1.jpg"
+                },
+                {
+                    "image_url": "https://example.com/image2.jpg",
+                    "image": "image2.jpg"
+                }
+            ]
+        }
+    ]
+}

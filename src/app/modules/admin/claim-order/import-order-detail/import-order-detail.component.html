@@ -1,0 +1,368 @@
+<div class="flex flex-col flex-auto min-w-0">
+    <div class="flex-auto  sm:p-10 bg-card m-4 p-4 rounded-md">
+        <div class="flex flex-row justify-between pb-2 items-center">
+            <div class="flex flex-col">
+                <div class="flex space-x-2">
+                    <a [routerLink]="[ '/import-product-order']"
+                        class="md:text-sm font-medium tracking-tight leading-7 sm:leading-10 truncate">
+                        บริการ
+                    </a>
+                    <p class="md:text-sm font-medium tracking-tight leading-7 sm:leading-10 truncate">></p>
+                    <p class="md:text-sm font-medium tracking-tight leading-7 sm:leading-10 truncate text-[#DF0B12]">
+                        นำเข้าถูกต้อง
+                    </p>
+
+
+                </div>
+
+                <div class="flex flex-row gap-4">
+                    <p class="md:text-2xl text-[#DF0B12] font-bold tracking-tight leading-7 sm:leading-10 truncate">
+                        รหัสนำเข้าถูกต้อง: {{data?.code}}
+                    </p>
+
+                    @if (data?.status) {
+                    <asha-status-chip [status]="data?.status"></asha-status-chip>
+                    }
+                </div>
+
+
+            </div>
+            <div class="flex space-x-2">
+                <button mat-flat-button class="!text-white" [color]="'accent'" (click)="clickUpdateStatus()">
+                    <mat-icon svgIcon="edit"></mat-icon>
+                    <span class="ml-2"> อัพเดตสถานะ</span>
+                </button>
+            </div>
+        </div>
+
+        <div class="border-b-2 w-full my-4"></div>
+
+        <!-- ข้อมูลพื้นฐาน -->
+        <div class="flex flex-col w-full gap-4 mb-3">
+            <h3 class="text-2xl font-bold">ข้อมูลพื้นฐาน</h3>
+            <div class="border-b-2 w-full my-4"></div>
+            <div class="w-full grid grid-cols-4 font-semibold">
+                <div class="">ข้อมูลพื้นฐาน</div>
+                <div class="">ชื่อผู้นำเข้า</div>
+                <div class="">เบอร์โทร</div>
+                <div class="">วันที่รับเรื่อง</div>
+            </div>
+            <div class="w-full grid grid-cols-4">
+                <div class=""></div>
+                <div class="">{{data?.register_importer?.comp_name}}</div>
+                <div class="">{{data?.register_importer?.authorized_person_phone}}</div>
+                <div class="">{{data?.created_at | date:'dd/MM/yyyy'}}</div>
+            </div>
+        </div>
+
+        <div class="flex flex-col mt-4">
+            <h3 class="text-2xl font-bold">เอกสาร</h3>
+            <div class="border-b-2 w-full my-4"></div>
+            <div class="flex-auto">
+                <div class="grid grid-cols-2 gap-4">
+                    <div *ngIf="data?.invoice_file">
+                        <table class="w-full border border-gray-300">
+                            <thead>
+                                <tr class="bg-gray-200">
+                                    <th colspan="3" class="border border-gray-300 p-2 text-left">ไฟล์ Invoice</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="bg-gray-100">
+                                    <td class="border border-gray-300 p-2 font-semibold">#</td>
+                                    <td class="border border-gray-300 p-2 font-semibold">วันที่สร้าง</td>
+                                    <td class="border border-gray-300 p-2 font-semibold">ดาวน์โหลด</td>
+                                </tr>
+                                <tr>
+                                    <td class="border border-gray-300 p-2">1</td>
+                                    <td class="border border-gray-300 p-2">YYYY-MM-DD</td>
+                                    <td class="border border-gray-300 p-2">
+                                        <a class="text-primary" target="_blank"
+                                            [href]="data?.invoice_file">{{data?.invoice_file | fileNameFromUrl}}</a>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div *ngIf="data?.packinglist_file">
+                        <table class="w-full border border-gray-300">
+                            <thead>
+                                <tr class="bg-gray-200">
+                                    <th colspan="3" class="border border-gray-300 p-2 text-left">ไฟล์ Packing list</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="bg-gray-100">
+                                    <td class="border border-gray-300 p-2 font-semibold">#</td>
+                                    <td class="border border-gray-300 p-2 font-semibold">วันที่สร้าง</td>
+                                    <td class="border border-gray-300 p-2 font-semibold">ดาวน์โหลด</td>
+                                </tr>
+                                <tr>
+                                    <td class="border border-gray-300 p-2">1</td>
+                                    <td class="border border-gray-300 p-2">YYYY-MM-DD</td>
+                                    <td class="border border-gray-300 p-2">
+                                        <a class="text-primary" target="_blank"
+                                            [href]="data?.packinglist_file">{{data?.packinglist_file |
+                                            fileNameFromUrl}}</a>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div *ngIf="data?.license_file">
+                        <table class="w-full border border-gray-300">
+                            <thead>
+                                <tr class="bg-gray-200">
+                                    <th colspan="3" class="border border-gray-300 p-2 text-left">ไฟล์ขนส่ง</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="bg-gray-100">
+                                    <td class="border border-gray-300 p-2 font-semibold">#</td>
+                                    <td class="border border-gray-300 p-2 font-semibold">วันที่สร้าง</td>
+                                    <td class="border border-gray-300 p-2 font-semibold">ดาวน์โหลด</td>
+                                </tr>
+                                <tr>
+                                    <td class="border border-gray-300 p-2">1</td>
+                                    <td class="border border-gray-300 p-2">YYYY-MM-DD</td>
+                                    <td class="border border-gray-300 p-2">
+                                        <a class="text-primary" target="_blank"
+                                            [href]="data?.license_file">{{data?.license_file | fileNameFromUrl}}</a>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div *ngIf="data?.file">
+                        <table class="w-full border border-gray-300">
+                            <thead>
+                                <tr class="bg-gray-200">
+                                    <th colspan="3" class="border border-gray-300 p-2 text-left">เอกสารอื่นๆ</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="bg-gray-100">
+                                    <td class="border border-gray-300 p-2 font-semibold">#</td>
+                                    <td class="border border-gray-300 p-2 font-semibold">วันที่สร้าง</td>
+                                    <td class="border border-gray-300 p-2 font-semibold">ดาวน์โหลด</td>
+                                </tr>
+                                <tr>
+                                    <td class="border border-gray-300 p-2">1</td>
+                                    <td class="border border-gray-300 p-2">YYYY-MM-DD</td>
+                                    <td class="border border-gray-300 p-2">
+                                        <a class="text-primary" target="_blank" [href]="data?.file">{{data?.file |
+                                            fileNameFromUrl}}</a>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="border rounded p-4 mt-4">
+            <div class="flex justify-between">
+                <div class="">
+                    <p class="font-bold text-3xl pb-4">รายการผลิตภัณฑ์ใบรับเข้าคลัง / PO</p>
+                </div>
+                <div class="flex gap-2">
+                </div>
+            </div>
+
+            <div class="border-b-2 w-full my-4"></div>
+
+            <table class="w-full table-auto border border-gray-300 overflow-hidden">
+                <thead class="bg-gray-100 text-gray-700 uppercase text-sm font-semibold">
+                    <tr>
+                        <th class="px-4 py-2 border">#</th>
+                        <th class="px-4 py-2 border">ชื่อผลิตภัณฑ์</th>
+                        <th class="px-4 py-2 border">จำนวน</th>
+                        <th class="px-4 py-2 border">ยาว</th>
+                        <th class="px-4 py-2 border">กว้าง</th>
+                        <th class="px-4 py-2 border">สูง</th>
+                        <th class="px-4 py-2 border">น้ำหนัก</th>
+                    </tr>
+                </thead>
+                <tbody class="text-center text-gray-800">
+                    @for (orderList of data?.import_product_order_lists; track orderList.id; let i = $index) {
+                    <tr class="border-b hover:bg-gray-50 transition">
+                        <td class="h-12 px-4 py-2 border">{{i + 1}}</td>
+                        <td class="h-12 px-4 py-2 border">{{orderList?.product_name}}</td>
+                        <td class="h-12 px-4 py-2 border">{{orderList?.qty}}</td>
+                        <td class="h-12 px-4 py-2 border">{{orderList?.long}}</td>
+                        <td class="h-12 px-4 py-2 border">{{orderList?.width}}</td>
+                        <td class="h-12 px-4 py-2 border">{{orderList?.height}}</td>
+                        <td class="h-12 px-4 py-2 border">{{orderList?.weight}}</td>
+                    </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <div class="border rounded p-4 mt-4">
+            <div class="flex justify-between">
+                <div class="">
+                    <p class="font-bold text-3xl pb-4">ค่าบริการในการดำเนินการ</p>
+                </div>
+                <div class="flex gap-2">
+                </div>
+            </div>
+
+            <div class="border-b-2 w-full my-4"></div>
+
+            <div class="flex flex-row w-full p-6 gap-5">
+                <div class="flex flex-col w-1/2 p-6 gap-5">
+                    @for (item of importProductOrderListFees; track $index) {
+                    <div class="flex flex-row w-full">
+                        <div class="flex w-1/2 font-bold">
+                            <div class="">ค่าบริการส่วนที่ {{$index+1}}: ชำระเงิน</div>
+                        </div>
+
+                        <div class="flex flex-col w-1/2">
+                            @for (fee of item.value; track $index) {
+                            <div class="flex flex-row justify-between w-full">
+                                <div class="">{{fee?.fee_master?.name}}</div>
+                                <div class="">{{fee?.amount | number:'1.2-2'}} บาท</div>
+                            </div>
+                            }
+                        </div>
+                    </div>
+                    }
+                </div>
+                <div
+                    class="flex flex-row items-center justify-around w-1/2 bg-[#3A3D45] text-white text-center py-4 rounded-lg">
+                    <p class="text-lg font-semibold">ราคารวมทั้งสิ้น</p>
+                    <p class="text-2xl font-bold">{{totalFee | number:'1.2-2'}} บาท</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="border rounded p-4 mt-4">
+            <div class="flex justify-between">
+                <div class="">
+                    <p class="font-bold text-3xl pb-4">รายการ Tracking</p>
+                </div>
+                <div class="flex gap-2">
+                    <button mat-flat-button class="!text-white" [color]="'primary'">
+                        <mat-icon class="icon-size-5" [svgIcon]="'add'"></mat-icon>
+                        <span class="ml-2"> เพิ่มรายการ</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="border-b-2 w-full my-4"></div>
+
+            <table class="w-full table-auto border border-gray-300 overflow-hidden">
+                <thead class="bg-gray-100 text-gray-700 uppercase text-sm font-semibold">
+                    <tr>
+                        <th class="px-4 py-2 border">#</th>
+                        <th class="px-4 py-2 border">ชื่อผลิตภัณฑ์</th>
+                        <th class="px-4 py-2 border">ราคา</th>
+                        <th class="px-4 py-2 border">จำนวนชิ้น</th>
+                        <th class="px-4 py-2 border">ราคารวม</th>
+                        <th class="px-4 py-2 border">เลขติดตาม</th>
+                        <th class="px-4 py-2 border">ลิงก์</th>
+                        <th class="px-4 py-2 border">สถานะ</th>
+                    </tr>
+                </thead>
+                <tbody class="text-center">
+                    @for (orderList of []; track orderList.id;let i = $index) {
+                    <tr>
+                        <td>{{i + 1}}</td>
+                        <td>{{orderList?.product_name}}</td>
+                        <td>{{orderList?.product_price | number:'1.2-2'}}</td>
+                        <td>{{orderList?.product_qty}}</td>
+                        <td>{{orderList?.product_total | number:'1.2-2'}}</td>
+                        <td>{{orderList?.track_ecommerce_no ?? '-'}}</td>
+                        <td>
+                            <a *ngIf="orderList?.product_url; else noLink" [href]="orderList?.product_url"
+                                target="_blank" rel="noopener noreferrer"
+                                class="font-bold text-blue-600 hover:underline">
+                                เปิดลิงก์
+                            </a>
+                            <ng-template #noLink>-</ng-template>
+                        </td>
+
+                        <td>
+                            <span [ngSwitch]="orderList?.status">
+                                <span *ngSwitchCase="'waiting_for_review'"
+                                    class="px-4 py-1.5 rounded-full text-sm inline-flex items-center justify-center font-medium bg-yellow-50 text-yellow-600 border border-yellow-200">
+                                    รอตรวจสอบ
+                                </span>
+                                <span *ngSwitchCase="'reviewed'"
+                                    class="px-4 py-1.5 rounded-full text-sm inline-flex items-center justify-center font-medium
+                                                                                                               bg-blue-50 text-blue-600 border border-blue-200">
+                                    ตรวจสอบแล้ว
+                                </span>
+                                <span *ngSwitchCase="'reject'"
+                                    class="px-4 py-1.5 rounded-full text-sm inline-flex items-center justify-center font-medium
+                                                                                                          bg-red-50 text-red-600 border border-red-200">
+                                    ยกเลิกรายการ
+                                </span>
+                                <span *ngSwitchDefault> - </span>
+                            </span>
+                        </td>
+
+                    </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <div class="border rounded p-4 mt-4">
+            <div class="flex justify-between">
+                <p class="font-bold text-3xl pb-4">รูปการส่งของ</p>
+                <div class="flex gap-2">
+                    <input type="file" accept="image/*" multiple #file hidden (change)="selectFile($event)">
+                    <button mat-flat-button class="!text-white" [color]="'primary'" (click)="file.click()">
+                        <mat-icon class="icon-size-5" [svgIcon]="'add_photo_alternate'"></mat-icon>
+                        <span class="ml-2"> เพิ่มรูปภาพ</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="border-b-2 w-full my-4"></div>
+
+            <table class="w-full table-auto border border-gray-300 overflow-hidden">
+                <thead class="bg-gray-100 text-gray-700 uppercase text-sm font-semibold">
+                    <tr>
+                        <th class="px-4 py-2 border">#</th>
+                        <th class="px-4 py-2 border">รูปภาพ</th>
+                    </tr>
+                </thead>
+                <tbody class="text-center">
+                    <ng-container *ngFor="let orderList of transportFiles; let i = index">
+                        <tr>
+                            <td>{{ i + 1 }}</td>
+                            <td class="flex justify-center">
+                                <img class="w-15 h-15 text-center object-cover rounded" [src]="orderList.product_image"
+                                    alt="Uploaded Image">
+                            </td>
+                        </tr>
+                    </ng-container>
+                </tbody>
+            </table>
+        </div>
+
+
+        <div class="flex flex-col p-4 mt-4 border rounded">
+            <h3 class="text-2xl font-bold">เอกสาร</h3>
+            <div class="border-b-2 w-full my-4"></div>
+            <div class="flex-auto">
+                <div class="flex-auto">
+                    <div class="font-semibold mb-2">แนบเอกสารเสร็จสิ้น</div>
+                    <asha-upload-file id="file1" [multiple]="false"
+                        (filesChanged)="selectFileInvoice($event)"></asha-upload-file>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<ng-template #pic let-data="adtData">
+    <div class="flex flex-row justify-center">
+        <img [src]="data?.product_image" alt="Image" class="rounded-md w-20 text-center" />
+    </div>
+</ng-template>

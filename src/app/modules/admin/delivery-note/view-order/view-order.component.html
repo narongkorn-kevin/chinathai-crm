@@ -1,0 +1,424 @@
+<div class="flex flex-col flex-auto justify-start items-center w-full">
+    <div class="w-full flex-col justify-between items-center flex overflow-hidden">
+        <div class="w-full flex-col justify-start items-start flex">
+            <div class="w-full px-10 pt-5 pb-2.5 bg-white justify-between items-center flex">
+                <div class="flex flex-col">
+                    <div class="flex space-x-2">
+                        <button class="md:text-xl font-medium tracking-tight leading-7 sm:leading-10 truncate"
+                            [routerLink]="['/delivery-note']" routerLinkActive="router-link-active">
+                            เอกสาร
+                        </button>
+                        <p class="md:text-sm font-medium tracking-tight leading-7 sm:leading-10 truncate">></p>
+                        <button
+                            class="md:text-sm font-medium tracking-tight leading-7 sm:leading-10 truncate text-[#DF0B12]"
+                            [routerLink]="['/delivery-note']" routerLinkActive="router-link-active">
+                            ใบส่งของ
+                        </button>
+                    </div>
+
+                    <p class="md:text-2xl text-[#DF0B12] font-bold tracking-tight leading-7 sm:leading-10 truncate">
+                        สร้างใบส่งของ
+                    </p>
+                </div>
+                <div class="justify-end items-center gap-2 flex">
+                    <button mat-flat-button (click)="close()">
+                        <mat-icon [svgIcon]="'heroicons_solid:trash'"></mat-icon>
+                        <span class="ml-2">ยกเลิก</span>
+                    </button>
+                    <button mat-flat-button [color]="'primary'" (click)="submit()">
+                        <mat-icon [svgIcon]="'feather:save'" class=""></mat-icon>
+                        <span class="ml-2">บันทึก</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="w-full px-10 flex flex-col gap-2 bg-white">
+                <div class="flex flex-col md:flex-row items-center justify-between w-full">
+                    <!-- Step 1 -->
+                    <div class="flex flex-col items-center">
+                        <div class="w-12 h-12 rounded-full bg-red-600 flex items-center justify-center mb-3">
+                            <mat-icon class="text-white" svgIcon="heroicons_solid:user"></mat-icon>
+                        </div>
+                        <p class="text-red-600 font-medium text-center whitespace-nowrap">ข้อมูลการจัดส่ง</p>
+                    </div>
+
+                    <!-- Connecting Line 1 -->
+                    <div class="hidden md:flex w-full max-w-xs items-center justify-center">
+                        <div class="h-0.5 bg-red-600 w-full"></div>
+                    </div>
+
+                    <!-- Step 2 -->
+                    <div class="flex flex-col items-center mt-6 md:mt-0">
+                        <div class="w-12 h-12 rounded-full bg-red-600 flex items-center justify-center mb-3">
+                            <mat-icon class="text-white" svgIcon="heroicons_solid:qr-code"></mat-icon>
+                        </div>
+                        <p class="text-red-600 font-medium text-center whitespace-nowrap">สแกนขาออก</p>
+                    </div>
+
+                    <!-- Connecting Line 2 -->
+                    <div class="hidden md:block w-full max-w-xs">
+                        <div class="h-0.5 bg-red-600"></div>
+                    </div>
+
+                    <!-- Step 3 -->
+                    <div class="flex flex-col items-center mt-6 md:mt-0">
+                        <div class="w-12 h-12 rounded-full bg-red-600 flex items-center justify-center mb-3">
+                            <mat-icon class="text-white" svgIcon="heroicons_solid:photo"></mat-icon>
+                        </div>
+                        <p class="text-red-600 font-medium text-center whitespace-nowrap">รูปภาพอ้างอิง</p>
+                    </div>
+
+                    <!-- Connecting Line 3 -->
+                    <div class="hidden md:block w-full max-w-xs">
+                        <div class="h-0.5 bg-red-600"></div>
+                    </div>
+
+                    <!-- Step 4 -->
+                    <div class="flex flex-col items-center mt-6 md:mt-0">
+                        <div class="w-12 h-12 rounded-full bg-red-600 flex items-center justify-center mb-3">
+                            <mat-icon class="text-white" svgIcon="heroicons_solid:clipboard"></mat-icon>
+                        </div>
+                        <p class="text-red-600 font-medium text-center whitespace-nowrap">ตรวจสอบข้อมูล</p>
+                    </div>
+                </div>
+
+                <form [formGroup]="Form">
+                    <div class="w-full flex-col gap-2 flex mt-5">
+                        <div class="w-full flex-col flex">
+                            <div class="text-lg font-bold">ข้อมูลสมาชิก</div>
+                            <mat-divider></mat-divider>
+                        </div>
+                        <div class="w-full grid grid-flow-row grid-cols-2 gap-x-2 ">
+                            <div class="w-full">
+                                <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                                    <mat-label>รหัสลูกค้า (ที่อยู่จัดส่ง)</mat-label>
+                                    <input matInput [placeholder]="''" formControlName="customerCode">
+                                </mat-form-field>
+                            </div>
+                            <div class="w-full">
+                                <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                                    <mat-label>วันที่เข้าโกดัง</mat-label>
+                                    <input matInput [matDatepicker]="picker" [placeholder]="''" formControlName="warehouseDate">
+                                    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                                    <mat-datepicker #picker></mat-datepicker>
+                                </mat-form-field>
+                            </div>
+                            <div class="w-full col-span-2">
+                                <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                                    <mat-label>หมายเหตุ</mat-label>
+                                    <input matInput [placeholder]="''" formControlName="note">
+                                </mat-form-field>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="w-full flex-col gap-2 flex mt-5" *ngIf="status_type ==='send'">
+                        <div class="w-full flex-col flex">
+                            <div class="text-lg font-bold">ข้อมูลการจัดส่ง</div>
+                            <mat-divider></mat-divider>
+                        </div>
+                        <div class="w-full grid grid-flow-row grid-cols-3 gap-x-2 ">
+                            <div class="w-full">
+                                <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                                    <mat-label>ชื่อ-นามสกุล</mat-label>
+                                    <input matInput [placeholder]="''" formControlName="fullName">
+                                </mat-form-field>
+                            </div>
+                            <div class="w-full">
+                                <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                                    <mat-label>เบอร์โทรคนขับรถ</mat-label>
+                                    <input matInput [placeholder]="''" formControlName="driverPhone">
+                                </mat-form-field>
+                            </div>
+                            <div class="w-full">
+                                <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                                    <mat-label>เลขที่บัตรใบขับขี่</mat-label>
+                                    <input matInput [placeholder]="''" formControlName="licenseNumber">
+                                </mat-form-field>
+                            </div>
+                            <div class="w-full">
+                                <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                                    <mat-label>ทะเบียนรถ</mat-label>
+                                    <input matInput [placeholder]="''" formControlName="carRegistration">
+                                </mat-form-field>
+                            </div>
+                            <div class="w-full">
+                                <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                                    <mat-label>ขนส่งโดย</mat-label>
+                                    <input matInput [placeholder]="''" formControlName="shippedBy">
+                                </mat-form-field>
+                            </div>
+                            <div class="w-full">
+                                <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                                    <mat-label>พื้นที่</mat-label>
+                                    <input matInput [placeholder]="''" formControlName="area">
+                                </mat-form-field>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="w-full flex-col gap-2 flex mt-5" *ngIf="status_type ==='pick'">
+                        <div class="w-full flex-col flex">
+                            <div class="text-lg font-bold">ข้อมูลการจัดส่ง</div>
+                            <mat-divider></mat-divider>
+                        </div>
+                        <div class="w-full grid grid-flow-row grid-cols-3 gap-x-2 ">
+                            <div class="w-full">
+                                <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                                    <mat-label>ชื่อผู้รับสินค้า</mat-label>
+                                    <input matInput [placeholder]="''" formControlName="fullName">
+                                </mat-form-field>
+                            </div>
+                            <div class="w-full">
+                                <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                                    <mat-label>เบอร์โทร</mat-label>
+                                    <input matInput [placeholder]="''" formControlName="driverPhone">
+                                </mat-form-field>
+                            </div>
+                            <div class="w-full">
+                                <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                                    <mat-label>ขนส่งโดย</mat-label>
+                                    <input matInput [placeholder]="''" formControlName="licenseNumber">
+                                </mat-form-field>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="w-full mt-2">
+                        <div class="text-lg font-bold my-2">แนบเอกสารสำเนาบัตรประจำตัวประชาชน</div>
+                        <asha-upload-file></asha-upload-file>
+                    </div>
+                </form>
+
+                <div class="w-full p-4 my-4 border border-gray-300 rounded-lg min-h-[300px] overflow-y-auto flex flex-col">
+                    <div class="flex flex-row w-full gap-2 mb-6">
+                        <div class="w-full text-3xl font-bold">รายการใบส่งของ</div>
+                        <mat-divider></mat-divider>
+                    </div>
+                    <form *ngIf="!showFilterForm" [formGroup]="filterForm">
+                        <div class="flex flex-col md:flex-row w-full gap-2 items-end">
+                            <div class="w-full">
+                                <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                                    <mat-icon class="icon-size-5 mr-2"
+                                        [svgIcon]="'heroicons_solid:magnifying-glass'"></mat-icon>
+                                    <input matInput formControlName="in_store"
+                                        [placeholder]="'ค้นหาด้วยรหัสใบรับเข้าคลัง'">
+                                </mat-form-field>
+                            </div>
+                            <div>
+                                <button mat-flat-button [color]="'primary'" class="mb-5">
+                                    <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:cog-6-tooth'"></mat-icon>
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                    <div class="overflow-x-auto">
+                        <table class="whitespace-nowrap w-full">
+                            <thead>
+                                <tr>
+                                    <th class="px-6 py-3 border border-l-0 w-10">#</th>
+                                    <th class="px-6 py-3 border border-x-0">วันที่</th>
+                                    <th class="px-6 py-3 border border-x-0">สถานะ</th>
+                                    <th class="px-6 py-3 border border-x-0">รหัสใบรับเข้าคลัง</th>
+                                    <th class="px-6 py-3 border border-x-0">ลูกค้า</th>
+                                    <th class="px-6 py-3 border border-x-0">ที่อยู่</th>
+                                    <th class="px-6 py-3 border border-x-0">ขนส่ง</th>
+                                    <th class="px-6 py-3 border border-x-0">ช่วงเวลา</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let list of filteredDeliveryOrders; let i = index" class="text-center">
+                                    <td class="px-6 py-3 border border-l-0">{{ i + 1 }}</td>
+                                    <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order?.order?.name ?? '-' }}</td>
+                                    <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order?.code ?? '-' }}</td>
+                                    <td class="px-6 py-3 border border-x-0">{{ getShipmentMethod(list?.delivery_order?.shipped_by) }}</td>
+                                    <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order?.quantity_check ?? '-' }}</td>
+                                    <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order?.product_type?.name ?? '-' }}</td>
+                                    <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order?.weight ?? '-' }}</td>
+                                    <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order?.cbm ?? '-' }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="w-full p-4 my-4 border border-gray-300 rounded-lg min-h-[300px] overflow-y-auto flex flex-col">
+                    <div class="flex flex-row w-full gap-2 mb-6">
+                        <div class="w-full text-3xl font-bold">สแกนขาออก</div>
+                        <button mat-flat-button [color]="'primary'" (click)="opendialogpo()">
+                            <mat-icon svgIcon="heroicons_solid:plus-circle"  class="text-white"></mat-icon>
+                            <span class="ml-2">เพิ่มรายการ</span>
+                        </button>
+                    </div>
+                    <form *ngIf="!showFilterForm" [formGroup]="filterForm">
+                        <div class="flex flex-col md:flex-row w-full gap-2 items-end">
+                            <div class="w-full">
+                                <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                                    <mat-icon class="icon-size-5 mr-2"
+                                        [svgIcon]="'heroicons_solid:magnifying-glass'"></mat-icon>
+                                    <input matInput formControlName="in_store"
+                                        [placeholder]="'ค้นหาด้วยรหัสใบรับเข้าคลัง'">
+                                </mat-form-field>
+                            </div>
+                            <div>
+                                <button mat-flat-button [color]="'primary'" class="mb-5">
+                                    <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:cog-6-tooth'"></mat-icon>
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                    <div class="overflow-x-auto">
+                        <table class="whitespace-nowrap w-full">
+                            <thead>
+                                <tr>
+                                    <th class="px-6 py-3 border border-l-0 w-10">#</th>
+                                    <th class="px-6 py-3 border border-x-0">หมายเลขจัดส่ง</th>
+                                    <th class="px-6 py-3 border border-x-0">รหัสลูกค้า</th>
+                                    <th class="px-6 py-3 border border-x-0">รหัสใบรับเข้าคลัง</th>
+                                    <th class="px-6 py-3 border border-x-0">Tracking</th>
+                                    <th class="px-6 py-3 border border-x-0">สแกนออก</th>
+                                    <th class="px-6 py-3 border border-x-0">ผู้ดำเนินการสแกน</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let list of filteredOut; let i = index" class="text-center">
+                                    <td class="px-6 py-3 border border-l-0">{{ i + 1 }}</td>
+                                    <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order?.order?.name ?? '-' }}</td>
+                                    <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order?.code ?? '-' }}</td>
+                                    <td class="px-6 py-3 border border-x-0">{{ getShipmentMethod(list?.delivery_order?.shipped_by) }}</td>
+                                    <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order?.quantity_check ?? '-' }}</td>
+                                    <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order?.product_type?.name ?? '-' }}</td>
+                                    <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order?.weight ?? '-' }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="w-full p-4 my-4 border border-gray-300 rounded-lg min-h-[300px] overflow-y-auto flex flex-col">
+                    <div class="flex flex-row w-full gap-2 mb-6">
+                        <div class="w-full text-3xl font-bold">รายการ Tracking</div>
+                        <button mat-flat-button [color]="'primary'" (click)="opendialogtracking()">
+                            <mat-icon svgIcon="heroicons_solid:plus-circle"  class="text-white"></mat-icon>
+                            <span class="ml-2">เพิ่มรายการ Tracking</span>
+                        </button>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="whitespace-nowrap w-full">
+                            <thead>
+                                <tr>
+                                    <th class="px-6 py-3 border border-l-0 w-10">#</th>
+                                    <th class="px-6 py-3 border border-x-0">หมายเลขจัดส่ง</th>
+                                    <th class="px-6 py-3 border border-x-0">รหัสลูกค้า</th>
+                                    <th class="px-6 py-3 border border-x-0">Tracking</th>
+                                    <th class="px-6 py-3 border border-x-0">Tracking</th>
+                                    <th class="px-6 py-3 border border-x-0">วันที่</th>
+                                    <th class="px-6 py-3 border border-x-0">ผู้บันทึก</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let list of filteredtracking; let i = index" class="text-center">
+                                    <td class="px-6 py-3 border border-l-0">{{ i + 1 }}</td>
+                                    <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order?.order?.name ?? '-' }}</td>
+                                    <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order?.code ?? '-' }}</td>
+                                    <td class="px-6 py-3 border border-x-0">{{ getShipmentMethod(list?.delivery_order?.shipped_by) }}</td>
+                                    <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order?.quantity_check ?? '-' }}</td>
+                                    <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order?.product_type?.name ?? '-' }}</td>
+                                    <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order?.weight ?? '-' }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="w-full grid grid-cols-2 gap-4 gap-x-6">
+                    <div class="w-full p-4 border border-gray-300 rounded-lg min-h-[300px] overflow-y-auto flex flex-col">
+                        <div class="flex flex-row w-full gap-2 mb-6">
+                            <div class="w-full text-3xl font-bold">รูปรถ</div>
+                            <button mat-flat-button [color]="'primary'" (click)="opendialogimage('รูปรถ')">
+                                <mat-icon svgIcon="heroicons_solid:photo"  class="text-white"></mat-icon>
+                                <span class="ml-2">เพิ่มรูปรถ</span>
+                            </button>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="whitespace-nowrap w-full">
+                                <thead>
+                                    <tr>
+                                        <th class="px-6 py-3 border border-l-0 w-10">#</th>
+                                        <th class="px-6 py-3 border border-x-0">รูปรถ</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let list of filteredtracking; let i = index" class="text-center">
+                                        <td class="px-6 py-3 border border-l-0">{{ i + 1 }}</td>
+                                        <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order?.order?.name ?? '-' }}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="w-full p-4 border border-gray-300 rounded-lg min-h-[300px] overflow-y-auto flex flex-col">
+                        <div class="flex flex-row w-full gap-2 mb-6">
+                            <div class="w-full text-3xl font-bold">รูปสินค้า</div>
+                            <button mat-flat-button [color]="'primary'" (click)="opendialogimage('รูปสินค้า')">
+                                <mat-icon svgIcon="heroicons_solid:photo"  class="text-white"></mat-icon>
+                                <span class="ml-2">เพิ่มรูปสินค้า</span>
+                            </button>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="whitespace-nowrap w-full">
+                                <thead>
+                                    <tr>
+                                        <th class="px-6 py-3 border border-l-0 w-10">#</th>
+                                        <th class="px-6 py-3 border border-x-0">รูปสินค้า</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let list of filteredtracking; let i = index" class="text-center">
+                                        <td class="px-6 py-3 border border-l-0">{{ i + 1 }}</td>
+                                        <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order?.order?.name ?? '-' }}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="w-full p-4 border border-gray-300 rounded-lg min-h-[300px] overflow-y-auto flex flex-col">
+                        <div class="flex flex-row w-full gap-2 mb-6">
+                            <div class="w-full text-3xl font-bold">รูปใบส่งของ</div>
+                            <button mat-flat-button [color]="'primary'" (click)="opendialogimage('รูปใบส่งของ')">
+                                <mat-icon svgIcon="heroicons_solid:photo"  class="text-white"></mat-icon>
+                                <span class="ml-2">เพิ่มรูปใบส่งของ</span>
+                            </button>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="whitespace-nowrap w-full">
+                                <thead>
+                                    <tr>
+                                        <th class="px-6 py-3 border border-l-0 w-10">#</th>
+                                        <th class="px-6 py-3 border border-x-0">รูปใบส่งของ</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let list of filteredtracking; let i = index" class="text-center">
+                                        <td class="px-6 py-3 border border-l-0">{{ i + 1 }}</td>
+                                        <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order?.order?.name ?? '-' }}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <form [formGroup]="Form">
+                    <div>
+                        <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                            <mat-label>หมายเหตุ</mat-label>
+                            <textarea matInput [placeholder]="'หมายเหตุ'" formControlName="note"></textarea>
+                        </mat-form-field>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

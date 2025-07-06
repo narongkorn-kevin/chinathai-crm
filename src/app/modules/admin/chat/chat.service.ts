@@ -1,0 +1,61 @@
+import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { environment } from 'environments/environment';
+import { toUpper } from 'lodash';
+import { BehaviorSubject, map, tap } from 'rxjs';
+
+@Injectable({
+    providedIn: 'root'
+})
+export class ChatService {
+
+    private _categories: BehaviorSubject<any[] | null> = new BehaviorSubject(null);
+    private _roles: BehaviorSubject<any[] | null> = new BehaviorSubject(null);
+    private _branch: BehaviorSubject<any[] | null> = new BehaviorSubject(null);
+
+    get categories$() {
+        return this._categories.asObservable();
+    }
+
+    constructor(private http: HttpClient) { }
+
+    datatable(dataTablesParameters: any) {
+
+        return this.http.post('/api/chat_page', dataTablesParameters).pipe(
+            map((resp: any) => {
+                // resp.data.forEach((e: any, i: number) => e.no = start + i + 1);
+                return resp;
+            })
+        );
+    }
+
+    get(id: number) {
+        return this.http.get(environment.apiUrl + '/api/chat/' + id,)
+    }
+    getall() {
+        return this.http.post(environment.apiUrl + '/api/get_chat', {} )
+    }
+
+    create(data: any) {
+        return this.http.post(environment.apiUrl + '/api/chat', data)
+    }
+
+    update(id: any, data: any) {
+        return this.http.put(environment.apiUrl + '/api/chat/' + id, data)
+    }
+
+    delete(id: number) {
+        return this.http.delete(environment.apiUrl + '/api/chat/' + id)
+    }
+
+    sendchat(data: any) {
+        return this.http.post(environment.apiUrl + '/api/chat_msg', data)
+    }
+
+    upload_image(data: any) {
+        return this.http.post(environment.apiUrl + '/api/upload_images', data)
+    }
+    upload_file(data: any) {
+        return this.http.post(environment.apiUrl + '/api/upload_file', data)
+    }
+}

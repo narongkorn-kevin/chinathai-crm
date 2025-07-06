@@ -1,0 +1,76 @@
+<div class="md:max-w-lg">
+    <div class="flex flex-row justify-between ">
+        <h1 mat-dialog-title class="text-xl font-semibold mb-4" >รายละเอียดข้อมูล</h1>
+        <div class="justify-end gap-2 item-center mt-4">
+            <button class="px-6" mat-flat-button [color]="'warn'" (click)="onClose()">
+                ปิด
+            </button>
+        </div>
+    </div>
+
+    <form [formGroup]="form">
+        <div mat-dialog-content class="overflow-y-auto md:max-h-180">
+            <div class="flex flex-col gap-4 w-full">
+                <div class="flex flex-row gap-2 w-full">
+                    <div class="w-full">
+                        <span class="font-bold">รหัสลูกค้า</span>
+                    </div>
+                    <div class="w-full">
+                        <span>{{ form.get('code')?.value }}</span>
+                    </div>
+                </div>
+                <div class="flex flex-row gap-2 w-full">
+                    <div class="w-full">
+                        <span class="font-bold">ชื่อลูกค้า</span>
+                    </div>
+                    <div class="w-full">
+                        <span>{{ form.get('fname')?.value }} {{ form.get('lname')?.value }}</span>
+                    </div>
+                </div>
+                <div class="flex flex-row gap-2 w-full">
+                    <div class="w-full">
+                        <span class="font-bold">หัวข้อปัญหา</span>
+                    </div>
+                    <div class="w-full">
+                        <span>{{ form.get('topic')?.value }}</span>
+                    </div>
+                </div>
+                <div class="flex flex-row gap-2 w-full">
+                    <div class="w-full">
+                        <span class="font-bold">รายการปัญหา</span>
+                    </div>
+                    <div class="w-full">
+                        <span>{{ form.get('master')?.value }}</span>
+                    </div>
+                </div>
+                <div class="flex flex-row gap-2 w-full">
+                    <div class="w-full">
+                        <span class="font-bold">เรื่อง</span>
+                    </div>
+                    <div class="w-full">
+                        <span>{{ form.get('name')?.value }}</span>
+                    </div>
+                </div>
+                <div class="flex flex-col gap-2 w-full">
+                    <div class="w-full">
+                        <span class="font-bold">รายละเอียด</span>
+                    </div>
+                    <div class="w-full">
+                        <span>{{ form.get('description')?.value }}</span>
+                    </div>
+                </div>
+                <div class="flex flex-col gap-2 w-full">
+                    <div class="w-full">
+                        <span class="font-bold">รูปภาพ</span>
+                    </div>
+                    <div class="grid grid-cols-2 gap-y-2 w-full">
+                        <div class="w-full " *ngFor="let image of form.get('Image')?.value">
+                            <img [src]="image.image" alt="Problem Image" class="w-16 h-16">
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </form>
+</div>

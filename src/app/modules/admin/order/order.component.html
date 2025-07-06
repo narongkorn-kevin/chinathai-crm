@@ -1,0 +1,189 @@
+<div class="flex flex-col flex-auto min-w-0">
+  <div class="flex flex-row justify-between pb-2 items-center">
+    <div class="w-full px-5 pt-5 pb-2.5  justify-between items-center flex">
+      <div class="flex flex-col">
+        <div class="flex space-x-2">
+          <button class="md:text-xl font-medium tracking-tight leading-7 sm:leading-10 truncate"
+            routerLinkActive="router-link-active">
+            รายการฝากสั่งซื้อ
+          </button>
+
+        </div>
+        <div class="flex space-x-2">
+          <p class="md:text-3xl font-medium tracking-tight leading-7 sm:leading-10 truncate text-black">
+            {{title}}
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <mat-divider class="w-full p-1 mx-5 flex border-t-[1px] border-slate-300"></mat-divider>
+  <div class="flex-auto p-4 m-4 rounded-md sm:p-10 bg-card">
+    <!-- ใน template -->
+    <mat-tab-group [(selectedIndex)]="selectedTabIndex" (selectedIndexChange)="onTabChange($event)" class="mb-4">
+      <mat-tab *ngFor="let status of filteredStatuses" [label]="status.label + ' (' + status.count + ')'"></mat-tab>
+    </mat-tab-group>
+    <form *ngIf="!showFilterForm" [formGroup]="form">
+      <div class="flex flex-col md:flex-row w-full gap-2 items-end">
+        <div class="w-full">
+          <mat-form-field class="w-full fuse-mat-dense">
+            <mat-label>วันที่</mat-label>
+            <mat-date-range-input [rangePicker]="campaignOnePicker1" [comparisonStart]="form.value.date_start"
+              [comparisonEnd]="form.value.date_end">
+              <input matStartDate [formControlName]="'date_start'">
+              <input matEndDate [formControlName]="'date_end'">
+            </mat-date-range-input>
+            <mat-datepicker-toggle matIconSuffix [for]="campaignOnePicker1"></mat-datepicker-toggle>
+            <mat-date-range-picker #campaignOnePicker1></mat-date-range-picker>
+          </mat-form-field>
+        </div>
+        <div class="w-full">
+          <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+            <mat-icon svgIcon="heroicons_outline:magnifying-glass"></mat-icon>
+            <input matInput [placeholder]="'ค้นหาด้วยเลขที่คำร้อง'">
+          </mat-form-field>
+        </div>
+        <div>
+          <button mat-stroked-button [color]="'primary'" (click)="openfillter()" class="mb-5 border-primary-600">
+            <mat-icon class="icon-size-5" [svgIcon]="'filter_list'"></mat-icon>
+            <span class="ml-2">ค้นหาโดยใช้ตัวกรอง</span>
+          </button>
+        </div>
+      </div>
+    </form>
+    <form *ngIf="showFilterForm" [formGroup]="filterForm" class="p-4 rounded-md">
+      <div>
+        <h2 class="text-xl font-light leading-7 tracking-tight truncate md:text-xl sm:leading-10">
+          ตัวกรองขั้นสูง
+        </h2>
+        <mat-divider></mat-divider>
+      </div>
+      <div class="grid grid-cols-5 md:flex-row w-full gap-x-2 mt-2">
+        <div class="w-full">
+          <mat-form-field class="w-full fuse-mat-dense">
+            <mat-label>วันที่</mat-label>
+            <mat-date-range-input [rangePicker]="campaignOnePicker" [comparisonStart]="filterForm.value.date_start"
+              [comparisonEnd]="filterForm.value.date_end">
+              <input matStartDate [formControlName]="'date_start'">
+              <input matEndDate [formControlName]="'date_end'">
+            </mat-date-range-input>
+            <!-- <mat-hint>MM/DD/YYYY – MM/DD/YYYY</mat-hint> -->
+            <mat-datepicker-toggle matIconSuffix [for]="campaignOnePicker"></mat-datepicker-toggle>
+            <mat-date-range-picker #campaignOnePicker></mat-date-range-picker>
+          </mat-form-field>
+        </div>
+        <div class="w-full">
+          <mat-form-field class="w-full fuse-mat-dense">
+            <mat-label>เลขที่คำร้อง</mat-label>
+            <input matInput formControlName="code">
+          </mat-form-field>
+        </div>
+
+        <div class="w-full">
+          <mat-form-field class="w-full fuse-mat-dense">
+            <mat-label>รหัสลูกค้า</mat-label>
+            <input matInput formControlName="code">
+          </mat-form-field>
+        </div>
+        <div class="w-full">
+          <mat-form-field class="w-full fuse-mat-dense">
+            <mat-label>ชื่อลูกค้า</mat-label>
+            <input matInput formControlName="code">
+          </mat-form-field>
+        </div>
+        <div class="w-full">
+          <mat-form-field class="w-full fuse-mat-dense">
+            <mat-label>สถานะ</mat-label>
+            <mat-select formControlName="status">
+              <mat-option value="1">รอดดำเนินการ</mat-option>
+              <mat-option value="2">ดำเนินการแล้ว</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+      </div>
+
+      <div class="w-full flex justify-end gap-2">
+        <button mat-stroked-button [color]="'primary'" class="border-none" (click)="openfillter()">
+          <span class="ml-2">ปิดตัวกรอง</span>
+        </button>
+        <button mat-stroked-button [color]="'primary'" (click)="filterForm.reset()" class="border-primary-600">
+          <mat-icon class="icon-size-5" [svgIcon]="'clear_all'"></mat-icon>
+          <span class="ml-2">ล้างตั้งค่าตัวกรอง</span>
+        </button>
+        <button mat-flat-button [color]="'primary'" (click)="rerender()">
+          <mat-icon class="icon-size-5" [svgIcon]="'search'"></mat-icon>
+          <span class="ml-2">ค้นหา</span>
+        </button>
+      </div>
+    </form>
+    <div class="w-full overflow-auto">
+      <table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger"
+        class="table w-full bg-white row-border hover whitespace-nowrap">
+      </table>
+    </div>
+    <div class="flex flex-row justify-between space-x-2 bg-white mt-4" *ngIf="multiSelect.length > 0">
+      <p class="md:text-xl font-normal tracking-tight leading-7 sm:leading-10 truncate text-black">
+        จำนวนรายการทั้งหมด <span class=" text-lg text-primary"> {{multiSelect.length}} รายการ</span>
+      </p>
+      <button mat-flat-button  [color]="'primary'" (click)="openOrderShowDialog()">
+        <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:plus'"></mat-icon>
+        <span class="ml-2">จัดการออร์เดอร์</span>
+      </button>
+    </div>
+  </div>
+
+</div>
+
+
+
+<ng-template #btNg let-data="adtData">
+  <button mat-icon-button [color]="'primary'" [matMenuTriggerFor]="menu">
+    <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:cog-8-tooth'"></mat-icon>
+  </button>
+  <mat-menu #menu="matMenu">
+    <button mat-menu-item (click)="openDialogEdit(data)">
+      <mat-icon [svgIcon]="'heroicons_solid:eye'"></mat-icon>
+      <span>ดูรายละเอียด</span>
+    </button>
+    <mat-divider></mat-divider>
+    <button mat-menu-item (click)="clickVoid(data.id)">
+      <mat-icon [svgIcon]="'heroicons_outline:receipt-refund'"></mat-icon>
+      <span>void</span>
+    </button>
+    <!-- <button mat-menu-item (click)="clickDelete(data.id)">
+      <mat-icon [svgIcon]="'heroicons_solid:trash'"></mat-icon>
+      <span>ลบ</span>
+    </button> -->
+  </mat-menu>
+</ng-template>
+
+<ng-template #orderNo let-data="adtData">
+  <div>
+    <div class="px-4 py-1.5 text-sm inline-flex items-center justify-center font-bold text-blue-600 cursor-pointer"
+      (click)="viewOrder(data)">
+      {{data.order_no}}
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #statusCustomer let-data="adtData">
+  <div>
+    <div class="px-4 py-1.5 text-sm inline-flex items-center justify-center font-bold text-blue-600 cursor-pointer">
+      <mat-icon svgIcon="heroicons_solid:exclamation-circle" class="text-red-500"></mat-icon>
+      &nbsp;
+      {{data.customer_code}}
+    </div>
+  </div>
+</ng-template>
+<ng-template #statusOrder let-data="adtData">
+  <app-status-badge [status]="data.order_status"></app-status-badge>
+</ng-template>
+<ng-template #shipment let-data="adtData">
+  <app-status-shipment [shipment]="data.shipment_by"></app-status-shipment>
+</ng-template>
+<ng-template #checkbox let-data="adtData">
+  <ng-container *ngIf="allowedStatuses.includes(this.formstatus.value.filter_status)">
+    <mat-checkbox class="text-white" [color]="'primary'" [checked]="data.selected"
+      (change)="onCheckboxChange($event, data.id)"></mat-checkbox>
+  </ng-container>
+</ng-template>

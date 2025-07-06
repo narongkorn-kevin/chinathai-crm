@@ -1,0 +1,36 @@
+<form [formGroup]="form">
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <mat-form-field class="w-full" appearance="outline">
+            <mat-label>สาขา</mat-label>
+            <mat-select [formControlName]="'branchId'" (selectionChange)="tranferData()">
+                <mat-option  [value]="">
+                    สถานะทั้งหมด
+                </mat-option>
+                <mat-option *ngFor="let item of branch;" [value]="item.id">
+                    {{item.name}}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+        <mat-form-field class="w-full" appearance="outline">
+            <mat-label>สถานะ</mat-label>
+            <mat-select [formControlName]="'status'" (selectionChange)="tranferData()">
+                <mat-option  [value]="">
+                    สถานะทั้งหมด
+                </mat-option>
+                <mat-option *ngFor="let item of orderStatus;" [value]="item.key">
+                    {{item.value}}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+        <mat-form-field class="w-full" appearance="outline">
+            <mat-label>วันที่</mat-label>
+            <mat-date-range-input [rangePicker]="picker" (click)="picker.open()" >
+                <input matStartDate placeholder="วันที่เริ่ม" formControlName="startDate" (dateChange)="tranferData()">
+                <input matEndDate placeholder="วันที่สิ้นสุด" formControlName="endDate" (dateChange)="tranferData()">
+            </mat-date-range-input>
+            <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-date-range-picker #picker></mat-date-range-picker>
+        </mat-form-field>
+        
+    </div>
+</form>

@@ -1,0 +1,184 @@
+<div class="flex flex-col flex-auto min-w-0">
+    <div class="flex flex-row justify-between pb-2 items-center">
+        <div class="w-full px-5 pt-5 pb-2.5  justify-between items-center flex">
+            <div class="flex flex-col">
+                <div class="flex space-x-2">
+                    <button class="md:text-xl font-medium tracking-tight leading-7 sm:leading-10 truncate"
+                        [routerLink]="['/follow-up']" routerLinkActive="router-link-active">
+                        Case Follow up
+                    </button>
+                </div>
+                <div class="flex space-x-2">
+                    <p class="md:text-3xl font-medium tracking-tight leading-7 sm:leading-10 truncate text-black">
+                        รายการ Follow up
+                    </p>
+                </div>
+            </div>
+            <div class="justify-end items-center gap-2 flex">
+                <div class="justify-start items-center gap-2 flex">
+                    <button mat-flat-button [color]="'primary'" (click)="addClaimOrder()">
+                        <mat-icon svgIcon="heroicons_outline:plus"></mat-icon>
+                        &nbsp;
+                        เพิ่มรายการ
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <mat-divider class="w-full p-1 mx-5 flex border-t-[1px] border-slate-300"></mat-divider>
+    <div class="flex-auto p-4 m-4 rounded-md sm:p-10 bg-card">
+        <form *ngIf="!showFilterForm" [formGroup]="form">
+            <div class="flex flex-col md:flex-row w-full gap-2 items-end">
+                <div class="w-full">
+                    <mat-form-field class="w-full fuse-mat-dense">
+                        <mat-label>วันที่ทำรายการ</mat-label>
+                        <mat-date-range-input [rangePicker]="campaignOnePicker1"
+                            [comparisonStart]="form.value.date_start" [comparisonEnd]="form.value.date_end">
+                            <input matStartDate [formControlName]="'date_start'">
+                            <input matEndDate [formControlName]="'date_end'">
+                        </mat-date-range-input>
+                        <mat-datepicker-toggle matIconSuffix [for]="campaignOnePicker1"></mat-datepicker-toggle>
+                        <mat-date-range-picker #campaignOnePicker1></mat-date-range-picker>
+                    </mat-form-field>
+                </div>
+                <div class="w-full">
+                    <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                        <mat-icon svgIcon="heroicons_outline:magnifying-glass"></mat-icon>
+                        <input matInput [placeholder]="'ค้นหาด้วยชื่อลูกค้า'">
+                    </mat-form-field>
+                </div>
+                <div>
+                    <button mat-stroked-button [color]="'primary'" (click)="openfillter()"
+                        class="mb-5 border-primary-600">
+                        <mat-icon class="icon-size-5" [svgIcon]="'filter_list'"></mat-icon>
+                        <span class="ml-2">ค้นหาโดยใช้ตัวกรอง</span>
+                    </button>
+                </div>
+            </div>
+        </form>
+        <form *ngIf="showFilterForm" [formGroup]="filterForm" class="p-4 rounded-md">
+            <div>
+                <h2 class="text-xl font-light leading-7 tracking-tight truncate md:text-xl sm:leading-10">
+                    ตัวกรองขั้นสูง
+                </h2>
+                <mat-divider></mat-divider>
+            </div>
+            <div class="grid grid-cols-3 md:flex-row w-full gap-x-2 mt-2">
+                <div class="w-full">
+                    <mat-form-field class="w-full fuse-mat-dense">
+                        <mat-label>วันที่ทำรายการ</mat-label>
+                        <mat-date-range-input [rangePicker]="campaignOnePicker"
+                            [comparisonStart]="filterForm.value.date_start" [comparisonEnd]="filterForm.value.date_end">
+                            <input matStartDate [formControlName]="'date_start'">
+                            <input matEndDate [formControlName]="'date_end'">
+                        </mat-date-range-input>
+                        <!-- <mat-hint>MM/DD/YYYY – MM/DD/YYYY</mat-hint> -->
+                        <mat-datepicker-toggle matIconSuffix [for]="campaignOnePicker"></mat-datepicker-toggle>
+                        <mat-date-range-picker #campaignOnePicker></mat-date-range-picker>
+                    </mat-form-field>
+                </div>
+                <div class="w-full">
+                    <mat-form-field class="w-full fuse-mat-dense">
+                        <mat-label>วันที่ปิดรายการ</mat-label>
+                        <mat-date-range-input [rangePicker]="caseNoPicker"
+                            [comparisonStart]="filterForm.value.date_start" [comparisonEnd]="filterForm.value.date_end">
+                            <input matStartDate [formControlName]="'date_start'">
+                            <input matEndDate [formControlName]="'date_end'">
+                        </mat-date-range-input>
+                        <!-- <mat-hint>MM/DD/YYYY – MM/DD/YYYY</mat-hint> -->
+                        <mat-datepicker-toggle matIconSuffix [for]="caseNoPicker"></mat-datepicker-toggle>
+                        <mat-date-range-picker #caseNoPicker></mat-date-range-picker>
+                    </mat-form-field>
+                </div>
+                <div class="w-full">
+                    <mat-form-field class="w-full fuse-mat-dense">
+                        <mat-label>Case No.</mat-label>
+                        <input matInput formControlName="code">
+                    </mat-form-field>
+                </div>
+               <div class="w-full">
+                    <mat-form-field class="w-full fuse-mat-dense">
+                        <mat-label>เลขออร์เดอร์</mat-label>
+                        <input matInput formControlName="code">
+                    </mat-form-field>
+                </div>
+                <div class="w-full">
+                    <mat-form-field class="w-full fuse-mat-dense">
+                        <mat-label>เลขแทรคกิ้งไทย</mat-label>
+                        <input matInput formControlName="code">
+                    </mat-form-field>
+                </div>
+                <div class="w-full">
+                    <mat-form-field class="w-full fuse-mat-dense">
+                        <mat-label>สถานะ</mat-label>
+                        <mat-select formControlName="status">
+                            <mat-option value="1">รอดดำเนินการ</mat-option>
+                            <mat-option value="2">ดำเนินการแล้ว</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+            </div>
+            <div class="w-full flex justify-end gap-2">
+                <button mat-stroked-button [color]="'primary'" class="border-none" (click)="openfillter()">
+                    <span class="ml-2">ปิดตัวกรอง</span>
+                </button>
+                <button mat-stroked-button [color]="'primary'" (click)="filterForm.reset()" class="border-primary-600">
+                    <mat-icon class="icon-size-5" [svgIcon]="'clear_all'"></mat-icon>
+                    <span class="ml-2">ล้างตั้งค่าตัวกรอง</span>
+                </button>
+                <button mat-flat-button [color]="'primary'" (click)="rerender()">
+                    <mat-icon class="icon-size-5" [svgIcon]="'search'"></mat-icon>
+                    <span class="ml-2">ค้นหา</span>
+                </button>
+            </div>
+        </form>
+        <div class="w-full overflow-auto">
+            <table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger"
+                class="table w-full bg-white row-border hover whitespace-nowrap">
+            </table>
+        </div>
+    </div>
+</div>
+
+<ng-template #checkbox let-data="adtData">
+    <mat-checkbox [checked]="formData.get('ids').value.includes(data.id)"
+        (change)="toggleSelect(data.id, $event.checked)">
+    </mat-checkbox>
+</ng-template>
+
+<ng-template #edit let-data="adtData">
+    <a class="text-[#DF0B12CC]" [routerLink]="[ data.id ]">{{data?.code}}</a>
+</ng-template>
+
+<ng-template #member let-data="adtData">
+    <div class="text-blue-500 underline cursor-pointer"> {{data?.customer_code}}</div>
+</ng-template>
+
+<ng-template #caseNo let-data="adtData">
+    <div class="text-blue-500 underline cursor-pointer" [routerLink]="['/follow-up/' + data.id]" routerLinkActive="router-link-active"> {{data?.case_no}}</div>
+</ng-template>
+
+<ng-template #status let-data="adtData">
+    <div class="flex items-center space-x-2">
+        <div class="w-4 h-4 rounded-full ring-2" [ngClass]="color(data.status)"></div>
+        <span class="text-lg text-gray-700">{{ label(data?.status) }}</span>
+    </div>
+
+</ng-template>
+
+<ng-template #update let-data="adtData">
+    <div class="flex gap-2">
+        <button mat-icon-button class="bg-primary rounded-md p-2 shadow-md ">
+            <mat-icon svgIcon="feather:save" class="text-white"></mat-icon>
+        </button>
+    </div>
+</ng-template>
+
+
+
+<ng-template #pic let-data="adtData">
+    <div class="flex flex-row justify-center">
+        <img src="https://www.scb.co.th/content/media/personal-banking/cards/prepaid-cards/images/how-to/transfer/planet-how-to-transfer-img-07.png"
+            alt="Image" class="rounded-md w-10 h-15 text-center" />
+    </div>
+</ng-template>

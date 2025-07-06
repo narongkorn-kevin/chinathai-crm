@@ -1,0 +1,41 @@
+<div class="flex flex-col flex-auto min-w-0">
+    <div class="flex flex-col p-6 sm:p-10 bg-card m-4 rounded-md overflow-auto">
+        <div class="flex flex-col md:flex-row items-start justify-between p-3 bg-card dark:bg-transparent w-full">
+            <div class="flex flex-row gap-4 items-center justify-between">
+                <h2 class="text-2xl md:text-2xl tracking-tight leading-7 sm:leading-10 truncate"> รายงานยอดขาย
+                </h2>
+            </div>
+            <div class="flex flex-col md:flex-row">
+                <button mat-flat-button [color]="'primary'" (click)="onSearch()">
+                    <mat-icon class="icon-size-5" [svgIcon]="'feather:search'"></mat-icon>
+                    <span class="ml-2"> ค้นหา</span>
+                </button>
+                &nbsp;
+                <button mat-flat-button [color]="'accent'"  (click)="resetSearch()">
+                    <mat-icon class="icon-size-5" [svgIcon]="'mat_solid:replay_circle_filled'"></mat-icon>
+                    <span class="ml-2"> ล้าง</span>
+                </button>
+                &nbsp;
+                <button mat-flat-button class="bg-green-800 text-white" (click)="exportExcel()">
+                    <mat-icon class="icon-size-5" [svgIcon]="'heroicons_mini:document'"></mat-icon>
+                    <span class="ml-2">Excel</span>
+                </button>
+            </div>
+        
+            
+        </div>
+        <div class="flex items-start justify-end p-3 bg-card dark:bg-transparent w-full">
+
+            <div class="w-full">
+                <app-search #searchComponent (dataSearch)="handleChange($event)" ></app-search>
+            </div>
+        </div>
+        <table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" class="row-border hover ">
+        </table>
+    </div>
+</div>
+<ng-template #btNg let-data="adtData">
+    <button mat-icon-button [color]="'primary'" (click)="printBill(data.id)" disabled>
+        <mat-icon class="icon-size-5" svgIcon="heroicons_solid:printer"></mat-icon>
+    </button>
+</ng-template>

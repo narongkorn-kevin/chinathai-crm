@@ -1,0 +1,32 @@
+<div class="p-6">
+    <h2 class="text-2xl font-semibold mb-4">สร้างใบปล่อยของ</h2>
+    <form [formGroup]="form">
+        <div class="grid grid-cols-2 gap-4">
+            <!-- ตัวเลือก "มารับเอง" -->
+            <label class="flex flex-col border rounded-lg p-4 cursor-pointer" [class.border-red-500]="form.value.type === 'self'">
+                <div class="flex justify-between items-center">
+                    <span class="text-lg">มารับเอง</span>
+                    <mat-checkbox color="warn" [checked]="form.value.type === 'self'" (change)="form.patchValue({ type: 'self' })"></mat-checkbox>
+                </div>
+                <span class="text-sm text-gray-500">รูปแบบขนส่ง</span>
+            </label>
+
+            <!-- ตัวเลือก "บริษัทนำส่งหรือรถร่วม" -->
+            <label class="flex flex-col border rounded-lg p-4 cursor-pointer" [class.border-red-500]="form.value.type === 'company'">
+                <div class="flex justify-between items-center">
+                    <span class="text-lg">บริษัทนำส่งหรือรถร่วม</span>
+                    <mat-checkbox color="warn" [checked]="form.value.type === 'company'" (change)="form.patchValue({ type: 'company' })"></mat-checkbox>
+                </div>
+                <span class="text-sm text-gray-500">รูปแบบขนส่ง</span>
+            </label>
+        </div>
+    </form>
+    <div mat-dialog-actions class="flex justify-end border-t-2 mt-2 p-2">
+        <button class="px-6 ml-3" mat-flat-button (click)="onClose()">
+            ยกเลิก
+        </button>
+        <button class="px-6 ml-3" mat-flat-button [color]="'primary'" (click)="Submit()">
+            บันทึก
+        </button>
+    </div>
+</div>

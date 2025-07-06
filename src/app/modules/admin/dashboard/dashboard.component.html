@@ -1,0 +1,94 @@
+<div class="flex flex-row flex-auto w-full min-w-0">
+    <div class="flex-auto p-6 sm:p-10">
+
+     
+
+      <div class="grid justify-center w-full min-w-0 grid-cols-1 gap-6 sm:grid-cols-3 md:grid-cols-3">
+        <div class="flex flex-col flex-auto p-6 overflow-hidden shadow bg-card rounded-2xl">
+          <div class="flex items-start justify-between">
+            <div class="text-lg font-medium leading-6 tracking-tight truncate">ยอดรวม</div>
+          </div>
+          <div class="flex flex-col items-center mt-2">
+            <div class="font-bold leading-none tracking-tight text-blue-500 text-7xl sm:text-8xl">{{ total }}</div>
+            <div class="text-lg font-medium text-blue-600 dark:text-blue-500">ยอด</div>
+          </div>
+        </div>
+
+        <div class="flex flex-col flex-auto p-6 overflow-hidden shadow bg-card rounded-2xl">
+          <div class="flex items-start justify-between">
+            <div class="text-lg font-medium leading-6 tracking-tight truncate">จำนวนบิล</div>
+          </div>
+          <div class="flex flex-col items-center mt-2">
+            <div class="font-bold leading-none tracking-tight text-red-500 text-7xl sm:text-8xl">{{ bill }}</div>
+            <div class="text-lg font-medium text-red-600 dark:text-red-500">ยอด</div>
+          </div>
+        </div>
+
+        <div class="flex flex-col flex-auto p-6 overflow-hidden shadow bg-card rounded-2xl">
+          <div class="flex items-start justify-between">
+            <div class="text-lg font-medium leading-6 tracking-tight truncate">เฉลี่ย/บิล</div>
+          </div>
+          <div class="flex flex-col items-center mt-2">
+            <div class="font-bold leading-none tracking-tight text-red-500 text-7xl sm:text-8xl">{{ avg }}</div>
+            <div class="text-lg font-medium text-red-600 dark:text-red-500">ยอด</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex flex-col flex-auto w-full p-6 mt-3 overflow-hidden shadow bg-card rounded-2xl">
+        <div class="flex items-start justify-between w-full mt-3">
+          <div id="chart" class="w-full mt-3">
+            <!-- Replace 'apx-chart' with your actual chart component -->
+            <apx-chart class="w-full gap-3 mt-3"
+                       [series]="chartOptions.series"
+                       [chart]="chartOptions.chart"
+                       [xaxis]="chartOptions.xaxis"
+                       [stroke]="chartOptions.stroke"
+                       [tooltip]="chartOptions.tooltip"
+                       [dataLabels]="chartOptions.dataLabels">
+            </apx-chart>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex flex-row w-full mt-3">
+        <div class="flex flex-col flex-auto w-full p-6 mr-3 overflow-hidden shadow bg-card rounded-2xl">
+          <div class="flex items-start justify-between w-full">
+            <a class="w-full">5 อันดับสินค้าขายดี
+              <!-- Replace 'apx-chart' with your actual chart component -->
+              <apx-chart class="w-full"
+                         [series]="chartOptions2.series"
+                         [chart]="chartOptions2.chart"
+                         [dataLabels]="chartOptions2.dataLabels"
+                         [plotOptions]="chartOptions2.plotOptions"
+                         [yaxis]="chartOptions2.yaxis"
+                         [xaxis]="chartOptions2.xaxis"
+                         [legend]="chartOptions2.legend"
+                         [colors]="chartOptions2.colors"
+                         [grid]="chartOptions2.grid">
+              </apx-chart>
+            </a>
+          </div>
+        </div>
+
+        <div class="flex flex-col flex-auto w-full p-6 overflow-hidden shadow bg-card rounded-2xl">
+          <div class="flex items-start justify-between w-full">
+            <a class="w-full">วิธีการชำระเงิน
+              <!-- Replace 'apx-chart' with your actual chart component -->
+              <apx-chart class="w-full"
+                         [series]="chartOptions3.series"
+                         [chart]="chartOptions3.chart"
+                         [dataLabels]="chartOptions3.dataLabels"
+                         [plotOptions]="chartOptions3.plotOptions"
+                         [yaxis]="chartOptions3.yaxis"
+                         [xaxis]="chartOptions3.xaxis"
+                         [legend]="chartOptions3.legend"
+                         [colors]="chartOptions3.colors"
+                         [grid]="chartOptions3.grid">
+              </apx-chart>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>

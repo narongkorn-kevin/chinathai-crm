@@ -1,0 +1,134 @@
+<div class="flex flex-col items-center justify-start flex-auto">
+    <div class="flex flex-col items-center justify-between w-full overflow-hidden">
+        <div class="flex flex-col items-start justify-start w-full">
+            <div class="w-full px-10 pt-5 pb-2.5 bg-white justify-between items-center flex">
+                <div class="flex flex-col">
+                    <div class="flex space-x-2">
+                        <button class="font-medium leading-7 tracking-tight truncate md:text-sm sm:leading-10"
+                            [routerLink]="['/delivery_order']" routerLinkActive="router-link-active">
+                            รายการรวมพัสดุ
+                        </button>
+                        <p class="font-medium leading-7 tracking-tight truncate md:text-sm sm:leading-10">></p>
+                        <p
+                            class="md:text-sm font-medium tracking-tight leading-7 sm:leading-10 truncate text-[#DF0B12]">
+                            Packing List
+                        </p>
+                    </div>
+
+                    <p class="md:text-2xl text-[#DF0B12] font-bold tracking-tight leading-7 sm:leading-10 truncate">
+                        <span *ngIf="type === 'NEW'">เพิ่มรายการ Packing List</span>
+                        <span *ngIf="type === 'EDIT'">หมายเลข Packing List: {{ data.code }}</span>
+                    </p>
+                </div>
+                <div class="flex items-center justify-end gap-2">
+                    <button mat-flat-button (click)="Close()">
+                        <mat-icon [svgIcon]="'heroicons_solid:trash'"></mat-icon>
+                        <span class="ml-2">ยกเลิก</span>
+                    </button>
+                    <button mat-flat-button [color]="'primary'" (click)="Submit()">
+                        <mat-icon [svgIcon]="'heroicons_solid:pencil-square'"></mat-icon>
+                        <span class="ml-2">บันทึก</span>
+                    </button>
+                </div>
+            </div>
+            <div class="flex flex-col w-full px-10 bg-white " [formGroup]="form">
+                <div class="flex flex-row gap-2">
+                    <div class="w-full">
+                        <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                            <mat-label>Packinglist No. / ลำดับตู้</mat-label>
+                            <input matInput [placeholder]="'กรุณากรอก Packinglist No.'"
+                                formControlName="packinglist_no">
+                        </mat-form-field>
+                    </div>
+                    <div class="w-full">
+                        <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                            <mat-label>หมายเลขคู่</mat-label>
+                            <input matInput [placeholder]="'กรุณากรอกหมายเลขคู่'" formControlName="container_no">
+                        </mat-form-field>
+                    </div>
+                    <div class="w-full">
+                        <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                            <mat-label>ป้ายทะเบียนรถ</mat-label>
+                            <input matInput [placeholder]="'กรุณากรอกป้ายทะเบียนรถ'"
+                                formControlName="truck_license_plate">
+                        </mat-form-field>
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 w-full gap-x-2">
+                    <div class="w-full">
+                        <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                            <mat-label>วันที่ปิดตู้</mat-label>
+                            <input matInput [matDatepicker]="pairCloseDatePicker" formControlName="closing_date">
+                            <mat-datepicker-toggle matIconSuffix [for]="pairCloseDatePicker"></mat-datepicker-toggle>
+                            <mat-datepicker #pairCloseDatePicker></mat-datepicker>
+                        </mat-form-field>
+                    </div>
+                    <div class="w-full">
+                        <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                            <mat-label>วันที่เข้าไทยโดยประมาณ</mat-label>
+                            <input matInput [matDatepicker]="estimatedArrivalPicker"
+                                formControlName="estimated_arrival_date">
+                            <mat-datepicker-toggle matIconSuffix [for]="estimatedArrivalPicker"></mat-datepicker-toggle>
+                            <mat-datepicker #estimatedArrivalPicker></mat-datepicker>
+                        </mat-form-field>
+                    </div>
+                    <div class="w-full">
+                        <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                            <mat-label>Shipping จีน</mat-label>
+                            <input matInput [placeholder]="'กรุณากรอก Shipping จีน'" formControlName="shipping_china">
+                        </mat-form-field>
+                    </div>
+                    <div class="w-full">
+                        <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                            <mat-label>Shipping ไทย</mat-label>
+                            <input matInput [placeholder]="'กรุณากรอก Shipping ไทย'"
+                                formControlName="shipping_thailand">
+                        </mat-form-field>
+                    </div>
+                </div>
+
+                <div class="flex flex-row gap-2">
+                    <div class="w-full">
+                        <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                            <mat-label>ขนส่งโดย</mat-label>
+                            <mat-select formControlName="transport_by"
+                                (selectionChange)="onTransportByChange($event.value)">
+                                <mat-option value="Car">ขนส่งทางรถ</mat-option>
+                                <mat-option value="Ship">ขนส่งทางเรือ</mat-option>
+                                <mat-option value="Train">ขนส่งทางรถไฟ</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+                    <div class="w-full">
+                        <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                            <mat-label>ปลายทาง</mat-label>
+                            <mat-select formControlName="destination" placeholder="">
+                                <ng-container *ngIf="transportBy === 'Ship'; else provinceOptions">
+                                    <mat-option value="มุกดาหาร">มุกดาหาร</mat-option>
+                                    <mat-option value="แหลมฉบัง">แหลมฉบัง</mat-option>
+                                    <mat-option value="กรุงเทพฯ">กรุงเทพฯ</mat-option>
+                                </ng-container>
+                                <ng-template #provinceOptions>
+                                    <mat-option *ngFor="let province of provinces" [value]="province.id">
+                                        {{ province.provinceNameTh }}
+                                    </mat-option>
+                                </ng-template>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+                </div>
+
+                <div class="flex flex-row gap-2">
+                    <div class="w-full">
+                        <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                            <mat-label>หมายเหตุ</mat-label>
+                            <textarea matInput [placeholder]="'กรุณากรอกหมายเหตุ'" formControlName="remark"
+                                rows="3"></textarea>
+                        </mat-form-field>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>

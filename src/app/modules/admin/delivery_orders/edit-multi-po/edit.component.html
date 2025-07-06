@@ -1,0 +1,169 @@
+<div class="flex flex-col flex-auto min-w-0">
+    <div class="flex flex-row justify-between pb-2 items-center">
+        <div class="w-full px-5 pt-5 pb-2.5  justify-between items-center flex">
+            <div class="flex flex-col">
+                <div class="flex space-x-2">
+                    <button class="md:text-xl font-medium tracking-tight leading-7 sm:leading-10 truncate"
+                        [routerLink]="['/claim']" routerLinkActive="router-link-active">
+                        โกดังไทย
+                    </button>
+                    <p class="md:text-sm font-medium tracking-tight leading-7 sm:leading-10 truncate">></p>
+                    <p class="md:text-sm font-medium tracking-tight leading-7 sm:leading-10 truncate text-primary-600">
+                        รายการสินค้าทั้งหมดจากจีน
+                    </p>
+                </div>
+                <div class="flex space-x-2">
+                    <p class="md:text-3xl font-medium tracking-tight leading-7 sm:leading-10 truncate text-black">
+                        แก้ไขหลายรายการ
+                    </p>
+                </div>
+            </div>
+            <div class="justify-end items-center gap-2 flex">
+                <div class="justify-start items-center gap-2 flex">
+                    <button mat-stroked-button class="border-[1px] border-slate-500">
+                        ยกเลิก
+                    </button>
+                </div>
+                <div class="justify-start items-center gap-2 flex">
+                    <button mat-flat-button [color]="'primary'">
+                        ยืนยัน
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <mat-divider class="w-full p-1 mx-5 flex border-t-[1px] border-slate-300"></mat-divider>
+    <div class="flex-auto  p-10 bg-card m-5 rounded-md">
+        <form [formGroup]="form" class="space-y-6">
+            <!-- ข้อมูลการจัดส่ง -->
+            <div>
+                <h2 class="text-lg font-bold mb-4">ข้อมูลการจัดส่ง</h2>
+                <mat-divider class="w-full p-1 flex border-t-[1px] border-slate-300"></mat-divider>
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <mat-form-field class="w-full" [ngClass]="formFieldHelpers">
+                        <mat-label>WH</mat-label>
+                        <mat-select formControlName="wh">
+                            <mat-option *ngFor="let wh of whList" [value]="wh">{{ wh }}</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+
+                    <mat-form-field class="w-full" [ngClass]="formFieldHelpers">
+                        <mat-label>LOT no.</mat-label>
+                        <input matInput formControlName="lot_no" />
+                    </mat-form-field>
+
+                    <mat-form-field class="w-full" [ngClass]="formFieldHelpers">
+                        <mat-label>Carton No</mat-label>
+                        <mat-select formControlName="carton_no">
+                            <mat-option value="Cartoon no">Cartoon no</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+
+                    <mat-form-field class="w-full" [ngClass]="formFieldHelpers">
+                        <mat-label>วิธีขนส่ง</mat-label>
+                        <mat-select formControlName="shipping_method">
+                            <mat-option value="ทางรถ">ทางรถ</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                    <mat-form-field class="w-full" [ngClass]="formFieldHelpers">
+                        <mat-label>Receive date</mat-label>
+                        <input matInput [matDatepicker]="receivePicker" formControlName="receive_date" />
+                        <mat-datepicker-toggle matSuffix [for]="receivePicker"></mat-datepicker-toggle>
+                        <mat-datepicker #receivePicker></mat-datepicker>
+                    </mat-form-field>
+
+                    <mat-form-field class="w-full" [ngClass]="formFieldHelpers">
+                        <mat-label>Ship out date</mat-label>
+                        <input matInput [matDatepicker]="shipPicker" formControlName="ship_out_date" />
+                        <mat-datepicker-toggle matSuffix [for]="shipPicker"></mat-datepicker-toggle>
+                        <mat-datepicker #shipPicker></mat-datepicker>
+                    </mat-form-field>
+                </div>
+            </div>
+
+            <!-- ข้อมูลคำสั่งซื้อ -->
+            <div>
+                <h2 class="text-lg font-bold mb-4">ข้อมูลคำสั่งซื้อ</h2>
+                <mat-form-field class="w-full" [ngClass]="formFieldHelpers">
+                    <mat-label>IMP/PRE</mat-label>
+                    <mat-select formControlName="imp_pre" [value]="'PRE'">
+                        <mat-option value="PRE">PRE</mat-option>
+                        <mat-option value="IMP">IMP</mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+
+            <!-- ข้อมูลลูกค้า -->
+            <div>
+                <h2 class="text-lg font-bold mb-4">ข้อมูลลูกค้า</h2>
+                <mat-form-field class="w-full" [ngClass]="formFieldHelpers">
+                    <mat-label>รหัสลูกค้าหน้ากล่อง</mat-label>
+                    <input matInput formControlName="customer_code" />
+                </mat-form-field>
+            </div>
+
+            <!-- ข้อมูลสินค้า -->
+            <div>
+                <h2 class="text-lg font-bold mb-4">ข้อมูลสินค้า</h2>
+                <mat-divider class="w-full p-1 flex border-t-[1px] border-slate-300"></mat-divider>
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <mat-form-field class="w-full" [ngClass]="formFieldHelpers">
+                        <mat-label>สินค้า</mat-label>
+                        <mat-select formControlName="product" [value]="'C'">
+                            <mat-option value="C">C</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+
+                    <mat-form-field class="w-full" [ngClass]="formFieldHelpers">
+                        <mat-label>น้ำหนัก (กก.)</mat-label>
+                        <input matInput type="number" formControlName="weight" />
+                    </mat-form-field>
+
+                    <mat-form-field class="w-full" [ngClass]="formFieldHelpers">
+                        <mat-label>Qty</mat-label>
+                        <input matInput type="number" formControlName="qty" />
+                    </mat-form-field>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+                    <mat-form-field class="w-full" [ngClass]="formFieldHelpers">
+                        <mat-label>กว้าง (ซม.)</mat-label>
+                        <input matInput type="number" formControlName="width" />
+                    </mat-form-field>
+
+                    <mat-form-field class="w-full" [ngClass]="formFieldHelpers">
+                        <mat-label>ยาว (ซม.)</mat-label>
+                        <input matInput type="number" formControlName="length" />
+                    </mat-form-field>
+
+                    <mat-form-field class="w-full" [ngClass]="formFieldHelpers">
+                        <mat-label>สูง (ซม.)</mat-label>
+                        <input matInput type="number" formControlName="height" />
+                    </mat-form-field>
+                </div>
+
+                <mat-form-field class="w-full mt-4" [ngClass]="formFieldHelpers">
+                    <mat-label>รายละเอียด (คำแปลสินค้า)</mat-label>
+                    <textarea matInput rows="2" formControlName="description" [rows]="3"></textarea>
+                </mat-form-field>
+            </div>
+
+            <!-- ข้อมูลเพิ่มเติม -->
+            <div>
+                <h2 class="text-lg font-bold mb-4">ข้อมูลเพิ่มเติม</h2>
+                <mat-divider class="w-full p-1 flex border-t-[1px] border-slate-300"></mat-divider>
+                <mat-form-field class="w-full" [ngClass]="formFieldHelpers">
+                    <mat-label>หมายเหตุ</mat-label>
+                    <textarea matInput formControlName="remark" [rows]="3"></textarea>
+                </mat-form-field>
+            </div>
+        </form>
+
+    </div>
+</div>
+
+<ng-template #pic let-data="adtData">
+    <div class="flex flex-row justify-center">
+        <img [src]="data?.product_image" alt="Image" class="rounded-md w-20 text-center" />
+    </div>
+</ng-template>
