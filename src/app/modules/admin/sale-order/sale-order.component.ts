@@ -165,21 +165,8 @@ export class SaleOrderComponent implements OnInit, AfterViewInit {
         });
     }
 
-    openDialogEdit(item: any) {
-        const DialogRef = this.dialog.open(DialogForm, {
-            disableClose: true,
-            width: '500px',
-            height: 'auto',
-            data: {
-                type: 'EDIT',
-                value: item,
-            }
-        });
-        DialogRef.afterClosed().subscribe((result) => {
-            if (result) {
-                this.rerender();
-            }
-        });
+    openDialogEdit(id: any) {
+        window.open('/sale-order/edit/' + id, '_blank');
     }
 
 

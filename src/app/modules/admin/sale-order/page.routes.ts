@@ -1,11 +1,26 @@
 import { Routes } from '@angular/router';
 import { SaleOrderComponent } from './sale-order.component';
 import { inject } from '@angular/core';
+import { SoOrderFormComponent } from './form/form.component';
 
 export default [
     {
-        path     : '',
+        path: '',
         component: SaleOrderComponent,
+        resolve: {
+            // branch: () => inject(DeviceService).getBranch(),
+        }
+    },
+    {
+        path: 'form',
+        component: SoOrderFormComponent,
+        resolve: {
+            // branch: () => inject(DeviceService).getBranch(),
+        }
+    },
+    {
+        path: 'edit/:id',
+        component: SoOrderFormComponent,
         resolve: {
             // branch: () => inject(DeviceService).getBranch(),
         }

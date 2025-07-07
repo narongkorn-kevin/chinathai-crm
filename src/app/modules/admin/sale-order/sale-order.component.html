@@ -14,7 +14,7 @@
     <!-- so.component.html -->
     <div class="space-y-6">
       <!-- Filter Section -->
-      <mat-card class="p-4 grid grid-cols-1 md:grid-cols-6 gap-4 ">
+      <mat-card class="p-4 grid grid-cols-1 md:grid-cols-3 gap-4 ">
         <mat-form-field appearance="outline">
           <mat-label>ค้นหา</mat-label>
           <input matInput placeholder="ค้นหา..." />
@@ -88,7 +88,7 @@
               </td>
               <td class="px-4 py-2">{{ order.total | currency:'THB' }}</td>
               <td class="px-4 py-2">
-                <button mat-icon-button color="primary">
+                <button mat-icon-button color="primary" (click)="openDialogEdit(1)"> 
                   <mat-icon>edit</mat-icon>
                 </button>
               </td>

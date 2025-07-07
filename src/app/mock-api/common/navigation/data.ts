@@ -43,7 +43,7 @@ export const defaultNavigation: FuseNavigationItem[] = [
                 id: 'sale-order.pr',
                 title: 'ใบสั่งซื้อ',
                 type: 'basic',
-                link: '/follow-up',
+                link: '/sale-order',
                 badge: {
                     title: '3',
                     classes: 'px-2 bg-red-600 text-white rounded-full',
