@@ -159,6 +159,7 @@ export const appRoutes: Route[] = [
             { path: 'claim', loadChildren: () => import('app/modules/admin/claim-order/claim-order.routes')},
             { path: 'customer', loadChildren: () => import('app/modules/admin/customer/customer.routes')},
             { path: 'follow-up', loadChildren: () => import('app/modules/admin/follow-up/follow-up.routes')},
+            { path: 'sale-order', loadChildren: () => import('app/modules/admin/sale-order/page.routes')},
         ]
     }
 ];
