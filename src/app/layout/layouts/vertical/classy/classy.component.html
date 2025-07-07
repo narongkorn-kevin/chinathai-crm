@@ -3,7 +3,7 @@
 
 <!-- Navigation -->
 <fuse-vertical-navigation
-    class="dark bg-gray-900 print:hidden"
+    class="dark print:hidden bg-white text-[#145ca5]"
     [mode]="isScreenSmall ? 'over' : 'side'"
     [name]="'mainNavigation'"
     [navigation]="navigation.default"
@@ -12,14 +12,14 @@
     <ng-container fuseVerticalNavigationContentHeader>
         <div class="flex items-center w-full p-4 pl-6">
             <!-- Logo -->
-            <div class="flex items-center justify-center">
+            <!-- <div class="flex items-center justify-center">
                 <img
                     class="w-8"
-                    src="assets/images/logo/logo.svg">
-            </div>
+                    src="assets/images/logo/logo.jpg">
+            </div> -->
             <!-- Components -->
             <div class="flex items-center ml-auto">
-                <notifications></notifications>
+                <!-- <notifications></notifications> -->
                 <user [showAvatar]="false"></user>
             </div>
         </div>
@@ -27,33 +27,28 @@
         <div class="flex flex-col items-center w-full p-4">
             <div class="relative w-24 h-24">
                 <img
-                    class="w-full h-full rounded-full"
-                    *ngIf="user.avatar"
-                    [src]="user.avatar"
+                    class="w-full h-full rounded-full border-2 border-gray-500"
+                   src="assets/images/logo/logo.jpg"
                     alt="User avatar">
-                <mat-icon
-                    class="icon-size-24"
-                    *ngIf="!user.avatar"
-                    [svgIcon]="'heroicons_solid:user-circle'"></mat-icon>
             </div>
-            <div class="flex flex-col items-center justify-center w-full mt-6">
+            <div class="flex flex-col items-center justify-center w-full mt-4">
                 <div class="w-full whitespace-nowrap text-ellipsis overflow-hidden text-center leading-normal font-medium">
-                    {{user.name}}
+                    {{user?.name ?? 'Admin Admin'}}
                 </div>
                 <div class="w-full mt-0.5 whitespace-nowrap text-ellipsis overflow-hidden text-center text-md leading-normal font-medium text-secondary">
-                    {{user.email}}
+                    {{user?.email ?? 'admin@gmail.com'}}
                 </div>
             </div>
         </div>
     </ng-container>
     <!-- Navigation footer hook -->
-    <ng-container fuseVerticalNavigationContentFooter>
+    <!-- <ng-container fuseVerticalNavigationContentFooter>
         <div class="flex flex-0 items-center justify-center h-16 pr-6 pl-2 mt-2 mb-4 opacity-12">
             <img
                 class="max-w-36"
                 src="assets/images/logo/logo.png">
         </div>
-    </ng-container>
+    </ng-container> -->
 </fuse-vertical-navigation>
 
 <!-- Wrapper -->
@@ -70,16 +65,16 @@
         <!-- Components -->
         <div class="flex items-center pl-2 ml-auto space-x-0.5 sm:space-x-2">
             <languages></languages>
-            <fuse-fullscreen class="hidden md:block"></fuse-fullscreen>
-            <search [appearance]="'bar'"></search>
-            <shortcuts></shortcuts>
-            <messages></messages>
-            <button
+            <!-- <fuse-fullscreen class="hidden md:block"></fuse-fullscreen> -->
+            <!-- <search [appearance]="'bar'"></search> -->
+            <!-- <shortcuts></shortcuts> -->
+            <!-- <messages></messages> -->
+            <!-- <button
                 class="lg:hidden"
                 mat-icon-button
                 (click)="quickChat.toggle()">
                 <mat-icon [svgIcon]="'heroicons_outline:chat-bubble-left-right'"></mat-icon>
-            </button>
+            </button> -->
         </div>
     </div>
 
@@ -98,4 +93,4 @@
 </div>
 
 <!-- Quick chat -->
-<quick-chat #quickChat="quickChat"></quick-chat>
+<!-- <quick-chat #quickChat="quickChat"></quick-chat> -->
