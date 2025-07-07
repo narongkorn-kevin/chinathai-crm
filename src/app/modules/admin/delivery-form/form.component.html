@@ -1,0 +1,104 @@
+<div class="p-6 space-y-6 bg-gray-50 w-full mx-auto">
+    <div class="bg-white p-6 rounded shadow border space-y-6">
+        <h2 class="text-xl font-bold">นำเข้าอย่างเดียว</h2>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                <mat-label>เลือกลูกค้า</mat-label>
+                <mat-select formControlName="vendor">
+                    <mat-option *ngFor="let client of clientData" [value]="client.code">
+                        {{ client.name }} ({{ client.code }})
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+        </div>
+
+        <div class="space-y-4">
+            <div *ngFor="let shipment of shipments.controls; let i = index" [formGroup]="shipment"
+                class="grid grid-cols-1 md:grid-cols-6 gap-4 items-end">
+                <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                    <mat-label>รายละเอียดสินค้า</mat-label>
+                    <input matInput formControlName="productName" />
+                </mat-form-field>
+
+                <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                    <mat-label>จำนวนกล่อง</mat-label>
+                    <input matInput type="number" formControlName="totalQty" />
+                </mat-form-field>
+
+                <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                    <mat-label>จำนวนประเภท</mat-label>
+                    <input matInput type="number" formControlName="totalTypes" />
+                </mat-form-field>
+
+                <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                    <mat-label>หน่วย</mat-label>
+                    <mat-select formControlName="unit">
+                        <mat-option value="ชิ้น">ชิ้น</mat-option>
+                    </mat-select>
+                </mat-form-field>
+
+                <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                    <mat-label>น้ำหนัก (กก)</mat-label>
+                    <input matInput type="number" formControlName="weight" />
+                </mat-form-field>
+
+                <button mat-icon-button color="warn" (click)="removeShipment(i)" class="self-center">
+                    <mat-icon>delete</mat-icon>
+                </button>
+            </div>
+            <button mat-mini-fab color="primary" (click)="addShipment()" class="col-span-6 items-end">
+                <mat-icon>add</mat-icon>
+            </button>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- วิธีส่งไฟล์ -->
+        <div class="bg-white p-6 rounded shadow border space-y-2">
+            <h3 class="text-lg font-bold mb-2">ระบบที่ใช้ในการใช้ไฟล์</h3>
+
+            <mat-radio-group formControlName="fileOption" class="space-y-2 block">
+                <mat-radio-button value="dropbox">Dropbox หรือส่งลิงก์</mat-radio-button>
+                <div class="text-red-600 text-sm pl-6">
+                    * แจ้งให้ลูกค้าส่งลิงก์เท่านั้น
+                </div>
+
+                <mat-radio-button value="google-drive">Google Drive</mat-radio-button>
+                <div class="text-red-600 text-sm pl-6">
+                    * ใช้บัญชีลูกค้าในการแชร์ลิงก์
+                </div>
+            </mat-radio-group>
+        </div>
+
+        <!-- หมายเหตุ -->
+        <div class="bg-white p-6 rounded shadow border">
+            <h3 class="text-lg font-bold mb-2">หมายเหตุ</h3>
+            <mat-form-field [ngClass]="formFieldHelpers" class="w-full"> class="w-full">
+                <textarea matInput rows="5" formControlName="note"></textarea>
+            </mat-form-field>
+            <button mat-raised-button color="primary" class="mt-2">บันทึก</button>
+        </div>
+    </div>
+
+    <!-- ที่อยู่ในการจัดส่ง -->
+    <div class="bg-white p-6 rounded shadow border">
+        <h3 class="text-lg font-bold mb-2">ที่อยู่ในการจัดส่ง</h3>
+        <mat-icon>home</mat-icon>
+    </div>
+
+    <!-- บริษัทขนส่ง -->
+    <div class="bg-white p-6 rounded shadow border">
+        <h3 class="text-lg font-bold mb-2">บริษัทขนส่งที่ใช้</h3>
+
+        <mat-radio-group formControlName="carrier" class="space-y-2 block">
+            <mat-radio-button value="FLASH">FLASH</mat-radio-button><br />
+            <mat-radio-button value="J&T">J&T</mat-radio-button><br />
+            <mat-radio-button value="BEST">BEST EXPRESS</mat-radio-button><br />
+            <mat-radio-button value="KERRY">KERRY</mat-radio-button><br />
+            <mat-radio-button value="SCG">SCG EXPRESS</mat-radio-button><br />
+            <mat-radio-button value="NIM">NIM EXPRESS</mat-radio-button><br />
+            <mat-radio-button value="อื่นๆ">อื่นๆ</mat-radio-button>
+        </mat-radio-group>
+    </div>
+</div>
