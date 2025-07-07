@@ -10,7 +10,7 @@ import { CommonModule } from '@angular/common';
 })
 export class SoOrderFormComponent {
     form: FormGroup;
-
+    formFieldHelpers: string[] = ['fuse-mat-dense'];
     constructor(private fb: FormBuilder) {
         this.form = this.fb.group({
             soNumber: ['LO2507070060'],

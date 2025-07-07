@@ -1,0 +1,89 @@
+<div class="flex flex-col flex-auto min-w-0">
+    <div class="flex-auto  sm:p-10 bg-card m-4 p-4 rounded-md">
+        <div class="flex flex-row justify-between pb-2 my-5">
+            <div>
+                <h2 class="text-2xl md:text-xl font-extrabold tracking-tight leading-7 sm:leading-10 truncate">
+                    Claim
+                </h2>
+            </div>
+        </div>
+        <!-- so.component.html -->
+        <div class="space-y-6">
+            <!-- Filter Section -->
+            <mat-card class="p-4 grid grid-cols-1 md:grid-cols-4 gap-4 ">
+                    <mat-form-field class="w-full" [ngClass]="formFieldHelpers">
+                    <mat-label>Form - To</mat-label>
+                    <mat-date-range-input [rangePicker]="picker">
+                        <input matStartDate>
+                        <input matEndDate>
+                    </mat-date-range-input>
+                    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                    <mat-date-range-picker #picker></mat-date-range-picker>
+                </mat-form-field>
+                <mat-form-field [ngClass]="formFieldHelpers">
+                    <mat-label>Customer</mat-label>
+                    <input matInput />
+                </mat-form-field>
+                <mat-form-field [ngClass]="formFieldHelpers">
+                    <mat-label>SO</mat-label>
+                    <input matInput />
+                </mat-form-field>
+                <mat-form-field [ngClass]="formFieldHelpers">
+                    <mat-label>สถานะ</mat-label>
+                    <mat-select>
+                        <mat-option value="">ทั้งหมด</mat-option>
+                        <mat-option value="pending">รอดำเนินการ</mat-option>
+                        <mat-option value="completed">เสร็จสิ้น</mat-option>
+                    </mat-select>
+                </mat-form-field>
+                <div class="col-span-full flex justify-end">
+                    <button mat-flat-button color="primary">ค้นหา</button>
+                </div>
+            </mat-card>
+            <div class="overflow-x-auto">
+                <table datatable class="min-w-full divide-y divide-gray-200 text-sm text-left">
+                    <thead class="bg-gray-100 text-gray-700">
+                        <tr>
+                            <th class="px-3 py-2">Doc No</th>
+                            <th class="px-3 py-2">Code</th>
+                            <th class="px-3 py-2">Created</th>
+                            <th class="px-3 py-2">Completed</th>
+                            <th class="px-3 py-2">Cancel</th>
+                            <th class="px-3 py-2">Product฿</th>
+                            <th class="px-3 py-2">CNCN฿</th>
+                            <th class="px-3 py-2">CNTH฿</th>
+                            <th class="px-3 py-2">Total฿</th>
+                            <th class="px-3 py-2">Status</th>
+                            <th class="px-3 py-2 text-center">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let item of data" class="hover:bg-gray-50">
+                            <td class="px-3 py-2">{{ item.docNo }}</td>
+                            <td class="px-3 py-2 text-blue-600 hover:underline cursor-pointer">{{ item.code }}
+                            </td>
+                            <td class="px-3 py-2">{{ item.created }}</td>
+                            <td class="px-3 py-2 text-green-600">{{ item.completed
+                                }}</td>
+                            <td class="px-3 py-2 text-red-500">{{ item.cancel }}</td>
+                            <td class="px-3 py-2 text-right">{{ item.product | number:'1.2-2' }}</td>
+                            <td class="px-3 py-2 text-right">{{ item.cncn | number:'1.2-2' }}</td>
+                            <td class="px-3 py-2 text-right">{{ item.cnth | number:'1.2-2' }}</td>
+                            <td class="px-3 py-2 text-right">{{ item.total | number:'1.2-2' }}</td>
+                            <td class="px-3 py-2">
+                                <span *ngIf="item.status === 'Completed'"
+                                    class="text-green-600 font-bold">Completed</span>
+                                <span *ngIf="item.status === 'Cancel'" class="text-red-600 font-bold">Cancel</span>
+                            </td>
+                            <td class="px-3 py-2 text-center">
+                                <button mat-icon-button color="primary" (click)="openDialogEdit(item.docNo)">
+                                    <mat-icon>edit</mat-icon>
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

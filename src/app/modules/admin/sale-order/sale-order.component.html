@@ -3,39 +3,35 @@
     <div class="flex flex-row justify-between pb-2 my-5">
       <div>
         <h2 class="text-2xl md:text-xl font-extrabold tracking-tight leading-7 sm:leading-10 truncate">
-          รายการแผนก
+          SO
         </h2>
       </div>
-      <button mat-flat-button [color]="'primary'" (click)="opendialogapro()">
-        <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:plus-circle'"></mat-icon>
-        <span class="ml-2 "> เพิ่มแผนก</span>
-      </button>
     </div>
     <!-- so.component.html -->
     <div class="space-y-6">
       <!-- Filter Section -->
       <mat-card class="p-4 grid grid-cols-1 md:grid-cols-3 gap-4 ">
-        <mat-form-field appearance="outline">
+        <mat-form-field [ngClass]="formFieldHelpers">
           <mat-label>ค้นหา</mat-label>
           <input matInput placeholder="ค้นหา..." />
         </mat-form-field>
 
-        <mat-form-field appearance="outline">
+        <mat-form-field [ngClass]="formFieldHelpers">
           <mat-label>ชื่อ</mat-label>
           <input matInput />
         </mat-form-field>
 
-        <mat-form-field appearance="outline">
+        <mat-form-field [ngClass]="formFieldHelpers">
           <mat-label>สมาชิก</mat-label>
           <input matInput />
         </mat-form-field>
 
-        <mat-form-field appearance="outline">
+        <mat-form-field [ngClass]="formFieldHelpers">
           <mat-label>เลขที่เอกสาร</mat-label>
           <input matInput />
         </mat-form-field>
 
-        <mat-form-field appearance="outline">
+        <mat-form-field [ngClass]="formFieldHelpers">
           <mat-label>สถานะ</mat-label>
           <mat-select>
             <mat-option value="">ทั้งหมด</mat-option>
@@ -44,7 +40,7 @@
           </mat-select>
         </mat-form-field>
 
-        <mat-form-field appearance="outline">
+        <mat-form-field [ngClass]="formFieldHelpers">
           <mat-label>ประเภท</mat-label>
           <mat-select>
             <mat-option value="">ทั้งหมด</mat-option>

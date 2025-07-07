@@ -64,7 +64,7 @@ export const defaultNavigation: FuseNavigationItem[] = [
                 id: 'sale-order.claim',
                 title: 'เคลม',
                 type: 'basic',
-                // link: '/follow-up',
+                link: '/claim',
                 badge: {
                     title: '3',
                     classes: 'px-2 bg-red-600 text-white rounded-full',

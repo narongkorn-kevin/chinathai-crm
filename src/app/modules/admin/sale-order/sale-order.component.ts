@@ -40,6 +40,7 @@ import { MatInputModule } from '@angular/material/input';
     changeDetection: ChangeDetectionStrategy.Default,
 })
 export class SaleOrderComponent implements OnInit, AfterViewInit {
+    formFieldHelpers: string[] = ['fuse-mat-dense'];
     dtOptions: any = {};
     dtTrigger: Subject<ADTSettings> = new Subject<ADTSettings>();
     @ViewChild('btNg') btNg: any;
