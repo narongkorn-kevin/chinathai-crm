@@ -1,0 +1,117 @@
+<div class="flex flex-col flex-auto min-w-0">
+  <div class="flex-auto  sm:p-10 bg-card m-4 p-4 rounded-md">
+    <div class="flex flex-row justify-between pb-2 my-5">
+      <div>
+        <h2 class="text-2xl md:text-xl font-extrabold tracking-tight leading-7 sm:leading-10 truncate">
+          PO
+        </h2>
+      </div>
+    </div>
+    <!-- so.component.html -->
+    <div class="space-y-6">
+      <!-- Filter Section -->
+      <mat-card class="p-4 grid grid-cols-1 md:grid-cols-3 gap-4 ">
+        <mat-form-field [ngClass]="formFieldHelpers">
+          <mat-label>ค้นหา</mat-label>
+          <input matInput placeholder="ค้นหา..." />
+        </mat-form-field>
+
+        <mat-form-field [ngClass]="formFieldHelpers">
+          <mat-label>ชื่อ</mat-label>
+          <input matInput />
+        </mat-form-field>
+
+        <mat-form-field [ngClass]="formFieldHelpers">
+          <mat-label>สมาชิก</mat-label>
+          <input matInput />
+        </mat-form-field>
+
+        <mat-form-field [ngClass]="formFieldHelpers">
+          <mat-label>เลขที่เอกสาร</mat-label>
+          <input matInput />
+        </mat-form-field>
+
+        <mat-form-field [ngClass]="formFieldHelpers">
+          <mat-label>สถานะ</mat-label>
+          <mat-select>
+            <mat-option value="">ทั้งหมด</mat-option>
+            <mat-option value="pending">รอดำเนินการ</mat-option>
+            <mat-option value="completed">เสร็จสิ้น</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field [ngClass]="formFieldHelpers">
+          <mat-label>ประเภท</mat-label>
+          <mat-select>
+            <mat-option value="">ทั้งหมด</mat-option>
+            <mat-option value="change">เปลี่ยนสินค้า</mat-option>
+            <mat-option value="express">Express Order</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <div class="col-span-full flex justify-end">
+          <button mat-flat-button color="primary">ค้นหา</button>
+        </div>
+      </mat-card>
+
+      <!-- Table Section -->
+      <div class="overflow-auto">
+        <table datatable class="min-w-full divide-y divide-gray-200 text-sm text-left">
+          <thead class="bg-gray-100">
+            <tr>
+              <th class="px-4 py-2">เลขที่เอกสาร</th>
+              <th class="px-4 py-2">ภาพสินค้า</th>
+              <th class="px-4 py-2">ประเภท</th>
+              <th class="px-4 py-2">วันที่สร้าง</th>
+              <th class="px-4 py-2">รหัส</th>
+              <th class="px-4 py-2">สถานะ</th>
+              <th class="px-4 py-2">มูลค่า</th>
+              <th class="px-4 py-2">จัดการ</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-100">
+            <tr *ngFor="let order of mockData">
+              <td class="px-4 py-2">{{ order.documentNo }}</td>
+              <td class="px-4 py-2">
+                <img [src]="order.image" alt="product" class="w-12 h-12 rounded border" />
+              </td>
+              <td class="px-4 py-2">{{ order.type }}</td>
+              <td class="px-4 py-2">{{ order.createdAt }}</td>
+              <td class="px-4 py-2">{{ order.code }}</td>
+              <td class="px-4 py-2">
+                <span class="text-green-600 font-medium" *ngIf="order.status === 'completed'">ยืนยันแล้ว</span>
+                <span class="text-yellow-600 font-medium" *ngIf="order.status === 'pending'">รอดำเนินการ</span>
+              </td>
+              <td class="px-4 py-2">{{ order.total | currency:'THB' }}</td>
+              <td class="px-4 py-2">
+                <button mat-icon-button color="primary" (click)="openDialogEdit(1)"> 
+                  <mat-icon>edit</mat-icon>
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Include mockData in component -->
+
+  </div>
+</div>
+
+<ng-template #btNg let-data="adtData">
+  <button mat-icon-button [color]="'primary'" [matMenuTriggerFor]="menu">
+    <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:cog-8-tooth'"></mat-icon>
+  </button>
+  <mat-menu #menu="matMenu">
+    <button mat-menu-item (click)="openDialogEdit(data)">
+      <mat-icon [svgIcon]="'heroicons_solid:pencil-square'"></mat-icon>
+      <span>แก้ไข</span>
+    </button>
+    <mat-divider></mat-divider>
+    <button mat-menu-item (click)="clickDelete(data.id)">
+      <mat-icon [svgIcon]="'heroicons_solid:trash'"></mat-icon>
+      <span>ลบ</span>
+    </button>
+  </mat-menu>
+</ng-template>

@@ -92,7 +92,7 @@ export const defaultNavigation: FuseNavigationItem[] = [
                 id: 'purchase-order.po',
                 title: 'PO',
                 type: 'basic',
-                // link: '/follow-up',
+                link: '/purchase-order',
                 badge: {
                     title: '3',
                     classes: 'px-2 bg-red-600 text-white rounded-full',
