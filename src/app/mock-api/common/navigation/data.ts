@@ -74,7 +74,7 @@ export const defaultNavigation: FuseNavigationItem[] = [
                 id: 'sale-order.assign',
                 title: 'เปิดบิลฝากส่ง',
                 type: 'basic',
-                // link: '/follow-up',
+                link: '/order-request',
                 // badge: {
                 //     title: '3',
                 //     classes: 'px-2 bg-red-600 text-white rounded-full',
