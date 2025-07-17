@@ -1,0 +1,62 @@
+<!-- Pagination container -->
+<div class="flex flex-col md:flex-row items-center justify-end gap-2 mt-4">
+    <!-- Items per page dropdown -->
+    <!-- <div class="flex items-center">
+        <span class="mr-2">แสดง</span>
+        <mat-form-field>
+            <mat-select [(ngModel)]="itemsPerPage" (selectionChange)="onItemsPerPageChange()">
+                <mat-option [value]="5">5</mat-option>
+                <mat-option [value]="10">10</mat-option>
+                <mat-option [value]="20">20</mat-option>
+                <mat-option [value]="50">50</mat-option>
+                <mat-option [value]="100">100</mat-option>
+            </mat-select>
+        </mat-form-field>
+    </div> -->
+    <div class="flex items-center relative">
+        <div class="flex items-center">
+            <span class="mr-2">{{ 'common.pagination.show' | transloco }}</span>
+            <div class="relative">
+                <select
+                    [(ngModel)]="itemsPerPage"
+                    (change)="onItemsPerPageChange()"
+                    class="appearance-none bg-transparent pr-6 pl-1 py-0 border-b-2 border-black font-medium focus:outline-none"
+                >
+                    <option [value]="5">5</option>
+                    <option [value]="10">10</option>
+                    <option [value]="20">20</option>
+                    <option [value]="50">50</option>
+                    <option [value]="100">100</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <!-- Page information -->
+    <div class="mx-2">
+        {{ startItem }}-{{ endItem }} of {{ totalItems }}
+    </div>
+
+    <!-- Navigation buttons -->
+    <div class="flex gap-1">
+        <!-- First page button -->
+        <button mat-icon-button [disabled]="currentPage === 1" (click)="goToFirstPage()">
+            <mat-icon>first_page</mat-icon>
+        </button>
+
+        <!-- Previous page button -->
+        <button mat-icon-button [disabled]="currentPage === 1" (click)="goToPreviousPage()">
+            <mat-icon>chevron_left</mat-icon>
+        </button>
+
+        <!-- Next page button -->
+        <button mat-icon-button [disabled]="currentPage === totalPages" (click)="goToNextPage()">
+            <mat-icon>chevron_right</mat-icon>
+        </button>
+
+        <!-- Last page button -->
+        <button mat-icon-button [disabled]="currentPage === totalPages" (click)="goToLastPage()">
+            <mat-icon>last_page</mat-icon>
+        </button>
+    </div>
+</div>

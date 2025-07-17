@@ -1,0 +1,85 @@
+<div class="p-6 flex flex-col h-screen">
+    <!-- หัวข้อ -->
+    <h2 class="text-2xl font-semibold mb-4">
+        {{ 'dalivery_order.view.title.number' | transloco }}: {{ this.data?.delivery_order?.po_no }}
+    </h2>
+
+    <!-- Progress + ข้อมูล PO -->
+    <div class="rounded-lg border-gray-300 border p-6 flex flex-col mb-4">
+        <div class="flex flex-row w-full items-center mt-4">
+            <img class="flex w-14 mr-2" src="assets/images/item/scanning.png" alt="Logo image">
+            <div class="text-lg font-normal w-full">
+                {{ 'packing_list.view.scan_tracking_thai_warehouse_entry' | transloco }}
+            </div>
+        </div>
+        <div class="w-full mt-4">
+            <asha-progress-bar [total]="allItem" [value]="inItem"
+                [color]="inItem === allItem ? 'bg-green-600' : 'bg-red-600'"></asha-progress-bar>
+        </div>
+        <div class="flex flex-row justify-between items-center w-full mt-4">
+            <div>{{ 'packing_list.view.total_from_po_2' | transloco }} {{ this.data?.delivery_order?.po_no }}</div>
+            <div class="text-4xl font-bold text-blue-900">{{ inItem ?? 0 }}/{{ allItem ?? 0 }}</div>
+        </div>
+    </div>
+
+    <!-- ตาราง (เลื่อนเฉพาะตาราง) -->
+    <div class="overflow-y-auto border rounded-lg flex-1">
+        <table class="whitespace-nowrap w-full">
+            <thead>
+                <tr>
+                    <th class="px-4 py-3 border w-10 text-center">
+                        <mat-checkbox (change)="toggleAll($event)"></mat-checkbox>
+                    </th>
+                    <th class="px-6 py-3 border text-left w-10">#</th>
+                    <th class="px-6 py-3 text-left border">
+                        {{ 'pallet.view.barcode_number' | transloco }}
+                    </th>
+                    <th class="px-6 py-3 text-left border">Packing List</th>
+                    <th class="px-6 py-3 text-left border">
+                        {{ 'packing_list.view.container_number' | transloco }}
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let item of data?.delivery_order_list?.delivery_order_list_items; let i = index">
+                    <td class="px-4 py-2 text-center border w-1/12 h-[63px]">
+                        <ng-container *ngIf="item.packing_list_id === currentPackingListId">
+                            <mat-checkbox [(ngModel)]="item.checked"></mat-checkbox>
+                        </ng-container>
+                    </td>
+                    <td class="px-6 py-2 text-center border w-1/12">{{ i + 1 }}</td>
+                    <td class="px-6 py-2 border w-2/12">{{ item?.barcode }}</td>
+                    <td class="px-6 py-2 border w-2/12">
+                        <ng-container *ngIf="getPackingNo(item?.packing_list_id); else notCreated">
+                            {{ getPackingNo(item?.packing_list_id)?.packinglist_no }}
+                        </ng-container>
+                        <ng-template #notCreated>
+                            <span class="px-3 py-1 border border-red-500 rounded-full text-red-600 text-sm">
+                                ยังไม่ได้สร้าง Packing list
+                            </span>
+                        </ng-template>
+                    </td>
+                    <td class="px-6 py-2 border w-2/12">
+                        <ng-container *ngIf="getPackingNo(item?.packing_list_id); else notCreated2">
+                            {{ getPackingNo(item?.packing_list_id)?.container_no }}
+                        </ng-container>
+                        <ng-template #notCreated2>
+                            <span class="px-3 py-1 border border-red-500 rounded-full text-red-600 text-sm">
+                                ยังไม่ได้สร้าง Packing list
+                            </span>
+                        </ng-template>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <!-- ปุ่ม Submit/Cancel (อยู่ล่างสุด) -->
+    <div mat-dialog-actions class="flex justify-end border-t-2 mt-2 p-2">
+        <button class="px-6 ml-3" mat-flat-button color="primary" (click)="deleteSelected()">
+            {{ 'buttons.submit' | transloco }}
+        </button>
+        <button class="px-6 ml-3" mat-flat-button color="warn" (click)="onClose()">
+            {{ 'buttons.cancel' | transloco }}
+        </button>
+    </div>
+</div>

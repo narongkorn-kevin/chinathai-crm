@@ -1,102 +1,68 @@
-<div class="flex flex-col items-center justify-start flex-auto">
+<div class="flex flex-col items-center justify-start flex-auto w-full">
     <div class="flex flex-col items-center justify-between w-full overflow-hidden">
         <div class="flex flex-col items-start justify-start w-full">
-            <div class="w-full px-10 pt-5 pb-2.5 bg-white justify-between items-center flex">
+            <div class="w-full px-4 md:px-10 pt-5 pb-2.5 bg-white flex flex-col md:flex-row md:justify-between">
                 <div class="flex flex-col">
                     <div class="flex space-x-2">
-                        <button class="md:text-xl font-medium tracking-tight leading-7 sm:leading-10 truncate"
+                        <button class="md:text-sm font-medium tracking-tight leading-7 sm:leading-10 truncate"
                             [routerLink]="['/delivery_orders']" routerLinkActive="router-link-active">
-                            รายการรวมพัสดุ
+                            {{ 'dalivery_order.title.main' | transloco }}
                         </button>
                         <p class="md:text-sm font-medium tracking-tight leading-7 sm:leading-10 truncate">></p>
                         <button
                             class="md:text-sm font-medium tracking-tight leading-7 sm:leading-10 truncate text-[#DF0B12]"
                             [routerLink]="['/delivery_orders']" routerLinkActive="router-link-active">
-                            รายการพัสดุเข้าคลัง/PO
+                            {{ 'dalivery_order.title.subtitle' | transloco }}
                         </button>
                     </div>
 
                     <p class="md:text-2xl text-[#DF0B12] font-bold tracking-tight leading-7 sm:leading-10 truncate">
-                        รายการพัสดุเข้าคลัง/PO
+                        {{ 'dalivery_order.form.warehouse_orders' | transloco }}
                     </p>
                 </div>
                 <div class="flex items-center justify-end gap-2">
-                    <button mat-flat-button (click)="Close()">
-                        <mat-icon [svgIcon]="'heroicons_solid:trash'"></mat-icon>
-                        <span class="ml-2">ยกเลิก</span>
-                    </button>
+                    <div class="border border-black rounded-md">
+                        <button mat-flat-button (click)="Close()" class="hover-effect">
+                            <mat-icon svgIcon="feather:trash"></mat-icon>
+                            <span class="ml-2">{{ 'buttons.cancel' | transloco }}</span>
+                        </button>
+                    </div>
                     <button mat-flat-button [color]="'primary'" (click)="Submit()">
-                        <mat-icon [svgIcon]="'heroicons_solid:pencil-square'"></mat-icon>
-                        <span class="ml-2">บันทึก</span>
+                        <mat-icon [svgIcon]="'mat_outline:save'"></mat-icon>
+                        <span class="ml-2">{{ 'buttons.save' | transloco }}</span>
                     </button>
                 </div>
             </div>
-            <div class="flex flex-col w-full px-10 bg-white " [formGroup]="form">
-                <div class="grid w-full grid-flow-row md:grid-cols-4 gap-x-2 ">
+            <div class="flex flex-col w-full px-4 md:px-10 bg-white " [formGroup]="form">
+                <div class="grid w-full grid-flow-row md:grid-cols-3 gap-x-2 ">
                     <div class="w-full">
-                        <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
-                            <mat-label>เลขที่ PO</mat-label>
-                            <input matInput [placeholder]="'เลขที่ PO'" formControlName="track_no">
-                        </mat-form-field>
-                    </div>
-                    <div class="w-full">
-                        <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
-                            <mat-label>วันที่เข้าโกดัง</mat-label>
-                            <input matInput [matDatepicker]="picker" [placeholder]="'วันที่เข้าโกดัง'"
-                                formControlName="date">
-                            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-                            <mat-datepicker #picker></mat-datepicker>
-                        </mat-form-field>
+                        <!-- <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                            <mat-label>{{ 'dalivery_order.form.customer' | transloco }}</mat-label>
+                            <input matInput [placeholder]="'dalivery_order.form.customer' | transloco"
+                                formControlName="member" appUppercaseEnglish>
+                        </mat-form-field> -->
+                        <mat-label>{{ 'dalivery_order.labels.customer' | transloco }}</mat-label>
+                        <asha-select-member (change)="selectMember($event)"
+                            class="w-full [&_input]:!mt-0 [&_input]:!pt-1 [&_input]:!pb-1 [&_.mdc-text-field]:!mt-0">
+                        </asha-select-member>
                     </div>
                     <div class="w-full">
                         <!-- <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
-                            <mat-label>รหัสลูกค้า</mat-label>
-                            <input matInput [placeholder]="'รหัสลูกค้า'" formControlName="member_id">
+                            <mat-label>{{ 'dalivery_order.form.agent_code' | transloco }}</mat-label>
+                            <input matInput [placeholder]="'dalivery_order.form.agent_code' | transloco"
+                                formControlName="agent_code" appUppercaseEnglish>
                         </mat-form-field> -->
-                        <asha-select-member (change)="selectMember($event)" class="w-full"></asha-select-member>
-                    </div>
-                    <div class="w-full">
-                        <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
-                            <mat-label>รหัสลูกตัวแทน</mat-label>
-                            <input matInput [placeholder]="'รหัสลูกตัวแทน'">
-                        </mat-form-field>
-                    </div>
-                    <div class="w-full">
-                        <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
-                            <mat-label>โกดัง</mat-label>
-                            <mat-select >
-                                <mat-option *ngFor="let store of store" [value]="store.id">{{ store.name }}</mat-option>
-                            </mat-select>
-                        </mat-form-field>
-                    </div>
-                    <div class="w-full">
-                        <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
-                            <mat-label>ขนส่งโดย</mat-label>
-                            <mat-select formControlName="shipment_by">
-                                <mat-option value="ship">ขนส่งทางเรือ</mat-option>
-                                <mat-option value="car">ขนส่งทางรถ</mat-option>
-                                <mat-option value="train">ขนส่งทางรถไฟ</mat-option>
-                            </mat-select>
-                        </mat-form-field>
-                    </div>
-                    <div class="w-full">
-                        <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
-                            <mat-label>ขนส่งจีน</mat-label>
-                            <input matInput [placeholder]="'ขนส่งจีน'">
-                        </mat-form-field>
+                        <asha-select-member [memberId]="agentToEdit" (change)="selectAgent($event)" class="w-full"
+                            [title]="'dalivery_order.form.agent_code'"></asha-select-member>
+
                     </div>
                     <div class="w-full">
                         <mat-form-field [ngClass]="formFieldHelpers" class="w-full md:w-4/4">
-                            <mat-label>Ref. Order No.</mat-label>
-                            <input
-                                matInput
-                                [formControl]="ordersFilter"
-                                [matAutocomplete]="orderAutoComplete"
-                                placeholder="ค้นหา order"
-                            />
-                            <mat-autocomplete
-                                #orderAutoComplete="matAutocomplete"
-                                (optionSelected)="onSelectorder($event.option.value, 'manual')">
+                            <mat-label>{{ 'dalivery_order.form.ref_order_no' | transloco }}</mat-label>
+                            <input matInput [formControl]="ordersFilter" [matAutocomplete]="orderAutoComplete"
+                                [placeholder]="'dalivery_order.form.ref_order_no' | transloco" />
+                            <mat-autocomplete #orderAutoComplete="matAutocomplete"
+                                (optionSelected)="onSelectorder($event.option.value)">
                                 <mat-option *ngFor="let item of filterorders | async" [value]="item">
                                     {{item.code}}
                                 </mat-option>
@@ -104,47 +70,111 @@
                         </mat-form-field>
                     </div>
                 </div>
-                <div class="flex flex-col w-full md:flex-row gap-x-2">
+                <div class="grid w-full grid-flow-row md:grid-cols-4 gap-x-2 ">
                     <div class="w-full">
                         <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
-                            <mat-label>คนส่งของ</mat-label>
-                            <input matInput [placeholder]="'คนส่งของ'" formControlName="driver_name">
+                            <mat-label>{{ 'dalivery_order.form.po_number' | transloco }}</mat-label>
+                            <input matInput [placeholder]="'dalivery_order.form.po_number' | transloco"
+                                formControlName="po_no" appUppercaseEnglish>
+                            <mat-error class="text-red-500" *ngIf="form.get('po_no')?.hasError('duplicate')">
+                                หมายเลขนี้ถูกใช้ไปแล้ว
+                            </mat-error>
                         </mat-form-field>
                     </div>
                     <div class="w-full">
                         <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
-                            <mat-label>เบอร์โทร</mat-label>
-                            <input matInput [placeholder]="'เบอร์โทร'" formControlName="driver_phone">
+                            <mat-label>{{ 'dalivery_order.form.warehouse_entry_date' | transloco }}</mat-label>
+                            <input matInput [matDatepicker]="picker"
+                                [placeholder]="'dalivery_order.form.warehouse_entry_date' | transloco "
+                                formControlName="date">
+                            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                            <mat-datepicker #picker></mat-datepicker>
+                        </mat-form-field>
+                    </div>
+                    <div class="w-full">
+                        <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                            <mat-label>{{ 'dalivery_order.form.product_type' | transloco }}</mat-label>
+                            <mat-select formControlName="product_type_id">
+                                <mat-option *ngFor="let product_type of product_type" [value]="product_type.id">{{
+                                    product_type.name }}</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+                    <div class="w-full">
+                        <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                            <mat-label>{{ 'dalivery_order.form.shipment_by' | transloco }}</mat-label>
+                            <mat-select formControlName="shipment_by">
+                                <mat-option value="Ship">{{ 'dalivery_order.form.shipment_by_ship' | transloco
+                                    }}</mat-option>
+                                <mat-option value="Car">{{ 'dalivery_order.form.shipment_by_car' | transloco
+                                    }}</mat-option>
+                                <mat-option value="Train">{{ 'dalivery_order.form.shipment_by_train' | transloco
+                                    }}</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+                    <div class="w-full">
+                        <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                            <mat-label>{{ 'dalivery_order.form.chinese_shipping' | transloco }}</mat-label>
+                            <input matInput [placeholder]="'dalivery_order.form.chinese_shipping' | transloco"
+                                formControlName="shipment_china">
+                        </mat-form-field>
+                    </div>
+                    <div class="w-full">
+                        <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                            <mat-label>{{ 'dalivery_order.form.warehouse' | transloco }}</mat-label>
+                            <mat-select formControlName="store_id">
+                                <mat-option *ngFor="let store of store" [value]="store.id">{{ store.name }}</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+                    <div class="w-full">
+                        <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                            <mat-label>{{ 'dalivery_order.form.sender' | transloco }}</mat-label>
+                            <input matInput [placeholder]="'dalivery_order.form.sender' | transloco"
+                                formControlName="driver_name">
+                        </mat-form-field>
+                    </div>
+                    <div class="w-full">
+                        <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                            <mat-label>{{ 'dalivery_order.form.phone_number' | transloco }}</mat-label>
+                            <input matInput [placeholder]="'dalivery_order.form.phone_number' | transloco"
+                                formControlName="driver_phone">
                         </mat-form-field>
                     </div>
                 </div>
                 <div>
                     <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
-                        <mat-label>หมายเหตุ</mat-label>
-                        <textarea matInput [placeholder]="'หมายเหตุ'" formControlName="note"></textarea>
+                        <mat-label>{{ 'dalivery_order.form.note' | transloco }}</mat-label>
+                        <textarea matInput [placeholder]="'dalivery_order.form.note' | transloco"
+                            formControlName="note"></textarea>
                     </mat-form-field>
                 </div>
                 <div class="flex flex-col w-full gap-6 md:flex-row">
-                    <div class="w-2/3 p-4 border border-gray-300 rounded-lg">
+                    <div class="w-full md:w-2/3 p-4 border border-gray-300 rounded-lg">
                         <div class="flex flex-row w-full gap-2 mb-2">
-                            <div class="w-full text-3xl font-bold">รายละเอียด Tracking</div>
-                            <div class="flex flex-row justify-end w-full gap-2">
-                                <div class="flex items-center gap-2">
-                                    <button mat-flat-button [color]="'primary'" (click)="removeSelectedTracks()">
-                                        <mat-icon svgIcon="heroicons_solid:trash"></mat-icon>
-                                        <span class="ml-2">ลบ</span>
+                            <div class="w-full text-xl md:text-3xl font-bold">{{ 'dalivery_order.form.tracking_details'
+                                | transloco }}</div>
+                            <div class="flex flex-col md:flex-row justify-end w-full gap-2">
+                                <div class="flex items-center gap-2 w-full">
+                                    <button mat-flat-button [color]="'primary'" class="w-full"
+                                        (click)="removeSelectedTracks()" [disabled]="!hasSelectedTracks()">
+                                        <mat-icon svgIcon="feather:trash"></mat-icon>
+                                        <span class="ml-2">{{ 'dalivery_order.form.delete' | transloco }}</span>
                                     </button>
                                 </div>
-                                <div class="flex items-center gap-2">
-                                    <button mat-flat-button [color]="'primary'" (click)="openAddimage()">
+                                <div class="flex items-center gap-2 w-full">
+                                    <button mat-flat-button [color]="'primary'" class="w-full"
+                                        (click)="openScancodeDialog()">
                                         <mat-icon [svgIcon]="'heroicons_solid:qr-code'"></mat-icon>
-                                        <span class="ml-2">สแกนผ่านกล้อง</span>
+                                        <span class="ml-2">{{ 'dalivery_order.form.scan_camera' | transloco }}</span>
                                     </button>
                                 </div>
-                                <div class="flex items-center gap-2">
-                                    <button mat-flat-button [color]="'primary'" (click)="openAddTacking()">
+                                <div class="flex items-center gap-2 w-full">
+                                    <button mat-flat-button [color]="'primary'" class="w-full"
+                                        (click)="openAddTacking()">
                                         <mat-icon [svgIcon]="'heroicons_solid:document'"></mat-icon>
-                                        <span class="ml-2">เพิ่ม Tracking</span>
+                                        <span class="ml-2">{{ 'dalivery_order.form.add_tracking' | transloco }}</span>
                                     </button>
                                 </div>
                             </div>
@@ -152,72 +182,124 @@
                         <div class="w-full mb-2 ">
                             <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
                                 <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:magnifying-glass'"></mat-icon>
-                                <input matInput [placeholder]="'ค้นหาด้วย Tracking'" formControlName="name">
+                                <input matInput class="ml-2"
+                                    [placeholder]="'dalivery_order.form.tracking_details' | transloco"
+                                    formControlName="name">
                             </mat-form-field>
                         </div>
-                        <table class="whitespace-nowrap w-full">
-                            <thead>
-                                <tr>
-                                    <th class="px-6 py-3 border border-x-0 w-10">
-                                        <mat-checkbox [checked]="selectAll" [indeterminate]="someSelect()"
-                                        (change)="SelectAll($event.checked)"></mat-checkbox>
-                                    </th>
-                                    <th class="px-6 py-3 border border-l-0 w-10">#</th>
-                                    <th class="px-6 py-3 border border-r-0">วันที่เพิ่ม Tracking</th>
-                                    <th class="px-6 py-3 border border-x-0">Tracking / เลขพัสดุ</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr *ngFor="let track of tracksArray.controls; let i = index" (click)="selectTrack(track)"
-                                    [ngClass]="{'bg-gray-100': isSelectedTrack(track)}" class="hover:bg-gray-100 cursor-pointer">
-                                    <td class="px-6 py-4 text-center border border-x-0">
-                                        <mat-checkbox [(ngModel)]="track.value.IsChecked" (ngModelChange)="updateAllselect()"
-                                        [ngModelOptions]="{standalone: true}"></mat-checkbox>
-                                    </td>
-                                    <td class="px-6 py-4 text-center border border-l-0">{{ i + 1 }}</td>
-                                    <td class="px-6 py-4 text-center border border-r-0">{{ track.get('date')?.value | date: 'yyyy-MM-dd' }}</td>
-                                    <td class="px-6 py-4 text-center border border-x-0">{{ track.get('track_no')?.value }}</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="flex flex-col w-1/3 gap-2">
-                        <div>
-                            <div class="my-4 text-3xl font-bold">ค่าใช้จ่ายเพิ่มเติม</div>
-                            <mat-divider class="mx-2"></mat-divider>
+                        <div class="w-full overflow-x-auto">
+                            <table class="whitespace-nowrap w-full">
+                                <thead>
+                                    <tr>
+                                        <th class="px-1 md:px-6 py-3 border border-x-0 w-10">
+                                            <mat-checkbox [checked]="selectAll" [indeterminate]="someSelect()"
+                                                class="text-white" [color]="'primary'"
+                                                (change)="SelectAll($event.checked)"></mat-checkbox>
+                                        </th>
+                                        <th class="px-3 md:px-6 py-3 border border-l-0 w-10">#</th>
+                                        <th class="px-6 py-3 border border-r-0">{{ 'dalivery_order.form.date_tracking' |
+                                            transloco }}</th>
+                                        <th class="px-6 py-3 border border-x-0">{{ 'dalivery_order.form.tracking' |
+                                            transloco }}ุ</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Show no results message when search has no results -->
+                                    <ng-container
+                                        *ngIf="filteredTracks.length === 0 && form.get('name')?.value else noTracksFound">
+                                        <tr>
+                                            <td colspan="4" class="px-6 py-4 text-center border border-x-0">
+                                                <span class="text-gray-500">{{ 'dalivery_order.form.no_data_found' |
+                                                    transloco }}</span>
+                                            </td>
+                                        </tr>
+                                    </ng-container>
+                                    <ng-template #noTracksFound>
+                                        <tr *ngFor="let track of filteredTracks.length ? filteredTracks : tracksArray.controls; let i = index"
+                                            (click)="selectTrack(track)"
+                                            [ngClass]="{'bg-gray-100': isSelectedTrack(track)}"
+                                            class="hover:bg-gray-100 cursor-pointer">
+                                            <td class="px-1 md:px-6 py-4 text-center border border-x-0">
+                                                <mat-checkbox [formControl]="track.get('IsChecked')"
+                                                    (change)="updateAllselect()" class="text-white" [color]="'primary'">
+                                                </mat-checkbox>
+                                            </td>
+                                            <td class="px-3 md:px-6 py-4 text-center border border-l-0">{{ i + 1 }}</td>
+                                            <td class="px-6 py-4 text-center border border-r-0">{{
+                                                track.get('date')?.value
+                                                | date: 'yyyy-MM-dd' }}</td>
+                                            <td class="px-6 py-4 text-center border border-x-0">{{
+                                                track.get('track_no')?.value }}</td>
+                                        </tr>
+                                    </ng-template>
+                                </tbody>
+                            </table>
                         </div>
+                    </div>
+                    <div class="flex flex-col w-full md:w-1/3 gap-2">
+                        <!-- หัวข้อและปุ่มอยู่บรรทัดเดียวกัน -->
+                        <div class="flex items-center justify-between my-4">
+                            <div class="text-xl md:text-3xl font-bold w-full  md:w-1/2">
+                                {{ 'dalivery_order.form.additional_costs' | transloco }}
+                            </div>
+                            <button mat-flat-button [color]="'primary'" class="w-full md:w-1/2" (click)="addService()">
+                                <mat-icon [svgIcon]="'heroicons_solid:plus'"></mat-icon>
+                                <span class="ml-2">{{ 'เพิ่มค่าบริการเพิ่มเติม' | transloco }}</span>
+                            </button>
+                        </div>
+
+                        <mat-divider class="mx-2"></mat-divider>
+
                         <div class="w-full" formArrayName="add_on_services">
-                            <div *ngFor="let service of add_on_servicesArray.controls; let i = index" [formGroupName]="i">
+                            <div *ngFor="let service of add_on_servicesArray.controls; let i = index"
+                                [formGroupName]="i" class="mb-2">
                                 <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
-                                    <mat-label>{{ service.get('name').value }}</mat-label>
-                                    <input matInput formControlName="price">
-                                    <span matSuffix>หยวน</span>
+                                    <mat-label>{{ 'ชื่อบริการ' | transloco }}</mat-label>
+                                    <mat-select formControlName="add_on_service_id">
+                                        <mat-option *ngFor="let item of on_services" [value]="item.id">
+                                            {{item.name}}
+                                        </mat-option>
+                                    </mat-select>
                                 </mat-form-field>
+                                <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                                    <mat-label>{{ 'ราคา' | transloco }}</mat-label>
+                                    <input matInput formControlName="price" type="number">
+                                    <span matSuffix>{{ 'lables.yuan' | transloco }}</span>
+                                </mat-form-field>
+                                <button mat-flat-button [color]="'primary'" class="w-fit" (click)="removeService()">
+                                    <mat-icon svgIcon="feather:trash"></mat-icon>
+                                    <span class="ml-2">{{ 'dalivery_order.form.remove_selected' | transloco }}</span>
+                                </button>
                             </div>
                         </div>
                     </div>
+
+
                 </div>
                 <div
                     class="w-full p-4 my-4 border border-gray-300 rounded-lg min-h-[300px] overflow-y-auto flex flex-col">
                     <div class="flex flex-row w-full gap-2 mb-6">
-                        <div class="w-full text-3xl font-bold">รายการผลิตภัณฑ์ใบรับเข้าคลัง / PO</div>
-                        <div class="flex flex-row justify-end w-full gap-2">
+                        <div class="w-full text-xl md:text-3xl font-bold">{{
+                            'dalivery_order.form.warehouse_product_list' | transloco }}</div>
+                        <div class="flex flex-col md:flex-row justify-end w-full gap-2">
                             <div class="flex items-center gap-2" *ngIf="index_track !== undefined">
-                                <button mat-flat-button [color]="'primary'" (click)="openAddProductWait()">
+                                <button mat-flat-button [color]="'primary'" class="w-full"
+                                    (click)="openAddProductWait()">
                                     <mat-icon [svgIcon]="'heroicons_solid:document'"></mat-icon>
-                                    <span class="ml-2">เพิ่ม Product</span>
+                                    <span class="ml-2">{{ 'dalivery_order.form.add_product' | transloco }}</span>
                                 </button>
                             </div>
                             <div class="flex items-center gap-2">
-                                <button mat-flat-button [color]="'primary'" (click)="removeSelectedProducts()">
-                                    <mat-icon svgIcon="heroicons_solid:trash"></mat-icon>
-                                    <span class="ml-2">ลบ</span>
+                                <button mat-flat-button [color]="'primary'" class="w-full"
+                                    (click)="removeSelectedProducts()" [disabled]="!hasSelectedProducts()">
+                                    <mat-icon svgIcon="feather:trash"></mat-icon>
+                                    <span class="ml-2">{{ 'dalivery_order.form.remove_selected' | transloco }}</span>
                                 </button>
                             </div>
                             <div class="flex items-center gap-2">
-                                <button mat-flat-button [color]="'primary'" (click)="openAddProduct()">
+                                <button mat-flat-button [color]="'primary'" class="w-full" (click)="openAddProduct()">
                                     <mat-icon [svgIcon]="'heroicons_solid:plus'"></mat-icon>
-                                    <span class="ml-2">เพิ่มรายการ</span>
+                                    <span class="ml-2">{{ 'dalivery_order.form.add_list' | transloco }}</span>
                                 </button>
                             </div>
                         </div>
@@ -227,37 +309,62 @@
                             <div class="flex flex-col items-start justify-between w-full">
                                 <table class="whitespace-nowrap w-full">
                                     <thead>
-                                      <tr >
-                                        <th rowspan="2" class="px-6 py-3 border border-x-0 w-10">
-                                            <mat-checkbox [checked]="selectAllProducts" [indeterminate]="someSelectProducts()"
-                                            (change)="SelectAllProducts($event.checked)"></mat-checkbox>
-                                        </th>
-                                        <th rowspan="2" class="px-6 py-3 border border-x-0 w-10">#</th>
-                                        <th rowspan="2" class="px-6 py-3 border border-x-0">รูปสินค้า</th>
-                                        <th rowspan="2" class="px-6 py-3 border border-x-0">ประเภท</th>
-                                        <th rowspan="2" class="px-6 py-3 border border-x-0">ชื่อผลิตภัณฑ์</th>
-                                        <th rowspan="2" class="px-6 py-3 border border-x-0">รูปแบบบรรจุภัณฑ์</th>
-                                        <th rowspan="2" class="px-6 py-3 border border-x-0">โลโก้</th>
-                                        <th rowspan="2" class="px-6 py-3 border border-x-0">จำนวนลัง</th>
-                                        <th rowspan="2" class="px-6 py-3 border border-x-0">จำนวนชิ้น</th>
-                                        <th rowspan="2" class="px-6 py-3 border border-x-0">น้ำหนัก (Kg.)</th>
-                                        <th colspan="3" class="px-6 py-3 border border-x-0">ขนาด (ลบ.ม)</th>
-                                        <th rowspan="2" class="px-6 py-3 border border-x-0">CBM</th>
-                                      </tr>
-                                      <tr>
-                                        <th class="px-6 py-3 border border-x-0">ยาว</th>
-                                        <th class="px-6 py-3 border border-x-0">กว้าง</th>
-                                        <th class="px-6 py-3 border border-x-0">สูง</th>
-                                      </tr>
+                                        <tr>
+                                            <th rowspan="2" class="px-1 md:px-6 py-3 border border-x-0 w-10">
+                                                <mat-checkbox [checked]="selectAllProducts"
+                                                    [indeterminate]="someSelectProducts()" class="text-white"
+                                                    [color]="'primary'" [disabled]="!hasAnyProducts()"
+                                                    (change)="SelectAllProducts($event.checked)"></mat-checkbox>
+                                            </th>
+                                            <th rowspan="2" class="px-3 md:px-6 py-3 border border-x-0 w-10"></th>
+                                            <th rowspan="2" class="px-3 md:px-6 py-3 border border-x-0 w-10">#</th>
+                                            <th rowspan="2" class="px-6 py-3 border border-x-0">{{
+                                                'dalivery_order.form.image' | transloco }}</th>
+                                            <th rowspan="2" class="px-6 py-3 border border-x-0">{{
+                                                'dalivery_order.form.category' | transloco }}</th>
+                                            <th rowspan="2" class="px-6 py-3 border border-x-0">{{
+                                                'dalivery_order.form.product_name' | transloco }}</th>
+                                            <th rowspan="2" class="px-6 py-3 border border-x-0">{{
+                                                'dalivery_order.form.packaging' | transloco }}</th>
+                                            <th rowspan="2" class="px-6 py-3 border border-x-0">{{
+                                                'dalivery_order.form.logo' | transloco }}</th>
+                                            <th rowspan="2" class="px-6 py-3 border border-x-0">{{
+                                                'dalivery_order.form.box_quantity' | transloco }}</th>
+                                            <th rowspan="2" class="px-6 py-3 border border-x-0">{{
+                                                'dalivery_order.form.unit_quantity' | transloco }}</th>
+                                            <th rowspan="2" class="px-6 py-3 border border-x-0">{{
+                                                'dalivery_order.form.weight' | transloco }}</th>
+                                            <th colspan="3" class="px-6 py-3 border border-x-0">{{
+                                                'dalivery_order.form.dimensions' | transloco }}</th>
+                                            <th rowspan="2" class="px-6 py-3 border border-x-0">{{
+                                                'dalivery_order.form.cbm' | transloco }}</th>
+                                        </tr>
+                                        <tr>
+                                            <th class="px-6 py-3 border border-x-0">{{ 'dalivery_order.form.length' |
+                                                transloco }}</th>
+                                            <th class="px-6 py-3 border border-x-0">{{ 'dalivery_order.form.width' |
+                                                transloco }}</th>
+                                            <th class="px-6 py-3 border border-x-0">{{ 'dalivery_order.form.height' |
+                                                transloco }}</th>
+                                        </tr>
                                     </thead>
                                     <tbody *ngIf="index_track !== undefined">
-                                      <tr *ngFor="let product of listsArray.controls; let i = index" class="text-center" >
-                                        <td class="px-6 py-3 border border-x-0">
-                                            <mat-checkbox [(ngModel)]="product.value.IsChecked" (ngModelChange)="updateAllSelectProducts()"
-                                            [ngModelOptions]="{standalone: true}"></mat-checkbox>
-                                        </td>
-                                        <td  class="px-6 py-3 border border-l-0"> {{ i+1 }} </td>
-                                        <td class="px-6 py-3 border border-x-0">
+                                        <tr *ngFor="let product of listsArray.controls; let i = index"
+                                            class="text-center">
+                                            <td class="px-1 md:px-6 py-3 border border-x-0">
+                                                <mat-checkbox [(ngModel)]="product.value.IsChecked"
+                                                    (ngModelChange)="updateAllSelectProducts()" class="text-white"
+                                                    [color]="'primary'"
+                                                    [ngModelOptions]="{standalone: true}"></mat-checkbox>
+                                            </td>
+                                            <td class="px-3 md:px-6 py-3 border border-x-0">
+                                                <button mat-flat-button [color]="'primary'" class="w-full"
+                                                    (click)="openEditProduct(product.value , i)">
+                                                    <mat-icon [svgIcon]="'mat_outline:edit_note'"></mat-icon>
+                                                </button>
+                                            </td>
+                                            <td class="px-3 md:px-6 py-3 border border-l-0"> {{ i+1 }} </td>
+                                            <!-- <td class="px-6 py-3 border border-x-0">
                                           <img *ngIf="product.get('images')?.value; else noImage" [src]="product.get('images')?.value[0]?.image" class="w-16 h-auto rounded">
                                           <ng-template #noImage>
                                             <div class="w-16 h-16 bg-[#797979] flex flex-col items-center justify-center text-sm rounded-md text-white">
@@ -269,31 +376,69 @@
                                                 </div>
                                             </div>
                                           </ng-template>
-                                        </td>
-                                        <td class="px-6 py-3 border border-x-0">{{ product.get('product_type')?.value }}</td>
-                                        <td class="px-6 py-3 border border-x-0">{{ product.get('product_name')?.value }}</td>
-                                        <td class="px-6 py-3 border border-x-0">{{ product.get('unit_id')?.value }}</td>
-                                        <td class="px-6 py-3 border border-x-0">{{ product.get('product_logo')?.value }}</td>
-                                        <td class="px-6 py-3 border border-x-0">{{ product.get('qty_box')?.value }}</td>
-                                        <td class="px-6 py-3 border border-x-0">{{ product.get('qty')?.value }}</td>
-                                        <td class="px-6 py-3 border border-x-0">{{ product.get('weight')?.value }}</td>
-                                        <td class="px-6 py-3 border border-x-0">{{ product.get('long')?.value }}</td>
-                                        <td class="px-6 py-3 border border-x-0">{{ product.get('width')?.value }}</td>
-                                        <td class="px-6 py-3 border border-x-0">{{ product.get('height')?.value }}</td>
-                                        <td class="px-6 py-3 border border-x-0">{{ product.get('cbm')?.value }}</td>
-                                      </tr>
+                                        </td> -->
+                                            <td class="px-6 py-3 border border-x-0">
+                                                <ng-container
+                                                    *ngIf="product.get('images')?.value?.length > 0; else noImage">
+                                                    <img [src]="product.get('images')?.value[0]?.image_url"
+                                                        (click)="showPicture(product.get('images')?.value)"
+                                                        class="w-16 h-auto rounded" (error)="imageLoadError = true"
+                                                        *ngIf="!imageLoadError; else noImage">
+                                                </ng-container>
+
+                                                <ng-template #noImage>
+                                                    <div
+                                                        class="w-16 h-16 bg-[#797979] flex flex-col items-center justify-center text-sm rounded-md text-white">
+                                                        <div>
+                                                            <mat-icon class="text-white"
+                                                                [svgIcon]="'heroicons_solid:photo'"></mat-icon>
+                                                        </div>
+                                                        <div>
+                                                            No Image
+                                                        </div>
+                                                    </div>
+                                                </ng-template>
+                                            </td>
+                                            <td class="px-6 py-3 border border-x-0">{{ getProductTypeName(
+                                                product.get('product_type_id')?.value) }}</td>
+                                            <td class="px-6 py-3 border border-x-0">{{
+                                                product.get('product_name')?.value }}</td>
+                                            <td class="px-6 py-3 border border-x-0">{{ product.get('unit_id')?.value }}
+                                            </td>
+                                            <td class="px-6 py-3 border border-x-0">{{
+                                                product.get('product_logo')?.value }}</td>
+                                            <td class="px-6 py-3 border border-x-0">{{ product.get('qty_box')?.value ??
+                                                0 }}</td>
+                                            <td class="px-6 py-3 border border-x-0">{{ product.get('qty')?.value }}</td>
+                                            <td class="px-6 py-3 border border-x-0">{{ product.get('weight')?.value *
+                                                product.get('qty_box')?.value || 0 }}
+                                            </td>
+                                            <td class="px-6 py-3 border border-x-0">{{ product.get('long')?.value }}
+                                            </td>
+                                            <td class="px-6 py-3 border border-x-0">{{ product.get('width')?.value }}
+                                            </td>
+                                            <td class="px-6 py-3 border border-x-0">{{ product.get('height')?.value }}
+                                            </td>
+                                            <td class="px-6 py-3 border border-x-0">{{ product.get('cbm')?.value }}</td>
+                                        </tr>
                                     </tbody>
                                     <tfoot class="bg-gray-100">
-                                      <tr class="text-center">
-                                        <td colspan="7" class="px-6 py-3 border border-x-0 text-left"> ผลรวม {{ totallist }} รายการ </td>
-                                        <td class="px-6 py-3 border border-x-0">{{ totalBoxes }}</td>
-                                        <td class="px-6 py-3 border border-x-0">{{ totalUnits }}</td>
-                                        <td class="px-6 py-3 border border-x-0">{{ totalWeight }}</td>
-                                        <td colspan="3" class="px-6 py-3 border border-x-0"></td>
-                                        <td class="px-6 py-3 border border-x-0">{{ totalCBM }}</td>
-                                      </tr>
+                                        <tr class="text-center">
+                                            <td colspan="8" class="px-6 py-3 border border-x-0 text-left">{{
+                                                'dalivery_order.form.summary.total' | transloco }} {{totallist}} {{
+                                                'dalivery_order.form.summary.items' | transloco }} </td>
+                                            <td class="px-6 py-3 border border-x-0">{{ 'dalivery_order.form.total_boxes'
+                                                | transloco }} {{totalBoxes}}</td>
+                                            <td class="px-6 py-3 border border-x-0">{{ 'dalivery_order.form.total_units'
+                                                | transloco }} {{totalUnits}}</td>
+                                            <td class="px-6 py-3 border border-x-0">{{
+                                                'dalivery_order.form.total_weight' | transloco }} {{totalWeight}}</td>
+                                            <td colspan="3" class="px-6 py-3 border border-x-0"></td>
+                                            <td class="px-6 py-3 border border-x-0">{{ 'dalivery_order.form.total_cbm' |
+                                                transloco }} {{totalCBM}}</td>
+                                        </tr>
                                     </tfoot>
-                                  </table>
+                                </table>
                             </div>
                         </div>
                     </div>

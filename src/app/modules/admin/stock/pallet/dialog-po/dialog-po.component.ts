@@ -32,7 +32,10 @@ import { HttpClient } from '@angular/common/http';
 import { PalletService } from '../pallet.service';
 import { MatDivider } from '@angular/material/divider';
 import { ADTSettings } from 'angular-datatables/src/models/settings';
-import { MatDatepickerModule, MatDateRangePicker } from '@angular/material/datepicker';
+import {
+    MatDatepickerModule,
+    MatDateRangePicker,
+} from '@angular/material/datepicker';
 import {
     trigger,
     state,
@@ -40,12 +43,15 @@ import {
     transition,
     animate,
 } from '@angular/animations';
+import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
+
 @Component({
-    selector: 'app-dialog-po-update-payment-new-product-form-addressed-18',
+    selector: 'app-dialog-item-none-pallet-sack-update-payment-new-product-form-addressed-18',
     standalone: true,
     templateUrl: './dialog-po.component.html',
     styleUrl: './dialog-po.component.scss',
     imports: [
+        TranslocoModule,
         CommonModule,
         DataTablesModule,
         MatIconModule,
@@ -87,7 +93,8 @@ import {
 })
 export class DialogPoComponent implements OnInit {
     @ViewChild('checkbox') checkbox: any;
-    @ViewChild(DataTableDirective, { static: false })dtElement: DataTableDirective;
+    @ViewChild(DataTableDirective, { static: false })
+    dtElement: DataTableDirective;
     dtTrigger: Subject<ADTSettings> = new Subject<ADTSettings>();
     form: FormGroup;
     stores: any[] = [];
@@ -96,8 +103,10 @@ export class DialogPoComponent implements OnInit {
     addForm: FormGroup;
     tracks = [];
     dataRow: any[] = [];
+    members: any[] = [];
 
     constructor(
+        private translocoService: TranslocoService,
         private dialogRef: MatDialogRef<DialogPoComponent>,
         @Inject(MAT_DIALOG_DATA) public data: any,
         public dialog: MatDialog,
@@ -106,8 +115,12 @@ export class DialogPoComponent implements OnInit {
         private toastr: ToastrService,
         private http: HttpClient,
         private _service: PalletService,
-        private formBuilder: FormBuilder,
+        private formBuilder: FormBuilder
     ) {
+
+        this._service.getMember().subscribe((resp: any) => {
+            this.members = resp.data;
+        })
         this.filterForm = this.FormBuilder.group({
             start_date: [''],
             end_date: [''],
@@ -117,10 +130,27 @@ export class DialogPoComponent implements OnInit {
             member_code: [''],
             shipment: [''],
         });
-        console.log(data, 'data');
+        console.log(this.data, 'data');
+        this.langues = localStorage.getItem('lang');
     }
+    langues: any;
+    languageUrl: any;
 
     ngOnInit(): void {
+        if (this.langues === 'en') {
+            this.languageUrl =
+                'https://cdn.datatables.net/plug-ins/1.11.3/i18n/en-gb.json';
+        } else if (this.langues === 'th') {
+            this.languageUrl =
+                'https://cdn.datatables.net/plug-ins/1.11.3/i18n/th.json';
+        } else if (this.langues === 'cn') {
+            this.languageUrl =
+                'https://cdn.datatables.net/plug-ins/1.11.3/i18n/zh.json';
+        } else {
+            this.languageUrl =
+                'https://cdn.datatables.net/plug-ins/1.11.3/i18n/th.json';
+        }
+
         this.form = this.FormBuilder.group({
             track_no: this.FormBuilder.array([]),
         });
@@ -158,10 +188,17 @@ export class DialogPoComponent implements OnInit {
     }
 
     Submit() {
-        const formValue = this.multiSelect
+        if (this.form.invalid) {
+            this.toastr.error(
+                this.translocoService.translate('toastr.missing_fields')
+            );
+            this.form.markAllAsTouched();
+            return;
+        }
+        const formValue = this.multiSelect;
 
         const confirmation = this.fuseConfirmationService.open({
-            title: 'ยืนยันการบันทึกข้อมูล',
+            title: this.translocoService.translate('confirmation.save_title'),
             icon: {
                 show: true,
                 name: 'heroicons_outline:exclamation-triangle',
@@ -170,12 +207,16 @@ export class DialogPoComponent implements OnInit {
             actions: {
                 confirm: {
                     show: true,
-                    label: 'ยืนยัน',
+                    label: this.translocoService.translate(
+                        'confirmation.confirm_button'
+                    ),
                     color: 'primary',
                 },
                 cancel: {
                     show: true,
-                    label: 'ยกเลิก',
+                    label: this.translocoService.translate(
+                        'confirmation.cancel_button'
+                    ),
                 },
             },
             dismissible: false,
@@ -193,11 +234,7 @@ export class DialogPoComponent implements OnInit {
     }
 
     trackingItems = [
-        { trackingNumber: 'AZ9999999999', selected: false },
-        { trackingNumber: 'AZ9999999998', selected: false },
-        { trackingNumber: 'AZ9999999997', selected: false },
-        { trackingNumber: 'AZ9999999996', selected: false },
-        { trackingNumber: 'AZ9999999995', selected: false },
+
     ];
 
     get selectedTrackings(): string[] {
@@ -220,19 +257,58 @@ export class DialogPoComponent implements OnInit {
     }
 
     loadTable(): void {
+        const menuTitles = {
+            warehouse_entry_date: {
+                th: 'วันที่เข้าโกดัง',
+                en: 'Warehouse Entry Date',
+                cn: '入库日期',
+            },
+            sack_number: {
+                th: 'หมายเลขกระสอบ',
+                en: 'Sack Number',
+                cn: '麻袋编号',
+            },
+            warehouse_receipt_code: {
+                th: 'รหัสใบรับเข้าคลัง',
+                en: 'Warehouse Receipt Code',
+                cn: '入库单号',
+            },
+            barcode_number: {
+                th: 'เลขที่บาร์โค้ด',
+                en: 'Barcode Number',
+                cn: '条码编号',
+            },
+            customer_code: {
+                th: 'รหัสลูกค้า',
+                en: 'Customer Code',
+                cn: '客户代码',
+            },
+            shipped_by: {
+                th: 'ขนส่งโดย',
+                en: 'Shipped By',
+                cn: '运输方式',
+            },
+        };
+
         this.dtOptions = {
             pagingType: 'full_numbers',
+            pageLength: 1000,    // ✅ จำกัดจำนวนแถวต่อหน้า
+            lengthMenu: [50, 100, 500, 1000],
             serverSide: true,
             scrollX: true,
+            
+            language: {
+                url: this.languageUrl,
+            },
             ajax: (dataTablesParameters: any, callback) => {
+                dataTablesParameters.product_type_id = this.data?.value?.product_type_id
+                dataTablesParameters.shipment_by = this.data?.value?.shipped_by
                 this._service
-                    .datatableorderlist(dataTablesParameters)
+                    .datatableorderlistBox(dataTablesParameters)
                     .pipe(map((resp: { data: any }) => resp.data))
                     .subscribe({
                         next: (resp: any) => {
                             this.dataRow = resp.data;
-                            console.log(resp, 'resp');
-
                             callback({
                                 recordsTotal: resp.total,
                                 recordsFiltered: resp.total,
@@ -246,9 +322,7 @@ export class DialogPoComponent implements OnInit {
                     title: '',
                     data: null,
                     defaultContent: '',
-                    ngTemplateRef: {
-                        ref: this.checkbox,
-                    },
+                    ngTemplateRef: { ref: this.checkbox },
                     className: 'w-10 text-center',
                 },
                 {
@@ -257,72 +331,52 @@ export class DialogPoComponent implements OnInit {
                     className: 'w-10 text-center',
                 },
                 {
-                    title: 'วันที่เข้าโกดัง',
-                    data: function (row: any) {
-                        if(!row.delivery_order?.date){
-                            return '-';
-                        }
-                        return row.delivery_order?.date;
-                    },
+                    title: menuTitles.warehouse_entry_date[this.langues],
+                    data: (row: any) => row.delivery_order?.date || '-',
                     className: 'w-10 text-center',
-                    // ngTemplateRef: {
-                    //     ref: this.date,
-                    // },
                 },
                 {
-                    title: 'หมายเลขกระสอบ',
-                    data: function (row: any) {
-                        if(!row.sack?.name){
-                            return '-';
-                        }
-                        return row.sack?.name;
-                    },
+                    title: menuTitles.sack_number[this.langues],
+                    data: (row: any) => row.sack?.name || '-',
                     className: 'text-center',
                 },
                 {
-                    title: 'รหัสใบรับเข้าคลัง',
-                    data: function (row: any) {
-                        if(!row.delivery_order?.code){
-                            return '-';
-                        }
-                        return row.delivery_order?.code;
-                    },
+                    title: menuTitles.warehouse_receipt_code[this.langues],
+                    data: (row: any) => row.delivery_order?.po_no || '-',
                     className: 'text-center',
                 },
                 {
-                    title: 'เลขที่บาร์โค้ด',
-                    data: function (row: any) {
-                        if(!row.delivery_order?.member?.code){
-                            return '-';
-                        }
-                        return row.delivery_order?.member?.code;
-                    },
+                    title: menuTitles.barcode_number[this.langues],
+                    data: (row: any) => row?.barcode || '-',
                     className: 'text-center',
                 },
                 {
-                    title: 'รหัสลูกค้า',
-                    data: function (row: any) {
-                        if(!row.delivery_order?.member?.code){
-                            return '-';
-                        }
-                        return row.delivery_order?.member?.code;
-                    },
+                    title: menuTitles.customer_code[this.langues],
+                    data: (row: any) => this.findMemberName(row.delivery_order?.member_id) || '-',
                     className: 'text-center',
                 },
                 {
-                    title: 'ขนส่งโดย',
-                    data: function (row: any) {
-                        if(!row.shipment?.name){
-                            return '-';
-                        }
-                        return row.shipment?.name;
-                    },
+                    title: menuTitles.shipped_by[this.langues],
+                    data: (row: any) => this.getShipmentMethod(row.delivery_order?.shipment_by) || '-',
                     className: 'text-center',
                 },
-
             ],
         };
     }
+
+    getShipmentMethod(shippedBy: string): string {
+        if (shippedBy === 'Car' || shippedBy === 'car') {
+            return 'ขนส่งทางรถ';
+        } else if (shippedBy === 'Ship' || shippedBy === 'ship') {
+            return 'ขนส่งทางเรือ';
+        } else if (shippedBy === 'Train' || shippedBy === 'train') {
+            return 'ขนส่งทางรถไฟ';
+        } else {
+            return '-';
+        }
+    }
+
+
     rerender(): void {
         this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
             // Destroy the table first
@@ -341,7 +395,7 @@ export class DialogPoComponent implements OnInit {
         if (isSelectAll) {
             // เลือกทั้งหมด: เพิ่ม object ของทุกแถวใน multiSelect
             this.dataRow.forEach((row: any) => {
-                if (!this.multiSelect.some(item => item.id === row.id)) {
+                if (!this.multiSelect.some((item) => item.id === row.id)) {
                     this.multiSelect.push(row); // เพิ่ม object ถ้ายังไม่มีใน multiSelect
                 }
                 row.selected = true; // ตั้งค่า selected เป็น true
@@ -349,7 +403,9 @@ export class DialogPoComponent implements OnInit {
         } else {
             // ยกเลิกการเลือกทั้งหมด: ลบ object ของทุกแถวออกจาก multiSelect
             this.dataRow.forEach((row: any) => {
-                const index = this.multiSelect.findIndex(item => item.id === row.id);
+                const index = this.multiSelect.findIndex(
+                    (item) => item.id === row.id
+                );
                 if (index !== -1) {
                     this.multiSelect.splice(index, 1); // ลบ object ออกจาก multiSelect
                 }
@@ -364,7 +420,9 @@ export class DialogPoComponent implements OnInit {
             this.multiSelect.push(row);
         } else {
             // ลบ object ออกจาก multiSelect
-            const index = this.multiSelect.findIndex(item => item.id === row.id);
+            const index = this.multiSelect.findIndex(
+                (item) => item.id === row.id
+            );
             if (index !== -1) {
                 this.multiSelect.splice(index, 1); // ใช้ splice เพื่อลบค่าออก
             }
@@ -385,5 +443,12 @@ export class DialogPoComponent implements OnInit {
     clearFilter() {
         this.filterForm.reset();
         this.rerender();
+    }
+
+    findMemberName(memberId: any): string {
+        const member = this.members.find((m) => m.id === +memberId);
+        console.log(member);
+        
+        return member ? member.importer_code : '-';
     }
 }

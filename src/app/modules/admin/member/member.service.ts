@@ -24,7 +24,11 @@ export class MemberService {
     update(data: any) {
         return this.http.put('/api/member', data)
     }
-
+    getMember() {
+        return this.http.get(
+            environment.apiUrl + '/api/get_member'
+        );
+    }
     getRole() {
         return this.http.get('/api/role').pipe(
             tap((resp: any) => {

@@ -1,6 +1,13 @@
 import { CdkMenuModule } from '@angular/cdk/menu';
 import { Subject, Subscription } from 'rxjs';
-import { Component, OnInit, OnChanges, Inject, ViewChild, ChangeDetectorRef } from '@angular/core';
+import {
+    Component,
+    OnInit,
+    OnChanges,
+    Inject,
+    ViewChild,
+    ChangeDetectorRef,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DataTableDirective, DataTablesModule } from 'angular-datatables';
 import { MatIconModule } from '@angular/material/icon';
@@ -91,12 +98,15 @@ export type ChartOptions = {
     legend: ApexLegend;
     colors: string[];
 };
+import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
+
 @Component({
     selector: 'app-member-setting',
     standalone: true,
     templateUrl: './form.component.html',
     styleUrl: './form.component.scss',
     imports: [
+        TranslocoModule,
         CommonModule,
         DataTablesModule,
         MatIconModule,
@@ -159,8 +169,10 @@ export class FormComponent implements OnInit {
     @ViewChild('checkbox') checkbox: any;
     filteredProducts: any[] = [];
     shipment_delivery_orders: any[] = [];
+    productTypes: { id: number, name: string }[] = [];
 
     constructor(
+        private translocoService: TranslocoService,
         private _changeDetectorRef: ChangeDetectorRef,
         private FormBuilder: FormBuilder,
         public _service: DeliveryService,
@@ -176,19 +188,53 @@ export class FormComponent implements OnInit {
         this.OrderShipment = this.activated.snapshot.data.OrderShipment?.data;
         this.product_types = this.data?.product_type?.data;
         this.shipment_delivery_orders = this.data?.shipment_delivery_orders;
-        this.filteredProducts = this.shipment_delivery_orders.map(product => ({
-            ...product,
-            IsChecked: false
-        }));
+        this.filteredProducts = this.shipment_delivery_orders.map(
+            (product) => ({
+                ...product,
+                IsChecked: false,
+            })
+        );
         console.log(this.filteredProducts, 'filteredProducts');
+        this.langues = localStorage.getItem('lang');
     }
+    langues: any;
+    languageUrl: any;
+
     ngOnInit(): void {
+        if (this.langues === 'en') {
+            this.languageUrl =
+                'https://cdn.datatables.net/plug-ins/1.11.3/i18n/en-gb.json';
+        } else if (this.langues === 'th') {
+            this.languageUrl =
+                'https://cdn.datatables.net/plug-ins/1.11.3/i18n/th.json';
+        } else if (this.langues === 'cn') {
+            this.languageUrl =
+                'https://cdn.datatables.net/plug-ins/1.11.3/i18n/zh.json';
+        } else {
+            this.languageUrl =
+                'https://cdn.datatables.net/plug-ins/1.11.3/i18n/th.json';
+        }
+
         setTimeout(() => this.loadTable());
         this.filterForm = this.FormBuilder.group({
-            code: [''],
-            shipment: [''],
+            member_id: [''],
+            po_no: [''],
+            shipment_by: [''],
             type: [''],
+            product_type: ['']
         });
+
+        this.filterForm.get('po_no')?.valueChanges.subscribe(() => {
+            this.applyFilter();
+        });
+        this.filterForm.valueChanges
+        .pipe(debounceTime(300))
+        .subscribe(() => {
+            this.applyFilter();
+        });
+        
+
+        
     }
     rerender(): void {
         this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
@@ -209,10 +255,46 @@ export class FormComponent implements OnInit {
         this.dtTrigger.unsubscribe();
     }
     loadTable(): void {
+        const menuTitles = {
+            warehouse_receipt_code: {
+                th: 'รหัสใบรับเข้าคลัง',
+                en: 'Warehouse Receipt Code',
+                cn: '入库单号',
+            },
+            customer_code: {
+                th: 'รหัสลูกค้า',
+                en: 'Customer Code',
+                cn: '客户代码',
+            },
+            shipped_by: {
+                th: 'ขนส่งโดย',
+                en: 'Shipped By',
+                cn: '运输方式',
+            },
+            shipping_cost: {
+                th: 'ค่าขนส่ง',
+                en: 'Shipping Cost',
+                cn: '运费',
+            },
+            shipping_status: {
+                th: 'สถานะขนส่ง',
+                en: 'Shipping Status',
+                cn: '运输状态',
+            },
+            type: {
+                th: 'ประเภท',
+                en: 'Type',
+                cn: '类型',
+            },
+        };
+
         this.dtOptions = {
             pagingType: 'full_numbers',
             serverSide: true,
             scrollX: true,
+            language: {
+                url: this.languageUrl,
+            },
             ajax: (dataTablesParameters: any, callback) => {
                 this._service
                     .datatable(dataTablesParameters)
@@ -244,7 +326,7 @@ export class FormComponent implements OnInit {
                     className: 'w-10 text-center',
                 },
                 {
-                    title: 'รหัสใบรับเข้าคลัง',
+                    title: menuTitles.warehouse_receipt_code[this.langues],
                     data: null,
                     className: 'text-center',
                     // ngTemplateRef: {
@@ -252,27 +334,27 @@ export class FormComponent implements OnInit {
                     // },
                 },
                 {
-                    title: 'รหัสลูกค้า',
+                    title: menuTitles.customer_code[this.langues],
                     data: null,
                     className: 'text-center',
                 },
                 {
-                    title: 'ขนส่งโดย',
+                    title: menuTitles.shipped_by[this.langues],
                     data: null,
                     className: 'text-center',
                 },
                 {
-                    title: 'ค่าขนส่ง',
+                    title: menuTitles.shipping_cost[this.langues],
                     data: null,
                     className: 'text-center',
                 },
                 {
-                    title: 'สถานะขนส่ง',
+                    title: menuTitles.shipping_status[this.langues],
                     data: null,
                     className: 'text-center',
                 },
                 {
-                    title: 'ประเภท',
+                    title: menuTitles.type[this.langues],
                     data: null,
                     className: 'text-center',
                 },
@@ -282,11 +364,29 @@ export class FormComponent implements OnInit {
 
     getShipmentMethod(shippedBy: string): string {
         if (shippedBy === 'Car') {
-            return 'ทางรถ';
+            return 'ขนส่งทางรถ';
         } else if (shippedBy === 'Ship') {
-            return 'ทางเรือ';
+            return 'ขนส่งทางเรือ';
         } else if (shippedBy === 'Train') {
-            return 'ทางรถไฟ';
+            return 'ขนส่งทางรถไฟ';
+        } else {
+            return '-';
+        }
+    }
+
+    getProductTypeName(productTypeId: number): string {
+        if (productTypeId === 1) {
+            return 'สินค้าประเภท A';
+        } else if (productTypeId === 3) {
+            return 'สินค้าประเภท B';
+        } else if (productTypeId === 4) {
+            return 'สินค้าประเภท C';
+        } else if (productTypeId === 6) {
+            return 'สินค้าประเภท D';
+        } else if (productTypeId === 7) {
+            return 'สินค้าประเภท CB';
+        } else if (productTypeId === 8) {
+            return 'สินค้าประเภท CF';
         } else {
             return '-';
         }
@@ -305,23 +405,34 @@ export class FormComponent implements OnInit {
     }
 
     applyFilter() {
-        const { code, member_id, sack_code } = this.filterForm.value;
-        this.filteredDeliveryOrders = this.data.delivery_orders.filter(
-            (order) => {
-                return (
-                    (!code || order.delivery_order.code.includes(code)) &&
-                    (!member_id ||
-                        order.delivery_order.member_id.includes(member_id)) &&
-                    (!sack_code ||
-                        order.delivery_order.sack_code.includes(sack_code))
-                );
-            }
-        );
+        const { po_no, member_id, shipment_by, product_type } = this.filterForm.value;
+
+        console.log('📥 Filter Form Value:', this.filterForm.value);
+
+        if (!this.data?.shipment_delivery_orders || !Array.isArray(this.data.shipment_delivery_orders)) {
+            console.warn('⚠️ No shipment_delivery_orders data to filter');
+            this.filteredProducts = [];
+            return;
+        }
+
+        this.filteredProducts = this.data.shipment_delivery_orders.filter(order => {
+            const deliveryOrder = order.delivery_order;
+            if (!deliveryOrder) return false;
+
+            const matchesPoNo = !po_no || deliveryOrder.po_no?.toLowerCase().includes(po_no.toLowerCase());
+            const matchesMember = !member_id || deliveryOrder.member?.code?.toLowerCase().includes(member_id.toLowerCase());
+            const matchesShipment = !shipment_by || deliveryOrder.shipment_by === shipment_by;
+            const matchesProductType = !product_type || deliveryOrder.product_type_id?.toString() === product_type;
+
+            return matchesPoNo && matchesMember && matchesShipment && matchesProductType;
+        });
+
+        console.log('✅ Filtered Result:', this.filteredProducts);
     }
 
     clearFilter() {
         this.filterForm.reset();
-        this.filteredDeliveryOrders = this.data.delivery_orders;
+        this.filteredProducts = [...this.data.shipment_delivery_orders]; // ✅ ใช้ตัวแปรที่ตารางใช้
     }
     selectMember(event: any) {
         this.filterForm.patchValue({
@@ -330,9 +441,12 @@ export class FormComponent implements OnInit {
     }
     opendialogdelete() {
         const confirmation = this.fuseConfirmationService.open({
-            title: 'คุณแน่ใจหรือไม่ว่าต้องการลบรายการ?',
-            message:
-                'คุณกำลังจะ ลบรายการ หากกดยืนยันแล้วจะไม่สามารถเอากลับมาอีกได้',
+            title: this.translocoService.translate(
+                'confirmation.delete_title2'
+            ),
+            message: this.translocoService.translate(
+                'confirmation.delete_message2'
+            ),
             icon: {
                 show: true,
                 name: 'heroicons_outline:exclamation-triangle',
@@ -341,12 +455,16 @@ export class FormComponent implements OnInit {
             actions: {
                 confirm: {
                     show: true,
-                    label: 'ยืนยัน',
+                    label: this.translocoService.translate(
+                        'confirmation.confirm_button'
+                    ),
                     color: 'primary',
                 },
                 cancel: {
                     show: true,
-                    label: 'ยกเลิก',
+                    label: this.translocoService.translate(
+                        'confirmation.cancel_button'
+                    ),
                 },
             },
             dismissible: false,
@@ -356,10 +474,16 @@ export class FormComponent implements OnInit {
             if (result == 'confirmed') {
                 this._service.delete(this.Id).subscribe({
                     error: (err) => {
-                        this.toastr.error('ไม่สามารถลบข้อมูลได้');
+                        this.toastr.error(
+                            this.translocoService.translate(
+                                'toastr.delete_fail'
+                            )
+                        );
                     },
                     complete: () => {
-                        this.toastr.success('ดำเนินการลบข้อมูลสำเร็จ');
+                        this.toastr.success(
+                            this.translocoService.translate('toastr.delete')
+                        );
                         this._router.navigate(['pallet']);
                     },
                 });
@@ -396,7 +520,7 @@ export class FormComponent implements OnInit {
                     (isNaN(Number(item.weight)) ? 0 : Number(item.weight)),
                 0
             )
-            .toFixed(2);
+            .toFixed(4);
     }
     get totalCBM() {
         return this.data.delivery_orders
@@ -405,7 +529,7 @@ export class FormComponent implements OnInit {
                     total + (isNaN(Number(item.cbm)) ? 0 : Number(item.cbm)),
                 0
             )
-            .toFixed(2);
+            .toFixed(4);
     }
 
     selectAll: boolean = false;
@@ -502,8 +626,7 @@ export class FormComponent implements OnInit {
             maxHeight: '90vh',
             enterAnimationDuration: 300,
             exitAnimationDuration: 300,
-            data: {
-            },
+            data: {},
         });
         DialogRef.afterClosed().subscribe((result) => {
             if (result) {
@@ -518,11 +641,11 @@ export class FormComponent implements OnInit {
         if (this.filteredProducts == null) {
             return false;
         }
-        return this.filteredProducts.some(product => product.IsChecked);
+        return this.filteredProducts.some((product) => product.IsChecked);
     }
 
     clearProductSelection() {
-        this.filteredProducts.forEach(product => {
+        this.filteredProducts.forEach((product) => {
             product.IsChecked = false;
         });
 
@@ -532,20 +655,29 @@ export class FormComponent implements OnInit {
     SelectAllProducts(checked: boolean) {
         this.selectAllProducts = checked; // Set isSelectAll to true when selectAll is checked
 
-        this.filteredProducts.forEach((product) => product.IsChecked = this.selectAllProducts);
+        this.filteredProducts.forEach(
+            (product) => (product.IsChecked = this.selectAllProducts)
+        );
     }
 
     updateAllSelectProducts() {
-        this.selectAllProducts = this.filteredProducts != null && this.filteredProducts.every(product => product.IsChecked);
+        this.selectAllProducts =
+            this.filteredProducts != null &&
+            this.filteredProducts.every((product) => product.IsChecked);
         this._changeDetectorRef.detectChanges(); // Trigger change detection
         console.log(this.filteredProducts, 'products');
     }
 
     get selectedProductList() {
-        return this.filteredProducts != null && this.filteredProducts.filter(product => product.IsChecked).map(product => product.product_id);
+        return (
+            this.filteredProducts != null &&
+            this.filteredProducts
+                .filter((product) => product.IsChecked)
+                .map((product) => product.product_id)
+        );
     }
 
     get isAnyProductSelected(): boolean {
-        return this.filteredProducts.some(product => product.IsChecked);
+        return this.filteredProducts.some((product) => product.IsChecked);
     }
 }

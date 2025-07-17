@@ -45,12 +45,15 @@ import {
 } from '@angular/animations';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { DeliveryNoteService } from '../delivery-note.service';
+import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
+
 @Component({
     selector: 'app-lot-dialog-tracking',
     standalone: true,
     templateUrl: './dialog-tracking.component.html',
     styleUrl: './dialog-tracking.component.scss',
     imports: [
+        TranslocoModule,
         CommonModule,
         DataTablesModule,
         MatIconModule,
@@ -96,6 +99,7 @@ export class DialogTrackingComponent implements OnInit {
     tracks = [];
 
     constructor(
+        private translocoService: TranslocoService,
         private dialogRef: MatDialogRef<DialogTrackingComponent>,
         @Inject(MAT_DIALOG_DATA) public data: any,
         public dialog: MatDialog,
@@ -104,9 +108,7 @@ export class DialogTrackingComponent implements OnInit {
         private toastr: ToastrService,
         private http: HttpClient,
         private _service: DeliveryNoteService
-    ) {
-
-    }
+    ) {}
     protected _onDestroy = new Subject<void>();
 
     ngOnInit(): void {
@@ -120,8 +122,15 @@ export class DialogTrackingComponent implements OnInit {
     ngOnDestroy(): void {}
 
     Submit() {
+        if (this.form.invalid) {
+            this.toastr.error(
+                this.translocoService.translate('toastr.missing_fields')
+            );
+            this.form.markAllAsTouched();
+            return;
+        }
         const confirmation = this.fuseConfirmationService.open({
-            title: 'ยืนยันการบันทึกข้อมูล',
+            title: this.translocoService.translate('confirmation.save_title'),
             icon: {
                 show: true,
                 name: 'heroicons_outline:exclamation-triangle',
@@ -130,12 +139,16 @@ export class DialogTrackingComponent implements OnInit {
             actions: {
                 confirm: {
                     show: true,
-                    label: 'ยืนยัน',
+                    label: this.translocoService.translate(
+                        'confirmation.confirm_button'
+                    ),
                     color: 'primary',
                 },
                 cancel: {
                     show: true,
-                    label: 'ยกเลิก',
+                    label: this.translocoService.translate(
+                        'confirmation.cancel_button'
+                    ),
                 },
             },
             dismissible: false,
@@ -145,7 +158,9 @@ export class DialogTrackingComponent implements OnInit {
             if (result == 'confirmed') {
                 console.log('submit');
                 this.dialogRef.close();
-                this.toastr.success('บันทึกข้อมูลสำเร็จ');
+                this.toastr.success(
+                    this.translocoService.translate('toastr.success')
+                );
             }
         });
     }

@@ -45,12 +45,15 @@ import {
 } from '@angular/animations';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { DeliveryNoteService } from '../delivery-note.service';
+import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
+
 @Component({
     selector: 'app-lot-dialog-choose',
     standalone: true,
     templateUrl: './dialog-choose.component.html',
     styleUrl: './dialog-choose.component.scss',
     imports: [
+        TranslocoModule,
         CommonModule,
         DataTablesModule,
         MatIconModule,
@@ -96,6 +99,7 @@ export class DialogChooseComponent implements OnInit {
     tracks = [];
 
     constructor(
+        private translocoService: TranslocoService,
         private dialogRef: MatDialogRef<DialogChooseComponent>,
         @Inject(MAT_DIALOG_DATA) public data: any,
         public dialog: MatDialog,
@@ -104,9 +108,7 @@ export class DialogChooseComponent implements OnInit {
         private toastr: ToastrService,
         private http: HttpClient,
         private _service: DeliveryNoteService
-    ) {
-
-    }
+    ) { }
     protected _onDestroy = new Subject<void>();
 
     ngOnInit(): void {
@@ -114,14 +116,21 @@ export class DialogChooseComponent implements OnInit {
             type: ['', Validators.required],
         });
     }
-    ngAfterViewInit() {}
+    ngAfterViewInit() { }
 
-    ngOnDestroy(): void {}
+    ngOnDestroy(): void { }
 
     Submit() {
+        if (this.form.invalid) {
+            this.toastr.error(
+                this.translocoService.translate('toastr.missing_fields')
+            );
+            this.form.markAllAsTouched();
+            return;
+        }
         const formvalue = this.form.value;
         const confirmation = this.fuseConfirmationService.open({
-            title: 'ยืนยันการบันทึกข้อมูล',
+            title: this.translocoService.translate('confirmation.save_title'),
             icon: {
                 show: true,
                 name: 'heroicons_outline:exclamation-triangle',
@@ -130,12 +139,16 @@ export class DialogChooseComponent implements OnInit {
             actions: {
                 confirm: {
                     show: true,
-                    label: 'ยืนยัน',
+                    label: this.translocoService.translate(
+                        'confirmation.confirm_button'
+                    ),
                     color: 'primary',
                 },
                 cancel: {
                     show: true,
-                    label: 'ยกเลิก',
+                    label: this.translocoService.translate(
+                        'confirmation.cancel_button'
+                    ),
                 },
             },
             dismissible: false,
@@ -143,10 +156,28 @@ export class DialogChooseComponent implements OnInit {
 
         confirmation.afterClosed().subscribe((result) => {
             if (result == 'confirmed') {
-                console.log('submit');
-                this.dialogRef.close(formvalue);
-                this.toastr.success('บันทึกข้อมูลสำเร็จ');
+                const payload = {
+                    type: formvalue.type,
+                    delivery_order_id: this.data.id,
+                };
+                this._service.updateTranspot(this.data.id,payload).subscribe({
+                    next: (resp: any) => {
+                        this.dialogRef.close(resp);
+                        this.toastr.success(
+                            this.translocoService.translate('toastr.success')
+                        )
+                    },
+                    error: (err: any) => {
+                        this.toastr.error(
+                            this.translocoService.translate('toastr.error')
+                        );
+                    },
+                });
             }
+
+
+
+
         });
     }
 

@@ -1,9 +1,15 @@
 import { data } from 'jquery';
-import { CommonModule, CurrencyPipe, DecimalPipe } from '@angular/common';
+import {
+    CommonModule,
+    CurrencyPipe,
+    DatePipe,
+    DecimalPipe,
+} from '@angular/common';
 import {
     AfterViewInit,
     ChangeDetectionStrategy,
     Component,
+    ElementRef,
     OnInit,
     ViewChild,
 } from '@angular/core';
@@ -39,9 +45,14 @@ import { SelectMemberComponent } from 'app/modules/common/select-member/select-m
 import { DialogChooseComponent } from './dialog-choose/dialog-choose.component';
 import { DialogViewImageComponent } from 'app/modules/common/dialog-view-image/dialog-view-image.component';
 
+import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
+import { ExportService } from 'app/modules/shared/export.service';
+import { calculateCBM } from 'app/helper';
+
 @Component({
     standalone: true,
     imports: [
+        TranslocoModule,
         CommonModule,
         DataTablesModule,
         MatButtonModule,
@@ -62,7 +73,7 @@ import { DialogViewImageComponent } from 'app/modules/common/dialog-view-image/d
     templateUrl: './delivery-note.component.html',
     styleUrl: './delivery-note.component.scss',
     changeDetection: ChangeDetectionStrategy.Default,
-    providers: [CurrencyPipe, DecimalPipe],
+    providers: [CurrencyPipe, DecimalPipe, DatePipe],
     animations: [
         trigger('slideToggleFilter', [
             state(
@@ -93,10 +104,12 @@ export class DeliveryNoteComponent implements OnInit, AfterViewInit {
     @ViewChild('checkbox') checkbox: any;
     @ViewChild('view') view: any;
     @ViewChild('view_order') view_order: any;
+    @ViewChild('dialogType') dialogType: any;
 
     @ViewChild('pic_car') pic_car: any;
     @ViewChild('pic_pro') pic_pro: any;
     @ViewChild('pic_bill') pic_bill: any;
+    @ViewChild('status') status: any;
     @ViewChild(DataTableDirective, { static: false })
     dtElement: DataTableDirective;
     showAdvancedFilters: boolean = false;
@@ -107,8 +120,9 @@ export class DeliveryNoteComponent implements OnInit, AfterViewInit {
 
     filterForm: FormGroup;
     showFilterForm: boolean = false;
-
+    @ViewChild('tableElement') tableElement!: ElementRef;
     constructor(
+        private translocoService: TranslocoService,
         private http: HttpClient,
         private _service: DeliveryNoteService,
         private fuseConfirmationService: FuseConfirmationService,
@@ -116,7 +130,9 @@ export class DeliveryNoteComponent implements OnInit, AfterViewInit {
         public dialog: MatDialog,
         private _router: Router,
         private FormBuilder: FormBuilder,
-        private activated: ActivatedRoute
+        private activated: ActivatedRoute,
+        private datePipe: DatePipe,
+        private exportService: ExportService
     ) {
         this.transports = this.activated.snapshot.data.transports?.data;
 
@@ -127,20 +143,99 @@ export class DeliveryNoteComponent implements OnInit, AfterViewInit {
             code: [''],
             shipment: [''],
             standard_size_id: [''],
-            category_product:['']
+            category_product: [''],
         });
+        this.langues = localStorage.getItem('lang');
     }
+    langues: any;
+    languageUrl: any;
+
     ngOnInit(): void {
+        if (this.langues === 'en') {
+            this.languageUrl =
+                'https://cdn.datatables.net/plug-ins/1.11.3/i18n/en-gb.json';
+        } else if (this.langues === 'th') {
+            this.languageUrl =
+                'https://cdn.datatables.net/plug-ins/1.11.3/i18n/th.json';
+        } else if (this.langues === 'cn') {
+            this.languageUrl =
+                'https://cdn.datatables.net/plug-ins/1.11.3/i18n/zh.json';
+        } else {
+            this.languageUrl =
+                'https://cdn.datatables.net/plug-ins/1.11.3/i18n/th.json';
+        }
         setTimeout(() => this.loadTable());
     }
     loadTable(): void {
+        const menuTitles = {
+            date: {
+                th: 'วันที่',
+                en: 'Date',
+                cn: '日期',
+            },
+            delivery_number: {
+                th: 'หมายเลขจัดส่ง',
+                en: 'Delivery Number',
+                cn: '配送编号',
+            },
+            delivery_type: {
+                th: 'ประเภทการส่งของ',
+                en: 'Delivery Type',
+                cn: '配送类型',
+            },
+            invoice_status: {
+                th: 'สถานะใบแจ้งหนี้',
+                en: 'Invoice Status',
+                cn: '发票状态',
+            },
+            delivery_status: {
+                th: 'สถานะใบส่งของ',
+                en: 'Delivery Status',
+                cn: '配送状态',
+            },
+            car_image: {
+                th: 'รูปรถ',
+                en: 'Car Image',
+                cn: '车辆图片',
+            },
+            product_image: {
+                th: 'รูปสินค้า',
+                en: 'Product Image',
+                cn: '商品图片',
+            },
+            product_bill: {
+                th: 'รูปบิลสินค้า',
+                en: 'Product Bill',
+                cn: '商品账单图片',
+            },
+            customer: {
+                th: 'ลูกค้า',
+                en: 'Customer',
+                cn: '客户',
+            },
+            address: {
+                th: 'ที่อยู่',
+                en: 'Address',
+                cn: '地址',
+            },
+            time_period: {
+                th: 'ช่วงเวลา',
+                en: 'Time Period',
+                cn: '时间段',
+            },
+        };
+
         this.dtOptions = {
             pagingType: 'full_numbers',
             serverSide: true,
-            scrollX: true,
+            scrollX: false,
+            language: {
+                url: this.languageUrl,
+            },
             ajax: (dataTablesParameters: any, callback) => {
+                dataTablesParameters.status = 'paid';
                 this._service
-                    .datatablepo(dataTablesParameters)
+                    .datatable(dataTablesParameters)
                     .pipe(map((resp: { data: any }) => resp.data))
                     .subscribe({
                         next: (resp: any) => {
@@ -170,76 +265,124 @@ export class DeliveryNoteComponent implements OnInit, AfterViewInit {
                     className: 'w-10 text-center',
                 },
                 {
-                    title: 'วันที่',
-                    data: 'date',
+                    title: menuTitles.date[this.langues],
+                    data: 'in_thai_date',
                     className: 'text-center',
+                    render: (data: string) => {
+                        return this.datePipe.transform(data, 'yyyy-MM-dd');
+                    },
                 },
                 {
-                    title: 'หมายเลขจัดส่ง',
+                    title: menuTitles.delivery_number[this.langues],
                     data: 'code',
-                    className: ' text-center',
+                    className: 'text-center',
                     ngTemplateRef: {
                         ref: this.view,
                     },
                 },
                 {
-                    title: 'ประเภทการส่งของ',
+                    title: menuTitles.delivery_number[this.langues],
                     data: 'code',
-                    className: ' text-center',
+                    className: 'text-center',
                     ngTemplateRef: {
                         ref: this.view_order,
                     },
                 },
                 {
-                    title: 'สถานะใบแจ้งหนี้',
-                    data: 'create_by',
-                    className: ' text-center',
+                    title: menuTitles.delivery_type[this.langues],
+                    data: 'code',
+                    className: 'text-center',
+                    ngTemplateRef: {
+                        ref: this.dialogType,
+                    },
                 },
                 {
-                    title: 'สถานะใบส่งของ',
+                    title: menuTitles.invoice_status[this.langues],
                     data: 'create_by',
-                    className: ' text-center',
+                    className: 'text-center',
+                    ngTemplateRef: {
+                        ref: this.status,
+                    },
                 },
                 {
-                    title: 'รูปรถ',
+                    title: menuTitles.delivery_status[this.langues],
                     data: 'create_by',
-                    className: ' text-center',
+                    className: 'text-center',
+                },
+                {
+                    title: menuTitles.car_image[this.langues],
+                    data: 'create_by',
+                    className: 'text-center',
                     ngTemplateRef: {
                         ref: this.pic_car,
                     },
                 },
                 {
-                    title: 'รูปสินค้า',
+                    title: menuTitles.product_image[this.langues],
                     data: 'create_by',
-                    className: ' text-center',
+                    className: 'text-center',
                     ngTemplateRef: {
                         ref: this.pic_pro,
                     },
                 },
                 {
-                    title: 'รูปบิลสินค้า',
+                    title: menuTitles.product_bill[this.langues],
                     data: 'create_by',
-                    className: ' text-center',
+                    className: 'text-center',
                     ngTemplateRef: {
                         ref: this.pic_bill,
                     },
                 },
                 {
-                    title: 'ลูกค้า',
-                    data: 'create_by',
-                    className: ' text-center',
+                    title: menuTitles.customer[this.langues],
+                    data: function (row: any) {
+                        return row.member?.importer_code
+                    },
+                    className: 'text-center',
                 },
                 {
-                    title: 'ที่อยู่',
-                    data: 'create_by',
-                    className: ' text-center',
+                    title: menuTitles.address[this.langues],
+                    data: function (row: any) {
+                        return (
+                            (row.member_address?.sub_district ?? '') +
+                            ' ' +
+                            (row.member_address?.district ?? '') +
+                            ' ' +
+                            (row.member_address?.province ?? '') +
+                            ' ' +
+                            (row.member_address?.address ?? '') +
+                            ' ' +
+                            (row.member_address?.postal_code ?? '')
+                        );
+                    },
+                    className: 'text-center',
                 },
                 {
-                    title: 'ช่วงเวลา',
-                    data: 'create_by',
-                    className: ' text-center',
+                    title: menuTitles.time_period[this.langues],
+                    data: 'member.avaliable_time',
+                    className: 'text-center',
                 },
             ],
+            // Declare the use of the extension in the dom parameter
+            dom: 'lfrtip',
+            buttons: [
+                {
+                    extend: 'copy',
+                    className: 'btn-csv-hidden'
+                },
+                {
+                    extend: 'csv',
+                    className: 'btn-csv-hidden'
+                },
+                {
+                    extend: 'excel',
+                    className: 'btn-csv-hidden'
+                },
+                {
+                    extend: 'print',
+                    className: 'btn-csv-hidden'
+                },
+            ]
         };
     }
 
@@ -306,9 +449,12 @@ export class DeliveryNoteComponent implements OnInit, AfterViewInit {
     }
     opendialogdelete() {
         const confirmation = this.fuseConfirmationService.open({
-            title: 'คุณแน่ใจหรือไม่ว่าต้องการลบรายการ?',
-            message:
-                'คุณกำลังจะ ลบรายการ หากกดยืนยันแล้วจะไม่สามารถเอากลับมาอีกได้',
+            title: this.translocoService.translate(
+                'confirmation.delete_title2'
+            ),
+            message: this.translocoService.translate(
+                'confirmation.delete_message2'
+            ),
             icon: {
                 show: true,
                 name: 'heroicons_outline:exclamation-triangle',
@@ -317,12 +463,16 @@ export class DeliveryNoteComponent implements OnInit, AfterViewInit {
             actions: {
                 confirm: {
                     show: true,
-                    label: 'ยืนยัน',
+                    label: this.translocoService.translate(
+                        'confirmation.confirm_button'
+                    ),
                     color: 'primary',
                 },
                 cancel: {
                     show: true,
-                    label: 'ยกเลิก',
+                    label: this.translocoService.translate(
+                        'confirmation.cancel_button'
+                    ),
                 },
             },
             dismissible: false,
@@ -345,7 +495,7 @@ export class DeliveryNoteComponent implements OnInit, AfterViewInit {
             //             complete: () => {
             //                 if (i == id.length - 1) {
             //                     this.multiSelect = [];
-            //                     this.toastr.success('ลบรายการสมาชิก สำเร็จ');
+            //                     this.toastr.success(this.translocoService.translate('toastr.delete'));
             //                     this.rerender();
             //                 }
             //             },
@@ -365,7 +515,9 @@ export class DeliveryNoteComponent implements OnInit, AfterViewInit {
 
                 forkJoin(deleteRequests).subscribe({
                     next: () => {
-                        this.toastr.success('ลบรายการสมาชิก สำเร็จ');
+                        this.toastr.success(
+                            this.translocoService.translate('toastr.delete')
+                        );
                         this.multiSelect = [];
                         this.rerender();
                     },
@@ -395,16 +547,15 @@ export class DeliveryNoteComponent implements OnInit, AfterViewInit {
         this.rerender();
     }
 
-    checkdata(data:any){
-        if(data?.status == null){
+    checkdata(data: any) {
+        if (data?.status == null) {
             const DialogRef = this.dialog.open(DialogChooseComponent, {
                 disableClose: true,
                 width: '50%',
                 maxHeight: '90vh',
                 enterAnimationDuration: 300,
                 exitAnimationDuration: 300,
-                data: {
-                },
+                data: {id: data.id},
             });
             DialogRef.afterClosed().subscribe((result) => {
                 if (result) {
@@ -412,12 +563,14 @@ export class DeliveryNoteComponent implements OnInit, AfterViewInit {
                     this.rerender();
                 }
             });
-        }else{
+        } else {
             this._router.navigate(['/delivery-note/view-order/' + data?.id]);
         }
     }
 
-    dialogviewimage(title:string){
+    dialogviewimage(title?: string) {
+        if (title !== null) {
+        }
         const DialogRef = this.dialog.open(DialogViewImageComponent, {
             disableClose: true,
             width: '50%',
@@ -436,5 +589,10 @@ export class DeliveryNoteComponent implements OnInit, AfterViewInit {
             }
         });
     }
+
+    exportData(type: 'csv' | 'excel' | 'print' | 'copy') {
+        this.exportService.exportTable(this.tableElement, type);
+    }
+
 
 }

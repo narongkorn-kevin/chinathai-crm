@@ -1,0 +1,11 @@
+.chart-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  apx-chart {
+    width: 100% !important;
+    max-width: none !important;
+  }

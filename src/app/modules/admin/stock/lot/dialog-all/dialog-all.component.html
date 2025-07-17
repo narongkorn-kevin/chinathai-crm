@@ -1,11 +1,11 @@
 <div class="p-6">
-    <h2 class="text-2xl font-semibold mb-4">เปลี่ยนตู้</h2>
-    <div class="flex flex-row w-full gap-2 items-center">
+    <h2 class="text-2xl font-semibold mb-4">{{ 'packing_list.dialog_all.change_cabinet' | transloco }}</h2>
+    <div class="flex flex-col md:flex-row w-full gap-2 items-center">
         <div class="w-full">
             <mat-form-field [ngClass]="formFieldHelpers" class="w-full md:w-4/4">
-                <mat-label>Packing List เดิม</mat-label>
+                <mat-label>{{ 'packing_list.dialog_all.packing_list_old' | transloco }}</mat-label>
                 <input matInput [formControl]="packinglistFilter" [matAutocomplete]="AutoComplete"
-                    placeholder="ค้นหา packing list" />
+                    [placeholder]="'packing_list.dialog_all.find_packing_list' | transloco" />
                 <mat-autocomplete #AutoComplete="matAutocomplete"
                     (optionSelected)="onSelectpackinglist_main($event.option.value)">
                     <mat-option *ngFor="let item of filterpackinglist | async" [value]="item">
@@ -14,14 +14,14 @@
                 </mat-autocomplete>
             </mat-form-field>
         </div>
-        <div class="flex items-center justify-center mx-2">
+        <div class="flex items-center justify-center mx-2" [ngClass]="{'hidden': isScreenSmall}">
             <mat-icon svgIcon="heroicons_outline:arrow-right"></mat-icon>
         </div>
         <div class="w-full">
             <mat-form-field [ngClass]="formFieldHelpers" class="w-full md:w-4/4">
-                <mat-label>Packing List ใหม่</mat-label>
+                <mat-label>{{ 'packing_list.dialog_all.packing_list_new' | transloco }}</mat-label>
                 <input matInput [formControl]="newPackinglistFilter" [matAutocomplete]="newAutoComplete"
-                    placeholder="ค้นหา packing list" />
+                    [placeholder]="'packing_list.dialog_all.find_packing_list' | transloco" />
                 <mat-autocomplete #newAutoComplete="matAutocomplete"
                     (optionSelected)="onSelectpackinglist($event.option.value)">
                     <mat-option *ngFor="let item of filterNewPackinglist | async" [value]="item">
@@ -33,10 +33,10 @@
     </div>
     <div mat-dialog-actions class="flex justify-end border-t-2 mt-2 p-2">
         <button class="px-6 ml-3" mat-flat-button [color]="'primary'" (click)="Submit()">
-            ตกลง
+            {{ 'buttons.submit' | transloco }}
         </button>
         <button class="px-6 ml-3" mat-flat-button [color]="'warn'" (click)="onClose()">
-            ยกเลิก
+            {{ 'buttons.cancel' | transloco }}
         </button>
     </div>
 </div>

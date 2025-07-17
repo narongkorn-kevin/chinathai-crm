@@ -1,14 +1,26 @@
-import { CommonModule, CurrencyPipe, DecimalPipe } from '@angular/common';
+import {
+    CommonModule,
+    CurrencyPipe,
+    DatePipe,
+    DecimalPipe,
+} from '@angular/common';
 import {
     AfterViewInit,
     ChangeDetectionStrategy,
     Component,
+    ElementRef,
     OnInit,
     ViewChild,
 } from '@angular/core';
 import { DataTableDirective, DataTablesModule } from 'angular-datatables';
 import { ADTSettings } from 'angular-datatables/src/models/settings';
-import { forkJoin, map, Subject } from 'rxjs';
+import {
+    debounceTime,
+    distinctUntilChanged,
+    forkJoin,
+    map,
+    Subject,
+} from 'rxjs';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatButtonModule } from '@angular/material/button';
 import { MatMenuModule } from '@angular/material/menu';
@@ -36,9 +48,13 @@ import {
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { SelectMemberComponent } from 'app/modules/common/select-member/select-member.component';
 
+import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
+import { ExportService } from 'app/modules/shared/export.service';
+
 @Component({
     standalone: true,
     imports: [
+        TranslocoModule,
         CommonModule,
         DataTablesModule,
         MatButtonModule,
@@ -59,7 +75,7 @@ import { SelectMemberComponent } from 'app/modules/common/select-member/select-m
     templateUrl: './sack.component.html',
     styleUrl: './sack.component.scss',
     changeDetection: ChangeDetectionStrategy.Default,
-    providers: [CurrencyPipe, DecimalPipe],
+    providers: [CurrencyPipe, DecimalPipe, DatePipe],
     animations: [
         trigger('slideToggleFilter', [
             state(
@@ -98,27 +114,12 @@ export class SackComponent implements OnInit, AfterViewInit {
     rows: any[] = [];
     standard_size = [];
 
-
-    sumdashboard = {
-        pallet_summary: {
-            truck: {
-                pallet_count: 1870,
-                total_packages: 1870,
-                total_weight_kg: 1870,
-                total_cbm: 1870,
-            },
-            ship: {
-                pallet_count: 1870,
-                total_packages: 1870,
-                total_weight_kg: 1870,
-                total_cbm: 1870,
-            },
-        },
-    };
     filterForm: FormGroup;
     showFilterForm: boolean = false;
-
+    dashboard_sack: any;
+    @ViewChild('tableElement') tableElement!: ElementRef;
     constructor(
+        private translocoService: TranslocoService,
         private http: HttpClient,
         private _service: SackService,
         private fuseConfirmationService: FuseConfirmationService,
@@ -127,27 +128,140 @@ export class SackComponent implements OnInit, AfterViewInit {
         private _router: Router,
         private FormBuilder: FormBuilder,
         private activated: ActivatedRoute,
+        private exportService: ExportService,
+        private datePipe: DatePipe
     ) {
         this.standard_size = this.activated.snapshot.data.standard_size?.data;
+        this.dashboard_sack = this.activated.snapshot.data.dashboard_sack?.data;
 
         this.filterForm = this.FormBuilder.group({
-            date: [''],
             start_date: [''],
             end_date: [''],
             code: [''],
-            shipment: [''],
-            standard_size_id: [''],
+            shipped_by: [''],
         });
+        this.langues = localStorage.getItem('lang');
     }
+    langues: any;
+    languageUrl: any;
+
     ngOnInit(): void {
+        if (this.langues === 'en') {
+            this.languageUrl =
+                'https://cdn.datatables.net/plug-ins/1.11.3/i18n/en-gb.json';
+        } else if (this.langues === 'th') {
+            this.languageUrl =
+                'https://cdn.datatables.net/plug-ins/1.11.3/i18n/th.json';
+        } else if (this.langues === 'cn') {
+            this.languageUrl =
+                'https://cdn.datatables.net/plug-ins/1.11.3/i18n/zh.json';
+        } else {
+            this.languageUrl =
+                'https://cdn.datatables.net/plug-ins/1.11.3/i18n/th.json';
+        }
+
         setTimeout(() => this.loadTable());
+
+        this.filterForm
+            .get('code')
+            ?.valueChanges.pipe(debounceTime(500), distinctUntilChanged())
+            .subscribe(() => {
+                this.getDashbaordsack();
+                this.rerender();
+            });
+
+        this.filterForm
+            .get('start_date')
+            ?.valueChanges.pipe(debounceTime(500), distinctUntilChanged())
+            .subscribe(() => {
+                this.getDashbaordsack();
+                this.rerender();
+            });
+
+        this.filterForm
+            .get('end_date')
+            ?.valueChanges.pipe(debounceTime(500), distinctUntilChanged())
+            .subscribe(() => {
+                this.getDashbaordsack();
+                this.rerender();
+            });
     }
     loadTable(): void {
+        const menuTitles = {
+            warehouse_entry_date: {
+                th: 'วันที่เข้าโกดัง',
+                en: 'Warehouse Entry Date',
+                cn: '入库日期',
+            },
+            sack_code: {
+                th: 'รหัสกระสอบ',
+                en: 'Sack Code',
+                cn: '麻袋编号',
+            },
+            shipping_type: {
+                th: 'ประเภท',
+                en: 'Shipping Type',
+                cn: '运输类型',
+                types: {
+                    car: {
+                        th: 'ขนส่งทางรถ',
+                        en: 'Truck Transport',
+                        cn: '卡车运输',
+                    },
+                    ship: {
+                        th: 'ขนส่งทางเรือ',
+                        en: 'Ship Transport',
+                        cn: '船舶运输',
+                    },
+                    train: {
+                        th: 'ขนส่งทางรถไฟ',
+                        en: 'Train Transport',
+                        cn: '火车运输',
+                    },
+                },
+            },
+            weight: {
+                th: 'น้ำหนัก(Kg.)',
+                en: 'Weight(Kg.)',
+                cn: '重量(公斤)',
+            },
+            volume: {
+                th: 'CBM',
+                en: 'CBM',
+                cn: '立方米',
+            },
+            package_count: {
+                th: 'จำนวนชิ้น',
+                en: 'Package Count',
+                cn: '包裹数量',
+            },
+        };
+
         this.dtOptions = {
             pagingType: 'full_numbers',
             serverSide: true,
             scrollX: true,
+            language: {
+                url: this.languageUrl,
+            },
             ajax: (dataTablesParameters: any, callback) => {
+                if (this.filterForm.value.start_date) {
+                    dataTablesParameters.start_date = this.formatDate(
+                        new Date(this.filterForm.value.start_date)
+                    );
+                }
+                if (this.filterForm.value.end_date) {
+                    dataTablesParameters.end_date = this.formatDate(
+                        new Date(this.filterForm.value.end_date)
+                    );
+                }
+                if (this.filterForm.value.code) {
+                    dataTablesParameters.code = this.filterForm.value.code;
+                }
+                if (this.filterForm.value.shipped_by) {
+                    dataTablesParameters.shipped_by =
+                        this.filterForm.value.shipped_by;
+                }
                 this._service
                     .datatable(dataTablesParameters)
                     .pipe(map((resp: { data: any }) => resp.data))
@@ -167,9 +281,7 @@ export class SackComponent implements OnInit, AfterViewInit {
                     title: '',
                     data: null,
                     defaultContent: '',
-                    ngTemplateRef: {
-                        ref: this.checkbox,
-                    },
+                    ngTemplateRef: { ref: this.checkbox },
                     className: 'w-10 text-center',
                 },
                 {
@@ -178,7 +290,7 @@ export class SackComponent implements OnInit, AfterViewInit {
                     className: 'w-10 text-center',
                 },
                 {
-                    title: 'วันที่เข้าโกดัง',
+                    title: menuTitles.warehouse_entry_date[this.langues],
                     data: 'received_date',
                     className: 'w-10 text-center',
                     // ngTemplateRef: {
@@ -186,62 +298,74 @@ export class SackComponent implements OnInit, AfterViewInit {
                     // },
                 },
                 {
-                    title: 'รหัสกระสอบ',
+                    title: menuTitles.sack_code[this.langues],
                     data: 'code',
                     className: 'w-10 text-center',
-                    ngTemplateRef: {
-                        ref: this.gotoRoute,
-                    },
+                    ngTemplateRef: { ref: this.gotoRoute },
                 },
                 {
-                    title: 'ประเภท',
-                    data: function (row: any) {
-                        if(!row.shipped_by){
-                            return '-';
-                        }
-                        if(row.shipped_by == 'Car'){
-                            return 'ขนส่งทางรถ';
-                        }else if(row.shipped_by == 'Ship'){
-                            return 'ขนส่งทางเรือ';
-                        }else if(row.shipped_by == 'Train'){
-                            return 'ขนส่งทางรถไฟ';
-                        }else{
-                            return row.shipped_by
+                    title: menuTitles.shipping_type[this.langues],
+                    data: (row: any) => {
+                        if (!row.shipped_by) return '-';
+                        switch (row.shipped_by) {
+                            case 'Car':
+                                return menuTitles.shipping_type.types.car[
+                                    this.langues
+                                ];
+                            case 'Ship':
+                                return menuTitles.shipping_type.types.ship[
+                                    this.langues
+                                ];
+                            case 'Train':
+                                return menuTitles.shipping_type.types.train[
+                                    this.langues
+                                ];
+                            default:
+                                return row.shipped_by;
                         }
                     },
                     className: 'text-center',
                 },
                 {
-                    title: 'น้ำหนัก(Kg.)',
+                    title: menuTitles.weight[this.langues],
+                    data: (row: any) => row.total_weight || 0,
+                    className: 'text-center',
+                },
+                {
+                    title: menuTitles.volume[this.langues],
                     data: function (row: any) {
-                        if(!row.weight_kg){
-                            return '-';
+                        if (!row?.total_cbm) {
+                            return '0.000';
                         }
-                        return row.weight_kg;
+                        return Number(row.total_cbm).toFixed(4);
                     },
                     className: 'text-center',
                 },
                 {
-                    title: 'CBM',
-                    data: function (row: any) {
-                        if(!row.cbm){
-                            return '-';
-                        }
-                        return row.cbm;
-                    },
+                    title: menuTitles.package_count[this.langues],
+                    data: (row: any) => row.total_box || 0,
                     className: 'text-center',
+                },
+            ],
+            // Declare the use of the extension in the dom parameter
+            dom: 'lfrtip',
+            buttons: [
+                {
+                    extend: 'copy',
+                    className: 'btn-csv-hidden'
                 },
                 {
-                    title: 'จำนวนชิ้น',
-                    data: function (row: any) {
-                        if(!row.total_packages){
-                            return '-';
-                        }
-                        return row.total_packages;
-                    },
-                    className: 'text-center',
+                    extend: 'csv',
+                    className: 'btn-csv-hidden',
                 },
-
+                {
+                    extend: 'excel',
+                    className: 'btn-csv-hidden',
+                },
+                {
+                    extend: 'print',
+                    className: 'btn-csv-hidden',
+                },
             ],
         };
     }
@@ -309,9 +433,12 @@ export class SackComponent implements OnInit, AfterViewInit {
     }
     opendialogdelete() {
         const confirmation = this.fuseConfirmationService.open({
-            title: 'คุณแน่ใจหรือไม่ว่าต้องการลบรายการ?',
-            message:
-                'คุณกำลังจะ ลบรายการ หากกดยืนยันแล้วจะไม่สามารถเอากลับมาอีกได้',
+            title: this.translocoService.translate(
+                'confirmation.delete_title2'
+            ),
+            message: this.translocoService.translate(
+                'confirmation.delete_message2'
+            ),
             icon: {
                 show: true,
                 name: 'heroicons_outline:exclamation-triangle',
@@ -320,12 +447,16 @@ export class SackComponent implements OnInit, AfterViewInit {
             actions: {
                 confirm: {
                     show: true,
-                    label: 'ยืนยัน',
+                    label: this.translocoService.translate(
+                        'confirmation.confirm_button'
+                    ),
                     color: 'primary',
                 },
                 cancel: {
                     show: true,
-                    label: 'ยกเลิก',
+                    label: this.translocoService.translate(
+                        'confirmation.cancel_button'
+                    ),
                 },
             },
             dismissible: false,
@@ -348,7 +479,7 @@ export class SackComponent implements OnInit, AfterViewInit {
             //             complete: () => {
             //                 if (i == id.length - 1) {
             //                     this.multiSelect = [];
-            //                     this.toastr.success('ลบรายการสมาชิก สำเร็จ');
+            //                     this.toastr.success(this.translocoService.translate('toastr.delete'));
             //                     this.rerender();
             //                 }
             //             },
@@ -362,16 +493,22 @@ export class SackComponent implements OnInit, AfterViewInit {
                 const id = this.multiSelect;
                 console.log(id, 'id');
 
-                const deleteRequests = id.map((itemId) => this._service.delete(itemId));
+                const deleteRequests = id.map((itemId) =>
+                    this._service.delete(itemId)
+                );
 
                 forkJoin(deleteRequests).subscribe({
                     next: () => {
-                        this.toastr.success('ลบรายการสมาชิก สำเร็จ');
+                        this.toastr.success(
+                            this.translocoService.translate('toastr.delete')
+                        );
                         this.multiSelect = [];
                         this.rerender();
                     },
                     error: (err) => {
-                        this.toastr.error('ลบรายการสมาชิก ล้มเหลว โปรดลองใหม่อีกครั้งภายหลัง');
+                        this.toastr.error(
+                            'ลบรายการสมาชิก ล้มเหลว โปรดลองใหม่อีกครั้งภายหลัง'
+                        );
                         console.log(err, 'err');
                         this.rerender();
                     },
@@ -386,14 +523,51 @@ export class SackComponent implements OnInit, AfterViewInit {
 
     applyFilter() {
         const filterValues = this.filterForm.value;
-        console.log(filterValues);
+        this.getDashbaordsack();
         this.rerender();
     }
     clearFilter() {
         this.filterForm.reset();
+        this.getDashbaordsack();
         this.rerender();
     }
     openForm() {
         this._router.navigate(['sack/form']);
+    }
+
+    exportData(type: 'csv' | 'excel' | 'print' | 'copy') {
+        this.exportService.exportTable(this.tableElement, type);
+    }
+
+    formatDate(date: Date): string {
+        // กำหนด timezone เป็น 'Asia/Bangkok' หรือ timezone ที่ต้องการ
+        return this.datePipe.transform(date, 'yyyy-MM-dd', 'Asia/Bangkok');
+    }
+
+    getDashbaordsack() {
+        const formValue = this.filterForm.value;
+            // ตรวจสอบว่า start_date มีค่าหรือไม่
+        if (formValue.start_date) {
+            formValue.start_date = this.formatDate(new Date(formValue.start_date));
+        }
+
+        // ตรวจสอบว่า end_date มีค่าหรือไม่
+        if (formValue.end_date) {
+            formValue.end_date = this.formatDate(new Date(formValue.end_date));
+        }
+        const params: any = {};
+        Object.keys(formValue).forEach(key => {
+            if (formValue[key] !== null && formValue[key] !== '') {
+                params[key] = formValue[key];
+            }
+        });
+        this._service.getDashboardSackFilter(params).subscribe({
+            next: (resp: any) => {
+                this.dashboard_sack = resp.data;
+            },
+            error: (err) => {
+                console.error('Error fetching dashboard sack data:', err);
+            },
+        });
     }
 }

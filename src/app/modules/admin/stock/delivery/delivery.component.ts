@@ -1,14 +1,26 @@
-import { CommonModule, CurrencyPipe, DecimalPipe } from '@angular/common';
+import {
+    CommonModule,
+    CurrencyPipe,
+    DatePipe,
+    DecimalPipe,
+} from '@angular/common';
 import {
     AfterViewInit,
     ChangeDetectionStrategy,
     Component,
+    ElementRef,
     OnInit,
     ViewChild,
 } from '@angular/core';
 import { DataTableDirective, DataTablesModule } from 'angular-datatables';
 import { ADTSettings } from 'angular-datatables/src/models/settings';
-import { forkJoin, map, Subject } from 'rxjs';
+import {
+    debounceTime,
+    distinctUntilChanged,
+    forkJoin,
+    map,
+    Subject,
+} from 'rxjs';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatButtonModule } from '@angular/material/button';
 import { MatMenuModule } from '@angular/material/menu';
@@ -36,9 +48,13 @@ import {
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { SelectMemberComponent } from 'app/modules/common/select-member/select-member.component';
 
+import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
+import { ExportService } from 'app/modules/shared/export.service';
+
 @Component({
     standalone: true,
     imports: [
+        TranslocoModule,
         CommonModule,
         DataTablesModule,
         MatButtonModule,
@@ -59,7 +75,7 @@ import { SelectMemberComponent } from 'app/modules/common/select-member/select-m
     templateUrl: './delivery.component.html',
     styleUrl: './delivery.component.scss',
     changeDetection: ChangeDetectionStrategy.Default,
-    providers: [CurrencyPipe, DecimalPipe],
+    providers: [CurrencyPipe, DecimalPipe, DatePipe],
     animations: [
         trigger('slideToggleFilter', [
             state(
@@ -100,8 +116,9 @@ export class DeliveryComponent implements OnInit, AfterViewInit {
 
     filterForm: FormGroup;
     showFilterForm: boolean = false;
-
+    @ViewChild('tableElement') tableElement!: ElementRef;
     constructor(
+        private translocoService: TranslocoService,
         private http: HttpClient,
         private _service: DeliveryService,
         private fuseConfirmationService: FuseConfirmationService,
@@ -109,28 +126,121 @@ export class DeliveryComponent implements OnInit, AfterViewInit {
         public dialog: MatDialog,
         private _router: Router,
         private FormBuilder: FormBuilder,
-        private activated: ActivatedRoute
+        private activated: ActivatedRoute,
+        private exportService: ExportService,
+        private datePipe: DatePipe
     ) {
         this.standard_size = this.activated.snapshot.data.standard_size?.data;
 
         this.filterForm = this.FormBuilder.group({
-            date: [''],
             start_date: [''],
             end_date: [''],
             code: [''],
-            shipment: [''],
-            standard_size_id: [''],
+            delivery_orders_code: [''],
+            status: [''],
         });
+        this.langues = localStorage.getItem('lang');
     }
+    langues: any;
+    languageUrl: any;
+
     ngOnInit(): void {
+        if (this.langues === 'en') {
+            this.languageUrl =
+                'https://cdn.datatables.net/plug-ins/1.11.3/i18n/en-gb.json';
+        } else if (this.langues === 'th') {
+            this.languageUrl =
+                'https://cdn.datatables.net/plug-ins/1.11.3/i18n/th.json';
+        } else if (this.langues === 'cn') {
+            this.languageUrl =
+                'https://cdn.datatables.net/plug-ins/1.11.3/i18n/zh.json';
+        } else {
+            this.languageUrl =
+                'https://cdn.datatables.net/plug-ins/1.11.3/i18n/th.json';
+        }
+
         setTimeout(() => this.loadTable());
+
+        this.filterForm
+            .get('code')
+            ?.valueChanges.pipe(debounceTime(500), distinctUntilChanged())
+            .subscribe(() => {
+                this.rerender();
+            });
+
+        this.filterForm
+            .get('start_date')
+            ?.valueChanges.pipe(debounceTime(500), distinctUntilChanged())
+            .subscribe(() => {
+                this.rerender();
+            });
+
+        this.filterForm
+            .get('end_date')
+            ?.valueChanges.pipe(debounceTime(500), distinctUntilChanged())
+            .subscribe(() => {
+                this.rerender();
+            });
     }
     loadTable(): void {
+        const menuTitles = {
+            warehouse_entry_date: {
+                th: 'วันที่เข้าโกดัง',
+                en: 'Warehouse Entry Date',
+                cn: '入库日期',
+            },
+            shipment_no: {
+                th: 'Shipment No',
+                en: 'Shipment No',
+                cn: '货运编号',
+            },
+            status: {
+                th: 'สถานะ',
+                en: 'Status',
+                cn: '状态',
+                status_mapping: {
+                    waiting_in_process: {
+                        th: 'รอดำเนินการ',
+                        en: 'Pending',
+                        cn: '待处理',
+                    },
+                    in_store: {
+                        th: 'รับเข้าคลัง',
+                        en: 'In Warehouse',
+                        cn: '已入库',
+                    },
+                },
+            },
+        };
+
         this.dtOptions = {
             pagingType: 'full_numbers',
             serverSide: true,
             scrollX: true,
+            language: {
+                url: this.languageUrl,
+            },
             ajax: (dataTablesParameters: any, callback) => {
+                if (this.filterForm.value.start_date) {
+                    dataTablesParameters.start_date = this.formatDate(
+                        new Date(this.filterForm.value.start_date)
+                    );
+                }
+                if (this.filterForm.value.end_date) {
+                    dataTablesParameters.end_date = this.formatDate(
+                        new Date(this.filterForm.value.end_date)
+                    );
+                }
+                if (this.filterForm.value.code) {
+                    dataTablesParameters.code = this.filterForm.value.code;
+                }
+                if (this.filterForm.value.delivery_orders_code) {
+                    dataTablesParameters.delivery_orders_code =
+                        this.filterForm.value.delivery_orders_code;
+                }
+                if (this.filterForm.value.status) {
+                    dataTablesParameters.status = this.filterForm.value.status;
+                }
                 this._service
                     .datatablepo(dataTablesParameters)
                     .pipe(map((resp: { data: any }) => resp.data))
@@ -162,33 +272,56 @@ export class DeliveryComponent implements OnInit, AfterViewInit {
                     className: 'w-10 text-center',
                 },
                 {
-                    title: 'วันที่เข้าโกดัง',
+                    title: menuTitles.warehouse_entry_date[this.langues],
                     data: 'date',
                     className: 'text-center',
                 },
                 {
-                    title: 'Shipment No',
+                    title: menuTitles.shipment_no[this.langues],
                     data: 'code',
-                    className: ' text-center',
+                    className: 'text-center',
                     ngTemplateRef: {
                         ref: this.gotoRoute,
                     },
                 },
                 {
-                    title: 'สถานะ',
+                    title: menuTitles.status[this.langues],
                     data: function (row: any) {
                         if (!row.status) {
                             return '-';
                         }
                         if (row.status == 'waiting_in_process') {
-                            return 'รอดำเนินการ';
+                            return menuTitles.status.status_mapping
+                                .waiting_in_process[this.langues];
                         } else if (row.status == 'in_store') {
-                            return 'รับเข้าคลัง';
+                            return menuTitles.status.status_mapping.in_store[
+                                this.langues
+                            ];
                         } else {
                             return '-';
                         }
-                    },
+                    }.bind(this),
                     className: 'text-center',
+                },
+            ],
+            // Declare the use of the extension in the dom parameter
+            dom: 'lfrtip',
+            buttons: [
+                {
+                    extend: 'copy',
+                    className: 'btn-csv-hidden'
+                },
+                {
+                    extend: 'csv',
+                    className: 'btn-csv-hidden',
+                },
+                {
+                    extend: 'excel',
+                    className: 'btn-csv-hidden',
+                },
+                {
+                    extend: 'print',
+                    className: 'btn-csv-hidden',
                 },
             ],
         };
@@ -257,9 +390,12 @@ export class DeliveryComponent implements OnInit, AfterViewInit {
     }
     opendialogdelete() {
         const confirmation = this.fuseConfirmationService.open({
-            title: 'คุณแน่ใจหรือไม่ว่าต้องการลบรายการ?',
-            message:
-                'คุณกำลังจะ ลบรายการ หากกดยืนยันแล้วจะไม่สามารถเอากลับมาอีกได้',
+            title: this.translocoService.translate(
+                'confirmation.delete_title2'
+            ),
+            message: this.translocoService.translate(
+                'confirmation.delete_message2'
+            ),
             icon: {
                 show: true,
                 name: 'heroicons_outline:exclamation-triangle',
@@ -268,12 +404,16 @@ export class DeliveryComponent implements OnInit, AfterViewInit {
             actions: {
                 confirm: {
                     show: true,
-                    label: 'ยืนยัน',
+                    label: this.translocoService.translate(
+                        'confirmation.confirm_button'
+                    ),
                     color: 'primary',
                 },
                 cancel: {
                     show: true,
-                    label: 'ยกเลิก',
+                    label: this.translocoService.translate(
+                        'confirmation.cancel_button'
+                    ),
                 },
             },
             dismissible: false,
@@ -296,7 +436,7 @@ export class DeliveryComponent implements OnInit, AfterViewInit {
             //             complete: () => {
             //                 if (i == id.length - 1) {
             //                     this.multiSelect = [];
-            //                     this.toastr.success('ลบรายการสมาชิก สำเร็จ');
+            //                     this.toastr.success(this.translocoService.translate('toastr.delete'));
             //                     this.rerender();
             //                 }
             //             },
@@ -316,7 +456,9 @@ export class DeliveryComponent implements OnInit, AfterViewInit {
 
                 forkJoin(deleteRequests).subscribe({
                     next: () => {
-                        this.toastr.success('ลบรายการสมาชิก สำเร็จ');
+                        this.toastr.success(
+                            this.translocoService.translate('toastr.delete')
+                        );
                         this.multiSelect = [];
                         this.rerender();
                     },
@@ -341,14 +483,26 @@ export class DeliveryComponent implements OnInit, AfterViewInit {
         console.log(filterValues);
         this.rerender();
     }
+
     clearFilter() {
         this.filterForm.reset();
         this.rerender();
     }
+
     openForm() {
         this._router.navigate(['delivery/form']);
     }
+
     setting() {
         this._router.navigate(['delivery/settings']);
+    }
+
+    exportData(type: 'csv' | 'excel' | 'print' | 'copy') {
+        this.exportService.exportTable(this.tableElement, type);
+    }
+
+    formatDate(date: Date): string {
+        // กำหนด timezone เป็น 'Asia/Bangkok' หรือ timezone ที่ต้องการ
+        return this.datePipe.transform(date, 'yyyy-MM-dd', 'Asia/Bangkok');
     }
 }

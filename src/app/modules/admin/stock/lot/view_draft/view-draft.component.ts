@@ -1,6 +1,12 @@
 import { CdkMenuModule } from '@angular/cdk/menu';
 import { Subscription } from 'rxjs';
-import { Component, OnInit, OnChanges, Inject } from '@angular/core';
+import {
+    Component,
+    OnInit,
+    OnChanges,
+    Inject,
+    ChangeDetectorRef,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DataTablesModule } from 'angular-datatables';
 import { MatIconModule } from '@angular/material/icon';
@@ -66,8 +72,14 @@ import {
     ApexStroke,
     ApexLegend,
     NgApexchartsModule,
+    ChartComponent,
 } from 'ng-apexcharts';
-import { MatProgressBar, MatProgressBarModule } from '@angular/material/progress-bar';
+import {
+    MatProgressBar,
+    MatProgressBarModule,
+} from '@angular/material/progress-bar';
+import { PaginationComponent } from 'app/modules/common/pagination/pagination.component';
+import { MatPaginatorModule } from '@angular/material/paginator';
 
 export type ChartOptions = {
     series: ApexAxisChartSeries;
@@ -85,54 +97,59 @@ export type ChartOptions = {
     legend: ApexLegend;
     colors: string[];
 };
+import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
+
 @Component({
     selector: 'app-member-view-draft',
     standalone: true,
     templateUrl: './view-draft.component.html',
     styleUrl: './view-draft.component.scss',
     imports: [
-    CommonModule,
-    DataTablesModule,
-    MatIconModule,
-    MatFormFieldModule,
-    MatInputModule,
-    FormsModule,
-    MatToolbarModule,
-    MatButtonModule,
-    MatSelectModule,
-    ReactiveFormsModule,
-    MatInputModule,
-    MatRadioModule,
-    MatDatepickerModule,
-    MatDivider,
-    RouterLink,
-    SelectMemberComponent,
-    CdkMenuModule,
-    MatCheckboxModule,
-    NgApexchartsModule,
-    MatProgressBarModule
-],
-animations: [
-    trigger('slideToggleFilter', [
-        state(
-            'open',
-            style({
-                height: '*',
-                opacity: 1,
-                overflow: 'hidden',
-            })
-        ),
-        state(
-            'closed',
-            style({
-                height: '0px',
-                opacity: 0,
-                overflow: 'hidden',
-            })
-        ),
-        transition('open <=> closed', [animate('300ms ease-in-out')]),
-    ]),
-],
+        TranslocoModule,
+        CommonModule,
+        DataTablesModule,
+        MatIconModule,
+        MatFormFieldModule,
+        MatInputModule,
+        FormsModule,
+        MatToolbarModule,
+        MatButtonModule,
+        MatSelectModule,
+        ReactiveFormsModule,
+        MatInputModule,
+        MatRadioModule,
+        MatDatepickerModule,
+        MatDivider,
+        RouterLink,
+        SelectMemberComponent,
+        CdkMenuModule,
+        MatCheckboxModule,
+        NgApexchartsModule,
+        MatProgressBarModule,
+        PaginationComponent,
+        MatPaginatorModule,
+    ],
+    animations: [
+        trigger('slideToggleFilter', [
+            state(
+                'open',
+                style({
+                    height: '*',
+                    opacity: 1,
+                    overflow: 'hidden',
+                })
+            ),
+            state(
+                'closed',
+                style({
+                    height: '0px',
+                    opacity: 0,
+                    overflow: 'hidden',
+                })
+            ),
+            transition('open <=> closed', [animate('300ms ease-in-out')]),
+        ]),
+    ],
 })
 export class ViewDraftComponent implements OnInit {
     sumdashbord = {
@@ -150,21 +167,21 @@ export class ViewDraftComponent implements OnInit {
             total_orders: 0,
             total_cbm: 0,
             total_weight_kg: 0,
-            transport_truck: 0,
-            transport_ship: 0,
         },
     };
     formFieldHelpers: string[] = ['fuse-mat-dense'];
     dtOptions: DataTables.Settings = {};
     type: string;
+    delivery_orders: any[] = [];
     Id: number;
     data: any;
     lists = [];
     filteredDeliveryOrders: any[] = [];
-    Form: FormGroup;
-    public chartOptions: Partial<ChartOptions> = {
+    form: FormGroup;
+    public chartOptions: Partial<ChartOptions> = {};
 
-    };
+    currentPage: number = 1;
+    itemsPerPage: number = 20;
 
     constructor(
         private FormBuilder: FormBuilder,
@@ -174,38 +191,58 @@ export class ViewDraftComponent implements OnInit {
         private _router: Router,
         private activated: ActivatedRoute,
         public dialog: MatDialog,
+        private _changeDetectorRef: ChangeDetectorRef
     ) {
         this.type = this.activated.snapshot.data.type;
         this.Id = this.activated.snapshot.params.id;
         this.data = this.activated.snapshot.data.data?.data;
+        this.delivery_orders =
+            this.activated.snapshot.data.delivery_orders?.data;
+        if (this.delivery_orders) {
+            this.delivery_orders.forEach((order) => {
+                order.IsChecked = false;
+            });
+        }
     }
     ngOnInit(): void {
         this.filterForm = this.FormBuilder.group({
             member_id: [''],
+            start_date: [''],
+            end_date: [''],
             in_store: [''],
             code: [''],
             sack_code: [''],
+            type: [''],
+            trans_by: [''],
         });
-        this.filteredDeliveryOrders = this.data.delivery_orders;
-
-        this.filterForm.get('in_store').valueChanges.pipe(
-            debounceTime(500)
-        ).subscribe(value => {
-            if(this.filterForm.get('in_store').value !== null) {
-                this.filteredDeliveryOrders = this.data.delivery_orders.filter(order =>
-                    order.delivery_order.code.includes(value)
-                );
-            }
+        this.form = this.FormBuilder.group({
+            order: this.FormBuilder.array([]),
         });
+        this.filteredDeliveryOrders = this.delivery_orders;
+        this.updateDisplayedItems();
 
+        this.filterForm
+            .get('in_store')
+            .valueChanges.pipe(debounceTime(500))
+            .subscribe((value) => {
+                if (this.filterForm.get('in_store').value !== null) {
+                    this.filteredDeliveryOrders = this.delivery_orders.filter(
+                        (order) => order.delivery_order.code.includes(value)
+                    );
+                }
+            });
+
+        this.updateChartOptions();
+    }
+    updateChartOptions(): void {
         this.chartOptions = {
-            n_series: this.sumdashbord?.categories.map((cat) => cat.cbm),
+            n_series: [...this.sumdashbord.categories.map((cat) => cat.cbm)],
             chart: {
                 type: 'donut',
-                height: 400, // เพิ่มขนาดของกราฟให้สูงขึ้น
-                width: '100%', // ขยายความกว้างของกราฟ
+                height: 400,
+                width: '100%',
             },
-            labels: this.sumdashbord?.categories.map((cat) => cat.name),
+            labels: [...this.sumdashbord.categories.map((cat) => cat.name)],
             colors: [
                 '#FF0000',
                 '#CC0000',
@@ -216,10 +253,10 @@ export class ViewDraftComponent implements OnInit {
                 '#FF9999',
             ],
             legend: {
-                show: false, // ซ่อน Legend ของกราฟ
+                show: false,
             },
             dataLabels: {
-                enabled: false, // ซ่อนค่าบนกราฟ
+                enabled: false,
             },
             responsive: [
                 {
@@ -236,14 +273,28 @@ export class ViewDraftComponent implements OnInit {
                 },
             ],
         };
+
+        // บังคับให้ Angular ตรวจจับการเปลี่ยนแปลง
+        this._changeDetectorRef.detectChanges();
+    }
+    get orderArray(): FormArray {
+        return this.form.get('order') as FormArray;
+    }
+    createorder(data?: any): FormGroup {
+        return this.FormBuilder.group({
+            id: [data?.id || ''],
+        });
+    }
+    removeorder(index: number): void {
+        this.orderArray.removeAt(index);
     }
 
     getShipmentMethod(shippedBy: string): string {
-        if (shippedBy === 'Car') {
+        if (shippedBy === 'Car' || shippedBy === 'car') {
             return 'ขนส่งทางรถ';
-        } else if (shippedBy === 'Ship') {
+        } else if (shippedBy === 'Ship' || shippedBy === 'ship') {
             return 'ขนส่งทางเรือ';
-        } else if (shippedBy === 'Train') {
+        } else if (shippedBy === 'Train' || shippedBy === 'train') {
             return 'ขนส่งทางรถไฟ';
         } else {
             return '-';
@@ -264,122 +315,43 @@ export class ViewDraftComponent implements OnInit {
 
     applyFilter() {
         const { code, member_id, sack_code } = this.filterForm.value;
-        this.filteredDeliveryOrders = this.data.delivery_orders.filter(order => {
-            return (!code || order.delivery_order.code.includes(code)) &&
-                   (!member_id || order.delivery_order.member_id.includes(member_id)) &&
-                   (!sack_code || order.delivery_order.sack_code.includes(sack_code));
+        this.filteredDeliveryOrders = this.delivery_orders.filter((order) => {
+            return (
+                (!code || order.delivery_order.code.includes(code)) &&
+                (!member_id ||
+                    order.delivery_order.member_id.includes(member_id)) &&
+                (!sack_code ||
+                    order.delivery_order.sack_code.includes(sack_code))
+            );
         });
+        this.currentPage = 1;
+        this.updateDisplayedItems();
     }
 
     clearFilter() {
         this.filterForm.reset();
-        this.filteredDeliveryOrders = this.data.delivery_orders;
+        this.filteredDeliveryOrders = this.delivery_orders;
     }
     selectMember(event: any) {
         this.filterForm.patchValue({
             member_id: event.id,
         });
     }
-    opendialogdelete() {
-        const confirmation = this.fuseConfirmationService.open({
-            title: 'คุณแน่ใจหรือไม่ว่าต้องการลบรายการ?',
-            message:
-                'คุณกำลังจะ ลบรายการ หากกดยืนยันแล้วจะไม่สามารถเอากลับมาอีกได้',
-            icon: {
-                show: true,
-                name: 'heroicons_outline:exclamation-triangle',
-                color: 'warn',
-            },
-            actions: {
-                confirm: {
-                    show: true,
-                    label: 'ยืนยัน',
-                    color: 'primary',
-                },
-                cancel: {
-                    show: true,
-                    label: 'ยกเลิก',
-                },
-            },
-            dismissible: false,
-        });
-
-        confirmation.afterClosed().subscribe((result) => {
-            if (result == 'confirmed') {
-                this._service.delete(this.Id).subscribe({
-                    error: (err) => {
-                        this.toastr.error('ไม่สามารถลบข้อมูลได้');
-                    },
-                    complete: () => {
-                        this.toastr.success('ดำเนินการลบข้อมูลสำเร็จ');
-                        this._router.navigate(['pallet']);
-                    },
-                });
-            }
-        });
-    }
-    opendialogphoto() {
-        const DialogRef = this.dialog.open(DialogQRCodeComponent, {
-            disableClose: true,
-            width: '400px',
-            maxHeight: '90vh',
-            enterAnimationDuration: 300,
-            exitAnimationDuration: 300,
-            data: {
-                text: this.data?.code,
-            },
-        });
-        DialogRef.afterClosed().subscribe((result) => {
-            if (result) {
-                console.log(this.lists, 'lists');
-
-            }
-        });
-    }
-    opendialogqrcode(){
-        const DialogRef = this.dialog.open(DialogQRCodeComponent, {
-            disableClose: true,
-            width: '400px',
-            maxHeight: '90vh',
-            enterAnimationDuration: 300,
-            exitAnimationDuration: 300,
-            data: {
-                text: this.data?.code,
-            },
-        });
-        DialogRef.afterClosed().subscribe((result) => {
-            if (result) {
-
-                console.log(this.lists, 'lists');
-
-            }
-        });
-    }
-    get totallist() {
-        return this.data.delivery_orders.length;
-    }
-    get totalWeight() {
-        return this.data.delivery_orders
-            .reduce((total, item) => total + (isNaN(Number(item.weight)) ? 0 : Number(item.weight)), 0)
-            .toFixed(2);
-    }
-    get totalCBM() {
-        return this.data.delivery_orders
-            .reduce((total, item) => total + (isNaN(Number(item.cbm)) ? 0 : Number(item.cbm)), 0)
-            .toFixed(2);
-    }
 
     selectAll: boolean = false;
 
     someSelect(): boolean {
-        if (this.lists == null) {
+        if (this.delivery_orders == null) {
             return false;
         }
-        return this.lists.filter(t => t.IsChecked).length > 0 && !this.selectAll;
+        return (
+            this.delivery_orders.filter((t) => t.IsChecked).length > 0 &&
+            !this.selectAll
+        );
     }
 
     clearSelection() {
-        this.lists.forEach(item => {
+        this.delivery_orders.forEach((item) => {
             item.IsChecked = false;
         });
 
@@ -389,18 +361,57 @@ export class ViewDraftComponent implements OnInit {
     SelectAll(checked: boolean) {
         this.selectAll = checked; // Set isSelectAll to true when selectAll is checked
 
-        this.lists.forEach((item) => (item.IsChecked = this.selectAll));
+        this.delivery_orders.forEach(
+            (item) => (item.IsChecked = this.selectAll)
+        );
+        this.filteredDeliveryOrders.forEach(
+            (item) => (item.IsChecked = this.selectAll)
+        );
+
+        this.updateSummaryData();
+        this.updateChartOptions();
     }
 
     updateAllselect() {
-        this.selectAll = this.lists != null && this.lists.every(t => t.IsChecked);
-        // const listArray = this.listArray;
-        // this.lists.forEach((item, index) => {
-        //     listArray.at(index).get('IsChecked').setValue(item.IsChecked);
-        // });
+        this.selectAll =
+            this.delivery_orders != null &&
+            this.delivery_orders.every((t) => t.IsChecked);
+        this.updateSummaryData();
+        this.updateChartOptions();
     }
+
+    updateSummaryData() {
+        // อัปเดตค่าสรุปน้ำหนักและปริมาตร
+        this.sumdashbord.summary.total_cbm = parseFloat(this.totalCbm);
+        this.sumdashbord.summary.total_weight_kg = parseFloat(this.totalWeight);
+
+        // รีเซ็ตค่าหมวดหมู่
+        this.sumdashbord.categories.forEach((category) => {
+            category.boxes = 0;
+            category.cbm = 0;
+        });
+
+        // อัปเดตหมวดหมู่ตามรายการที่เลือก
+        this.delivery_orders
+            .filter((order) => order.IsChecked)
+            .forEach((order) => {
+                const category = this.sumdashbord.categories.find(
+                    (cat) => cat.name === order.product_type.name
+                );
+                if (category) {
+                    category.boxes += order.qty;
+                    category.cbm += parseFloat(
+                        order.total_box_cbm || order.total_cbm || 0
+                    );
+                }
+            });
+    }
+
     get seletedList() {
-        return this.lists != null && this.lists.filter(t => t.IsChecked).map(e => e.id);
+        return (
+            this.lists != null &&
+            this.lists.filter((t) => t.IsChecked).map((e) => e.id)
+        );
     }
 
     lotedit() {
@@ -411,5 +422,38 @@ export class ViewDraftComponent implements OnInit {
     }
     draft() {
         this._router.navigate(['/lot/draft/' + this.Id]);
+    }
+
+    onPageChange(event: { page: number; itemsPerPage: number }): void {
+        this.currentPage = event.page;
+        this.itemsPerPage = event.itemsPerPage;
+        this.updateDisplayedItems();
+    }
+
+    updateDisplayedItems(): void {
+        const startIndex = (this.currentPage - 1) * this.itemsPerPage;
+        const endIndex = startIndex + this.itemsPerPage;
+
+        this.filteredDeliveryOrders = this.delivery_orders.slice(
+            startIndex,
+            endIndex
+        );
+    }
+
+    get totalWeight() {
+        return this.delivery_orders
+            .filter((order) => order.IsChecked)
+            .reduce((total, product) => total + Number(product.weight || 0), 0)
+            .toFixed(4);
+    }
+
+    get totalCbm() {
+        return this.delivery_orders
+            .filter((order) => order.IsChecked)
+            .reduce(
+                (total, product) => total + Number(product.total_cbm || 0),
+                0
+            )
+            .toFixed(4);
     }
 }

@@ -11,6 +11,7 @@ export default [
         component: SackComponent,
         resolve: {
             standard_size: () => inject(SackService).getStandardSize(),
+            dashboard_sack: () => inject(SackService).getDashboardSack(),
             // tracking: () => inject(DeliveryOrdersService).gettacking(),
         },
     },

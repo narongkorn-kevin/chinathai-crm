@@ -1,5 +1,11 @@
 import { CommonModule, DatePipe } from '@angular/common';
-import { AfterViewInit, ChangeDetectionStrategy, Component, OnInit, ViewChild } from '@angular/core';
+import {
+    AfterViewInit,
+    ChangeDetectionStrategy,
+    Component,
+    OnInit,
+    ViewChild,
+} from '@angular/core';
 import { DataTableDirective, DataTablesModule } from 'angular-datatables';
 // import { PoService } from './po.service';
 import { ADTSettings } from 'angular-datatables/src/models/settings';
@@ -11,21 +17,25 @@ import { ToastrService } from 'ngx-toastr';
 import { FuseConfirmationService } from '@fuse/services/confirmation';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { MatTabsModule } from '@angular/material/tabs';
 import { PalletService } from '../pallet.service';
+
+import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 
 @Component({
     selector: 'app-stock-pallet-detail',
     standalone: true,
     imports: [
+        TranslocoModule,
         CommonModule,
         DataTablesModule,
         MatButtonModule,
         MatMenuModule,
         MatDividerModule,
         MatIconModule,
-        MatTabsModule
+        MatTabsModule,
+        RouterLink,
     ],
     templateUrl: './page.component.html',
     styleUrl: './page.component.scss',
@@ -47,14 +57,10 @@ export class PalletDetailComponent implements OnInit, AfterViewInit {
         public dialog: MatDialog,
         private datePipe: DatePipe,
         private _router: Router,
-        private _service: PalletService,
-    ) {
-
-    }
+        private _service: PalletService
+    ) {}
     ngOnInit(): void {
-        setTimeout(() =>
-            this.loadTable());
-
+        setTimeout(() => this.loadTable());
     }
 
     ngAfterViewInit() {
@@ -79,19 +85,19 @@ export class PalletDetailComponent implements OnInit, AfterViewInit {
                         callback({
                             recordsTotal: resp.meta.totalItems,
                             recordsFiltered: resp.meta.totalItems,
-                            data: resp.data
+                            data: resp.data,
                         });
                     },
                     error: () => {
                         this.dtOptions.data = []; // If an error occurs, ensure data is empty
-                    }
+                    },
                 });
             },
             columns: [
                 {
                     title: 'ลำดับ',
                     data: 'no',
-                    className: 'w-15 text-center'
+                    className: 'w-15 text-center',
                 },
                 {
                     title: 'ลูกค้า',
@@ -101,41 +107,42 @@ export class PalletDetailComponent implements OnInit, AfterViewInit {
                 {
                     title: 'เลขที่บาร์โค้ด',
                     data: 'cash',
-                    className: 'text-center'
+                    className: 'text-center',
                 },
                 {
                     title: 'เลขที่ PO',
                     data: 'cash',
-                    className: 'text-center'
+                    className: 'text-center',
                 },
                 {
                     title: 'ตรวจสอบจำนวน',
                     data: 'cash',
                     className: 'text-center',
                     render: (data, type, row) => {
-                        let bgColor = data === 'ครบ' ? 'bg-[#008000]' : 'bg-[#D02323]';
+                        let bgColor =
+                            data === 'ครบ' ? 'bg-[#008000]' : 'bg-[#D02323]';
                         return `<span class="${bgColor} text-white p-2 rounded">${data}</span>`;
-                    }
+                    },
                 },
                 {
                     title: 'ขนส่งโดย',
                     data: 'cash',
-                    className: 'text-center'
+                    className: 'text-center',
                 },
                 {
                     title: 'ประเภทพัสดุ',
                     data: 'cash',
-                    className: 'text-center'
+                    className: 'text-center',
                 },
                 {
                     title: 'น้ำหนัก (Kg.)',
                     data: 'cash',
-                    className: 'text-center'
+                    className: 'text-center',
                 },
                 {
                     title: 'CBM',
                     data: 'cash',
-                    className: 'text-center'
+                    className: 'text-center',
                 },
                 {
                     title: '',
@@ -144,21 +151,21 @@ export class PalletDetailComponent implements OnInit, AfterViewInit {
                     ngTemplateRef: {
                         ref: this.btNg,
                     },
-                    className: 'text-center'
+                    className: 'text-center',
                 },
             ],
             headerCallback: (thead, data, start, end, display) => {
                 // Apply gray background to header
                 $(thead).find('th').css('background-color', '#f2f2f2');
-            }
-        }
+            },
+        };
     }
 
-    backToPallet(){
+    backToPallet() {
         this._router.navigate(['/pallet']);
     }
 
-    goToEdit(){
+    goToEdit() {
         this._router.navigate(['/pallet-edit']);
     }
 

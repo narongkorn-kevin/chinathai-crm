@@ -1,453 +1,348 @@
 <div class="flex flex-col flex-auto min-w-0">
-    <div class="flex flex-row justify-between pb-2 items-center">
-        <div class="w-full px-5 pt-5 pb-2.5  justify-between items-center flex">
+    <div class="flex-auto p-4 md:px-10 m-4 rounded-md  bg-card">
+        <div class="flex flex-col sm:flex-row justify-between pb-2 my-5 gap-2">
             <div class="flex flex-col">
                 <div class="flex space-x-2">
-                    <button class="md:text-lg font-medium tracking-tight leading-7 sm:leading-10 truncate"
-                        [routerLink]="['/delivery_orders']" routerLinkActive="router-link-active">
-                        โกดังจีน
+                    <button class="md:text-sm font-medium tracking-tight leading-7 sm:leading-10 truncate"
+                        routerLinkActive="router-link-active">
+                        {{ 'dalivery_order.title.main' | transloco }}
                     </button>
                 </div>
-                <div class="flex space-x-2 items-center">
-                    <p class="md:text-3xl font-medium tracking-tight leading-7 sm:leading-10 truncate text-black">
-                        รายการสินค้าทั้งหมดจากจีน
-                    </p>
-
-                </div>
+                <p class="md:text-2xl text-[#DF0B12] font-bold tracking-tight leading-7 sm:leading-10 truncate">
+                    {{ 'dalivery_order.title.subtitle' | transloco }}
+                </p>
             </div>
-            <div class="justify-start items-center gap-2 flex">
-                <button mat-stroked-button class="bg-green-800 text-white">
-                    <mat-icon class="icon-size-5 text-white"
-                        svgIcon="heroicons_outline:shopping-bag"></mat-icon>&nbsp;Import Data
-                </button>
-                <!-- เปลี่ยน PO -->
-                <button mat-stroked-button class="bg-[#6C6DF2] text-white"
-                [routerLink]="['/delivery_orders/import']" routerLinkActive="router-link-active"
-                >
-                    <mat-icon class="icon-size-5 text-white"
-                        svgIcon="heroicons_outline:shopping-bag"></mat-icon>&nbsp;การจัดการข้อมูล
-                </button>
-                <!-- แก้ไข -->
-                <button mat-stroked-button class="bg-orange-600 text-white"
-                    [routerLink]="['/delivery_orders/item-table']" routerLinkActive="router-link-active">
-                    <mat-icon class="icon-size-5 text-white"
-                        [svgIcon]="'heroicons_solid:pencil-square'"></mat-icon>&nbsp;แก้ไข
+            <div class="flex flex-col md:flex-row ml-auto gap-2 md:gap-4 container">
+                <button mat-flat-button [color]="'warn'" (click)="opendialogdelete()"
+                    [disabled]="!this.multiSelect.length">
+                    <mat-icon class="icon-size-5" [svgIcon]="'feather:trash'"></mat-icon>
+                    <span class="ml-2">{{ 'buttons.delete_entry' | transloco }}</span>
                 </button>
 
+                <button mat-flat-button [cdkMenuTriggerFor]="optionsMenu" [color]="'primary'">
+                    <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:bars-3'"></mat-icon>
+                    <span class="ml-2">{{ 'buttons.options' | transloco }}</span>
+                </button>
+                <ng-template #optionsMenu>
+                    <div class="manage-menu bg-primary" cdkMenu>
+                        <button class="manage-menu-item text-white" (click)="openForm()" cdkMenuItem>
+                            <mat-icon class="icon-size-5 text-white" [svgIcon]="'heroicons_solid:plus'"></mat-icon>
+                            <span class="ml-2">{{ 'buttons.addItem' | transloco }}</span>
+                        </button>
+                        <button class="manage-menu-item text-white" (click)="openDialogaddress(this.multiSelect)" cdkMenuItem>
+                            <mat-icon class="icon-size-5 text-white"
+                                [svgIcon]="'heroicons_solid:square-2-stack'"></mat-icon>
+                            <span class="ml-2">{{ 'buttons.addressManagement' | transloco }}</span>
+                        </button>
+                        <button class="manage-menu-item text-white" (click)="openFormSetting()" cdkMenuItem>
+                            <mat-icon class="icon-size-5 text-white"
+                                [svgIcon]="'heroicons_solid:cog-6-tooth'"></mat-icon>
+                            <span class="ml-2">{{ 'buttons.standardSettings' | transloco }}</span>
+                        </button>
+                    </div>
+                </ng-template>
 
-                <!-- ตีกลับ -->
-                <button *ngIf="orderStatus === 'wait_customer'" mat-stroked-button (click)="openReturnOrderShowDialog()"
-                    class="border-[1px] border-slate-400 text-slate-700 bg-white">
-                    <mat-icon svgIcon="vector"></mat-icon>&nbsp;ตีกลับ
-                </button>
-                <!-- ยกเลิก -->
-                <button *ngIf="['pending', 'wait_customer'].includes(orderStatus)" mat-stroked-button
-                    (click)="openCancelOrderDialog()" class="bg-red-600 text-white">
-                    <mat-icon svgIcon="feather:trash" class="text-white"></mat-icon>&nbsp;ยกเลิก
+                <button [cdkMenuTriggerFor]="menu" mat-flat-button class="!text-white" [color]="'primary'">
+                    <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:shopping-bag'"></mat-icon>
+                    <div class="flex items-center gap-2">
+                        <span class="ml-2">{{ 'buttons.dataManagement' | transloco }}</span>
+                        <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:chevron-up'"></mat-icon>
+                    </div>
                 </button>
 
-                <!-- บันทึก -->
-                <button *ngIf="['pending', 'wait_payment'].includes(orderStatus)" mat-stroked-button
-                    class="bg-primary text-white">
-                    <mat-icon svgIcon="feather:save" class="text-white"></mat-icon>&nbsp;บันทึก
-                </button>
-
-                <!-- ยืนยัน -->
-                <button *ngIf="['pending', 'wait_approve'].includes(orderStatus)" mat-stroked-button
-                    class="bg-teal-500 text-white">
-                    <mat-icon svgIcon="heroicons_outline:check-badge" class="text-white"></mat-icon>&nbsp;ยืนยัน
-                </button>
+                <ng-template #menu>
+                    <div class="manage-menu bg-primary" cdkMenu>
+                        <button class="manage-menu-item text-white" cdkMenuItem>
+                            <mat-icon class="icon-size-5 text-white"
+                                [svgIcon]="'heroicons_solid:document-duplicate'"></mat-icon>
+                            <span class="ml-2">{{ 'buttons.copyClipboard' | transloco }}</span>
+                        </button>
+                        <button class="manage-menu-item text-white" cdkMenuItem (click)="exportData('csv')">
+                            <mat-icon class="icon-size-5 text-white"
+                                [svgIcon]="'heroicons_solid:table-cells'"></mat-icon>
+                            <span class="ml-2">CSV</span>
+                        </button>
+                        <button class="manage-menu-item text-white" cdkMenuItem (click)="exportData('excel')">
+                            <mat-icon class="icon-size-5 text-white"
+                                [svgIcon]="'heroicons_solid:table-cells'"></mat-icon>
+                            <span class="ml-2">Excel</span>
+                        </button>
+                        <button class="manage-menu-item text-white" cdkMenuItem (click)="exportData('print')">
+                            <mat-icon class="icon-size-5 text-white" [svgIcon]="'heroicons_solid:printer'"></mat-icon>
+                            <span class="ml-2">Print</span>
+                        </button>
+                    </div>
+                </ng-template>
             </div>
         </div>
-    </div>
-    <mat-divider class="w-full p-1 mx-5 flex border-t-[1px] border-slate-300"></mat-divider>
-    <mat-tab-group class="bg-white rounded-md shadow-sm" mat-stretch-tabs="false" mat-align-tabs="start">
-        <mat-tab label="รายการสินค้าทั้งหมดจากจีน">
-            <div class="flex-auto m-4 rounded-md  bg-card">
-                <div class="flex flex-col md:flex-row w-full gap-4 mb-4 border rounded-md p-5">
-                    <div class="rounded-lg border-gray-300 p-4 w-4/12 flex flex-col md:flex-row">
-                        <div class="grid grid-cols-1 md:grid-cols-5 gap-2 w-full">
-                            <!-- ประเภทสินค้า -->
-                            <div class="flex flex-col gap-2 md:col-span-3">
-                                <div *ngFor="let category of sumdashbord?.categories.slice(0, 4); let i = index"
-                                    class="flex flex-row items-center justify-center">
-                                    <div class="text-xl font-semibold text-center w-full">
-                                        <span class="inline-block w-4 h-4 rounded-full mr-2"
-                                            [ngStyle]="{ 'background-color': chartOptions.colors[i] || '#999' }"></span>
-                                        {{ category.name }}
-                                    </div>
-                                    <div class="text-lg text-center w-full">{{ category.boxes }} %</div>
-                                </div>
+        <div class="flex flex-col md:flex-row w-full gap-4 mb-4">
+            <!-- กล่องซ้าย: รายการประเภทและกราฟ -->
+            <div class="rounded-lg border-gray-300 border p-4 w-full md:w-7/12 flex flex-col md:flex-row">
+                <div class="grid grid-cols-1 md:grid-cols-5 gap-6 w-full">
+                    <!-- ประเภทสินค้า -->
+                    <div class="flex flex-col gap-4">
+                        <div class="flex flex-col md:items-end">
+                            <div class="text-2xl font-normal">{{ 'dalivery_order.labels.totalItems' | transloco }}</div>
+                            <div class="text-xl font-bold">{{ sumdashbord.total_items }} <span
+                                    class="text-2xl font-normal">{{ 'dalivery_order.labels.items' | transloco }}</span>
                             </div>
-
-                            <!-- กราฟ -->
-                            <div class="flex justify-center items-center w-full h-fit col-span-2">
-                                <apx-chart [series]="chartOptions.n_series" [chart]="chartOptions.chart"
-                                    [labels]="chartOptions.labels" [colors]="chartOptions.colors"
-                                    [responsive]="chartOptions.responsive" [legend]="chartOptions.legend"
-                                    [dataLabels]="chartOptions.dataLabels">
-                                </apx-chart>
+                        </div>
+                        <div *ngFor="let category of sumdashbord?.categories.slice(0,3)"
+                            class="flex flex-col md:items-end">
+                            <div class="text-xl font-semibold">{{ category.name }}</div>
+                            <div class="text-lg">{{ category.boxes }} {{ 'dalivery_order.labels.boxes' | transloco }}
                             </div>
+                            <div class="text-md text-red-500">{{ category.cbm }} CBM</div>
                         </div>
                     </div>
-                    <!-- กล่องขวา: สรุปข้อมูล -->
-                    <div class="grid grid-cols-1 md:grid-cols-4 gap-3 w-full px-2 sm:px-0 sm:w-10/12 lg:w-8/12">
-                        <!-- Card 1: Total CBM -->
-                        <div
-                            class="rounded-2xl border border-gray-300 p-3 sm:p-4 flex justify-between items-center bg-[url('/assets/images/item/bg_1.png')] bg-cover bg-center min-h-[120px]">
-                            <div class="text-left">
-                                <div class="text-sm sm:text-lg font-normal">CBM รวม</div>
-                                <div class="text-2xl sm:text-3xl md:text-4xl font-bold text-blue-950">
-                                    {{ sumdashbord?.summary.total_cbm | number }}
-                                </div>
-                            </div>
-                            <img class="w-10 sm:w-12 md:w-14" src="assets/images/item/icon_1.png" alt="CBM icon">
-                        </div>
 
-                        <!-- Card 2: Total Weight -->
-                        <div
-                            class="rounded-2xl border border-gray-300 p-3 sm:p-4 flex justify-between items-center bg-[url('/assets/images/item/bg_2.png')] bg-cover bg-center min-h-[120px]">
-                            <div class="text-left">
-                                <div class="text-sm sm:text-lg font-normal">น้ำหนักรวม (Kg.)</div>
-                                <div class="text-2xl sm:text-3xl md:text-4xl font-bold text-blue-950">
-                                    {{ sumdashbord?.summary.total_weight_kg | number }}
-                                </div>
+                    <!-- กราฟ -->
+                    <div class="flex justify-center items-center w-full col-span-3 ">
+                        <apx-chart [series]="chartOptions.series" [chart]="chartOptions.chart"
+                            [labels]="chartOptions.labels" [colors]="chartOptions.colors"
+                            [responsive]="chartOptions.responsive" [legend]="chartOptions.legend"
+                            [dataLabels]="chartOptions.dataLabels"></apx-chart>
+                    </div>
+                    <!-- ประเภทสินค้า (อีกครึ่ง) -->
+                    <div class="flex flex-col gap-4">
+                        <div *ngFor="let category of sumdashbord?.categories.slice(3,7)"
+                            class="flex flex-col md:items-end">
+                            <div class="text-xl font-semibold">{{ category.name }}</div>
+                            <div class="text-lg">{{ category.boxes }} {{ 'dalivery_order.labels.boxes' | transloco }}
                             </div>
-                            <img class="w-10 sm:w-12 md:w-14" src="assets/images/item/icon_2.png" alt="Weight icon">
-                        </div>
-
-                        <!-- Card 3: Truck CBM -->
-                        <div
-                            class="rounded-2xl border border-gray-300 p-3 sm:p-4 flex justify-between items-center bg-[url('/assets/images/item/bg_3.png')] bg-cover bg-center min-h-[120px]">
-                            <div class="text-left">
-                                <div class="text-sm sm:text-lg font-normal">CBM รวมทางรถ</div>
-                                <div class="text-2xl sm:text-3xl md:text-4xl font-bold text-blue-950">
-                                    {{ sumdashbord?.summary.transport_truck | number }}
-                                </div>
-                            </div>
-                            <img class="w-10 sm:w-12 md:w-14" src="assets/images/item/icon_3.png" alt="Truck icon">
-                        </div>
-
-                        <!-- Card 4: Ship CBM -->
-                        <div
-                            class="rounded-2xl border border-gray-300 p-3 sm:p-4 flex justify-between items-center bg-[url('/assets/images/item/bg_4.png')] bg-cover bg-center min-h-[120px]">
-                            <div class="text-left">
-                                <div class="text-sm sm:text-lg font-normal">CBM รวมทางเรือ</div>
-                                <div class="text-2xl sm:text-3xl md:text-4xl font-bold text-blue-950">
-                                    {{ sumdashbord?.summary.transport_ship | number }}
-                                </div>
-                            </div>
-                            <img class="w-10 sm:w-12 md:w-14" src="assets/images/item/icon_4.png" alt="Ship icon">
+                            <div class="text-md text-red-500">{{ category.cbm  }} CBM</div>
                         </div>
                     </div>
                 </div>
+            </div>
+
+            <!-- กล่องขวา: สรุปข้อมูล -->
+            <div class="flex flex-col md:grid md:grid-cols-2 gap-2 w-full md:w-5/12">
+                <div class="rounded-lg border-gray-300 border p-4 flex justify-between items-center md:col-span-2">
+                    <img class="flex w-14" src="assets/images/item/cart.png" alt="Logo image">
+                    <div class="text-right">
+                        <div class="text-lg font-normal">{{ 'dalivery_order.labels.number_of_items' | transloco }}</div>
+                        <div class="text-4xl font-bold text-blue-95">{{ sumdashbord?.total_items | number }}</div>
+                    </div>
+                </div>
+                <div class="rounded-lg border-gray-300 border p-4 flex justify-between items-center">
+                    <img class="flex w-14" src="assets/images/item/cube.png" alt="Logo image">
+                    <div class="text-right">
+                        <div class="text-lg font-normal">{{ 'dalivery_order.labels.total_cbm' | transloco }}</div>
+                        <div class="text-4xl font-bold text-blue-950">{{ sumdashbord?.summary.total_cbm | number : '1.4' }}
+                        </div>
+                    </div>
+                </div>
+                <div class="rounded-lg border-gray-300 border p-4 flex justify-between items-center">
+                    <img class="flex w-14" src="assets/images/item/kg.png" alt="Logo image">
+                    <div class="text-right">
+                        <div class="text-lg font-normal">{{ 'dalivery_order.labels.total_weight' | transloco }}</div>
+                        <div class="text-4xl font-bold text-blue-950">{{ sumdashbord?.summary.total_weight_kg | number
+                            }}</div>
+                    </div>
+                </div>
+                <div class="rounded-lg border-gray-300 border p-4 flex justify-between items-center">
+                    <img class="flex w-14" src="assets/images/item/race.png" alt="Logo image">
+                    <div class="text-right">
+                        <div class="text-lg font-normal">{{ 'dalivery_order.labels.transport_truck' | transloco }}</div>
+                        <div class="text-4xl font-bold text-blue-950">{{ sumdashbord?.summary.transport_truck | number
+                            }}</div>
+                    </div>
+                </div>
+                <div class="rounded-lg border-gray-300 border p-4 flex justify-between items-center">
+                    <img class="flex w-14" src="assets/images/item/ship.png" alt="Logo image">
+                    <div class="text-right">
+                        <div class="text-lg font-normal">{{ 'dalivery_order.labels.transport_ship' | transloco }}</div>
+                        <div class="text-4xl font-bold text-blue-950">{{ sumdashbord?.summary.transport_ship | number }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
 
-                <form *ngIf="!showFilterForm" [formGroup]="filterForm">
-                    <div class="flex flex-col md:flex-row w-full gap-2 items-end">
-                        <mat-form-field class="w-full" [ngClass]="formFieldHelpers">
-                            <mat-label>วันที่เข้าโกดัง</mat-label>
-                            <mat-date-range-input [rangePicker]="picker">
-                                <input matStartDate formControlName="start_date">
-                                <input matEndDate formControlName="end_date">
-                            </mat-date-range-input>
-                            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-                            <mat-date-range-picker #picker></mat-date-range-picker>
-                        </mat-form-field>
-                        <div class="w-full">
-                            <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
-                                <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:magnifying-glass'"></mat-icon>
-                                <input matInput [placeholder]="'ค้นหาด้วย ใบรับเข้าโกดัง'" formControlName="name">
-                            </mat-form-field>
-                        </div>
-                        <div>
-                            <button mat-flat-button [color]="'primary'" (click)="openfillter()" class="mb-5">
-                                <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:bars-3'"></mat-icon>
-                                <span class="ml-2">ค้นหาโดยใช้ตัวกรอง</span>
-                            </button>
-                        </div>
-                        <div>
-                            <button mat-flat-button [color]="'primary'" class="mb-5">
-                                <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:cog-6-tooth'"></mat-icon>
-                            </button>
-                        </div>
-                    </div>
-                </form>
-                <form [formGroup]="filterForm" class="p-4 rounded-md"
-                    [@slideToggleFilter]="showFilterForm ? 'open' : 'closed'">
-                    <div>
-                        <h2 class="text-xl font-extrabold leading-7 tracking-tight truncate md:text-xl sm:leading-10">
-                            ตัวกรองขั้นสูง
-                        </h2>
-                        <mat-divider></mat-divider>
-                    </div>
-                    <div class="grid md:grid-cols-4 md:flex-row w-full gap-x-2 mt-2">
-                        <mat-form-field class="w-full" [ngClass]="formFieldHelpers">
-                            <mat-label>วันที่เข้าโกดัง</mat-label>
-                            <mat-date-range-input [rangePicker]="picker">
-                                <input matStartDate formControlName="start_date">
-                                <input matEndDate formControlName="end_date">
-                            </mat-date-range-input>
-                            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-                            <mat-date-range-picker #picker></mat-date-range-picker>
-                        </mat-form-field>
-                        <div class="w-full">
-                            <mat-form-field class="w-full" [ngClass]="formFieldHelpers">
-                                <mat-label>รหัสใบรับเข้าคลัง</mat-label>
-                                <input matInput formControlName="code">
-                            </mat-form-field>
-                        </div>
-                        <div class="w-full">
-                            <mat-form-field class="w-full" [ngClass]="formFieldHelpers">
-                                <mat-label>ชื่อสินค้า</mat-label>
-                                <input matInput formControlName="name">
-                            </mat-form-field>
-                        </div>
-                        <div class="w-full">
-                            <asha-select-member (change)="selectMember($event)"></asha-select-member>
-                        </div>
-                        <div class="w-full">
-                            <mat-form-field class="w-full" [ngClass]="formFieldHelpers">
-                                <mat-label>Shipment</mat-label>
-                                <input matInput formControlName="shipment">
-                            </mat-form-field>
-                        </div>
-                        <div class="w-full">
-                            <mat-form-field class="w-full" [ngClass]="formFieldHelpers">
-                                <mat-label>โกดัง</mat-label>
-                                <mat-select formControlName="store">
-                                    <mat-option *ngFor="let store of stores" [value]="store.id">{{ store.name
-                                        }}</mat-option>
-                                </mat-select>
-                            </mat-form-field>
-                        </div>
-                        <div class="w-full">
-                            <mat-form-field class="w-full" [ngClass]="formFieldHelpers">
-                                <mat-label>ประเภทพัสดุ</mat-label>
-                                <mat-select formControlName="category_product">
-                                    <mat-option *ngFor="let product_type of product_types" [value]="product_type.id">{{
-                                        product_type.name }}</mat-option>
-                                </mat-select>
-                            </mat-form-field>
-                        </div>
-                        <div class="w-full">
-                            <mat-form-field class="w-full" [ngClass]="formFieldHelpers">
-                                <mat-label>ขนส่งโดย</mat-label>
-                                <mat-select formControlName="tracking">
-                                    <mat-option value="ship">ขนส่งทางเรือ</mat-option>
-                                    <mat-option value="car">ขนส่งทางรถ</mat-option>
-                                    <mat-option value="train">ขนส่งทางรถไฟ</mat-option>
-                                </mat-select>
-                            </mat-form-field>
-                        </div>
-                        <div class="w-full">
-                            <mat-form-field class="w-full" [ngClass]="formFieldHelpers">
-                                <mat-label>สถานะ</mat-label>
-                                <mat-select formControlName="status">
-                                    <mat-option value="warehouse">รับเข้าคลัง</mat-option>
-                                    <mat-option value="pallet">ขึ้นพาเลท</mat-option>
-                                    <mat-option value="transit_china">พัสดุเดินทางจากโกดังจีนไปหน้าด่าน</mat-option>
-                                    <mat-option value="booking">จองตู้</mat-option>
-                                    <mat-option value="close_container_china">ปิดตู้</mat-option>
-                                    <mat-option value="customs_china">ดำเนินพิธีศุลกากรต้นทางจีน</mat-option>
-                                    <mat-option value="inspection_china">ติดตรวจปล่อยพิธีศุลกากรต้นทางจีน</mat-option>
-                                    <mat-option value="transit_china_thailand">พัสดุเดินทางระหว่าง จีน-ไทย</mat-option>
-                                    <mat-option value="customs_thailand">ดำเนินพิธีศุลกากรปลายทางไทย</mat-option>
-                                    <mat-option value="warehouse_arrival">พัสดุถึงโกดัง</mat-option>
-                                    <mat-option value="customer_arrival">พัสดุถึงลูกค้าปลายทาง</mat-option>
-                                    <mat-option value="customer_received">พัสดุถึงลูกค้าปลายทางเรียบร้อย</mat-option>
-                                    <mat-option value="close_container_thai">ปิดตู้</mat-option>
-                                </mat-select>
-                            </mat-form-field>
-                        </div>
-                        <div class="w-full">
-                            <mat-form-field class="w-full" [ngClass]="formFieldHelpers">
-                                <mat-label>Packing List</mat-label>
-                                <input matInput formControlName="packing_list">
-                            </mat-form-field>
-                        </div>
-                    </div>
-                    <div class="w-full flex justify-end gap-2">
-                        <button mat-flat-button [color]="'primary'" (click)="openfillter()">
-                            <span class="ml-2">ปิดตัวกรอง</span>
-                        </button>
-                        <button mat-flat-button [color]="'primary'" (click)="clearFilter()">
-                            <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:bars-3'"></mat-icon>
-                            <span class="ml-2">ล้างตั้งค่าตัวกรอง</span>
-                        </button>
-                        <button mat-flat-button [color]="'primary'" (click)="rerender()">
-                            <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:magnifying-glass'"></mat-icon>
-                            <span class="ml-2">ค้นหา</span>
-                        </button>
-                    </div>
-                </form>
-                <!-- <button class="mb-2" mat-flat-button [color]="'accent'" (click)="toggleSelectAll(!isAllSelected)">
-            {{ isAllSelected ? 'Unselect All' : 'Select All' }}
-        </button> -->
-                <div class="overflow-x-auto whitespace-nowrap mt-2 max-w-full">
-                    <!-- <table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger"
+        <form *ngIf="!showFilterForm" [formGroup]="filterForm">
+            <div class="flex flex-col md:flex-row w-full gap-2 items-end">
+                <mat-form-field class="w-full" [ngClass]="formFieldHelpers">
+                    <mat-label>{{ 'dalivery_order.labels.warehouse_date' | transloco }}</mat-label>
+                    <mat-date-range-input [rangePicker]="picker">
+                        <input matStartDate formControlName="start_date">
+                        <input matEndDate formControlName="end_date">
+                    </mat-date-range-input>
+                    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                    <mat-date-range-picker #picker></mat-date-range-picker>
+                </mat-form-field>
+                <div class="w-full">
+                    <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                        <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:magnifying-glass'"></mat-icon>
+                        <input matInput class="ml-2"
+                            [placeholder]=" 'dalivery_order.labels.search_placeholder' | transloco "
+                            formControlName="po_no" >
+                    </mat-form-field>
+                </div>
+                <div>
+                    <button mat-flat-button [color]="'primary'" (click)="openfillter()" class="mb-5">
+                        <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:bars-3'"></mat-icon>
+                        <span class="ml-2">{{ 'buttons.advancedFilter' | transloco }}</span>
+                    </button>
+                </div>
+            </div>
+        </form>
+        <form [formGroup]="filterForm" class="p-4 rounded-md" [@slideToggleFilter]="showFilterForm ? 'open' : 'closed'">
+            <div>
+                <h2 class="text-xl font-extrabold leading-7 tracking-tight truncate md:text-xl sm:leading-10">
+                    {{ 'buttons.advancedFilter' | transloco }}
+                </h2>
+                <mat-divider></mat-divider>
+            </div>
+            <div class="grid md:grid-cols-4 md:flex-row w-full gap-x-2 mt-2">
+                <mat-form-field class="w-full" [ngClass]="formFieldHelpers">
+                    <mat-label>{{ 'dalivery_order.labels.warehouse_date' | transloco }}</mat-label>
+                    <mat-date-range-input [rangePicker]="picker">
+                        <input matStartDate formControlName="start_date">
+                        <input matEndDate formControlName="end_date">
+                    </mat-date-range-input>
+                    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                    <mat-date-range-picker #picker></mat-date-range-picker>
+                </mat-form-field>
+                <div class="w-full">
+                    <mat-form-field class="w-full" [ngClass]="formFieldHelpers">
+                        <mat-label>{{ 'dalivery_order.labels.receipt_code' | transloco }}</mat-label>
+                        <input matInput formControlName="po_no">
+                    </mat-form-field>
+                </div>
+                 <div class="w-full">
+                    <mat-form-field class="w-full" [ngClass]="formFieldHelpers">
+                        <mat-label>{{ 'dalivery_order.labels.shipment' | transloco }}</mat-label>
+                        <mat-select formControlName="shipment_by">
+                            <mat-option value="Ship">{{ 'dalivery_order.transport_methods.ship' | transloco
+                                }}</mat-option>
+                            <mat-option value="Car">{{ 'dalivery_order.transport_methods.car' | transloco
+                                }}</mat-option>
+                            <mat-option value="Train">{{ 'dalivery_order.transport_methods.train' | transloco
+                                }}</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+
+                <div class="w-full">
+                    <mat-form-field class="w-full" [ngClass]="formFieldHelpers">
+                        <mat-label>{{ 'dalivery_order.labels.warehouse' | transloco }}</mat-label>
+                        <mat-select formControlName="store_id">
+                            <mat-option *ngFor="let store of stores" [value]="store.id">{{ store.name }}</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+                <div class="w-full">
+                    <mat-form-field class="w-full" [ngClass]="formFieldHelpers">
+                        <mat-label>{{ 'dalivery_order.labels.product_type' | transloco }}</mat-label>
+                        <mat-select formControlName="product_type_id">
+                            <mat-option *ngFor="let product_type of product_types" [value]="product_type.id">{{
+                                product_type.name }}</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+
+                <div class="w-full">
+                    <mat-form-field class="w-full" [ngClass]="formFieldHelpers">
+                        <mat-label>{{ 'dalivery_order.labels.status' | transloco }}</mat-label>
+                        <mat-select formControlName="status">
+                            <mat-option value="warehouse">{{ 'dalivery_order.statuses.warehouse' | transloco
+                                }}</mat-option>
+                            <mat-option value="pallet">{{ 'dalivery_order.statuses.pallet' | transloco }}</mat-option>
+                            <mat-option value="transit_china">{{ 'dalivery_order.statuses.transit_china' | transloco
+                                }}</mat-option>
+                            <mat-option value="booking">{{ 'dalivery_order.statuses.booking' | transloco }}</mat-option>
+                            <mat-option value="close_container_china">{{ 'dalivery_order.statuses.close_container_china'
+                                | transloco }}</mat-option>
+                            <mat-option value="customs_china">{{ 'dalivery_order.statuses.customs_china' | transloco
+                                }}</mat-option>
+                            <mat-option value="inspection_china">{{ 'dalivery_order.statuses.inspection_china' |
+                                transloco }}</mat-option>
+                            <mat-option value="transit_china_thailand">{{
+                                'dalivery_order.statuses.transit_china_thailand' | transloco }}</mat-option>
+                            <mat-option value="customs_thailand">{{ 'dalivery_order.statuses.customs_thailand'
+                                |transloco }}</mat-option>
+                            <mat-option value="warehouse_arrival">{{ 'dalivery_order.statuses.warehouse_arrival' |
+                                transloco }}</mat-option>
+                            <mat-option value="customer_arrival">{{ 'dalivery_order.statuses.customer_arrival' |
+                                transloco }}</mat-option>
+                            <mat-option value="customer_received">{{ 'dalivery_order.statuses.customer_received' |
+                                transloco }}</mat-option>
+                            <mat-option value="close_container_thai">{{ 'dalivery_order.statuses.close_container_thai' |
+                                transloco }}</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+                     <div class="w-full">
+                    <mat-label>{{ 'dalivery_order.labels.customer' | transloco }}</mat-label>
+                    <asha-select-member
+                    (change)="selectMember($event)"
+                    class="w-full [&_input]:!mt-0 [&_input]:!pt-1 [&_input]:!pb-1 [&_.mdc-text-field]:!mt-0">
+                    </asha-select-member>
+                </div>
+            </div>
+            <div class="w-full flex justify-end gap-2">
+                <button mat-flat-button [color]="'primary'" (click)="openfillter()">
+                    <span class="ml-2">{{ 'buttons.closeFilter' | transloco }}</span>
+                </button>
+                <button mat-flat-button [color]="'primary'" (click)="clearFilter()">
+                    <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:bars-3'"></mat-icon>
+                    <span class="ml-2">{{ 'buttons.clearFilter' | transloco }}</span>
+                </button>
+                <button mat-flat-button [color]="'primary'" (click)="onChangeFilter()">
+                    <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:magnifying-glass'"></mat-icon>
+                    <span class="ml-2">{{ 'buttons.search' | transloco }}</span>
+                </button>
+            </div>
+            
+        </form>
+        <button class="my-2 " mat-flat-button [color]="'primary'" (click)="toggleSelectAll(!isAllSelected)">
+            {{ isAllSelected ? ('buttons.deselectAll' | transloco) : ('buttons.selectAll'
+            | transloco) }}
+        </button>
+        <div class="overflow-x-auto whitespace-nowrap mt-2 max-w-full">
+            <table #tableElement datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" id="tableData"
                 class="table w-full bg-white row-border hover">
-            </table> -->
-                    <table class="min-w-full text-lg border border-gray-200">
-                        <thead class="bg-gray-100 border-b border-gray-200">
-                            <tr>
-                                <th class="w-10 p-2 border-r border-gray-200">
-                                    <mat-checkbox [checked]="isAllSelected()" [indeterminate]="someItemsSelected()"
-                                        [color]="'primary'" (change)="toggleAllSelection($event)">
-                                    </mat-checkbox>
-                                </th>
-                                <th class="w-10 text-center border-r px-2">จัดการ</th>
-                                <th class="w-10 text-center border-r border-gray-200">#</th>
-                                <th class="border-r border-gray-200">คลัง</th>
-                                <th class="border-r border-gray-200">LOT no.</th>
-                                <th class="border-r border-gray-200">สถานะสินค้า</th>
-                                <th class="border-r border-gray-200">วิธีขนส่ง</th>
-                                <th class="border-r border-gray-200">Carton No</th>
-
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <ng-container *ngFor="let item of data; let i = index">
-                                <!-- Main row -->
-                                <tr class="border-b border-gray-200 text-center">
-                                    <td class="text-center border-r border-gray-200">
-                                        <mat-checkbox [checked]="item.selected"
-                                            (change)="toggleItemSelection(item, $event)"
-                                            (click)="$event.stopPropagation()">
-                                        </mat-checkbox>
-                                    </td>
-                                    <td class="text-center border-r">
-                                        <button (click)="toggleExpand(i)">
-                                            <mat-icon>{{ expanded[i] ? 'keyboard_arrow_up' : 'keyboard_arrow_down'
-                                                }}</mat-icon>
-                                        </button>
-                                    </td>
-                                    <td class="text-center border-r border-gray-200">{{ item.no }}</td>
-                                    <td class="border-r border-gray-200">{{ item.warehouse }}</td>
-                                    <td class="border-r border-gray-200">{{ item.lotNo }}</td>
-                                    <td class="border-r border-gray-200">{{ item.status }}</td>
-                                    <td class="border-r border-gray-200">{{ item.transport }}</td>
-                                    <td class="border-r border-gray-200">{{ item.cartonNo }}</td>
-
-                                </tr>
-
-                                <!-- Expanded row -->
-                                <tr *ngIf="expanded[i]" class="bg-gray-50 border-b border-gray-200">
-                                    <td colspan="8" class="p-4 border-t border-gray-300">
-                                        <div class="flex items-center gap-4">
-                                            <mat-checkbox [(ngModel)]="item.imageSelected"
-                                                (change)="toggleImageSelection(item)" class="mr-4">
-                                                เลือกรูปภาพ
-                                            </mat-checkbox>
-                                            <button mat-flat-button color="primary" (click)="openImageDialog()">
-                                                <mat-icon>photo_camera</mat-icon> รูปภาพ
-                                            </button>
-                                            <button mat-flat-button color="accent">
-                                                <mat-icon>qr_code_scanner</mat-icon> สแกนบาร์โค้ด
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                            </ng-container>
-                        </tbody>
-                    </table>
-                </div>
-                <!-- Action Bar (shown when items are selected) -->
-                <div *ngIf="multiSelect.length > 0"
-                    class="flex flex-row justify-between items-center p-4 bg-white mt-4 rounded-md shadow-sm border border-gray-200">
-                    <p class="text-base md:text-lg font-medium text-gray-800">
-                        จำนวนรายการทั้งหมด <span class="text-primary-600">{{multiSelect.length}} รายการ</span>
-                    </p>
-                    <div class="flex gap-2">
-                        <button mat-stroked-button class="bg-[#6C6DF2] hover:bg-[#5A5BD9] text-white"
-                            (click)="printBarcodes()">
-                            <mat-icon class="text-white icon-size-5" [svgIcon]="'heroicons_outline:qr-code'"></mat-icon>
-                            <span class="ml-2">พิมพ์บาร์โค๊ด</span>
-                        </button>
-                        <button mat-stroked-button class="bg-yellow-600 hover:bg-yellow-700 text-white"
-                            (click)="editMultiple()">
-                            <mat-icon class="text-white icon-size-5"
-                                [svgIcon]="'heroicons_solid:pencil-square'"></mat-icon>
-                            <span class="ml-2">แก้ไขหลายรายการ</span>
-                        </button>
-                        <button mat-stroked-button class="bg-red-500 hover:bg-red-600 text-white"
-                            (click)="deleteItems()">
-                            <mat-icon class="text-white icon-size-5" [svgIcon]="'heroicons_outline:trash'"></mat-icon>
-                            <span class="ml-2">ลบรายการ</span>
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </mat-tab>
-        <!-- Tab 2 -->
-        <mat-tab label="ประวัติรายการสินค้าทั้งหมดจากจีน">
-            <div class="p-4">
-                <div class="overflow-x-auto">
-                    <table class="min-w-full text-lg text-gray-700 border border-gray-300 border-collapse">
-                        <thead class="bg-gray-100 text-left">
-                            <tr>
-                                <th class="px-3 py-2 border border-gray-300">#</th>
-                                <th class="px-3 py-2 border border-gray-300">วัน/เวลา</th>
-                                <th class="px-3 py-2 border border-gray-300">หมายเลขแทรค</th>
-                                <th class="px-3 py-2 border border-gray-300">Tacking ext</th>
-                                <th class="px-3 py-2 border border-gray-300">หมายเหตุ</th>
-                                <th class="px-3 py-2 border border-gray-300">โดย</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr *ngFor="let item of historyData; let i = index">
-                                <td class="px-3 py-2 border border-gray-300">{{ i + 1 }}</td>
-                                <td class="px-3 py-2 border border-gray-300">{{ item.date }}</td>
-                                <td class="px-3 py-2 border border-gray-300">{{ item.trackNo }}</td>
-                                <td class="px-3 py-2 border border-gray-300">{{ item.tackingExt }}</td>
-                                <td class="px-3 py-2 border border-gray-300">{{ item.remark }}</td>
-                                <td class="px-3 py-2 border border-gray-300">{{ item.by }}</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </mat-tab>
-    </mat-tab-group>
-
+            </table>
+        </div>
+    </div>
 </div>
 
 
 <ng-template #btNg let-data="adtData">
     <button mat-icon-button color="primary" [matMenuTriggerFor]="menu">
-        <mat-icon class="text-white icon-size-5" svgIcon="heroicons_solid:cog-8-tooth"></mat-icon>
+        <mat-icon class="icon-size-5" svgIcon="heroicons_solid:cog-8-tooth"></mat-icon>
     </button>
     <mat-menu #menu="matMenu">
         <button mat-menu-item (click)="openDialogEdit(data)">
-            <mat-icon svgIcon="heroicons_solid:pencil-square"></mat-icon>
-            <span>แก้ไข</span>
+            <mat-icon svgIcon="mat_outline:edit_note"></mat-icon>
+            <span>{{ 'buttons.edit' | transloco }}</span>
         </button>
         <mat-divider></mat-divider>
         <button mat-menu-item (click)="clickDelete(data.id)">
-            <mat-icon svgIcon="heroicons_solid:trash"></mat-icon>
-            <span>ลบ</span>
+            <mat-icon svgIcon="feather:trash"></mat-icon>
+            <span>{{ 'buttons.delete_entry' | transloco }}</span>
         </button>
     </mat-menu>
 </ng-template>
 
-<!-- <ng-template #checkbox_head let-data="adtData">
-    <mat-checkbox [checked]="isAllSelected()" [indeterminate]="isSomeSelected()"
-        (click)="$event.stopPropagation()"
-        (change)="toggleSelectAll($event.checked)">
-    </mat-checkbox>
-</ng-template> -->
-
 <ng-template #checkbox let-data="adtData">
-    <mat-checkbox [checked]="data.selected" (change)="onCheckboxChange($event, data.id)"></mat-checkbox>
+    <mat-checkbox class="text-white" [color]="'primary'" [checked]="data.selected"
+        (change)="onCheckboxChange($event, data.id)"></mat-checkbox>
 </ng-template>
 
 <ng-template #gotoRoute let-data="adtData">
     <a class="text-[#DF0B12CC]" [routerLink]="['/delivery_orders/view', data.id]"
-        routerLinkActive="router-link-active">{{data?.code}}</a>
+        routerLinkActive="router-link-active">{{data?.po_no}}</a>
 </ng-template>
 
 <ng-template #full_name let-data="adtData">
     <div> {{data.fname}} {{data.lname}}</div>
+</ng-template>
+
+<ng-template #importerCode let-data="adtData">
+    <div> <span>{{data?.member?.importer_code}}</span><span *ngIf="data?.member_importer"> - {{data?.member_importer?.importer_code}}</span></div>
 </ng-template>
 
 <ng-template #date let-data="adtData">
@@ -458,25 +353,25 @@
     <div>
         <div *ngIf="data.order?.status == 'payment'"
             class="px-4 py-1.5 rounded-full text-sm inline-flex items-center justify-center font-medium bg-green-50 text-green-600 border border-green-200">
-            ชำระเงินแล้ว</div>
+            {{ 'dalivery_order.view.status_paid' | transloco }}</div>
         <div *ngIf="data.order?.status == 'awaiting_summary'"
             class="px-4 py-1.5 rounded-full text-sm inline-flex items-center justify-center font-medium bg-orange-50 text-orange-600 border border-orange-200">
-            รอสรุปยอด</div>
+            {{ 'dalivery_order.view.status_awaiting_summary' | transloco }}</div>
         <div *ngIf="data.order?.status == 'awaiting_payment'"
             class="px-4 py-1.5 rounded-full text-sm inline-flex items-center justify-center font-medium bg-yellow-50 text-yellow-600 border border-yellow-200">
-            รอชำระค่าสั่งซื้อ</div>
+            {{ 'dalivery_order.view.status_awaiting_payment' | transloco }}</div>
         <div *ngIf="data.order?.status == 'in_progress'"
             class="px-4 py-1.5 rounded-full text-sm inline-flex items-center justify-center font-medium bg-blue-50 text-blue-600 border border-blue-200">
-            อยู่ระหว่างการสั่งซื้อ</div>
+            {{ 'dalivery_order.view.status_in_progress' | transloco }}</div>
         <div *ngIf="data.order?.status == 'preparing_shipment'"
             class="px-4 py-1.5 rounded-full text-sm inline-flex items-center justify-center font-medium bg-purple-50 text-purple-600 border border-purple-200">
-            สินค้าเตรียมจัดส่ง</div>
+            {{ 'dalivery_order.view.status_preparing_shipment' | transloco }}</div>
         <div *ngIf="data.order?.status == 'shipped'"
             class="px-4 py-1.5 rounded-full text-sm inline-flex items-center justify-center font-medium bg-teal-50 text-teal-600 border border-teal-200">
-            ร้านค้าจัดส่งแล้ว</div>
+            {{ 'dalivery_order.view.status_shipped' | transloco }}</div>
         <div *ngIf="data.order?.status == 'cancelled'"
             class="px-4 py-1.5 rounded-full text-sm inline-flex items-center justify-center font-medium bg-red-50 text-red-500 border border-red-200">
-            ยกเลิก/ล้มเหลว</div>
+            {{ 'dalivery_order.view.status_cancelled' | transloco }}</div>
     </div>
 </ng-template>
 
@@ -484,18 +379,18 @@
     <div>
         <div *ngIf="data.status == 'arrived_china_warehouse'"
             class="px-4 py-1.5 rounded-full text-sm inline-flex items-center justify-center font-medium bg-gray-50 text-gray-600 border border-gray-200">
-            ถึงคลังสินค้าที่จีน</div>
+            {{ 'dalivery_order.shipment_statuses.arrived_china_warehouse' | transloco }}</div>
         <div *ngIf="data.status == 'in_transit'"
             class="px-4 py-1.5 rounded-full text-sm inline-flex items-center justify-center font-medium bg-blue-50 text-blue-600 border border-blue-200">
-            กำลังขนส่ง</div>
+            {{ 'dalivery_order.shipment_statuses.in_transit' | transloco }}</div>
         <div *ngIf="data.status == 'arrived_thailand_warehouse'"
             class="px-4 py-1.5 rounded-full text-sm inline-flex items-center justify-center font-medium bg-gray-50 text-gray-600 border border-gray-200">
-            ถึงคลังสินค้าที่ไทย</div>
+            {{ 'dalivery_order.shipment_statuses.arrived_thailand_warehouse' | transloco }}</div>
         <div *ngIf="data.status == 'awaiting_payment'"
             class="px-4 py-1.5 rounded-full text-sm inline-flex items-center justify-center font-medium bg-yellow-50 text-yellow-600 border border-yellow-200">
-            รอการชำระเงิน</div>
+            {{ 'dalivery_order.shipment_statuses.awaiting_payment' | transloco }}</div>
         <div *ngIf="data.status == 'delivered'"
             class="px-4 py-1.5 rounded-full text-sm inline-flex items-center justify-center font-medium bg-green-50 text-green-600 border border-green-200">
-            ส่งมอบเรียบร้อยแล้ว</div>
+            {{ 'dalivery_order.shipment_statuses.delivered' | transloco }}</div>
     </div>
 </ng-template>

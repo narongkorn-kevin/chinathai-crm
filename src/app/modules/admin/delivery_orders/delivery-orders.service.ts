@@ -19,11 +19,11 @@ export class DeliveryOrdersService {
         return this._categories.asObservable();
     }
 
-    constructor(private http: HttpClient) {}
+    constructor(private http: HttpClient) { }
 
-    update(id: number,data: any) {
-        return this.http.put('/api/delivery_orders/'+ id, data)
-      }
+    update(id: number, data: any) {
+        return this.http.put('/api/delivery_orders/' + id, data)
+    }
 
     getRole() {
         return this.http.get('/api/role').pipe(
@@ -60,6 +60,15 @@ export class DeliveryOrdersService {
             })
         );
     }
+    
+    getDeliveryOrders() {
+        return this.http.get('/api/get_delivery_orders').pipe(
+            tap((resp: any) => {
+                this._roles.next(resp);
+            })
+        );
+    }
+
     getUnit() {
         return this.http.get('/api/get_product_type').pipe(
             tap((resp: any) => {
@@ -116,6 +125,13 @@ export class DeliveryOrdersService {
             })
         );
     }
+    getOrderById(id: string) {
+        return this.http.get('/api/orders/' + id).pipe(
+            tap((resp: any) => {
+                this._data.next(resp);
+            })
+        );
+    }
 
     import(data: FormData) {
         return this.http.post('/api/member/import-excel', data);
@@ -133,8 +149,43 @@ export class DeliveryOrdersService {
     datatable(dataTablesParameters: any) {
         return this.http.post('/api/delivery_orders_page', dataTablesParameters).pipe(
             map((resp: any) => {
+                if (resp?.data?.data) {
+
+                    resp.data.data = resp.data.data.map((track: any) => {
+                        let sum_qty_box = 0;
+                        let sum_weight = 0;
+                        let sum_cbm = 0;
+
+                        // วนใน delivery_order_tracks แต่ละอัน
+                        track.delivery_order_tracks?.forEach((dot: any) => {
+                            dot.delivery_order_lists?.forEach((item: any) => {
+                                const qty_box = Number(item.qty_box || 0);
+                                const weight = Number(item.weight || 0);
+                                const width = Number(item.width || 0);
+                                const height = Number(item.height || 0);
+                                const long = Number(item.long || 0);
+
+                                sum_qty_box += qty_box;
+                                sum_weight += weight*qty_box;
+
+                                // คำนวณ CBM ต่อรายการ
+                                const cbm = (width * height * long * qty_box) / 1000000;
+
+                                sum_cbm += cbm;
+                            });
+                        });
+
+                        return {
+                            ...track,
+                            sum_qty_box,
+                            sum_weight,
+                            sum_cbm
+                        };
+                    });
+                }
                 return resp;
             })
+
         );
     }
     datatablesetting(dataTablesParameters: any) {
@@ -145,11 +196,7 @@ export class DeliveryOrdersService {
         );
     }
     datatatacking(dataTablesParameters: any) {
-        return this.http.post('/api/tracking_page', dataTablesParameters).pipe(
-            map((resp: any) => {
-                return resp;
-            })
-        );
+        return this.http.post('/api/tracking_page', dataTablesParameters).pipe( );
     }
     datataproductdraft(dataTablesParameters: any) {
         return this.http.post('/api/product_draft_page', dataTablesParameters).pipe(
@@ -172,11 +219,33 @@ export class DeliveryOrdersService {
             })
         );
     }
+    getpacking_type() {
+        return this.http.get('/api/get_packing_type').pipe(
+            tap((resp: any) => {
+                this._data.next(resp);
+            })
+        );
+    }
+    getDashboardDeliveryOrder() {
+        return this.http.get('/api/dashboard_delivery_order');
+    }
+
+    getDashboardDeliveryOrderFilter(param: any) {
+        
+        return this.http.get('/api/dashboard_delivery_order' , {params: param});
+    }
+
 
 
     get(id: number) {
         return this.http.get(
             environment.apiUrl + '/api/delivery_orders/' + id
+        );
+    }
+
+    getTracking(id: number) {
+        return this.http.get(
+            environment.apiUrl + '/api/tracking/' + id
         );
     }
 
@@ -186,6 +255,8 @@ export class DeliveryOrdersService {
             data
         );
     }
+
+
     createTracking(data: any) {
         return this.http.post(
             environment.apiUrl + '/api/tracking',
@@ -195,6 +266,18 @@ export class DeliveryOrdersService {
     createpo(data: any) {
         return this.http.post(
             environment.apiUrl + '/api/product_draft',
+            data
+        );
+    }
+    udpateProductDraft(data: any,id: any) {
+        return this.http.post(
+            environment.apiUrl + '/api/product_draft/' + id,
+            data
+        );
+    }
+    creatstandard_size(data: any) {
+        return this.http.post(
+            environment.apiUrl + '/api/standard_size',
             data
         );
     }
@@ -221,9 +304,16 @@ export class DeliveryOrdersService {
     }
 
     updatesetting(data: any, id: number) {
-        return this.http.put('/api/standard_size/'+ id, data)
-      }
-    updatepo(data: any, id: number) {
-        return this.http.put('/api/product_draft/'+ id, data)
-      }
+        return this.http.put('/api/standard_size/' + id, data)
+    }
+    updateproductpo(data: any, id: number) {
+        return this.http.put('/api/update_delivery_order_list/' + id, data)
+    }
+
+    createAdress(data: any) {
+        return this.http.post('/api/print_sender_and_recipient',
+            data,
+           
+        );
+    }
 }

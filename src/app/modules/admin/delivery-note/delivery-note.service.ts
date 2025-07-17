@@ -11,7 +11,7 @@ export class DeliveryNoteService {
 
     datatable(dataTablesParameters: any) {
         return this.http
-            .post('/api/shipment_page', dataTablesParameters)
+            .post('/api/bills_page', dataTablesParameters)
             .pipe(
                 map((resp: any) => {
                     return resp;
@@ -38,22 +38,26 @@ export class DeliveryNoteService {
     }
 
     create(data: any) {
-        return this.http.post('/api/shipment_master', data);
+        return this.http.post('/api/bills', data);
+    }
+
+      updateTranspot(id,data: any) {
+        return this.http.put('/api/bills11/' + id, data);
     }
 
     update(data: any,id: any) {
-        return this.http.put('/api/shipment_master/' + id, data);
+        return this.http.put('/api/bills/' + id, data);
     }
 
     get(id: any) {
-        return this.http.get('/api/shipment_master/' + id);
+        return this.http.get('/api/bills/' + id);
     }
     getshipment(id: any) {
         return this.http.get('/api/shipment/' + id);
     }
 
     delete(id: number) {
-        return this.http.delete('/api/shipment_master/' + id);
+        return this.http.delete('/api/bills/' + id);
     }
 
     getShipment() {
@@ -64,5 +68,8 @@ export class DeliveryNoteService {
     }
     getTransport() {
         return this.http.get('/api/get_transport');
+    }
+    getDeliveryDocByBill(id:number) {
+        return this.http.get('/api/get_delivery_doc_by_bill/'+id);
     }
 }

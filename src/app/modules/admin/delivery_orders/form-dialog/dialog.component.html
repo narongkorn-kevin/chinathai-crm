@@ -1,5 +1,5 @@
 <div class="overflow-auto md:max-w-lg" *ngIf="this.data?.type === 'NEW'">
-    <div class="grid items-center w-full grid-cols-2 "><h1 mat-dialog-title class="mb-4 text-xl font-semibold" *ngIf="this.data?.type === 'NEW'">นำเข้าข้อมูลผู้ใช้</h1>
+    <div class="grid items-center w-full grid-cols-2 "><h1 mat-dialog-title class="mb-4 text-xl font-semibold" *ngIf="this.data?.type === 'NEW'">{{ 'dalivery_order.dialog_form.user_import' | transloco }}</h1>
         <a class="ml-auto mr-5 cursor-pointer" (click)="exportTemplate()">Export Template</a></div>
     <div mat-dialog-content class="overflow-y-auto md:max-h-180">
         <form [formGroup]="form">
@@ -12,7 +12,7 @@
                     <input type="text" readonly matInput [formControlName]="'file_name'" />
                     <input type="file" hidden #file_name (change)="onSelect(file_name.files,'addfile')"
                         accept=".xls,.xlsx" />
-                    <mat-error>กรุณาเลือกไฟล์</mat-error>
+                    <mat-error>{{ 'dalivery_order.dialog_form.file_required_error' | transloco }}</mat-error>
                 </mat-form-field>
             </div>
         </form>
@@ -20,10 +20,10 @@
     <!-- <div> check : {{this.form.value | json}}</div> -->
     <div mat-dialog-actions class="flex justify-end">
         <button class="px-6 ml-3" mat-flat-button [color]="'primary'" (click)="Submit()">
-            ตกลง
+            {{ 'buttom.save' | transloco }}
         </button>
         <button class="px-6 ml-3" mat-flat-button [color]="'warn'" (click)="onClose()">
-            ยกเลิก
+            {{ 'buttom.cancle' | transloco }}
         </button>
     </div>
 </div>

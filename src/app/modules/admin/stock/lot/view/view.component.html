@@ -1,45 +1,44 @@
 <div class="flex flex-col flex-auto justify-start items-center w-full overflow-auto">
     <div class="w-full flex-col justify-between items-center flex overflow-hidden">
         <div class="w-full flex-col justify-start items-start flex">
-            <div class="w-full px-10 pt-5 pb-2.5 bg-white justify-between items-center flex">
+            <div class="w-full px-4 md:px-10 pt-5 pb-2.5 bg-white justify-between items-center flex gap-2">
                 <div class="flex flex-col">
                     <div class="flex space-x-2">
-                        <button class="md:text-xl font-medium tracking-tight leading-7 sm:leading-10 truncate"
+                        <button class="md:text-sm font-medium tracking-tight leading-7 sm:leading-10 truncate"
                             [routerLink]="['/lot']" routerLinkActive="router-link-active">
-                            รายการรวมพัสดุ
+                            {{ 'packing_list.package_summary_list' | transloco }}
                         </button>
                         <p class="md:text-sm font-medium tracking-tight leading-7 sm:leading-10 truncate">></p>
                         <button
                             class="md:text-sm font-medium tracking-tight leading-7 sm:leading-10 truncate text-[#DF0B12]"
                             [routerLink]="['/lot']" routerLinkActive="router-link-active">
-                            Packing List
+                            {{ 'packing_list.packing_list' | transloco }}
                         </button>
                     </div>
 
                     <p class="md:text-2xl text-[#DF0B12] font-bold tracking-tight leading-7 sm:leading-10 truncate">
-                        Packing List: {{ data.code }}
+                        {{ 'packing_list.view.package_summary_list' | transloco }}: {{ data?.packinglist_no }}
                     </p>
                 </div>
-                <div class="flex ml-auto space-x-4" *ngIf="selectedTabIndex === 0">
+                <div class="flex flex-col md:flex-row ml-auto gap-2" *ngIf="selectedTabIndex === 0">
                     <button mat-flat-button [cdkMenuTriggerFor]="optionsMenu" [color]="'primary'">
                         <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:bars-3'"></mat-icon>
-                        <span class="ml-2">ตัวเลือก</span>
+                        <span class="ml-2">{{ 'buttons.options' | transloco }}</span>
                     </button>
                     <ng-template #optionsMenu>
                         <div class="manage-menu bg-primary" cdkMenu>
                             <button class="manage-menu-item text-white" (click)="sacnpo()" cdkMenuItem>
-                                <mat-icon class="icon-size-5 text-white" [svgIcon]="'heroicons_solid:qr-code'"></mat-icon>
-                                <span class="ml-2">Scan Po ขึ้นตู้</span>
+                                <mat-icon class="icon-size-5 text-white"
+                                    [svgIcon]="'heroicons_solid:qr-code'"></mat-icon>
+                                <span class="ml-2">{{ 'packing_list.view.scan_po_up_truck' | transloco }}</span>
                             </button>
                             <button class="manage-menu-item text-white" (click)="draft()" cdkMenuItem>
-                                <mat-icon class="icon-size-5 text-white"
-                                    [svgIcon]="'feather:file-text'"></mat-icon>
+                                <mat-icon class="icon-size-5 text-white" [svgIcon]="'feather:file-text'"></mat-icon>
                                 <span class="ml-2">Draft</span>
                             </button>
                             <button class="manage-menu-item text-white" (click)="lotedit()" cdkMenuItem>
-                                <mat-icon class="icon-size-5 text-white"
-                                    [svgIcon]="'heroicons_solid:pencil-square'"></mat-icon>
-                                <span class="ml-2">แก้ไขข้อมูล</span>
+                                <mat-icon class="icon-size-5 text-white" [svgIcon]="'mat_outline:edit_note'"></mat-icon>
+                                <span class="ml-2">{{ 'packing_list.view.edit_data' | transloco }}</span>
                             </button>
                         </div>
                     </ng-template>
@@ -47,7 +46,7 @@
                     <button [cdkMenuTriggerFor]="menu" mat-flat-button class="!text-white" [color]="'primary'">
                         <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:shopping-bag'"></mat-icon>
                         <div class="flex items-center gap-2">
-                            <span class="ml-2"> การจัดการข้อมูล </span>
+                            <span class="ml-2">{{ 'packing_list.view.data_management' | transloco }}</span>
                             <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:chevron-up'"></mat-icon>
                         </div>
                     </button>
@@ -70,7 +69,8 @@
                                 <span class="ml-2">Excel</span>
                             </button>
                             <button class="manage-menu-item text-white" cdkMenuItem>
-                                <mat-icon class="icon-size-5 text-white" [svgIcon]="'heroicons_solid:printer'"></mat-icon>
+                                <mat-icon class="icon-size-5 text-white"
+                                    [svgIcon]="'heroicons_solid:printer'"></mat-icon>
                                 <span class="ml-2">Print</span>
                             </button>
                         </div>
@@ -78,218 +78,287 @@
                 </div>
                 <div class="flex ml-auto space-x-4" *ngIf="selectedTabIndex === 1">
                     <button mat-flat-button [color]="'primary'" (click)="opendialogstatus()">
-                        <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:pencil-square'"></mat-icon>
-                        <a class="ml-2">อัปเดตสถานะ</a>
+                        <mat-icon class="icon-size-5" [svgIcon]="'mat_outline:edit_note'"></mat-icon>
+                        <a class="ml-2">{{ 'packing_list.view.update_status' | transloco }}</a>
                     </button>
                 </div>
             </div>
-            <div class="w-full px-5 flex flex-col gap-2 bg-white">
+            <div class="w-full px-1 md:px-5 flex flex-col gap-2 bg-white">
                 <mat-tab-group (selectedTabChange)="onTabChange($event)">
-                    <mat-tab label="รายละเอียดรายการ Packing list">
+                    <mat-tab label="{{ 'packing_list.view.package_summary_list' | transloco }}">
                         <div class="flex flex-col gap-2 w-full mb-4">
-                            <h2 class="text-xl font-bold">รายละเอียดรายการ Packing list</h2>
+                            <h2 class="text-xl font-bold">{{ 'packing_list.view.package_summary_list' | transloco }}
+                            </h2>
                             <mat-divider class="mb-3"></mat-divider>
 
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-2 w-full ">
+                            <div class="flex flex-col md:grid md:grid-cols-2 gap-2 w-full ">
                                 <div class="flex justify-between w-full">
-                                    <div class="w-full font-bold">ลำดับตู้:</div>
-                                    <div class="w-full text-left">{{ data.code ?? '-' }}</div>
+                                    <div class="w-full font-bold">{{ 'packing_list.view.container_sequence' | transloco
+                                        }}:</div>
+                                    <div class="w-full text-left">{{ data?.packinglist_no ?? '-' }}</div>
                                 </div>
                                 <div class="flex justify-between w-full">
-                                    <div class="w-full font-bold">หมายเลขตู้:</div>
-                                    <div class="w-full text-left">{{ data.container_no ?? '-' }}</div>
+                                    <div class="w-full font-bold">{{ 'packing_list.view.container_number' | transloco
+                                        }}:</div>
+                                    <div class="w-full text-left">{{ data?.container_no ?? '-' }}</div>
                                 </div>
                                 <div class="flex justify-between w-full">
-                                    <div class="w-full font-bold">ป้ายทะเบียนรถ:</div>
-                                    <div class="w-full text-left">{{ data.truck_license_plate ?? '-' }}</div>
+                                    <div class="w-full font-bold">{{ 'packing_list.view.truck_license_plate' | transloco
+                                        }}:</div>
+                                    <div class="w-full text-left">{{ data?.truck_license_plate ?? '-' }}</div>
                                 </div>
                                 <div class="flex justify-between w-full">
-                                    <div class="w-full font-bold">วันที่เข้าโกดัง:</div>
-                                    <div class="w-full text-left">{{ data.closing_date ?? '-' }}</div>
+                                    <div class="w-full font-bold">{{ 'packing_list.view.warehouse_entry_date' |
+                                        transloco }}:</div>
+                                    <div class="w-full text-left">{{ data?.closing_date ?? '-' }}</div>
                                 </div>
                                 <div class="flex justify-between w-full">
-                                    <div class="w-full font-bold">SHIPPING จีน:</div>
-                                    <div class="w-full text-left">{{ data.shipping_china ?? '-' }}</div>
+                                    <div class="w-full font-bold">{{ 'packing_list.view.china_shipping' | transloco }}:
+                                    </div>
+                                    <div class="w-full text-left">{{ data?.shipment_china ?? '-' }}</div>
                                 </div>
                                 <div class="flex justify-between w-full">
-                                    <div class="w-full font-bold">SHIPPING ไทย:</div>
-                                    <div class="w-full text-left">{{ data.shipping_thailand ?? '-' }}</div>
+                                    <div class="w-full font-bold">{{ 'packing_list.view.thailand_shipping' | transloco
+                                        }}:</div>
+                                    <div class="w-full text-left">{{ data?.shipping_thailand ?? '-' }}</div>
                                 </div>
                                 <div class="flex justify-between w-full">
-                                    <div class="w-full font-bold">วันที่เข้าไทย:</div>
-                                    <div class="w-full text-left">{{ data.estimated_arrival_date ?? '-' }}</div>
+                                    <div class="w-full font-bold">{{ 'packing_list.view.thailand_arrival_date' |
+                                        transloco }}:</div>
+                                    <div class="w-full text-left">{{ data?.estimated_arrival_date ?? '-' }}</div>
                                 </div>
                                 <div class="flex justify-between w-full">
-                                    <div class="w-full font-bold">ขนส่งโดย:</div>
-                                    <div class="w-full text-left">{{ data.transport_by ?? '-' }}</div>
+                                    <div class="w-full font-bold">{{ 'packing_list.view.transport_by' | transloco }}:
+                                    </div>
+                                    <div class="w-full text-left">{{ getShipmentMethod(data?.transport_by) ?? '-' }}
+                                    </div>
                                 </div>
                                 <div class="flex justify-between w-full">
-                                    <div class="w-full font-bold">ปลายทาง:</div>
-                                    <div class="w-full text-left">{{ data.destination ?? '-' }}</div>
+                                    <div class="w-full font-bold">{{ 'packing_list.view.destination' | transloco }}:
+                                    </div>
+                                    <div class="w-full text-left">{{ data?.destination ?? '-' }}</div>
                                 </div>
                                 <div class="col-span-2 bg-[#fdeaeb] rounded-md p-4">
-                                    <p class="font-bold text-red-600">หมายเหตุ</p>
-                                    <p class="text-red-600"> {{ data.remark ?? '-' }} </p>
+                                    <p class="font-bold text-red-600">{{ 'packing_list.view.note' | transloco }}</p>
+                                    <p class="text-red-600"> {{ data?.remark ?? '-' }} </p>
                                 </div>
                             </div>
                         </div>
-                        <div class="w-full p-4 my-4 border border-gray-300 rounded-lg min-h-[300px] overflow-y-auto flex flex-col">
+                        <div
+                            class="w-full p-4 my-4 border border-gray-300 rounded-lg min-h-[300px] overflow-y-auto flex flex-col">
                             <div class="flex flex-row w-full gap-2 mb-6">
-                                <div class="w-full text-3xl font-bold">รายละเอียดรูปถ่าย</div>
-                                <div class="flex flex-row justify-end w-full gap-2">
-                                    <button mat-flat-button [color]="'primary'" (click)="opendialogdelete()" disabled>
-                                        <mat-icon [svgIcon]="'heroicons_solid:trash'"></mat-icon>
-                                        <span class="ml-2">ลบรูปภาพ</span>
+                                <div class="w-full text-xl md:text-3xl font-bold">{{ 'packing_list.view.photo_details' |
+                                    transloco }}
+                                </div>
+                                <div class="flex flex-col md:flex-row justify-end w-full gap-2">
+                                    <button mat-flat-button [color]="'primary'" (click)="opendialogdelete()">
+                                        <mat-icon [svgIcon]="'feather:trash'"></mat-icon>
+                                        <span class="ml-2">{{ 'packing_list.view.delete_photos' | transloco }}</span>
                                     </button>
                                     <button mat-flat-button [color]="'primary'" (click)="opendialogphoto()">
                                         <mat-icon [svgIcon]="'heroicons_solid:photo'"></mat-icon>
-                                        <span class="ml-2">แนบรูปถ่าย</span>
+                                        <span class="ml-2">{{ 'packing_list.view.attach_photos' | transloco }}</span>
                                     </button>
                                 </div>
                             </div>
                             <table class="whitespace-nowrap w-full">
                                 <thead>
-                                <tr >
-                                    <th class="px-6 py-3 w-10 border border-x-0">
-                                        <mat-checkbox [checked]="selectAll" [indeterminate]="someSelect()"
-                                        (change)="SelectAll($event.checked)"></mat-checkbox>
-                                    </th>
-                                    <th class="px-6 py-3 w-10 border border-l-0">#</th>
-                                    <th class="px-6 py-3 border border-x-0">วันที่</th>
-                                    <th class="px-6 py-3 border border-x-0">รูปที่ถ่าย</th>
-                                </tr>
+                                    <tr>
+                                        <th class="px-2 md:px-6 py-3 w-10 border border-x-0">
+                                            <mat-checkbox class="text-white" [color]="'primary'" [checked]="selectAll"
+                                                [indeterminate]="someSelect()"
+                                                (change)="SelectAll($event.checked)"></mat-checkbox>
+                                        </th>
+                                        <th class="px-2 md:px-6 py-3 w-10 border border-l-0">#</th>
+                                        <th class="px-6 py-3 border border-x-0">{{ 'packing_list.view.date' | transloco
+                                            }}</th>
+                                        <th class="px-6 py-3 border border-x-0">{{ 'packing_list.view.photo_taken' |
+                                            transloco }}
+                                        </th>
+                                    </tr>
                                 </thead>
                                 <tbody>
-                                    <tr *ngFor="let list of images; let i = index" class="text-center">
-                                        <td  class="px-6 py-3 border border-x-0">
-                                            <mat-checkbox [(ngModel)]="list.IsChecked" (ngModelChange)="updateAllselect()"
-                                            [ngModelOptions]="{standalone: true}"></mat-checkbox>
+                                    <tr *ngFor="let item of listArray.controls; let i = index" class="text-center"
+                                        [formGroup]="item">
+                                        <td class="px-2 md:px-6 py-3 border border-x-0">
+                                            <mat-checkbox class="text-white" [color]="'primary'"
+                                                formControlName="IsChecked" (change)="updateAllselect()">
+                                            </mat-checkbox>
                                         </td>
-                                        <td class="px-6 py-3 border border-l-0">{{ i + 1 }}</td>
-                                        <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order?.member_id ?? '-' }}</td>
-                                        <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order?.order_id ?? '-' }}</td>
+                                        <td class="px-2 md:px-6 py-3 border border-l-0">{{ i + 1 }}</td>
+                                        <td class="px-6 py-3 border border-x-0">
+                                            {{ images[i]?.created_at | date: 'yyyy-MM-dd' }}
+                                        </td>
+                                        <td class="px-6 py-3 border border-x-0">
+                                            <img *ngIf="images[i]?.image; else noImage"
+                                                (click)="showPicture(convertPathImage(images[i].image))"
+                                                [src]="convertPathImage(images[i].image)" class="w-16 h-auto rounded" />
+                                            <ng-template #noImage>
+                                                <div
+                                                    class="w-16 h-16 bg-[#797979] flex flex-col items-center justify-center text-sm rounded-md !text-white">
+                                                    <div>
+                                                        <mat-icon class="text-white"
+                                                            [svgIcon]="'heroicons_solid:photo'"></mat-icon>
+                                                    </div>
+                                                    <div>No Image</div>
+                                                </div>
+                                            </ng-template>
+                                        </td>
                                     </tr>
                                 </tbody>
                             </table>
                         </div>
-                        <div class="w-full p-4 my-4 border border-gray-300 rounded-lg min-h-[300px] overflow-y-auto flex flex-col">
+                        <div
+                            class="w-full p-4 my-4 border border-gray-300 rounded-lg min-h-[300px] overflow-y-auto flex flex-col">
                             <div class="flex flex-row w-full gap-2 mb-6">
-                                <div class="w-full text-3xl font-bold">รายละเอียดรูปถ่าย</div>
+                                <div class="w-full text-xl md:text-3xl font-bold">{{
+                                    'packing_list.view.package_summary_product_list' |
+                                    transloco }}
+                                </div>
                                 <div class="flex flex-row justify-end w-full gap-2">
                                     <button mat-flat-button [color]="'primary'" (click)="opendialogdelete()" disabled>
-                                        <mat-icon [svgIcon]="'heroicons_solid:trash'"></mat-icon>
-                                        <span class="ml-2">ลบรายการสินค้าใน Packing List</span>
+                                        <mat-icon [svgIcon]="'feather:trash'"></mat-icon>
+                                        <span class="ml-2">{{ 'packing_list.view.delete_packing_list_items' | transloco
+                                            }}</span>
                                     </button>
                                 </div>
                             </div>
                             <div class="flex flex-col md:flex-row w-full gap-4 mb-4">
                                 <!-- กล่องซ้าย: รายการประเภทและกราฟ -->
-                                 <div class="w-8/12">
-                                    <div class="w-full text-xl font-bold mb-1">ประเภทรายการ</div>
+                                <div class="w-full md:w-8/12">
+                                    <div class="w-full text-xl font-bold mb-1">{{ 'packing_list.view.item_types' |
+                                        transloco }}</div>
                                     <div class="rounded-lg border-gray-300 border p-4 w-full flex flex-col md:flex-row">
                                         <div class="grid grid-cols-1 md:grid-cols-5 gap-2 w-full">
                                             <!-- ประเภทสินค้า -->
                                             <div class="flex flex-col gap-4">
                                                 <div class="flex flex-col items-end">
-                                                    <div class="text-2xl font-normal">รายการทั้งหมด</div>
+                                                    <div class="text-2xl font-normal">{{ 'packing_list.view.all_items' |
+                                                        transloco
+                                                        }}</div>
                                                     <div class="text-xl font-bold">{{ sumdashbord.total_items }} <span
-                                                            class="text-2xl font-normal">รายการ</span></div>
+                                                            class="text-2xl font-normal">{{ 'packing_list.view.items' |
+                                                            transloco
+                                                            }}</span></div>
                                                 </div>
-                                                <div *ngFor="let category of sumdashbord?.categories.slice(0,3)" class="flex flex-col items-end">
+                                                <div *ngFor="let category of sumdashbord?.categories.slice(0,3)"
+                                                    class="flex flex-col items-end">
                                                     <div class="text-xl font-semibold">{{ category.name }}</div>
-                                                    <div class="text-lg">{{ category.boxes }} กล่อง</div>
-                                                    <div class="text-md text-red-500">{{ category.cbm }} CBM</div>
+                                                    <div class="text-lg">{{ category.boxes }} {{
+                                                        'packing_list.view.boxes' |
+                                                        transloco }}</div>
+                                                    <div class="text-md text-red-500">{{ category.cbm }} {{
+                                                        'packing_list.view.total_cbm' |
+                                                        transloco }}</div>
                                                 </div>
                                             </div>
 
                                             <!-- กราฟ -->
                                             <div class="flex justify-center items-center w-full col-span-3 ">
-                                                <apx-chart [series]="chartOptions.n_series" [chart]="chartOptions.chart"
+                                                <apx-chart 
+                                                    *ngIf="chartOptions && chartOptions.chart?.type"
+                                                    [series]="chartOptions.n_series" [chart]="chartOptions.chart"
                                                     [labels]="chartOptions.labels" [colors]="chartOptions.colors"
-                                                    [responsive]="chartOptions.responsive" [legend]="chartOptions.legend"
+                                                    [responsive]="chartOptions.responsive"
+                                                    [legend]="chartOptions.legend"
                                                     [dataLabels]="chartOptions.dataLabels"></apx-chart>
                                             </div>
                                             <!-- ประเภทสินค้า (อีกครึ่ง) -->
                                             <div class="flex flex-col gap-4">
-                                                <div *ngFor="let category of sumdashbord?.categories.slice(3,7)" class="flex flex-col items-end">
+                                                <div *ngFor="let category of sumdashbord?.categories.slice(3,7)"
+                                                    class="flex flex-col items-end">
                                                     <div class="text-xl font-semibold">{{ category.name }}</div>
-                                                    <div class="text-lg">{{ category.boxes }} กล่อง</div>
+                                                    <div class="text-lg">{{ category.boxes }} {{
+                                                        'packing_list.view.boxes' | transloco }}</div>
                                                     <div class="text-md text-red-500">{{ category.cbm }} CBM</div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                 </div>
-
-
+                                </div>
                                 <!-- กล่องขวา: สรุปข้อมูล -->
-                                 <div class="w-4/12">
-                                    <div class="w-full text-xl font-bold ml-1 mb-1">ยอดรวม</div>
+                                <div class="w-full md:w-4/12">
+                                    <div class="w-full text-xl font-bold ml-1 mb-1">{{ 'packing_list.view.total' |
+                                        transloco }}</div>
                                     <div class="grid grid-cols-1 md:grid-cols-2 gap-2 w-full">
-                                        <div class="rounded-lg border-gray-300 border p-6 py-8 flex justify-around items-center col-span-2 flex-col">
+                                        <div
+                                            class="rounded-lg border-gray-300 border p-6 py-8 flex justify-around items-center col-span-2 flex-col">
                                             <div class="flex flex-row w-full items-center mt-4">
-                                                <img class="flex w-14 mr-2" src="assets/images/item/kg.png" alt="Logo image">
-                                                <div class="text-lg font-normal w-full">น้ำหนักรวม (Kg.)</div>
+                                                <img class="flex w-14 mr-2" src="assets/images/item/kg.png"
+                                                    alt="Logo image">
+                                                <div class="text-lg font-normal w-full">{{
+                                                    'packing_list.view.total_weight_kg' |
+                                                    transloco }}</div>
                                             </div>
                                             <mat-divider class="my-2"></mat-divider>
                                             <div class="w-full flex flex-row justify-between items-center">
-                                                <div>ยอดรวมจากรายการในสินค้าใน Packing List</div>
-                                                <div class="text-4xl font-bold text-blue-900">{{ sumdashbord?.total_items | number }}</div>
+                                                <div>{{ 'packing_list.view.total_from_packing_list_items' | transloco }}
+                                                </div>
+                                                <div class="text-4xl font-bold text-blue-900">{{
+                                                    this.sumdashbord?.summary?.total_weight_kg| number : '1.2' }}</div>
                                             </div>
                                         </div>
-                                        <div class="rounded-lg border-gray-300 border p-6 py-8 flex justify-around items-center col-span-2 flex-col">
+                                        <div
+                                            class="rounded-lg border-gray-300 border p-6 py-8 flex justify-around items-center col-span-2 flex-col">
                                             <div class="flex flex-row w-full items-center mt-4">
-                                                <img class="flex w-14 mr-2" src="assets/images/item/cube.png" alt="Logo image">
-                                                <div class="text-lg font-normal w-full">CBM รวม</div>
+                                                <img class="flex w-14 mr-2" src="assets/images/item/cube.png"
+                                                    alt="Logo image">
+                                                <div class="text-lg font-normal w-full">{{ 'packing_list.view.total_cbm'
+                                                    | transloco
+                                                    }}</div>
                                             </div>
                                             <mat-divider class="my-2"></mat-divider>
                                             <div class="w-full flex flex-row justify-between items-center">
-                                                <div>ยอดรวมจากรายการในสินค้าใน Packing List</div>
-                                                <div class="text-4xl font-bold text-blue-900">{{ sumdashbord?.total_items | number }}</div>
+                                                <div>{{ 'packing_list.view.total_from_packing_list_items' | transloco }}
+                                                </div>
+                                                <div class="text-4xl font-bold text-blue-900">{{
+                                                    sumdashbord.summary?.total_cbm | number : '1.4' }}</div>
                                             </div>
                                         </div>
                                     </div>
-                                 </div>
+                                </div>
                             </div>
-                            <div class="rounded-lg border-gray-300 border p-6 flex justify-around items-center col-span-2 flex-col mb-2">
+                            <div
+                                class="rounded-lg border-gray-300 border p-6 flex justify-around items-center col-span-2 flex-col mb-2">
                                 <div class="flex flex-row w-full items-center mt-4">
                                     <img class="flex w-14 mr-2" src="assets/images/item/scanning.png" alt="Logo image">
-                                    <div class="text-lg font-normal w-full">Scan Tracking รับเข้าโกดังไทย</div>
+                                    <div class="text-lg font-normal w-full">{{
+                                        'packing_list.view.scan_tracking_thai_warehouse_entry' |
+                                        transloco }}</div>
                                 </div>
-                                <div class="w-full">
-                                    <asha-progress-bar [total]="100" [value]="50" color="bg-red-600"></asha-progress-bar>
-                                </div>
+
                                 <div class="flex flex-row justify-between items-center w-full">
-                                    <div>ยอดรวมจากรายการสินค้าใน Packing List</div>
-                                    <div class="text-4xl font-bold text-blue-900">50/100</div>
+                                    <div>{{ 'packing_list.view.total_from_packing_list_items_2' | transloco }}</div>
+                                    <div class="text-4xl font-bold text-blue-900">{{allItem ?? 0}}</div>
                                 </div>
                             </div>
                             <form *ngIf="!showFilterForm" [formGroup]="filterForm">
                                 <div class="flex flex-col md:flex-row w-full gap-2 items-end">
                                     <div class="w-full">
-                                        <mat-form-field [ngClass]="formFieldHelpers" class="w-full" >
-                                            <mat-icon class="icon-size-5 mr-2" [svgIcon]="'heroicons_solid:magnifying-glass'"></mat-icon>
-                                            <input matInput formControlName="in_store" [placeholder]="'ค้นหาด้วยรหัสใบรับของคลังสินค้า'">
+                                        <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                                            <mat-icon class="icon-size-5 mr-2"
+                                                [svgIcon]="'heroicons_solid:magnifying-glass'"></mat-icon>
+                                            <input matInput formControlName="po_no"
+                                                [placeholder]="'packing_list.view.search_with_warehouse_receipt_code' | transloco">
                                         </mat-form-field>
                                     </div>
                                     <div>
-                                        <button mat-flat-button [color]="'primary'" (click)="openfillter()" class="mb-5">
-                                            <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:bars-3'"></mat-icon>
-                                            <span class="ml-2">ค้นหาโดยใช้ตัวกรอง</span>
+                                        <button mat-flat-button [color]="'primary'" (click)="openfillter()"
+                                            class="mb-5">
+                                            <mat-icon class="icon-size-5"
+                                                [svgIcon]="'heroicons_solid:bars-3'"></mat-icon>
+                                            <span class="ml-2">{{ 'buttons.advancedFilter' | transloco }}</span>
                                         </button>
                                     </div>
-                                    <div>
-                                        <button mat-flat-button [color]="'primary'" class="mb-5">
-                                            <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:cog-6-tooth'"></mat-icon>
-                                        </button>
-                                    </div>
+
                                 </div>
                             </form>
                             <form [formGroup]="filterForm" class="p-4 rounded-md"
                                 [@slideToggleFilter]="showFilterForm ? 'open' : 'closed'">
                                 <div>
-                                    <h2 class="text-xl font-extrabold leading-7 tracking-tight truncate md:text-xl sm:leading-10">
-                                        ตัวกรองขั้นสูง
+                                    <h2
+                                        class="text-xl font-extrabold leading-7 tracking-tight truncate md:text-xl sm:leading-10">
+                                        {{ 'lables.advanced_filter' | transloco }}
                                     </h2>
                                     <mat-divider></mat-divider>
                                 </div>
@@ -297,178 +366,226 @@
                                     <div class="flex flex-row gap-x-2">
                                         <div class="w-full">
                                             <mat-form-field class="w-full" [ngClass]="formFieldHelpers">
-                                                <mat-label>วันที่สร้าง</mat-label>
-                                                <mat-date-range-input [rangePicker]="picker">
-                                                    <input matStartDate formControlName="start_date">
-                                                    <input matEndDate formControlName="end_date">
-                                                </mat-date-range-input>
-                                                <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-                                                <mat-date-range-picker #picker></mat-date-range-picker>
+                                                <mat-label>{{ 'packing_list.view.po_tracking' | transloco }}</mat-label>
+                                                <input matInput formControlName="po_no">
                                             </mat-form-field>
                                         </div>
                                         <div class="w-full">
                                             <mat-form-field class="w-full" [ngClass]="formFieldHelpers">
-                                                <mat-label>PO / Tracking</mat-label>
-                                                <input matInput formControlName="code">
+                                                <mat-label>{{ 'packing_list.view.transport_by' | transloco
+                                                    }}</mat-label>
+                                                <mat-select formControlName="shipment_by">
+                                                <mat-option value="Ship">{{ 'packing_list.form.transport_options.ship' | transloco
+                                                    }}</mat-option>
+                                                <mat-option value="Car">{{ 'packing_list.form.transport_options.car' | transloco
+                                                    }}</mat-option>
+                                            </mat-select>
                                             </mat-form-field>
                                         </div>
                                         <div class="w-full">
-                                            <asha-select-member (change)="selectMember($event)" class="w-full"></asha-select-member>
+                                            <mat-form-field class="w-full" [ngClass]="formFieldHelpers">
+                                                <mat-label>{{ 'packing_list.view.type' | transloco }}</mat-label>
+                                                <mat-select formControlName="type">
+                                                    <mat-option value="A">{{ 'packing_list.view.product_options.1' | transloco
+                                                    }}</mat-option>
+                                                <mat-option value="B">{{ 'packing_list.view.product_options.2' | transloco
+                                                    }}</mat-option>
+                                                    <mat-option value="C">{{ 'packing_list.view.product_options.3' | transloco
+                                                    }}</mat-option>
+                                                <mat-option value="D">{{ 'packing_list.view.product_options.4' | transloco
+                                                    }}</mat-option>
+                                                    <mat-option value="CB">{{ 'packing_list.view.product_options.5' | transloco
+                                                    }}</mat-option>
+                                                <mat-option value="CF">{{ 'packing_list.view.product_options.6' | transloco
+                                                    }}</mat-option>
+                                                </mat-select>
+                                            </mat-form-field>
                                         </div>
                                     </div>
 
-                                    <div class="flex flex-row gap-x-2">
-                                        <div class="w-full">
-                                            <mat-form-field class="w-full" [ngClass]="formFieldHelpers">
-                                                <mat-label>ขนส่งโดย</mat-label>
-                                                <input matInput formControlName="code">
-                                            </mat-form-field>
-                                        </div>
-                                        <div class="w-full">
-                                            <mat-form-field class="w-full" [ngClass]="formFieldHelpers">
-                                                <mat-label>ประเภท</mat-label>
-                                                <input matInput formControlName="code">
-                                            </mat-form-field>
-                                        </div>
-                                    </div>
+                                
                                 </div>
                                 <div class="w-full flex justify-end gap-2">
                                     <button mat-flat-button [color]="'primary'" (click)="openfillter()">
-                                        <span class="ml-2">ปิดตัวกรอง</span>
+                                        <span class="ml-2">{{ 'buttons.closeFilter' | transloco }}</span>
                                     </button>
                                     <button mat-flat-button [color]="'primary'" (click)="clearFilter()">
                                         <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:bars-3'"></mat-icon>
-                                        <span class="ml-2">ล้างตั้งค่าตัวกรอง</span>
+                                        <span class="ml-2">{{ 'buttons.clearFilter' | transloco }}</span>
                                     </button>
                                     <button mat-flat-button [color]="'primary'" (click)="applyFilter()">
-                                        <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:magnifying-glass'"></mat-icon>
-                                        <span class="ml-2">ค้นหา</span>
+                                        <mat-icon class="icon-size-5"
+                                            [svgIcon]="'heroicons_solid:magnifying-glass'"></mat-icon>
+                                        <span class="ml-2">{{ 'buttons.search' | transloco }}</span>
                                     </button>
                                 </div>
                             </form>
                             <div class="overflow-x-auto">
                                 <table class="whitespace-nowrap w-full">
                                     <thead>
-                                    <tr >
-                                        <th rowspan="2" class="sticky left-0 z-10 bg-white w-5 px-4 py-3 border border-x-0 items-center">
-                                            <mat-checkbox [checked]="selectAll" [indeterminate]="someSelect()"
-                                            (change)="SelectAll($event.checked)"></mat-checkbox>
-                                        </th>
-                                        <th rowspan="2" class="sticky left-12 z-10 bg-white w-10 px-6 py-3 border border-l-0">#</th>
-                                        <th rowspan="2" class="px-6 py-3 border border-x-0 min-w-50">scan</th>
-                                        <th rowspan="2" class="px-6 py-3 border border-x-0">รหัสใบรับของคลังสินค้า</th>
-                                        <th rowspan="2" class="px-6 py-3 border border-x-0">สินค้า</th>
-                                        <th rowspan="2" class="px-6 py-3 border border-x-0">ประเภท</th>
-                                        <th rowspan="2" class="px-6 py-3 border border-x-0">ชื่อสินค้า</th>
-                                        <th rowspan="2" class="px-6 py-3 border border-x-0">รูปภาพสินค้า</th>
-                                        <th rowspan="2" class="px-6 py-3 border border-x-0">ขนส่งโดย</th>
-                                        <th rowspan="2" class="px-6 py-3 border border-x-0">โกดัง</th>
-                                        <th rowspan="2" class="px-6 py-3 border border-x-0">จำนวน</th>
-                                        <th colspan="3" class="px-6 py-3 border border-x-0">ขนาน (ลบ.ม)</th>
-                                        <th rowspan="2" class="px-6 py-3 border border-x-0">CBM</th>
-                                        <th rowspan="2" class="px-6 py-3 border border-x-0">CBM (รวม)</th>
-                                        <th rowspan="2" class="px-6 py-3 border border-x-0">น้ำหนัก</th>
-                                        <th rowspan="2" class="px-6 py-3 border border-x-0">น้ำหนัก (รวม)</th>
-                                        <th rowspan="2" class="px-6 py-3 border border-x-0">หมายเหตุ</th>
-                                    </tr>
-                                    <tr>
-                                        <th class="px-6 py-3 border border-x-0">ยาว</th>
-                                        <th class="px-6 py-3 border border-x-0">กว้าง</th>
-                                        <th class="px-6 py-3 border border-x-0">สูง</th>
-                                    </tr>
+                                        <tr>
+                                            <th rowspan="2"
+                                                class="sticky left-0 z-10 bg-white w-5 px-4 py-3 border border-x-0 items-center">
+                                                <mat-checkbox class="text-white" [color]="'primary'"
+                                                    [checked]="selectAll" [indeterminate]="someSelect()"
+                                                    (change)="SelectAll($event.checked)"></mat-checkbox>
+                                            </th>
+                                            <th rowspan="2"
+                                                class="sticky left-12 z-10 bg-white w-10 px-6 py-3 border border-l-0">#
+                                            </th>
+                                            <th rowspan="2" class="px-6 py-3 border border-x-0 min-w-50">{{
+                                                'packing_list.view.scan'
+                                                | transloco }}</th>
+                                            <th rowspan="2" class="px-6 py-3 border border-x-0">{{
+                                                'packing_list.view.warehouse_receipt_code' | transloco }}
+                                            </th>
+                                            <!-- <th rowspan="2" class="px-6 py-3 border border-x-0">{{
+                                                'packing_list.view.product' |
+                                                transloco }}</th> -->
+                                            <th rowspan="2" class="px-6 py-3 border border-x-0">{{
+                                                'packing_list.view.type' |
+                                                transloco }}</th>
+                                            <th rowspan="2" class="px-6 py-3 border border-x-0">{{
+                                                'packing_list.view.product_name' |
+                                                transloco }}</th>
+                                            <th rowspan="2" class="px-6 py-3 border border-x-0">{{
+                                                'packing_list.view.product_image'
+                                                | transloco }}</th>
+                                            <th rowspan="2" class="px-6 py-3 border border-x-0">{{
+                                                'packing_list.view.transport_by' |
+                                                transloco }}</th>
+                                            <th rowspan="2" class="px-6 py-3 border border-x-0">{{
+                                                'packing_list.view.warehouse' |
+                                                transloco }}</th>
+                                            <th rowspan="2" class="px-6 py-3 border border-x-0">{{
+                                                'packing_list.view.quantity' |
+                                                transloco }}</th>
+                                            <th colspan="3" class="px-6 py-3 border border-x-0">{{
+                                                'packing_list.view.size_cbm' |
+                                                transloco }}</th>
+                                            <th rowspan="2" class="px-6 py-3 border border-x-0">{{
+                                                'packing_list.view.cbm' |
+                                                transloco }}</th>
+                                            <th rowspan="2" class="px-6 py-3 border border-x-0">{{
+                                                'packing_list.view.cbm_total' |
+                                                transloco }}</th>
+                                            <th rowspan="2" class="px-6 py-3 border border-x-0">{{
+                                                'packing_list.view.weight' |
+                                                transloco }}</th>
+                                            <th rowspan="2" class="px-6 py-3 border border-x-0">{{
+                                                'packing_list.view.total_weight' |
+                                                transloco }}</th>
+                                            <th rowspan="2" class="px-6 py-3 border border-x-0">{{
+                                                'packing_list.view.remark' |
+                                                transloco }}</th>
+                                        </tr>
+                                        <tr>
+                                            <th class="px-6 py-3 border border-x-0">{{ 'packing_list.view.length' |
+                                                transloco }}</th>
+                                            <th class="px-6 py-3 border border-x-0">{{ 'packing_list.view.width' |
+                                                transloco }}</th>
+                                            <th class="px-6 py-3 border border-x-0">{{ 'packing_list.view.height' |
+                                                transloco }}</th>
+                                        </tr>
                                     </thead>
                                     <tbody>
-                                        <tr *ngFor="let list of filteredDeliveryOrders; let i = index" class="text-center">
+                                        <tr *ngFor="let list of filteredDeliveryOrders; let i = index"
+                                            class="text-center">
                                             <td class="sticky left-0 z-10 bg-white py-3 border border-x-0 items-center">
-                                                <mat-checkbox [(ngModel)]="list.IsChecked" (ngModelChange)="updateAllselect()"
-                                                [ngModelOptions]="{standalone: true}"></mat-checkbox>
+                                                <mat-checkbox class="text-white" [color]="'primary'"
+                                                    [(ngModel)]="list.IsChecked" (ngModelChange)="updateAllselect()"
+                                                    [ngModelOptions]="{standalone: true}"></mat-checkbox>
                                             </td>
-                                            <td class="sticky left-12 z-10 bg-white py-3 border border-l-0">{{ i + 1 }}</td>
-                                            <td class="px-6 py-3 border border-x-0">
-                                                <div class="flex flex-row justify-between items-center gap-x-2">
-                                                    <span>4/4</span>
-                                                    <div class="w-full">
-                                                        <asha-progress-bar [value]="4" [total]="4" color="bg-green-700"></asha-progress-bar>
-                                                    </div>
-                                                    <div>
+                                            <td class="sticky left-12 z-10 bg-white py-3 border border-l-0">{{ i + 1 }}
+                                            </td>
+                                            <td class="px-4 py-3 border border-x-0 min-w-[240px]">
+                                                <div class="flex items-center w-full gap-3 cursor-pointer">
 
-                                                    </div>
+                                                    <!-- ตัวเลขนับ -->
+                                                    <span class="flex-shrink-0 w-[60px] text-sm text-center" [ngClass]="{
+            'text-green-600': countFilteredItems(list?.delivery_order_list?.delivery_order_list_items) === list?.delivery_order_list.total_all,
+            'text-red-600': countFilteredItems(list?.delivery_order_list?.delivery_order_list_items) !== list?.delivery_order_list.total_all
+          }">
+                                                        {{ CountInChina(list) }}/{{ list?.delivery_order_list?.total_all
+                                                        }}
+                                                    </span>
+
+                                                    <!-- Progress Bar -->
+                                                    <asha-progress-bar class="flex-grow"
+                                                        [total]="list?.delivery_order_list.total_all"
+                                                        [value]="list?.delivery_order_list.total_green"
+                                                        color="bg-red-600"></asha-progress-bar>
+
+                                                    <!-- Icon -->
+                                                    <mat-icon
+                                                        class="flex-shrink-0 text-gray-600 hover:text-blue-600 transition"
+                                                        svgIcon="heroicons_outline:exclamation-circle"
+                                                        (click)="openPoBox(list)"></mat-icon>
                                                 </div>
                                             </td>
-                                            <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order?.code ?? '-' }}</td>
-                                            <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order?.member?.name ?? '-' }}</td>
-                                            <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order_list?.product_type?.name ?? '-' }}</td>
-                                            <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order_list?.product_name ?? '-' }}</td>
+                                            <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order?.po_no ??
+                                                '-'
+                                                }}</td>
+                                            <!-- <td class="px-6 py-3 border border-x-0">{{
+                                                list?.delivery_order_list?.member?.product_name ?? '-' }}</td> -->
+                                            <td class="px-6 py-3 border border-x-0">{{
+                                                convertProductType(list?.delivery_order_list?.product_type_id) ?? '-' }}
+                                            </td>
+                                            <td class="px-6 py-3 border border-x-0">{{
+                                                list?.delivery_order_list?.product_name ?? '-' }}</td>
                                             <td class="px-6 py-3 border border-x-0">
-                                                <img *ngIf="list?.delivery_order_list?.image;else noImage" [src]="list?.delivery_order_list?.image" class="w-16 h-auto rounded">
+                                                <img *ngIf="list?.delivery_order_list?.image;else noImage"
+                                                    [src]="list?.delivery_order_list?.image"
+                                                    class="w-16 h-auto rounded">
                                                 <ng-template #noImage>
-                                                  <div class="w-16 h-16 bg-[#797979] flex flex-col items-center justify-center text-sm rounded-md !text-white">
-                                                      <div>
-                                                          <mat-icon class="text-white" [svgIcon]="'heroicons_solid:photo'"></mat-icon>
-                                                      </div>
-                                                      <div>
-                                                          No Image
-                                                      </div>
-                                                  </div>
+                                                    <div
+                                                        class="w-16 h-16 bg-[#797979] flex flex-col items-center justify-center text-sm rounded-md !text-white">
+                                                        <div>
+                                                            <mat-icon class="text-white"
+                                                                [svgIcon]="'heroicons_solid:photo'"></mat-icon>
+                                                        </div>
+                                                        <div>
+                                                            No Image
+                                                        </div>
+                                                    </div>
                                                 </ng-template>
-                                              </td>
-                                            <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order?.shipment_by ?? '-' }}</td>
-                                            <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order?.store?.name ?? '-' }}</td>
-                                            <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order_list?.qty ?? '-' }}</td>
-                                            <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order_list?.long ?? '-' }}</td>
-                                            <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order_list?.width ?? '-' }}</td>
-                                            <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order_list?.height ?? '-' }}</td>
-                                            <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order_list?.cbm ?? '-' }}</td>
-                                            <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order_list?.cbm_all ?? '-' }}</td>
-                                            <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order_list?.weight ?? '-' }}</td>
-                                            <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order_list?.weight_all ?? '-' }}</td>
-                                            <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order?.note ?? '-' }}</td>
+                                            </td>
+                                            <td class="px-6 py-3 border border-x-0">{{
+                                                getShipmentMethod(list?.delivery_order?.shipment_by)
+                                                ?? '-' }}</td>
+                                            <td class="px-6 py-3 border border-x-0">{{
+                                                convertStore(list?.delivery_order?.store_id)
+                                                ?? '-' }}</td>
+                                            <td class="px-6 py-3 border border-x-0">{{
+                                                list?.delivery_order_list?.qty_box ??
+                                                '-' }}</td>
+                                            <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order_list?.long
+                                                ?? '-' }}</td>
+                                            <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order_list?.width
+                                                ?? '-' }}</td>
+                                            <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order_list?.height
+                                                ?? '-' }}</td>
+                                            <td class="px-6 py-3 border border-x-0">{{ list?.cbmPerUnit ??
+                                                '-' }}</td>
+                                            <td class="px-6 py-3 border border-x-0">{{
+                                                list?.totalCBM ?? '-' }}</td>
+                                            <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order_list?.weight
+                                                ?? '-' }}</td>
+                                            <td class="px-6 py-3 border border-x-0">{{
+                                                list?.totalWeight ?? '-' }}</td>
+                                            <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order?.note ?? '-'
+                                                }}</td>
                                         </tr>
                                     </tbody>
                                 </table>
                             </div>
                         </div>
                     </mat-tab>
-                    <mat-tab label="สถานะ">
-                        <div class="p-6 mb-8">
-                            <div *ngFor="let item of timelineData" class="flex justify-start">
-                                <div class="flex flex-row items-top w-full">
-                                    <!-- วันที่และเวลา -->
-                                    <div class="min-w-26">
-                                        <div class="p-3 mb-2 text-right" *ngIf="item.date">
-                                            <p class="font-bold text-red-800">{{ item.date }}</p>
-                                            <p class="text-gray-600">{{ item.time }}</p>
-                                        </div>
-                                    </div>
-
-                                    <!-- เส้น Timeline -->
-                                    <div class="h-full mx-4 flex flex-col items-center pt-2">
-                                        <div
-                                            class="w-8 h-8 rounded-full flex items-center justify-center"
-                                            [ngClass]="item.status ? 'bg-red-800' : 'border-2 border-red-400'"
-                                        >
-                                            <mat-icon *ngIf="item.status" [svgIcon]="'heroicons_solid:check'" class="!text-white"></mat-icon>
-                                            <span *ngIf="!item.status">{{ item.id }}</span>
-                                        </div>
-                                        <div *ngIf="item.id !== '13'" class="h-20 border-x-2 my-2" [ngClass]="item.status ? 'border-red-800' : 'border-red-400'"></div>
-                                    </div>
-
-                                    <!-- ข้อความ -->
-                                    <div class="flex flex-row">
-                                        <div class="p-3 mb-2">
-                                            <p class="font-bold" [ngClass]="item.status ? 'text-red-800' : ''">{{ item.text }}</p>
-                                            <p *ngIf="item.user">{{ item.user }}</p>
-                                        </div>
-                                        <div *ngIf="item.hasButton">
-                                            <button mat-flat-button [color]="'primary'" (click)="opendialogviewimage()" class="!text-white">
-                                                <mat-icon [svgIcon]="'heroicons_outline:photo'"></mat-icon>
-                                                <span class="ml-2">แนบรูปถ่าย</span>
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                    <mat-tab label="{{ 'packing_list.view.status' | transloco }}">
+                        @if (data?.status_logs) {
+                        <asha-time-line [defaultTimeline]="timelineData"
+                            [timelineData]="data?.status_logs"></asha-time-line>
+                        }
                     </mat-tab>
                 </mat-tab-group>
             </div>
