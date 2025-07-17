@@ -107,6 +107,7 @@ export const defaultNavigation: FuseNavigationItem[] = [
                 id: 'customer.info',
                 title: 'ข้อมูลลูกค้า',
                 type: 'basic',
+                link: 'member'
             },
             {
                 id: 'customer.info',
