@@ -33,8 +33,17 @@
   </mat-menu>
 </ng-template>
 
-  <ng-template #pic let-data="adtData">
-    <div class="flex flex-row justify-center">
-      <img [src]="data.image" alt="Image" class="rounded-md w-20 text-center" />
+<ng-template #pic let-data="adtData">
+  <div class="flex flex-row justify-center">
+    <img
+      *ngIf="data?.image"
+      [src]="validImageSrc(data.image)"
+      (error)="onImageError($event)"
+      alt="Image"
+      class="rounded-md w-20 text-center"
+    />
+    <div *ngIf="!data?.image" class="w-20 h-20 flex items-center justify-center bg-gray-100 text-gray-400 rounded-md">
+      No Image
     </div>
-  </ng-template>
+  </div>
+</ng-template>

@@ -203,4 +203,19 @@ export class TransportComponent implements OnInit, AfterViewInit {
             }
         )
     }
+
+    fallbackImage = 'assets/no-image.png';
+
+    validImageSrc(src: string): string {
+        // ป้องกันค่าว่าง null undefined
+        if (!src || src.trim() === '') {
+            return this.fallbackImage;
+        }
+        return src;
+    }
+
+    onImageError(event: Event) {
+        const img = event.target as HTMLImageElement;
+        img.src = this.fallbackImage;
+    }
 }
