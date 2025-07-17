@@ -343,7 +343,7 @@ export const defaultNavigation: FuseNavigationItem[] = [
                         id: 'warehouse.cn.packinglist',
                         title: 'จัดกระสอบเตรียมขึ้นตู้',
                         type: 'basic',
-                        // link: '/follow-up',
+                        link: '/lot',
                         badge: {
                             title: '3',
                             classes: 'px-2 bg-green-600 text-white rounded-full',

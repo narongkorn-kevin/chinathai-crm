@@ -167,4 +167,7 @@ export class ViewComponent implements OnInit {
     Close() {
         this._router.navigate(['member']);
     }
+    goToEdit() {
+        this._router.navigate(['member/edit/1']);
+    }
 }
