@@ -1,0 +1,15 @@
+<mat-form-field class="w-full" [ngClass]="formFieldHelpers">
+  <mat-label class="font-normal">{{ placeholder }}</mat-label>
+  <input matInput [formControl]="control" [matAutocomplete]="auto" [placeholder]="placeholder" />
+
+  <!-- ปุ่มลบค่า -->
+  <button mat-icon-button *ngIf="control.value" matSuffix (click)="clear()" tabindex="-1">
+    <mat-icon>close</mat-icon>
+  </button>
+
+  <mat-autocomplete #auto="matAutocomplete" (optionSelected)="onSelect($event)" [displayWith]="displayFn">
+    <mat-option *ngFor="let item of filteredData | async" [value]="item">
+      {{ item[displayField] }}
+    </mat-option>
+  </mat-autocomplete>
+</mat-form-field>

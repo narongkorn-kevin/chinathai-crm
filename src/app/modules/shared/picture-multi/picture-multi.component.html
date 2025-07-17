@@ -1,0 +1,28 @@
+<div class="w-full h-full flex items-center justify-center bg-black relative overflow-hidden">
+  <!-- รูปภาพ -->
+  <img [src]="data.images[currentIndex]"
+    class="max-w-full max-h-full object-contain transition-opacity duration-300 ease-in-out" />
+
+  <!-- ปุ่ม Previous -->
+  <button mat-icon-button class="absolute left-4 text-white bg-black/50 hover:bg-black/70 rounded-full" (click)="prev()"
+    [disabled]="currentIndex === 0">
+    <mat-icon>chevron_left</mat-icon>
+  </button>
+
+  <!-- ปุ่ม Next -->
+  <button mat-icon-button class="absolute right-4 text-white bg-black/50 hover:bg-black/70 rounded-full"
+    (click)="next()" [disabled]="currentIndex === data.images.length - 1">
+    <mat-icon>chevron_right</mat-icon>
+  </button>
+
+  <!-- ปิด -->
+  <button mat-icon-button class="absolute top-4 right-4 text-white bg-black/50 hover:bg-black/70 rounded-full"
+    (click)="close()">
+    <mat-icon>close</mat-icon>
+  </button>
+
+  <!-- Indicator -->
+  <div class="absolute bottom-4 text-white bg-black/60 text-sm rounded px-3 py-1">
+    {{ currentIndex + 1 }} / {{ data.images.length }}
+  </div>
+</div>

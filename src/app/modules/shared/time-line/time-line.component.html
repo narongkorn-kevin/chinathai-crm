@@ -1,0 +1,38 @@
+<div class="p-6 mb-8">
+  <div *ngFor="let item of timeline" class="flex justify-start">
+    <div class="flex flex-row items-top w-full">
+      <!-- วันที่และเวลา -->
+      <div class="min-w-26">
+        <div class="p-3 mb-2 text-right" *ngIf="item.date">
+          <p class="font-bold text-red-800">{{ item.date }}</p>
+          <p class="text-gray-600">{{ item.time }}</p>
+        </div>
+      </div>
+      <!-- เส้น Timeline -->
+      <div class="h-full mx-4 flex flex-col items-center pt-2">
+        <div class="w-8 h-8 rounded-full flex items-center justify-center"
+          [ngClass]="item.status ? 'bg-red-800' : 'border-2 border-red-400'">
+          <mat-icon *ngIf="item.status" [svgIcon]="'heroicons_solid:check'" class="!text-white"></mat-icon>
+          <span *ngIf="!item.status">{{ item.id }}</span>
+        </div>
+        <div *ngIf="item.id !== '13'" class="h-20 border-x-2 my-2"
+          [ngClass]="item.status ? 'border-red-800' : 'border-red-400'"></div>
+      </div>
+      <!-- ข้อความ -->
+      <div class="flex flex-row">
+        <div class="p-3 mb-2">
+          <p class="font-bold" [ngClass]="item.status ? 'text-red-800' : ''">{{
+            item.text }}</p>
+          <p *ngIf="item.user">{{ item.user }}</p>
+        </div>
+        <div *ngIf="item.hasButton">
+          <button mat-flat-button [color]="'primary'" (click)="opendialogviewimage(item)" class="!text-white">
+            <mat-icon [svgIcon]="'heroicons_outline:photo'"></mat-icon>
+            <span class="ml-2">{{ 'packing_list.view.attach_photos' | transloco
+              }}</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
