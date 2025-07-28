@@ -123,6 +123,18 @@ export class OrderDetailComponent implements OnInit, AfterViewInit {
 
     permissionName = null;
 
+    summary = {
+        rate: 0,
+        totalQty: 0,
+        totalPriceYuan: 0,
+        serviceFeeBaht: 0,
+        chinaShippingBaht: 0,
+        otherFeeYuan: 0,
+        totalPriceBaht: 0,
+        totalFinalBaht: 0,
+        depositFee: 0
+    };
+
     constructor(
         private translocoService: TranslocoService,
         private _service: OrderProductsService,
@@ -149,10 +161,14 @@ export class OrderDetailComponent implements OnInit, AfterViewInit {
     }
 
     ngOnInit(): void {
+
         this._service
             .get(this.id)
             .pipe(
                 map((resp: any) => {
+                    let totalQty = 0;
+                    let totalPrice = 0;
+                    let totalYen = 0
                     resp.data.order_lists.forEach((e) => {
                         if (resp.data.exchange_rate != null) {
                             e.product_total = e.product_qty * e.product_price * resp.data.exchange_rate;
@@ -160,7 +176,17 @@ export class OrderDetailComponent implements OnInit, AfterViewInit {
                         } else {
                             e.product_total = e.product_qty * e.product_price * e.rate;
                         }
+                        const qty = parseFloat(e.product_qty);
+                        const price = parseFloat(e.product_price);
+                        const rate = resp.data.exchange_rate ?? e.rate;
 
+                        // สะสม qty
+                        totalQty += isNaN(qty) ? 0 : qty;
+
+                        // คำนวณยอดรวม
+                        e.product_total = qty * price * rate;
+                        totalPrice += isNaN(qty * price * rate) ? 0 : qty * price * rate;
+                        totalYen += isNaN(qty * price) ? 0 : qty * price;
                         e.IsChecked = false;
 
                         return e;
@@ -190,7 +216,12 @@ export class OrderDetailComponent implements OnInit, AfterViewInit {
                     this.confirmOrder.patchValue({
                         ...this.data
                     })
+                    this.calculateSummary();
+                    console.log(resp);
+
                 },
+
+
             });
     }
 
@@ -454,5 +485,61 @@ export class OrderDetailComponent implements OnInit, AfterViewInit {
         console.log(orderList);
     }
 
+
+    getShipmentMethod(shippedBy: string): string {
+        if (shippedBy === 'Car' || shippedBy === 'car') {
+            return 'ขนส่งทางรถ';
+        } else if (shippedBy === 'Ship' || shippedBy === 'ship') {
+            return 'ขนส่งทางเรือ';
+        } else if (shippedBy === 'Train' || shippedBy === 'train') {
+            return 'ขนส่งทางรถไฟ';
+        } else {
+            return '-';
+        }
+    }
+
+    deposit_fee: number = 0;
+    china_shipping_fee: number = 0;
+    totalFee: number = 0;
+    totalInBaht: number = 0;
+    calculateTotalFee() {
+        const deposit = Number(this.deposit_fee) || 0;
+        const shipping = Number(this.china_shipping_fee) || 0;
+        this.totalFee = deposit + shipping;
+
+        this.totalInBaht = this.totalFee * this.data?.order_lists[0]?.rate; // ถ้ามี exchange_rate
+    }
+    calculateSummary() {
+        const lists = this.data.order_lists;
+        this.deposit_fee = Number(this.data?.deposit_fee)
+        this.china_shipping_fee = Number(this.data?.china_shipping_fee)
+        const deposit = Number(this.deposit_fee) || 0;
+        const shipping = Number(this.china_shipping_fee) || 0;
+        this.totalFee = deposit + shipping;
+        this.summary.totalQty = lists.reduce((sum, item) => sum + item.product_qty, 0);
+        this.summary.totalPriceYuan = lists.reduce(
+            (sum, item) => sum + item.product_real_price * item.product_qty,
+            0
+        );
+
+        // ใช้ rate แรก ถ้าหลายรายการควรหาค่าเฉลี่ยหรือตามเงื่อนไขระบบ
+        this.summary.rate = lists.length ? lists[0].rate : 0;
+
+        // แปลงเป็นบาท
+        this.summary.totalPriceBaht = this.summary.totalPriceYuan * this.summary.rate;
+
+        this.summary.chinaShippingBaht = this.data.china_shipping_fee * this.summary.rate;
+        this.summary.serviceFeeBaht = 0
+        this.summary.otherFeeYuan = this.data.deposit_fee * this.summary.rate;
+        this.summary.depositFee = 0
+        this.summary.totalFinalBaht =
+            (+this.summary.totalPriceBaht) +
+            (+this.summary.chinaShippingBaht) +
+            (+this.summary.serviceFeeBaht) +
+            (+this.summary.otherFeeYuan);
+
+            console.log(this.summary);
+            
+    }
 
 }

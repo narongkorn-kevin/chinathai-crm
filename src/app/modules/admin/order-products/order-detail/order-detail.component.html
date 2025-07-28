@@ -45,34 +45,88 @@
     <!-- Customer Information Section -->
     <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
         <h2 class="text-lg font-semibold text-gray-800 mb-4">
-            {{ 'ข้อมูลลูกค้า' | transloco }}
+            {{ 'รายละเอียดออร์เดอร์สินค้าที่ลูกค้าสั่งซื้อ' | transloco }}
         </h2>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div>
-                <p class="text-sm text-gray-500">{{ 'order_products.order_detail.customer_name' | transloco }}</p>
-                <p class="font-medium">{{data?.member?.code}} {{data?.member?.fname}} {{data?.member?.lname}}</p>
-            </div>
-            <div>
-                <p class="text-sm text-gray-500">{{ 'order_products.order_detail.phone_number' | transloco }}</p>
-                <p class="font-medium">{{data?.member?.phone}}</p>
-            </div>
-            <div>
-                <p class="text-sm text-gray-500">{{ 'order_products.order_detail.shipping_type' | transloco }}</p>
-                <p class="font-medium">{{data?.shipping_type}}</p>
-            </div>
-            <div>
-                <p class="text-sm text-gray-500">{{ 'order_products.order_detail.admin_owner' | transloco }}</p>
-                <p class="font-medium">{{data?.updated_by ?? '-'}}</p>
-            </div>
-            <div class="md:col-span-2 lg:col-span-4">
-                <p class="text-sm text-gray-500">{{ 'order_products.order_detail.address' | transloco }}</p>
-                <p class="font-medium">
-                    {{ data?.member?.address }} {{ data?.member?.sub_district }} {{ data?.member?.district }}
-                    {{ data?.member?.province }} {{ data?.member?.postal_code }}
-                </p>
+        <div class="flex flex-col md:flex-row gap-2">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
+                <!-- ฝั่งซ้าย -->
+                <div class=" p-4 rounded-md space-y-2">
+                    <div class="flex justify-between items-center border-b pb-2">
+                        <h3 class="font-semibold text-gray-700 text-2xl">
+                            ข้อมูลลูกค้า
+                        </h3>
+                    </div>
+                    <div class="flex">
+                        <span class="w-40 font-semibold">ชื่อลูกค้า :</span>
+                        <a [routerLink]="['/member/view/' + data?.id]" class="text-blue-600 underline">{{
+                            data?.member?.fname}} {{data?.member?.lname}}</a>
+                    </div>
+                    <div class="flex">
+                        <span class="w-40 font-semibold">ประเภทการขนส่ง :</span>
+                        <span>{{getShipmentMethod(data?.shipping_type)}}</span>
+                    </div>
+                    <div class="flex">
+                        <span class="w-40 font-semibold">เบอร์ติดต่อ :</span>
+                        <span>{{data?.member?.phone}}</span>
+                    </div>
+                    <div class="flex">
+                        <span class="w-40 font-semibold">วันเวลาที่สั่งซื้อ :</span>
+                        <span>{{data?.created_at | date: 'dd/MM/yyyy HH:mm'}}</span>
+                    </div>
+                    <div class="flex">
+                        <span class="w-40 font-semibold">ผู้ดูแล :</span>
+                        <span>admin</span>
+                    </div>
+                    <div class="flex items-start">
+                        <span class="w-40 font-semibold">ที่อยู่ :</span>
+                        <div class="flex-1 flex flex-wrap gap-x-2">
+                            <span> {{ data?.member?.address }} {{ data?.member?.sub_district }} {{
+                                data?.member?.district }}
+                                {{ data?.member?.province }} {{ data?.member?.postal_code }}</span>
+                        </div>
+                    </div>
+                </div>
+                <!-- ฝั่งขวา -->
+                <div class="bg-blue-50 p-4 rounded-md space-y-2">
+                    <div class="flex justify-between items-center border-b pb-2 text-xl">
+                        <h3 class="font-semibold text-gray-700">รวมรายการ</h3>
+                        <span class="text-blue-600 font-normal">
+                            เรทการสั่งซื้อ : {{ summary.rate }}
+                        </span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span>จำนวนสั่งซื้อ (ชิ้น) :</span>
+                        <span>{{ summary.totalQty }}</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span>ราคารวมค่าสินค้า (฿) :</span>
+                        <span>{{ summary.totalPriceBaht | number: '1.2-2' }}</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span>ค่าบริการสั่งซื้อสินค้า (฿) :</span>
+                        <span>{{ summary.serviceFeeBaht | number: '1.2-2' }}</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span>รวมค่านำส่งจีน - จีน (฿) :</span>
+                        <span>{{ summary.chinaShippingBaht | number: '1.2-2' }}</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span>รวมค่าใช้จ่ายอื่น ๆ (¥) :</span>
+                        <span>{{ summary.otherFeeYuan | number: '1.2-2' }}</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span>ราคารวม (¥) :</span>
+                        <span>{{ summary.totalPriceYuan | number: '1.2-2' }}</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span>ราคารวม (฿) :</span>
+                        <span>{{ summary.totalPriceBaht | number: '1.2-2' }}</span>
+                    </div>
+                </div>
             </div>
         </div>
+
+
     </div>
 
     <!-- Buyer Note Section -->
@@ -151,7 +205,7 @@
                             {{ 'order_products.order_detail.product_real_price' | transloco }}
                         </th>
                         <th class="px-4 py-3 text-center text-md font-medium text-gray-500 uppercase tracking-wider">
-                            {{ 'order_products.order_detail.product_negotited_price' | transloco }}
+                            {{ 'ราคาต่อรอง' | transloco }}
                         </th>
                         <th class="px-4 py-3 text-left text-md font-medium text-gray-500 uppercase tracking-wider">
                             {{ 'order_products.order_number' | transloco }}
@@ -174,7 +228,7 @@
                     @for (shop of data?.order_lists_group; track shop.id) {
                     <tr class="bg-gray-50">
                         <td colspan="16" class="px-4 py-3">
-                            <span class="font-bold text-gray-700">{{shop.showName}}</span>
+                            <span class="font-bold text-gray-700">ร้านค้า : {{shop.showName ?? '-'}}</span>
                         </td>
                     </tr>
                     @for (orderList of shop.orderList; track orderList.id;let i = $index) {
@@ -198,7 +252,7 @@
                                 (click)="showPicture(orderList?.product_image)">
                         </td>
                         <td class="px-4 py-3 text-sm text-gray-900 whitespace-nowrap">
-                            <p class="font-medium text-gray-900">
+                            <p class="font-medium text-gray-900 leading-snug break-words whitespace-pre-line w-100">
                                 {{ orderList?.product_name }}
                             </p>
                             @if (orderList?.options?.length > 0) {
@@ -325,10 +379,10 @@
             </div>
 
             <div class="bg-gray-800 p-6 rounded-lg flex flex-col justify-center">
-                <p class="text-white text-center text-sm font-medium mb-1">
+                <p class="text-white text-center text-lg font-medium mb-1">
                     {{ 'order_products.order_detail.total_price_all' | transloco }}
                 </p>
-                <p class="text-white text-center text-2xl font-bold">
+                <p class="text-white text-center text-4xl font-bold">
                     {{totalPrice | number:'1.2-2'}} {{ 'lables.baht' | transloco }}
                 </p>
             </div>
