@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from 'environments/environment';
 import { toUpper } from 'lodash';
-import { BehaviorSubject, map, tap } from 'rxjs';
+import { BehaviorSubject, map, Observable, tap } from 'rxjs';
 
 @Injectable({
     providedIn: 'root'
@@ -26,10 +26,25 @@ export class OrderProductsService {
         return this._members.asObservable();
     }
 
-    constructor(private http: HttpClient) { }
+    constructor(private http: HttpClient) {
+
+     }
+
     datatable(dataTablesParameters: any) {
         return this.http.post('/api/orders_page', dataTablesParameters).pipe(
             map((resp: any) => {
+                // ตรวจสอบว่ามีข้อมูลหรือไม่
+                if (Array.isArray(resp.data.data)) {
+                    resp.data.data = resp.data.data.map((item: any) => {
+                        const code = item.member?.importer_code ?? '';
+                        const fname = item.member?.fname ?? '';
+                        const lname = item.member?.lname ?? '';
+                        return {
+                            ...item,
+                            fullname: `${code} ${fname} ${lname}`.trim()
+                        };
+                    });
+                }
                 return resp;
             })
         );
@@ -39,6 +54,9 @@ export class OrderProductsService {
     }
     create(data: any) {
         return this.http.post('/api/orders', data)
+    }
+    updateFee(data: any, id: any) {
+        return this.http.put('/api/confirm_order/' + id, data)
     }
 
     update(data: any) {
@@ -136,7 +154,26 @@ export class OrderProductsService {
         return this.http.post(environment.apiUrl + '/api/upload_images', data)
     }
 
+    uploadFile(data: FormData) {
+        return this.http.post(environment.apiUrl + '/api/upload_file', data)
+    }
+
     paymentOrder(data: any) {
         return this.http.post(environment.apiUrl + '/api/payment_order', data)
+    }
+
+    translateData(data: any) {
+        return this.http.post(environment.apiUrl + '/api/translate', data)
+    }
+
+    translateBatch(texts: string[], sourceLang: string, targetLang: string): Observable<{ [original: string]: string }> {
+  return this.http.post<{ translations: { [original: string]: string } }>(
+    '/api/translate',
+    { sourceLang, targetLang, texts }
+  ).pipe(map(res => res.translations));
+}
+
+    getfee() {
+        return this.http.get(environment.apiUrl + '/api/exchange-rate')
     }
 }

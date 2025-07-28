@@ -25,7 +25,8 @@
         "save": "บันทึก",
         "edit": "แก้ไข",
         "edit_entry": "แก้ไขรายการ",
-        "submit": "ตกลง"
+        "submit": "ตกลง",
+        "update": "อัปเดต"
     },
     "lables": {
         "or": "หรือ",
@@ -1661,7 +1662,8 @@
             "repacking_fee": "ค่าบริการตีลัง",
             "wrapping_fee": "แรปฟิลืมใส",
             "qc_check_fee": "ตรวจ QC สินค้า",
-            "total_amount": "รายการรวมทั้งสิ้น"
+            "total_amount": "รายการรวมทั้งสิ้น",
+            "order_code": "รหัสคำสั่งซื้อ"
         },
         "edit": {
             "invoice_details": "รายละเอียดใบแจ้งหนี้",
@@ -1855,7 +1857,8 @@
             "tables_images_products_title": "รูปสินค้า",
             "tables_images_products_add_button": "เพิ่มรูปสินค้า",
             "tables_images_delivery_note_title": "รูปใบส่งของ",
-            "tables_images_delivery_note_add_button": "เพิ่มรูปใบส่งของ"
+            "tables_images_delivery_note_add_button": "เพิ่มรูปใบส่งของ",
+            "update": "อัปเดตใบส่งของ"
         },
         "view": {
             "delivery_number": "หมายเลขจัดส่ง",

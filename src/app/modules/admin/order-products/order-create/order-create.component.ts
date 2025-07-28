@@ -1,8 +1,27 @@
 import { CommonModule, DatePipe, DecimalPipe } from '@angular/common';
-import { AfterViewInit, ChangeDetectionStrategy, Component, OnInit, ViewChild } from '@angular/core';
+import {
+    AfterViewInit,
+    ChangeDetectionStrategy,
+    Component,
+    ElementRef,
+    OnInit,
+    ViewChild,
+} from '@angular/core';
 import { DataTablesModule } from 'angular-datatables';
 // import { PoService } from './po.service';
-import { catchError, map, Observable, of, ReplaySubject, Subject, switchMap, takeUntil } from 'rxjs';
+import {
+    catchError,
+    filter,
+    map,
+    Observable,
+    of,
+    ReplaySubject,
+    Subject,
+    switchMap,
+    takeUntil,
+    throwError,
+    timeout,
+} from 'rxjs';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatButtonModule } from '@angular/material/button';
 import { MatMenuModule } from '@angular/material/menu';
@@ -16,25 +35,37 @@ import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { OrderProductsService } from '../order-products.service';
 import { CdkMenuModule } from '@angular/cdk/menu';
 import { MatCheckboxModule } from '@angular/material/checkbox';
-import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+    FormBuilder,
+    FormControl,
+    FormGroup,
+    FormsModule,
+    ReactiveFormsModule,
+    Validators,
+} from '@angular/forms';
 import { FuseDrawerComponent } from '@fuse/components/drawer';
 import { MatFormFieldModule, MatLabel } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { LocationService } from 'app/location.service';
 import { MatSelectModule } from '@angular/material/select';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
-import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatAutocompleteModule, MatAutocompleteTrigger } from '@angular/material/autocomplete';
 import { DialogProductComponent } from '../../dialog/dialog-product/dialog-product.component';
 import { DateTime } from 'luxon';
 import { DialogAddressComponent } from '../../member/dialog-address/dialog-address.component';
 import { DialogAddress } from '../../member/dialog-address/dialog-address';
 import { MatBadgeModule } from '@angular/material/badge';
 import { DialogProductComposeComponent } from '../../dialog/dialog-product-compose/dialog-product-compose.component';
+import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
+import { TranslateTextPipe } from 'app/modules/shared/translate.pipe';
+import { TranslationService } from 'app/modules/shared/translate.service';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 @Component({
     selector: 'app-order-create',
     standalone: true,
     imports: [
+        TranslocoModule,
         CommonModule,
         DataTablesModule,
         MatButtonModule,
@@ -54,7 +85,9 @@ import { DialogProductComposeComponent } from '../../dialog/dialog-product-compo
         MatSelectModule,
         MatPaginatorModule,
         MatAutocompleteModule,
-        MatBadgeModule
+        MatBadgeModule,
+        TranslateTextPipe,
+        MatTooltipModule
     ],
     templateUrl: './order-create.component.html',
     styleUrl: './order-create.component.scss',
@@ -62,12 +95,17 @@ import { DialogProductComposeComponent } from '../../dialog/dialog-product-compo
     providers: [DatePipe, DecimalPipe],
 })
 export class OrderCreateComponent implements OnInit, AfterViewInit {
-
-    displayedColumns: string[] = ['title', 'pic_url', 'price', 'detail_url', 'action'];
-    dataSource: MatTableDataSource<any>
+    displayedColumns: string[] = [
+        'title',
+        'pic_url',
+        'price',
+        'detail_url',
+        'action',
+    ];
+    dataSource: MatTableDataSource<any>;
     @ViewChild(MatPaginator) paginator!: MatPaginator;
     totalItems = 0; // ใช้เก็บจำนวน item ทั้งหมดจาก API
-
+    @ViewChild('customerInput') customerInput!: ElementRef<HTMLInputElement>;
     formFieldHelpers: string[] = ['fuse-mat-dense'];
 
     data: any;
@@ -86,7 +124,7 @@ export class OrderCreateComponent implements OnInit, AfterViewInit {
     memberFilter = new FormControl('');
     filterMember: ReplaySubject<any[]> = new ReplaySubject<any[]>(1);
     members: any[] = [];
-
+    @ViewChild(MatAutocompleteTrigger) autocompleteTrigger!: MatAutocompleteTrigger;
     addOnServices: any[] = [];
 
     drawerOpened = false;
@@ -94,6 +132,7 @@ export class OrderCreateComponent implements OnInit, AfterViewInit {
     protected _onDestroy = new Subject<void>();
 
     constructor(
+        private translocoService: TranslocoService,
         private _service: OrderProductsService,
         private fuseConfirmationService: FuseConfirmationService,
         private toastr: ToastrService,
@@ -103,23 +142,24 @@ export class OrderCreateComponent implements OnInit, AfterViewInit {
         private _activateRoute: ActivatedRoute,
         private _decimalPipe: DecimalPipe,
         private locationService: LocationService,
-        private _fb: FormBuilder
-    ) {
-    }
+        private _fb: FormBuilder,
+        private translationService: TranslationService
+    ) { }
 
     ngOnInit(): void {
         this.provinces$ = this.locationService.getProvinces();
         this.districts$ = this.locationService.getDistricts();
         this.subdistricts$ = this.locationService.getSubdistricts();
 
-        this._service.getMember()
+        this._service
+            .getMember()
             .pipe(
                 map((resp: { data: any[] }) => ({
                     ...resp,
-                    data: resp.data.map(e => ({
+                    data: resp.data.map((e) => ({
                         ...e,
-                        fullname: `${e.fname} ${e.lname}`
-                    }))
+                        fullname: `(${e.importer_code}) ${e.fname} ${e.lname}`,
+                    })),
                 }))
             )
             .subscribe((member: { data: any[] }) => {
@@ -128,13 +168,11 @@ export class OrderCreateComponent implements OnInit, AfterViewInit {
                 this.filterMember.next(this.members);
             });
 
-        this._service.getAddOnService().subscribe(
-            (resp: any) => {
-                this.addOnServices = resp.data
-            }
-        )
+        this._service.getAddOnService().subscribe((resp: any) => {
+            this.addOnServices = resp.data;
+        });
 
-        const now = DateTime.local().toFormat('yyyy-MM-dd')
+        const now = DateTime.local().toFormat('yyyy-MM-dd');
 
         this.form = this._fb.group({
             date: now,
@@ -142,7 +180,7 @@ export class OrderCreateComponent implements OnInit, AfterViewInit {
             member_id: [null, Validators.required],
             member_address_id: [null, Validators.required],
             shipping_type: [null, Validators.required],
-            payment_term: [null, Validators.required],
+            payment_term: ['2', Validators.required],
             address: [''],
             province: [''],
             province_code: [''],
@@ -154,8 +192,9 @@ export class OrderCreateComponent implements OnInit, AfterViewInit {
             importer_code: [''],
             phone: [''],
             email: [],
-            note: []
-        })
+            note: [],
+            bill_vat: 'N',
+        });
 
         this.memberFilter.valueChanges
             .pipe(takeUntil(this._onDestroy))
@@ -178,57 +217,47 @@ export class OrderCreateComponent implements OnInit, AfterViewInit {
 
         // กรองข้อมูลโดยค้นหาใน firstname และ lastname
         this.filterMember.next(
-            this.members.filter(item => item.fullname.includes(search))
+            this.members.filter((item) => item.fullname.includes(search))
         );
     }
 
     onSelectMember(event: any) {
         if (!event) {
-            if (this.memberFilter.invalid) {
-                this.memberFilter.markAsTouched(); // กำหนดสถานะ touched เพื่อแสดง mat-error
-            }
+            this.markInvalidMemberFilter();
             console.log('No Approver Selected');
             return;
         }
 
-        const selectedData = event; // event จะเป็นออบเจ็กต์ item
+        const selectedData = event;
 
-        if (selectedData) {
-            this.form.patchValue({
-                // date: [],
-                // total_price: [],
-                member_id: event.id,
-                // member_address_id: [],
-                // shipping_type: [],
-                // payment_term: [],
-                // address: event.address,
-                // province: event.province,
-                // district: event.district,
-                // sub_district: event.sub_district,
-                // postal_code: event.postal_code,
-                importer_code: event.importer_code,
-                phone: event.phone,
-            });
+        this.form.patchValue({
+            member_id: selectedData.id,
+            importer_code: selectedData.importer_code,
+            phone: selectedData.phone,
+        });
 
-            this.memberFilter.setValue(selectedData.fullname);
+        this.memberFilter.setValue(selectedData.fullname);
+        this.openDialogMemberAddress(selectedData.id);
 
-            this._service.getMemberById(event?.id)
-                .pipe(map((resp: any) => resp.data))
-                .subscribe({
-                    next: (resp: any) => {
-                        this.openDialogMemberAddress(resp?.ship_address ?? [])
-                    },
-                    error: (err) => {
+    }
 
-                    }
-                })
-        } else {
-            if (this.memberFilter.invalid) {
-                this.memberFilter.markAsTouched(); // กำหนดสถานะ touched เพื่อแสดง mat-error
-            }
-            console.log('No Approver Found');
-            return;
+    private markInvalidMemberFilter() {
+        if (this.memberFilter.invalid) {
+            this.memberFilter.markAsTouched();
         }
+    }
+
+    private focusFirstEmptyInput() {
+        setTimeout(() => {
+            const emptyInput = Array.from(document.querySelectorAll('input'))
+                .find(input =>
+                    input instanceof HTMLInputElement &&
+                    !input.disabled &&
+                    input.offsetParent !== null &&
+                    !input.value
+                );
+            (emptyInput as HTMLElement)?.focus();
+        }, 0);
     }
 
     ngAfterViewInit() {
@@ -275,16 +304,23 @@ export class OrderCreateComponent implements OnInit, AfterViewInit {
             });
     }
 
-    ngOnDestroy(): void {
-    }
+    ngOnDestroy(): void { }
 
     onProvinceChange() {
         const selectedProvince = this.form.get('province')?.value;
-        console.log(selectedProvince);
         if (selectedProvince) {
-            this.locationService.getDistricts(selectedProvince).subscribe(data => {
-                this.districts$ = of(data);
-                this.form.patchValue({ district: '', sub_district: '', postal_code: '' });
+            this.locationService.getProvinces().pipe(
+                map((provinces: any[]) => provinces.find((p: any) => p.provinceNameTh === selectedProvince)),
+            ).subscribe((province) => {
+                this.locationService.getDistricts(province.provinceCode)
+                    .subscribe((data) => {
+                        this.districts$ = of(data);
+                        this.form.patchValue({
+                            district: '',
+                            sub_district: '',
+                            postal_code: '',
+                        }, { emitEvent: false });
+                    });
             });
         }
     }
@@ -292,9 +328,14 @@ export class OrderCreateComponent implements OnInit, AfterViewInit {
     onDistrictChange() {
         const selectedDistrict = this.form.get('district')?.value;
         if (selectedDistrict) {
-            this.locationService.getSubdistricts(selectedDistrict).subscribe(data => {
-                this.subdistricts$ = of(data);
-                this.form.patchValue({ sub_district: '', postal_code: '' });
+            this.locationService.getDistricts().pipe(
+                map((districts: any[]) => districts.find((d: any) => d.districtNameTh === selectedDistrict)),
+            ).subscribe((district) => {
+                this.locationService.getSubdistricts(district.districtCode)
+                    .subscribe((data) => {
+                        this.subdistricts$ = of(data);
+                        this.form.patchValue({ sub_district: '', postal_code: '' }, { emitEvent: false });
+                    });
             });
         }
     }
@@ -302,16 +343,13 @@ export class OrderCreateComponent implements OnInit, AfterViewInit {
     onSubDistrictChange() {
         const selectedSubDistrict = this.form.get('sub_district')?.value;
         if (selectedSubDistrict) {
-            console.log(selectedSubDistrict);
-            this.locationService.getPostalCode(selectedSubDistrict).subscribe(postalCode => {
-
-                console.log(postalCode);
-
-                this.form.patchValue({ postal_code: postalCode });
+            this.locationService.getSubdistricts().pipe(
+                map((subdistricts: any[]) => subdistricts.find((s: any) => s.subdistrictNameTh === selectedSubDistrict)),
+            ).subscribe((subdistrict) => {
+                this.form.patchValue({ postal_code: subdistrict.postalCode }, { emitEvent: false });
             });
         }
     }
-
 
     clickSearchProduct() {
         if (this.search.invalid) {
@@ -326,20 +364,42 @@ export class OrderCreateComponent implements OnInit, AfterViewInit {
             )
             .pipe(
                 map((data: any) => {
+                    if (data.status === 'error') {
+                        this.toastr.error(this.translocoService.translate('toastr.search_error'));
+                        return [];
+                    }
+
                     this.totalItems = data.item.items.total_results; // ตั้งค่าจำนวนรายการทั้งหมด
                     return data.item.items.item || [];
                 }),
                 catchError(() => [])
             )
-            .subscribe((data) => {
-                this.dataSource = new MatTableDataSource(data);
-            });
+            .subscribe(
+                (data) => {
+                    this.dataSource = new MatTableDataSource(data);
+                },
+                (error) => {
+                    console.error('Error fetching data:', error);
+                    this.toastr.error(this.translocoService.translate('toastr.search_error'));
+                }
+            );
     }
 
     viewDetail(num_iid: string) {
-        this._service.getDetail(num_iid, this.selectedService).subscribe((productDetail: any) => {
-            this.openDialog(productDetail);
-        });
+        this._service
+            .getDetail(num_iid, this.selectedService)
+            .pipe(
+                timeout(60000),
+                catchError(error => {
+                    if (error.name === 'TimeoutError') {
+                        this.toastr.warning(this.translocoService.translate('request_timeout'));
+                    }
+                    return throwError(() => error);
+                })
+            )
+            .subscribe((productDetail: any) => {
+                this.openDialog(productDetail);
+            });
     }
 
     openDialog(productDetail: any): void {
@@ -348,16 +408,16 @@ export class OrderCreateComponent implements OnInit, AfterViewInit {
             data: {
                 product: productDetail,
                 addOnServices: this.addOnServices,
-                productStoreType: this.selectedService
-            }
+                productStoreType: this.selectedService,
+            },
         });
 
-        dialogRef.afterClosed().subscribe(result => {
+        dialogRef.afterClosed().subscribe((result) => {
             if (result) {
-                this.cart.push(result)
+                this.cart.push(result);
                 console.log(result);
 
-                this.openCart()
+                this.openCart();
             }
         });
     }
@@ -378,89 +438,148 @@ export class OrderCreateComponent implements OnInit, AfterViewInit {
         }
     }
 
-    openDialogMemberAddress(shipAddress: any[]) {
-        const dialog = this.dialog.open(DialogAddressComponent, {
-            width: '500px',
-            data: {
-                shipAddress: shipAddress
-            }
-        })
+    openDialogMemberAddress(id: any) {
+        this._service.getMemberById(id)
+            .pipe(map((resp: any) => resp?.data))
+            .subscribe({
+                next: (resp: any) => {
+                    const dialog = this.dialog.open(DialogAddressComponent, {
+                        width: '500px',
+                        data: {
+                            shipAddress: resp.ship_address
+                        }
+                    });
+                    dialog.afterClosed().subscribe((data: DialogAddress) => {
+                        if (data) {
+                            this.form.patchValue({
+                                member_address_id: data.id,
+                                address: data.address,
+                                province: data.province,
+                                // district: data.district,
+                                // sub_district: data.sub_district,
+                                // postal_code: data.postal_code,
+                            }, { emitEvent: false });
 
-        dialog.afterClosed().subscribe((data: DialogAddress) => {
-            if (data != undefined) {
-                this.form.patchValue({
-                    member_address_id: data.id,
-                    address: data.address,
-                    province: data.province,
-                    district: data.district,
-                    sub_district: data.sub_district,
-                    postal_code: data.postal_code,
-                })
-            }
+                            this.locationService.getProvinces().pipe(
+                                map((provinces: any[]) => provinces.find((p: any) => p.provinceNameTh === data.province)),
+                            ).subscribe((province) => {
+                                this.locationService.getDistricts(province.provinceCode)
+                                    .subscribe((districts) => {
+                                        this.districts$ = of(districts);
+                                        this.form.patchValue({
+                                            district: data.district,
+                                        }, { emitEvent: false });
 
-        });
+                                        this.locationService.getDistricts().pipe(
+                                            map((districts: any[]) => districts.find((d: any) => d.districtNameTh === data.district)),
+                                        ).subscribe((district) => {
+                                            this.locationService.getSubdistricts(district.districtCode)
+                                                .subscribe((subdistricts) => {
+                                                    this.subdistricts$ = of(subdistricts);
+                                                    this.form.patchValue({
+                                                        sub_district: data.sub_district,
+                                                        postal_code: data.postal_code
+                                                    }, { emitEvent: false });
+                                                });
+                                        });
+                                    });
+                            });
+
+                            this.customerInput?.nativeElement.blur();
+                            // โฟกัสช่องอื่นแทน
+                            // 2. focus ช่อง input ถัดไปที่ยังว่าง
+                            setTimeout(() => {
+                                const emptyInput = Array.from(document.querySelectorAll('input'))
+                                    .find(input =>
+                                        input instanceof HTMLInputElement &&
+                                        !input.disabled &&
+                                        input.offsetParent !== null && // ไม่ถูกซ่อนไว้
+                                        input !== this.customerInput?.nativeElement &&
+                                        !input.value
+                                    );
+
+                                if (emptyInput) {
+                                    (emptyInput as HTMLElement).focus();
+
+                                    // 💡 simulate click หากจำเป็น (เช่นถ้ามี logic onClick)
+                                    emptyInput.click();
+                                }
+                            }, 0);
+                        }
+                    });
+                },
+                error: (err) => {
+                    console.error('Error fetching member by ID', err);
+                }
+            });
+
     }
 
     removeFromCart(item: any): void {
-        this.cart = this.cart.filter(cartItem => cartItem.id !== item.id);
+        this.cart = this.cart.filter((cartItem) => cartItem.id !== item.id);
     }
 
     submit() {
         if (this.form.invalid) {
-            this.toastr.error('ระบุข้อมูลไม่ครบ');
-            return
+            this.toastr.error(this.translocoService.translate('toastr.missing_fields'));
+            return;
         }
 
         const confirmation = this.fuseConfirmationService.open({
-            title: "ยืนยันการบันทึกข้อมูล",
+            title: this.translocoService.translate('confirmation.save_title'),
             icon: {
                 show: true,
-                name: "heroicons_outline:exclamation-triangle",
-                color: "primary"
+                name: 'heroicons_outline:exclamation-triangle',
+                color: 'primary',
             },
             actions: {
                 confirm: {
                     show: true,
-                    label: "ยืนยัน",
-                    color: "primary"
+                    label: this.translocoService.translate(
+                        'confirmation.confirm_button'
+                    ),
+                    color: 'primary',
                 },
                 cancel: {
                     show: true,
-                    label: "ยกเลิก"
-                }
+                    label: this.translocoService.translate(
+                        'confirmation.cancel_button'
+                    ),
+                },
             },
-            dismissible: false
-        })
+            dismissible: false,
+        });
 
-        confirmation.afterClosed().subscribe(
-            result => {
-                if (result == 'confirmed') {
+        confirmation.afterClosed().subscribe((result) => {
+            if (result == 'confirmed') {
+                const body = {
+                    ...this.form.value,
+                    products: this.cart,
+                    total_price: this.calculateTotalPrice(),
+                };
 
-                    const body = {
-                        ...this.form.value,
-                        products: this.cart,
-                        total_price: this.calculateTotalPrice()
+                this._service.createOrder(body).subscribe(
+                    (resp: any) => {
+                        this.toastr.success(this.translocoService.translate('toastr.add'));
+                        this._router.navigateByUrl('/order-products');
+                    },
+                    (err) => {
+                        this.toastr.error(
+                            this.translocoService.translate('toastr.add_error')
+                        );
                     }
-
-                    this._service.createOrder(body).subscribe(
-                        (resp: any) => {
-                            this.toastr.success('เพิ่มรายการ สำเร็จ');
-                            this._router.navigateByUrl('/order-products');
-                        },
-                        (err) => {
-                            this.toastr.error('เพิ่มรายการ ไม่สำเร็จ');
-                        }
-                    )
-                }
+                );
             }
-        )
-
+        });
     }
 
     private calculateTotalPrice(): number {
         return this.cart.reduce((total, item) => {
             const basePrice = parseFloat(item.product_price) * item.product_qty;
-            const addOnPrice = item.add_on_services.reduce((sum, service) => sum + service.add_on_service_price, 0);
+            const addOnPrice = item.add_on_services.reduce(
+                (sum, service) => sum + service.add_on_service_price,
+                0
+            );
             return total + basePrice + addOnPrice;
         }, 0);
     }
@@ -470,16 +589,30 @@ export class OrderCreateComponent implements OnInit, AfterViewInit {
             width: '90%',
             data: {
                 addOnServices: this.addOnServices,
-            }
-        })
+            },
+        });
 
         dialog.afterClosed().subscribe((result) => {
             if (result != undefined) {
-                this.cart.push(result)
-                console.log(result);
+                this.cart.push(result);
 
-                this.openCart()
+                this.openCart();
             }
-        })
+        });
+    }
+
+
+    toggleTranslate(order: any) {
+        if (!order.currentLang || order.currentLang === 'zh-CN') {
+            // แปลจากจีน → ไทย
+            this.translationService.translate(order.product_name, 'zh-CN', 'th').subscribe((translated) => {
+                order.translatedProductName = translated;
+                order.currentLang = 'th';
+            });
+        } else {
+            // กลับเป็นต้นฉบับ (จีน)
+            order.translatedProductName = null;
+            order.currentLang = 'zh-CN';
+        }
     }
 }

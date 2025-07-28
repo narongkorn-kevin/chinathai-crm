@@ -1,9 +1,16 @@
 import { CommonModule } from '@angular/common';
-import { AfterViewInit, ChangeDetectionStrategy, Component, OnInit, ViewChild } from '@angular/core';
+import {
+    AfterViewInit,
+    ChangeDetectionStrategy,
+    Component,
+    ElementRef,
+    OnInit,
+    ViewChild,
+} from '@angular/core';
 import { DataTableDirective, DataTablesModule } from 'angular-datatables';
 import { OrderProductsService } from './order-products.service';
 import { ADTSettings } from 'angular-datatables/src/models/settings';
-import { Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged, Subject } from 'rxjs';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -15,7 +22,12 @@ import { DialogForm } from './form-dialog/dialog.component';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSelectModule } from '@angular/material/select';
 import { MatInputModule } from '@angular/material/input';
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import {
+    FormBuilder,
+    FormGroup,
+    FormsModule,
+    ReactiveFormsModule,
+} from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatCheckboxModule } from '@angular/material/checkbox';
@@ -26,10 +38,16 @@ import { CdkMenuModule } from '@angular/cdk/menu';
 import { DateTime } from 'luxon';
 import { SelectMemberComponent } from 'app/modules/common/select-member/select-member.component';
 
+import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
+import { PictureComponent } from 'app/modules/shared/picture/picture.component';
+import { copyToClipboard } from 'app/modules/shared/helper';
+import { ExportService } from 'app/modules/shared/export.service';
+import { getPermissionName } from 'app/helper';
 @Component({
     selector: 'app-order-products',
     standalone: true,
     imports: [
+        TranslocoModule,
         CommonModule,
         DataTablesModule,
         MatButtonModule,
@@ -46,7 +64,7 @@ import { SelectMemberComponent } from 'app/modules/common/select-member/select-m
         RouterLink,
         MatCheckboxModule,
         CdkMenuModule,
-        SelectMemberComponent
+        SelectMemberComponent,
     ],
     templateUrl: './order-products.component.html',
     styleUrl: './order-products.component.scss',
@@ -73,8 +91,12 @@ export class OrderProductsComponent implements OnInit, AfterViewInit {
 
     department: any[] = [];
     position: any[] = [];
+    @ViewChild('tableElement') tableElement!: ElementRef;
+
+    permissionName = null;
 
     constructor(
+        private translocoService: TranslocoService,
         private userService: OrderProductsService,
         private fuseConfirmationService: FuseConfirmationService,
         private toastr: ToastrService,
@@ -82,7 +104,9 @@ export class OrderProductsComponent implements OnInit, AfterViewInit {
         private _fb: FormBuilder,
         private _service: OrderProductsService,
         private activated: ActivatedRoute,
+        private exportService: ExportService
     ) {
+
         this.form = this._fb.group({
             member_id: [''],
             date_start: [''],
@@ -94,16 +118,44 @@ export class OrderProductsComponent implements OnInit, AfterViewInit {
             date_end: [''],
             code: [''],
             member_id: [''],
-            status: ['']
+            status: [''],
         });
+        this.langues = localStorage.getItem('lang');
+
+        this.permissionName = getPermissionName();
+
     }
+    langues: any;
+    languageUrl: any;
+
     ngOnInit(): void {
-        setTimeout(() =>
-            this.loadTable());
+
+        if (this.langues === 'en') {
+            this.languageUrl =
+                'https://cdn.datatables.net/plug-ins/1.11.3/i18n/en-gb.json';
+        } else if (this.langues === 'th') {
+            this.languageUrl =
+                'https://cdn.datatables.net/plug-ins/1.11.3/i18n/th.json';
+        } else if (this.langues === 'cn') {
+            this.languageUrl =
+                'https://cdn.datatables.net/plug-ins/1.11.3/i18n/zh.json';
+        } else {
+            this.languageUrl =
+                'https://cdn.datatables.net/plug-ins/1.11.3/i18n/th.json';
+        }
+
+        setTimeout(() => this.loadTable());
+
+        this.form.get('date_start')?.valueChanges
+            .pipe(debounceTime(300), distinctUntilChanged())
+            .subscribe(() => {
+                console.log('🔁 Searching with date_start...');
+                this.rerender();
+            });
 
         this.formData = this._fb.group({
-            ids: this._fb.array([])
-        })
+            ids: this._fb.array([]),
+        });
     }
 
     ngAfterViewInit() {
@@ -118,38 +170,110 @@ export class OrderProductsComponent implements OnInit, AfterViewInit {
     }
 
     loadTable(): void {
+        const menuTitles = {
+            action: {
+                th: 'ดำเนินการ',
+                en: 'Action',
+                cn: '操作',
+            },
+            orderNumber: {
+                th: 'หมายเลขฝากสั่ง',
+                en: 'Order Number',
+                cn: '订单号',
+            },
+            customer: {
+                th: 'ลูกค้า',
+                en: 'Customer',
+                cn: '客户',
+            },
+            amountDue: {
+                th: 'ยอดที่ต้องชำระ',
+                en: 'Amount Due',
+                cn: '应付金额',
+            },
+            transferAmount: {
+                th: 'ยอดโอน',
+                en: 'Transfer Amount',
+                cn: '转账金额',
+            },
+            taxInvoice: {
+                th: 'ออกใบกำกับภาษี',
+                en: 'Tax Invoice',
+                cn: '税务发票',
+            },
+            transferEvidence: {
+                th: 'หลักฐานการโอน',
+                en: 'Transfer Evidence',
+                cn: '转账凭证',
+            },
+            paymentDateTime: {
+                th: 'วันเวลาที่ชำระเงิน',
+                en: 'Payment Date & Time',
+                cn: '付款日期和时间',
+            },
+            adminOwner: {
+                th: 'ผู้ดูแล',
+                en: 'Admin Owner',
+                cn: '管理员',
+            },
+            note: {
+                th: 'หมายเหตุ',
+                en: 'Note',
+                cn: '备注',
+            },
+            status: {
+                th: 'สถานะ',
+                en: 'Status',
+                cn: '状态',
+            },
+        };
+
         this.dtOptions = {
             pagingType: 'full_numbers',
-            serverSide: true,     // Set the flag
+            serverSide: true, // Set the flag
             filter: false,
+            language: {
+                url: this.languageUrl,
+            },
             ajax: (dataTablesParameters: any, callback) => {
+                if (this.filterForm.value.code) {
+                    dataTablesParameters.code = this.filterForm.value.code;
+                }
+                if (this.filterForm.value.date_start) {
+                    dataTablesParameters.date = this.filterForm.value.date_start;
+                }
+                if (this.form.value.date_start) {
+                    dataTablesParameters.date = this.form.value.date_start;
+                }
+                
 
-                dataTablesParameters['date_start'] = !!this.filterForm.value.date_start
-                    ? DateTime.fromISO(this.filterForm.value.date_start.toString()).toLocal().toFormat('yyyy-MM-dd')
+                dataTablesParameters['date_end'] = !!this.filterForm.value
+                    .date_end
+                    ? DateTime.fromISO(
+                        this.filterForm.value.date_end.toString()
+                    )
+                        .toLocal()
+                        .toFormat('yyyy-MM-dd')
                     : '';
 
-                dataTablesParameters['date_end'] = !!this.filterForm.value.date_end
-                    ? DateTime.fromISO(this.filterForm.value.date_end.toString()).toLocal().toFormat('yyyy-MM-dd')
-                    : '';
-
-                dataTablesParameters['status'] = this.filterForm.value.status
-                dataTablesParameters['member_id'] = this.filterForm.value.member_id
-                dataTablesParameters['code'] = this.filterForm.value.code
+                dataTablesParameters['status'] = this.filterForm.value.status;
+                dataTablesParameters['member_id'] =
+                    this.filterForm.value.member_id;
+                dataTablesParameters['code'] = this.filterForm.value.code;
 
                 this.userService.datatable(dataTablesParameters).subscribe({
                     next: (resp: any) => {
-                        this.dataRow = resp.data;
-
+                        this.dataRow = resp.data.data;
                         callback({
                             recordsTotal: resp.data.total,
                             recordsFiltered: resp.data.total,
-                            data: resp.data.data
+                            data: resp.data.data,
                         });
                     },
                     error: (err: any) => {
-                        this.toastr.error('Load table error.')
-                    }
-                })
+                        this.toastr.error('Load table error.');
+                    },
+                });
             },
             columns: [
                 {
@@ -159,7 +283,7 @@ export class OrderProductsComponent implements OnInit, AfterViewInit {
                     orderable: false,
                 },
                 {
-                    title: 'ดำเนินการ',
+                    title: menuTitles.action[this.langues],
                     data: null,
                     defaultContent: '',
                     ngTemplateRef: {
@@ -169,7 +293,7 @@ export class OrderProductsComponent implements OnInit, AfterViewInit {
                     orderable: false,
                 },
                 {
-                    title: 'หมายเลขฝากสั่ง',
+                    title: menuTitles.orderNumber[this.langues],
                     data: 'code',
                     className: 'text-center',
                     ngTemplateRef: {
@@ -177,78 +301,107 @@ export class OrderProductsComponent implements OnInit, AfterViewInit {
                     },
                 },
                 {
-                    title: 'ลูกค้า',
-                    data: null,
-                    className: 'text-center',
-                    ngTemplateRef: {
-                        ref: this.member,
-                    },
+                    title: menuTitles.customer[this.langues],
+                    data: 'fullname',
+                    className: 'text-left',
+                    orderable: false,
+                    // ngTemplateRef: {
+                    //     ref: this.member,
+                    // },
                 },
                 {
-                    title: 'ยอดที่ต้องชำระ',
+                    title: menuTitles.amountDue[this.langues],
                     data: 'total_price',
                     className: 'text-center',
                     render: function (data, type, row) {
-                        return parseFloat(data).toFixed(2);
+                        return parseFloat(data).toFixed(4);
+                    },
+                },
+                {
+                    title: menuTitles.transferAmount[this.langues],
+                    data: 'order_payment.total_price',
+                    className: 'text-center',
+                    defaultContent: '0.00',
+                    render: function (data, type, row) {
+                        if (data === null || data === undefined) {
+                            return '0.00';
+                        }
+                        return parseFloat(data).toFixed(4);
                     }
                 },
                 {
-                    title: 'ยอดโอน',
+                    title: menuTitles.taxInvoice[this.langues],
                     data: function (row: any) {
-                        if (!row.order_payment) {
-                            return '-';
-                        }
-                        let payment = 0;
-                        for (let i = 0; i < row.order_payment.length; i++) {
-                            payment += row.order_payment[i].total_price;
-                        }
-                        return payment;
-                    },
-                    className: 'text-center'
-                },
-                {
-                    title: 'ออกใบกำกับภาษี',
-                    data: function (row: any) {
-                        return row.invoice ? 'Yes' : 'No';
+                        return row.bill_vat === 'Y' ? 'Yes' : 'No';
                     },
                     className: 'text-center',
                 },
                 {
-                    title: 'หลักฐานการโอน',
-                    data: function (row: any) {
-                        return row.order_payment?.length
-                            ? row.order_payment[row.order_payment.length - 1].image || '-'
-                            : '-';
-                    },
+                    title: menuTitles.transferEvidence[this.langues],
+                    data: 'order_payment',
+                    defaultContent: '-',
                     className: 'text-center',
                     ngTemplateRef: {
                         ref: this.pic,
                     },
                 },
                 {
-                    title: 'วันเวลาที่ชำระเงิน',
+                    title: menuTitles.paymentDateTime[this.langues],
                     data: function (row: any) {
-                        return row.order_payment?.length
-                            ? row.order_payment[row.order_payment.length - 1].date || '-'
+                        const createdAt = row.order_payment
+                            ? row.order_payment.created_at
+                            : null;
+
+                        return createdAt
+                            ? DateTime.fromISO(createdAt, { zone: 'utc' }).toLocal().toFormat('dd/MM/yyyy HH:mm')
                             : '-';
                     },
                     className: 'text-center',
                 },
                 {
-                    title: 'หมายเหตุ',
-                    data: 'note',
+                    title: menuTitles.adminOwner[this.langues],
+                    data: 'update_by',
+                    defaultContent: '-',
                     className: 'text-center',
                 },
                 {
-                    title: 'สถานะ',
+                    title: menuTitles.note[this.langues],
+                    data: 'note',
+                    defaultContent: '-',
+                    className: 'text-center',
+                },
+                {
+                    title: menuTitles.status[this.langues],
                     data: 'status',
+                    defaultContent: '-',
                     className: 'text-center',
                     ngTemplateRef: {
                         ref: this.status,
                     },
                 },
+            ],
+            // Declare the use of the extension in the dom parameter
+            dom: 'lfrtip',
+            buttons: [
+                {
+                    extend: 'copy',
+                    className: 'btn-csv-hidden'
+                },
+                {
+                    extend: 'csv',
+                    className: 'btn-csv-hidden'
+                },
+                {
+                    extend: 'excel',
+                    className: 'btn-csv-hidden'
+                },
+                {
+                    extend: 'print',
+                    className: 'btn-csv-hidden'
+                },
             ]
-        }
+
+        };
     }
 
     rerender(): void {
@@ -279,12 +432,12 @@ export class OrderProductsComponent implements OnInit, AfterViewInit {
             enterAnimationDuration: 300,
             exitAnimationDuration: 300,
             data: {
-                type: 'NEW'
-            }
+                type: 'NEW',
+            },
         });
         DialogRef.afterClosed().subscribe((result) => {
             if (result) {
-                console.log(result, 'result')
+                console.log(result, 'result');
                 this.rerender();
             }
         });
@@ -300,11 +453,11 @@ export class OrderProductsComponent implements OnInit, AfterViewInit {
             data: {
                 type: 'EDIT',
                 value: item,
-            }
+            },
         });
         DialogRef.afterClosed().subscribe((result) => {
             if (result) {
-                console.log(result, 'result')
+                console.log(result, 'result');
                 this.rerender();
             }
         });
@@ -320,57 +473,61 @@ export class OrderProductsComponent implements OnInit, AfterViewInit {
                 type: 'EDIT',
                 value: item,
                 department: this.department,
-                position: this.position
-            }
+                position: this.position,
+            },
         });
         DialogRef.afterClosed().subscribe((result) => {
             if (result) {
-                console.log(result, 'result')
+                console.log(result, 'result');
                 this.rerender();
             }
         });
     }
 
-
-
     clickDelete(id: any) {
         const confirmation = this.fuseConfirmationService.open({
-            title: "ยืนยันลบข้อมูล",
-            message: "กรุณาตรวจสอบข้อมูล หากลบข้อมูลแล้วจะไม่สามารถนำกลับมาได้",
+            title: this.translocoService.translate('confirmation.delete_title'),
+            message: this.translocoService.translate(
+                'confirmation.delete_message'
+            ),
             icon: {
                 show: true,
-                name: "heroicons_outline:exclamation-triangle",
-                color: "warn"
+                name: 'heroicons_outline:exclamation-triangle',
+                color: 'warn',
             },
             actions: {
                 confirm: {
                     show: true,
-                    label: "ยืนยัน",
-                    color: "primary"
+                    label: this.translocoService.translate(
+                        'confirmation.confirm_button'
+                    ),
+                    color: 'primary',
                 },
                 cancel: {
                     show: true,
-                    label: "ยกเลิก"
-                }
+                    label: this.translocoService.translate(
+                        'confirmation.cancel_button'
+                    ),
+                },
             },
-            dismissible: false
-        })
+            dismissible: false,
+        });
 
-        confirmation.afterClosed().subscribe(
-            result => {
-                if (result == 'confirmed') {
-                    this.userService.delete(id).subscribe({
-                        error: (err) => {
-
-                        },
-                        complete: () => {
-                            this.toastr.success('ดำเนินการลบสำเร็จ');
-                            this.rerender();
-                        },
-                    });
-                }
+        confirmation.afterClosed().subscribe((result) => {
+            if (result == 'confirmed') {
+                this.userService.delete(id).subscribe({
+                    error: (err) => { },
+                    complete: () => {
+                        this.toastr.success(
+                            this.translocoService.translate(
+                                'toastr.del_successfully'
+                            )
+                        );
+                        this.rerender();
+                    },
+                });
             }
-        )
+        });
     }
     openForm() {
         const DialogRef = this.dialog.open(DialogForm, {
@@ -382,97 +539,207 @@ export class OrderProductsComponent implements OnInit, AfterViewInit {
             data: {
                 type: 'NEW',
                 department: this.department,
-                position: this.position
-            }
+                position: this.position,
+            },
         });
         DialogRef.afterClosed().subscribe((result) => {
             if (result) {
-                console.log(result, 'result')
+                console.log(result, 'result');
                 this.rerender();
             }
         });
     }
     opendialogdelete() {
         const confirmation = this.fuseConfirmationService.open({
-            title: "คุณแน่ใจหรือไม่ว่าต้องการลบรายการ",
-            message: "คุณกำลังจะลบรายการหากกดยืนยันแล้วจะไม่สามารถเอากลับมาอีกได้",
+            title: this.translocoService.translate(
+                'confirmation.delete_title2'
+            ),
+            message: this.translocoService.translate(
+                'confirmation.delete_message2'
+            ),
             icon: {
                 show: true,
-                name: "heroicons_outline:exclamation-triangle",
-                color: "warn"
+                name: 'heroicons_outline:exclamation-triangle',
+                color: 'warn',
             },
             actions: {
                 confirm: {
                     show: true,
-                    label: "ยืนยัน",
-                    color: "primary"
+                    label: this.translocoService.translate(
+                        'confirmation.confirm_button'
+                    ),
+                    color: 'primary',
                 },
                 cancel: {
                     show: true,
-                    label: "ยกเลิก"
-                }
+                    label: this.translocoService.translate(
+                        'confirmation.cancel_button'
+                    ),
+                },
             },
-            dismissible: false
-        })
+            dismissible: false,
+        });
 
-        confirmation.afterClosed().subscribe(
-            result => {
-                if (result == 'confirmed') {
-                    const id = this.formData.get('ids').value;
-                    console.log(id, 'id');
+        confirmation.afterClosed().subscribe((result) => {
+            if (result == 'confirmed') {
+                const id = this.formData.get('ids').value;
+                console.log(id, 'id');
 
-                    for (let i = 0; i < id.length; i++) {
-                        this._service.delete(id[i]).subscribe({
-                            error: (err) => {
-                                this.toastr.error('ลบรายการสมาชิก ล้มเหลว โปรดลองใหม่อีกครั้งภายหลัง');
-                                console.log(err, 'err');
-                            },
-                            complete: () => {
-
-                            },
-                        });
-                        if (i == id.length - 1) {
-                            this.formData.get('ids').reset();
-                            this.toastr.success('ลบรายการสมาชิก สำเร็จ');
-                            this.rerender();
-                        }
+                for (let i = 0; i < id.length; i++) {
+                    this._service.delete(id[i]).subscribe({
+                        error: (err) => {
+                            this.toastr.error(
+                                this.translocoService.translate(
+                                    'toastr.delete_error'
+                                )
+                            );
+                            console.log(err, 'err');
+                        },
+                        complete: () => { },
+                    });
+                    if (i == id.length - 1) {
+                        this.formData.get('ids').reset();
+                        this.toastr.success(
+                            this.translocoService.translate('toastr.delete')
+                        );
+                        this.rerender();
                     }
                 }
             }
-        )
+        });
     }
 
     openDialogPayment(item: any) {
-        const dialog = this.dialog.open(DialogUpdatePaymentComponent, {
-            width: '600px',
-            data: {
-                order: item
-            }
-        })
+        this._service.get(item.id).subscribe((resp: any) => {
+            const dialog = this.dialog.open(DialogUpdatePaymentComponent, {
+                width: '600px',
+                data: {
+                    order: resp?.data,
+                },
+            })
+
+            dialog.afterClosed()
+                .subscribe((result) => {
+                    if (result) {
+                        this.rerender();
+                    }
+                });
+        });
+
+
     }
 
     clickUpdateStatus(item: any) {
-        this.dialog.open(DialogUpdateStatusComponent, {
-            width: '500px',
-            data: {
-                orders: [item],
-                status: [
-                    { value: 'awaiting_summary', name: 'รอสรุปยอด', },
-                    { value: 'awaiting_payment', name: 'รอชำระค่าสั่งซื้อ', },
-                    { value: 'in_progress', name: 'อยู่ระหว่างการสั่งซื้อ', },
-                    { value: 'preparing_shipment', name: 'สินค้าเตรียมจัดส่ง', },
-                    { value: 'shipped', name: 'ร้านค้าจัดส่งแล้ว', },
-                    { value: 'cancelled', name: 'ยกเลิก/ล้มเหลว', },
-                ]
-            }
-        }).afterClosed().subscribe(() => {
-            this.rerender();
-        })
+        this.dialog
+            .open(DialogUpdateStatusComponent, {
+                width: '500px',
+                data: {
+                    orders: [item],
+                    status: [
+                        {
+                            value: 'awaiting_summary',
+                            name: 'รอสรุปยอด'
+                        },
+                        {
+                            value: 'awaiting_payment',
+                            name: 'รอชำระค่าสั่งซื้อ',
+                        },
+                        {
+                            value: 'in_progress',
+                            name: 'อยู่ระหว่างการสั่งซื้อ',
+                        },
+                        {
+                            value: 'preparing_shipment',
+                            name: 'สินค้าเตรียมจัดส่ง',
+                        },
+                        {
+                            value: 'shipped',
+                            name: 'ร้านค้าจัดส่งแล้ว'
+                        },
+                        {
+                            value: 'cancelled',
+                            name: 'ยกเลิก/ล้มเหลว'
+                        },
+                    ],
+                },
+            })
+            .afterClosed()
+            .subscribe(() => {
+                this.rerender();
+            });
     }
 
     selectMember(item: any) {
         this.filterForm.patchValue({
-            member_id: item?.id
-        })
+            member_id: item?.id,
+        });
+    }
+
+    showPicture(imgObject: any): void {
+        this.dialog
+            .open(PictureComponent, {
+                autoFocus: false,
+                data: {
+                    imgSelected: imgObject,
+                },
+            })
+            .afterClosed()
+            .subscribe(() => {
+                // Go up twice because card routes are setup like this; "card/CARD_ID"
+                // this._router.navigate(['./../..'], {relativeTo: this._activatedRoute});
+            });
+    }
+
+    clearFilter() {
+        this.filterForm.reset();
+        this.rerender();
+    }
+
+    imageLoadedMap: { [key: string]: boolean } = {};
+
+    onImageError(id: string) {
+        this.imageLoadedMap[id] = false;
+    }
+
+    onImageLoad(id: string) {
+        this.imageLoadedMap[id] = true;
+    }
+
+    exportData(type: 'csv' | 'excel' | 'print' | 'copy') {
+        this.exportService.exportTable(this.tableElement, type);
+    }
+
+    copyFullTable(): void {
+        const table = ($(this.tableElement.nativeElement) as any).DataTable();
+        const rowsData = table.rows({ search: 'applied' }).data();
+
+        const headers = [
+            '#', 'Order Number', 'Customer', 'Amount Due', 'Transfer Amount',
+            'Tax Invoice', 'Transfer Evidence', 'Payment Date & Time', 'Note', 'Status'
+        ];
+
+        const rows: any[][] = [];
+
+        for (let i = 0; i < rowsData.length; i++) {
+            const row = rowsData[i];
+            rows.push([
+                i + 1,
+                row.code || '',
+                row.member?.importer_code + '  ' + row.member?.fname + ' ' + row.member?.lname || '',
+                parseFloat(row.total_price).toFixed(4),
+                this.calculatePayment(row.order_payment),
+                row.invoice ? 'Yes' : 'No',
+                row.order_payment?.[row.order_payment.length - 1]?.image || '-',
+                row.order_payment?.[row.order_payment.length - 1]?.date || '-',
+                row.note || '',
+                row.status || ''
+            ]);
+        }
+
+        copyToClipboard(headers, rows, this.toastr);
+    }
+    calculatePayment(payments: any[]): number | string {
+        if (!payments || !payments.length) return '-';
+        return payments.reduce((sum, p) => sum + (p.total_price || 0), 0).toFixed(4);
     }
 }

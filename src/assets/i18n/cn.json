@@ -1670,7 +1670,8 @@
             "repacking_fee": "重新包装服务费",
             "wrapping_fee": "透明包装费",
             "qc_check_fee": "质检费",
-            "total_amount": "总金额"
+            "total_amount": "总金额",
+            "order_code": "订单编号"
         },
         "edit": {
             "invoice_details": "发票详情",

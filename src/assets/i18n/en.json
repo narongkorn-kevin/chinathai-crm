@@ -1675,7 +1675,8 @@
             "repacking_fee": "Repacking Service Fee",
             "wrapping_fee": "Clear Wrapping Fee",
             "qc_check_fee": "QC Check Fee",
-            "total_amount": "Total Amount"
+            "total_amount": "Total Amount",
+            "order_code": "Order Code"
         },
         "edit": {
             "invoice_details": "Invoice Details",

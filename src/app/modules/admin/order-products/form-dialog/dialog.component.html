@@ -1,63 +1,64 @@
 <div class="overflow-auto md:max-w-lg">
-    <h1 mat-dialog-title class="mb-4 text-xl font-semibold" *ngIf="this.data?.type === 'NEW'">เพิ่มรายการ</h1>
-    <h1 mat-dialog-title class="mb-4 text-xl font-semibold" *ngIf="this.data?.type === 'EDIT'">แก้ไขข้อมูล</h1>
+    <h1 mat-dialog-title class="mb-4 text-xl font-semibold" *ngIf="this.data?.type === 'NEW'">{{ 'buttons.addItem' |
+        transloco }}</h1>
+    <h1 mat-dialog-title class="mb-4 text-xl font-semibold" *ngIf="this.data?.type === 'EDIT'">{{ 'order_products.dialog_form.edit_data' | transloco }}</h1>
     <div mat-dialog-content class="h-fit">
         <form [formGroup]="form">
             <div class="flex-auto">
                 <div class="grid grid-rows-1 md:grid-cols-2 gap-x-2">
                     <div class="md:w-full">
                         <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
-                            <mat-label>ชื่อ-นามสกุล</mat-label>
-                            <input matInput [placeholder]="'กรุณาระบุชื่อพนักงาน'" formControlName="name">
+                            <mat-label>{{ 'order_products.dialog_form.full_name' | transloco }}</mat-label>
+                            <input matInput [placeholder]="'order_products.dialog_form.name_placeholder' | transloco" formControlName="name">
                         </mat-form-field>
                     </div>
                     <div class="md:w-full">
                         <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
-                            <mat-label>เบอร์โทร</mat-label>
-                            <input matInput [placeholder]="'กรุณาระบุเบอร์ติดต่อ'" formControlName="phone"
-                                type="tel">
+                            <mat-label>{{ 'order_products.dialog_form.phone' | transloco }}</mat-label>
+                            <input matInput [placeholder]="'order_products.dialog_form.phone_placeholder' | transloco" formControlName="phone" type="tel">
                         </mat-form-field>
                     </div>
                     <div class="md:w-full">
                         <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
-                            <mat-label>อีเมล</mat-label>
-                            <input matInput [placeholder]="'กรุณาระบุอีเมล'" formControlName="email"
-                                type="email">
+                            <mat-label>{{ 'order_products.dialog_form.email' | transloco }}</mat-label>
+                            <input matInput [placeholder]="'order_products.dialog_form.email_placeholder' | transloco" formControlName="email" type="email">
                         </mat-form-field>
                     </div>
                     <div class="md:w-full">
                         <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
-                            <mat-label>ชื่อผู้ใช้</mat-label>
-                            <input matInput [placeholder]="'กรุณาระบุชื่อผู้ใช้'" formControlName="username">
+                            <mat-label>{{ 'order_products.dialog_form.username' | transloco }}</mat-label>
+                            <input matInput [placeholder]="'order_products.dialog_form.username_placeholder' | transloco" formControlName="username">
                         </mat-form-field>
                     </div>
                     <div class="md:w-full">
                         <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
-                            <mat-label>ระดับผู้ใช้</mat-label>
+                            <mat-label>{{ 'order_products.dialog_form.user_level' | transloco }}</mat-label>
                             <mat-select formControlName="permission_id" placeholder="">
-                                <mat-option *ngFor="let perm of permission" [value]="perm.id">{{ perm.name }}</mat-option>
+                                <mat-option *ngFor="let perm of permission" [value]="perm.id">{{ perm.name
+                                    }}</mat-option>
                             </mat-select>
                         </mat-form-field>
                     </div>
                     <div class="md:w-full">
                         <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
-                            <mat-label>แผนก</mat-label>
+                            <mat-label>{{ 'order_products.dialog_form.department' | transloco }}</mat-label>
                             <mat-select formControlName="department_id" placeholder="">
-                                <mat-option *ngFor="let dept of department" [value]="dept.id">{{ dept.name }}</mat-option>
+                                <mat-option *ngFor="let dept of department" [value]="dept.id">{{ dept.name
+                                    }}</mat-option>
                             </mat-select>
                         </mat-form-field>
                     </div>
                     <div class="md:w-full">
                         <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
-                            <mat-label>ตำแหน่ง</mat-label>
+                            <mat-label>{{ 'order_products.dialog_form.phone' | transloco }}</mat-label>
                             <mat-select formControlName="position_id" placeholder="">
                                 <mat-option *ngFor="let pos of position" [value]="pos.id">{{ pos.name }}</mat-option>
                             </mat-select>
                         </mat-form-field>
                     </div>
                     <div class="w-full" *ngIf="this.data?.type === 'NEW'">
-                        <mat-form-field [ngClass]="formFieldHelpers" class="w-full" >
-                            <mat-label>รหัสผ่าน</mat-label>
+                        <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                            <mat-label>{{ 'order_products.dialog_form.position' | transloco }}</mat-label>
                             <input matInput [type]="hidePassword ? 'password' : 'text'" formControlName="password">
                             <button mat-icon-button matSuffix (click)="togglePasswordVisibility('password')">
                                 <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
@@ -66,8 +67,9 @@
                     </div>
                     <div class="w-full" *ngIf="this.data?.type === 'NEW'">
                         <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
-                            <mat-label>ยืนยันรหัสผ่าน</mat-label>
-                            <input matInput [type]="hideConfirmPassword ? 'password' : 'text'" formControlName="confirmPassword">
+                            <mat-label>{{ 'order_products.dialog_form.confirm_password' | transloco }}</mat-label>
+                            <input matInput [type]="hideConfirmPassword ? 'password' : 'text'"
+                                formControlName="confirmPassword">
                             <button mat-icon-button matSuffix (click)="togglePasswordVisibility('confirmPassword')">
                                 <mat-icon>{{ hideConfirmPassword ? 'visibility_off' : 'visibility' }}</mat-icon>
                             </button>
@@ -75,10 +77,10 @@
                     </div>
                 </div>
                 <div class="w-full flex flex-col">
-                    <mat-label >สถานะ</mat-label>
+                    <mat-label>{{ 'order_products.dialog_form.status' | transloco }}</mat-label>
                     <mat-radio-group formControlName="status" class="flex flex-row">
-                        <mat-radio-button value="Yes">เปิดการใช้งาน</mat-radio-button>
-                        <mat-radio-button value="No">ปิดการใช้งาน</mat-radio-button>
+                        <mat-radio-button value="Yes">{{ 'order_products.dialog_form.status_active' | transloco }}</mat-radio-button>
+                        <mat-radio-button value="No">{{ 'order_products.dialog_form.status_inactive' | transloco }}</mat-radio-button>
                     </mat-radio-group>
                 </div>
             </div>
@@ -87,10 +89,10 @@
     <!-- <div> check : {{this.form.value | json}}</div> -->
     <div mat-dialog-actions class="flex justify-end">
         <button class="px-6 ml-3" mat-flat-button [color]="'primary'" (click)="Submit()">
-            ตกลง
+            {{ 'buttons.submit' | transloco }}
         </button>
         <button class="px-6 ml-3" mat-flat-button [color]="'warn'" (click)="onClose()">
-            ยกเลิก
+            {{ 'buttons.cancel' | transloco }}
         </button>
     </div>
 </div>
