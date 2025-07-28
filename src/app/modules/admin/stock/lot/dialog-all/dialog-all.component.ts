@@ -1,4 +1,10 @@
-import { Component, OnInit, Inject, ViewChild } from '@angular/core';
+import {
+    Component,
+    OnInit,
+    Inject,
+    ViewChild,
+    HostListener,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DataTableDirective, DataTablesModule } from 'angular-datatables';
 import { MatIconModule } from '@angular/material/icon';
@@ -45,12 +51,15 @@ import {
 } from '@angular/animations';
 import { LotService } from '../lot.service';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
+
 @Component({
     selector: 'app-lot-dialog-all',
     standalone: true,
     templateUrl: './dialog-all.component.html',
     styleUrl: './dialog-all.component.scss',
     imports: [
+        TranslocoModule,
         CommonModule,
         DataTablesModule,
         MatIconModule,
@@ -95,6 +104,8 @@ export class DialogAllComponent implements OnInit {
     formFieldHelpers: string[] = ['fuse-mat-dense'];
     tracks = [];
 
+    isScreenSmall: boolean;
+
     packinglistFilter = new FormControl('');
     filterpackinglist: ReplaySubject<any[]> = new ReplaySubject<any[]>(1);
     newPackinglistFilter = new FormControl('');
@@ -106,6 +117,7 @@ export class DialogAllComponent implements OnInit {
     delivery_order_lists: any[] = [];
 
     constructor(
+        private translocoService: TranslocoService,
         private dialogRef: MatDialogRef<DialogAllComponent>,
         @Inject(MAT_DIALOG_DATA) public data: any,
         public dialog: MatDialog,
@@ -132,12 +144,21 @@ export class DialogAllComponent implements OnInit {
             .subscribe(() => {
                 this._filterNewPackinglist();
             });
+
+        this.checkScreenSize();
     }
     ngAfterViewInit() {}
 
     ngOnDestroy(): void {}
 
     Submit() {
+        if (this.form.invalid) {
+            this.toastr.error(
+                this.translocoService.translate('toastr.missing_fields')
+            );
+            this.form.markAllAsTouched();
+            return;
+        }
         const formValue = {
             from_packing_list_id: this.from_packing_list_id,
             to_packing_list_id: this.to_packing_list_id,
@@ -148,7 +169,7 @@ export class DialogAllComponent implements OnInit {
         };
 
         const confirmation = this.fuseConfirmationService.open({
-            title: 'ยืนยันการบันทึกข้อมูล',
+            title: this.translocoService.translate('confirmation.save_title'),
             icon: {
                 show: true,
                 name: 'heroicons_outline:exclamation-triangle',
@@ -157,12 +178,16 @@ export class DialogAllComponent implements OnInit {
             actions: {
                 confirm: {
                     show: true,
-                    label: 'ยืนยัน',
+                    label: this.translocoService.translate(
+                        'confirmation.confirm_button'
+                    ),
                     color: 'primary',
                 },
                 cancel: {
                     show: true,
-                    label: 'ยกเลิก',
+                    label: this.translocoService.translate(
+                        'confirmation.cancel_button'
+                    ),
                 },
             },
             dismissible: false,
@@ -172,11 +197,17 @@ export class DialogAllComponent implements OnInit {
             if (result == 'confirmed') {
                 this._service.changePackingList(formValue).subscribe({
                     next: (resp: any) => {
-                        this.toastr.success('บันทึกข้อมูลสำเร็จ');
+                        this.toastr.success(
+                            this.translocoService.translate('toastr.success')
+                        );
                         this.dialogRef.close();
                     },
                     error: (error) => {
-                        this.toastr.error('เกิดข้อผิดพลาด');
+                        this.toastr.error(
+                            this.translocoService.translate(
+                                'toastr.error_occurred'
+                            )
+                        );
                         console.log(error);
                     },
                 });
@@ -202,8 +233,8 @@ export class DialogAllComponent implements OnInit {
         }
 
         this.filterpackinglist.next(
-            this.packing_list.filter(
-                (item) => item.code.toLowerCase().includes(search)
+            this.packing_list.filter((item) =>
+                item.code.toLowerCase().includes(search)
             )
         );
     }
@@ -222,8 +253,8 @@ export class DialogAllComponent implements OnInit {
         }
 
         this.filterNewPackinglist.next(
-            this.packing_list.filter(
-                (item) => item.code.toLowerCase().includes(search)
+            this.packing_list.filter((item) =>
+                item.code.toLowerCase().includes(search)
             )
         );
     }
@@ -267,6 +298,13 @@ export class DialogAllComponent implements OnInit {
         if (selectedData) {
             this.to_packing_list_id = selectedData.id;
 
+            if (this.to_packing_list_id === this.from_packing_list_id) {
+                this.toastr.error(this.translocoService.translate('toastr.cannot_select_same'));
+                this.newPackinglistFilter.setValue('');
+                this.to_packing_list_id = null;
+                return;
+            }
+
             this.newPackinglistFilter.setValue(`${selectedData.code}`);
         } else {
             if (this.newPackinglistFilter.invalid) {
@@ -275,5 +313,14 @@ export class DialogAllComponent implements OnInit {
             console.log('No packing list Found');
             return;
         }
+    }
+
+    @HostListener('window:resize', ['$event'])
+    onResize(event) {
+        this.checkScreenSize();
+    }
+
+    checkScreenSize() {
+        this.isScreenSmall = window.innerWidth < 960;
     }
 }

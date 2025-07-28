@@ -32,7 +32,10 @@ import { HttpClient } from '@angular/common/http';
 import { DeliveryService } from '../delivery.service';
 import { MatDivider } from '@angular/material/divider';
 import { ADTSettings } from 'angular-datatables/src/models/settings';
-import { MatDatepickerModule, MatDateRangePicker } from '@angular/material/datepicker';
+import {
+    MatDatepickerModule,
+    MatDateRangePicker,
+} from '@angular/material/datepicker';
 import {
     trigger,
     state,
@@ -40,12 +43,15 @@ import {
     transition,
     animate,
 } from '@angular/animations';
+import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
+
 @Component({
     selector: 'app-dialog-scan-update-payment-new-product-form-addressed-1',
     standalone: true,
     templateUrl: './dialog-po.component.html',
     styleUrl: './dialog-po.component.scss',
     imports: [
+        TranslocoModule,
         CommonModule,
         DataTablesModule,
         MatIconModule,
@@ -87,7 +93,8 @@ import {
 })
 export class DialogPoComponent implements OnInit {
     @ViewChild('checkbox') checkbox: any;
-    @ViewChild(DataTableDirective, { static: false })dtElement: DataTableDirective;
+    @ViewChild(DataTableDirective, { static: false })
+    dtElement: DataTableDirective;
     dtTrigger: Subject<ADTSettings> = new Subject<ADTSettings>();
     form: FormGroup;
     stores: any[] = [];
@@ -98,6 +105,7 @@ export class DialogPoComponent implements OnInit {
     dataRow: any[] = [];
 
     constructor(
+        private translocoService: TranslocoService,
         private dialogRef: MatDialogRef<DialogPoComponent>,
         @Inject(MAT_DIALOG_DATA) public data: any,
         public dialog: MatDialog,
@@ -106,7 +114,7 @@ export class DialogPoComponent implements OnInit {
         private toastr: ToastrService,
         private http: HttpClient,
         private _service: DeliveryService,
-        private formBuilder: FormBuilder,
+        private formBuilder: FormBuilder
     ) {
         this.filterForm = this.FormBuilder.group({
             start_date: [''],
@@ -118,9 +126,26 @@ export class DialogPoComponent implements OnInit {
             shipment: [''],
         });
         console.log(data, 'data');
+        this.langues = localStorage.getItem('lang');
     }
+    langues: any;
+    languageUrl: any;
 
     ngOnInit(): void {
+        if (this.langues === 'en') {
+            this.languageUrl =
+                'https://cdn.datatables.net/plug-ins/1.11.3/i18n/en-gb.json';
+        } else if (this.langues === 'th') {
+            this.languageUrl =
+                'https://cdn.datatables.net/plug-ins/1.11.3/i18n/th.json';
+        } else if (this.langues === 'cn') {
+            this.languageUrl =
+                'https://cdn.datatables.net/plug-ins/1.11.3/i18n/zh.json';
+        } else {
+            this.languageUrl =
+                'https://cdn.datatables.net/plug-ins/1.11.3/i18n/th.json';
+        }
+
         this.form = this.FormBuilder.group({
             track_no: this.FormBuilder.array([]),
         });
@@ -158,10 +183,17 @@ export class DialogPoComponent implements OnInit {
     }
 
     Submit() {
-        const formValue = this.multiSelect
+        if (this.form.invalid) {
+            this.toastr.error(
+                this.translocoService.translate('toastr.missing_fields')
+            );
+            this.form.markAllAsTouched();
+            return;
+        }
+        const formValue = this.multiSelect;
 
         const confirmation = this.fuseConfirmationService.open({
-            title: 'ยืนยันการบันทึกข้อมูล',
+            title: this.translocoService.translate('confirmation.save_title'),
             icon: {
                 show: true,
                 name: 'heroicons_outline:exclamation-triangle',
@@ -170,12 +202,16 @@ export class DialogPoComponent implements OnInit {
             actions: {
                 confirm: {
                     show: true,
-                    label: 'ยืนยัน',
+                    label: this.translocoService.translate(
+                        'confirmation.confirm_button'
+                    ),
                     color: 'primary',
                 },
                 cancel: {
                     show: true,
-                    label: 'ยกเลิก',
+                    label: this.translocoService.translate(
+                        'confirmation.cancel_button'
+                    ),
                 },
             },
             dismissible: false,
@@ -220,10 +256,41 @@ export class DialogPoComponent implements OnInit {
     }
 
     loadTable(): void {
+        const menuTitles = {
+            warehouse_receipt_code: {
+                th: 'รหัสใบรับเข้าคลัง',
+                en: 'Warehouse Receipt Code',
+                cn: '入库单号',
+            },
+            pallet_number: {
+                th: 'หมายเลขพาเลท',
+                en: 'Pallet Number',
+                cn: '托盘编号',
+            },
+            sack_number: {
+                th: 'หมายเลขกระสอบ',
+                en: 'Sack Number',
+                cn: '麻袋编号',
+            },
+            weight: {
+                th: 'น้ำหนัก (Kg.)',
+                en: 'Weight (Kg.)',
+                cn: '重量 (公斤)',
+            },
+            cbm: {
+                th: 'CBM',
+                en: 'CBM',
+                cn: '立方米',
+            },
+        };
+
         this.dtOptions = {
             pagingType: 'full_numbers',
             serverSide: true,
             scrollX: true,
+            language: {
+                url: this.languageUrl,
+            },
             ajax: (dataTablesParameters: any, callback) => {
                 this._service
                     .datatableorderlist(dataTablesParameters)
@@ -257,19 +324,29 @@ export class DialogPoComponent implements OnInit {
                     className: 'w-10 text-center',
                 },
                 {
-                    title: 'รหัสใบรับเข้าคลัง',
+                    title: menuTitles.warehouse_receipt_code[this.langues],
                     data: function (row: any) {
-                        if(!row.delivery_order?.code){
+                        if (!row.delivery_order?.po_no) {
                             return '-';
                         }
-                        return row.delivery_order?.code;
+                        return row.delivery_order?.po_no;
                     },
                     className: 'text-center',
                 },
                 {
-                    title: 'หมายเลขพาเลท',
+                    title: menuTitles.pallet_number[this.langues],
                     data: function (row: any) {
-                        if(!row.pallet?.name){
+                        if (!row.pallet?.name) {
+                            return '-';
+                        }
+                        return row.pallet?.name;
+                    },
+                    className: 'text-center',
+                },
+                {
+                    title: menuTitles.sack_number[this.langues],
+                    data: function (row: any) {
+                        if (!row.sack?.name) {
                             return '-';
                         }
                         return row.sack?.name;
@@ -277,19 +354,9 @@ export class DialogPoComponent implements OnInit {
                     className: 'text-center',
                 },
                 {
-                    title: 'หมายเลขกระสอบ',
+                    title: menuTitles.weight[this.langues],
                     data: function (row: any) {
-                        if(!row.sack?.name){
-                            return '-';
-                        }
-                        return row.sack?.name;
-                    },
-                    className: 'text-center',
-                },
-                {
-                    title: 'น้ำหนัก (Kg.)',
-                    data: function (row: any) {
-                        if(!row.weight){
+                        if (!row.weight) {
                             return '-';
                         }
                         return row.weight;
@@ -297,9 +364,9 @@ export class DialogPoComponent implements OnInit {
                     className: 'text-center',
                 },
                 {
-                    title: 'CBM',
+                    title: menuTitles.cbm[this.langues],
                     data: function (row: any) {
-                        if(!row.cbm){
+                        if (!row.cbm) {
                             return '-';
                         }
                         return row.cbm;
@@ -327,7 +394,7 @@ export class DialogPoComponent implements OnInit {
         if (isSelectAll) {
             // เลือกทั้งหมด: เพิ่ม object ของทุกแถวใน multiSelect
             this.dataRow.forEach((row: any) => {
-                if (!this.multiSelect.some(item => item.id === row.id)) {
+                if (!this.multiSelect.some((item) => item.id === row.id)) {
                     this.multiSelect.push(row); // เพิ่ม object ถ้ายังไม่มีใน multiSelect
                 }
                 row.selected = true; // ตั้งค่า selected เป็น true
@@ -335,7 +402,9 @@ export class DialogPoComponent implements OnInit {
         } else {
             // ยกเลิกการเลือกทั้งหมด: ลบ object ของทุกแถวออกจาก multiSelect
             this.dataRow.forEach((row: any) => {
-                const index = this.multiSelect.findIndex(item => item.id === row.id);
+                const index = this.multiSelect.findIndex(
+                    (item) => item.id === row.id
+                );
                 if (index !== -1) {
                     this.multiSelect.splice(index, 1); // ลบ object ออกจาก multiSelect
                 }
@@ -350,7 +419,9 @@ export class DialogPoComponent implements OnInit {
             this.multiSelect.push(row);
         } else {
             // ลบ object ออกจาก multiSelect
-            const index = this.multiSelect.findIndex(item => item.id === row.id);
+            const index = this.multiSelect.findIndex(
+                (item) => item.id === row.id
+            );
             if (index !== -1) {
                 this.multiSelect.splice(index, 1); // ใช้ splice เพื่อลบค่าออก
             }

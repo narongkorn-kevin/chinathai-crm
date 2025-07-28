@@ -3,151 +3,166 @@
     <div class="flex flex-row justify-between pb-2 items-center">
       <div class="flex flex-col">
         <p class="md:text-sm font-medium tracking-tight leading-7 sm:leading-10 truncate">
-        รายการรวมพัสดุ
+          รายการรวมพัสดุ
         </p>
         <p class="md:text-2xl text-[#DF0B12] font-bold tracking-tight leading-7 sm:leading-10 truncate">
-        รายการพัสดุเข้าคลัง/PO
+          รายการพัสดุเข้าคลัง/PO
         </p>
       </div>
       <div class="flex space-x-2">
         <button class="w-[150px] h-[32px] border-2 rounded flex items-center justify-center space-x-2">
-            <mat-icon svgIcon="heroicons_outline:trash" class="text-gray-300 icon-size-4"></mat-icon>
-            <p class="text-gray-300 text-xs font-medium pt-[3px]">ลบรายการ PO</p>
+          <mat-icon svgIcon="feather:trash" class="text-gray-300 icon-size-4"></mat-icon>
+          <p class="text-gray-300 text-xs font-medium pt-[3px]">{{ 'buttons.delete' | transloco }} PO</p>
         </button>
         <button class="w-[150px] h-[32px] bg-[#DF0B12] rounded flex items-center justify-center space-x-2">
-            <mat-icon svgIcon="heroicons_outline:plus" class="text-white icon-size-4"></mat-icon>
-            <p class="text-white text-xs font-medium pt-[3px]">สร้างรายการ PO</p>
+          <mat-icon svgIcon="heroicons_outline:plus" class="text-white icon-size-4"></mat-icon>
+          <p class="text-white text-xs font-medium pt-[3px]">สร้างรายการ PO</p>
         </button>
       </div>
 
     </div>
     <div class="border-b-2 w-full my-5"></div>
     <div>
-        <div *ngIf="showFilters">
-          <p class="md:text-sm font-medium tracking-tight leading-7 sm:leading-10 truncate">ช่วงที่ทำการออกรายการ</p>
-          <div class="grid grid-cols-12 gap-8 mb-4">
-            <!-- ส่วนของวันที่และการค้นหา -->
-            <div class="col-span-2">
-              <mat-form-field class="w-full">
-                <input matInput [matDatepicker]="picker" placeholder="เลือกวันที่" class="border-2 rounded h-[32px]">
-                <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-                <mat-datepicker #picker></mat-datepicker>
-              </mat-form-field>
-            </div>
-            <div class="col-span-8">
-              <input class="border-2 rounded w-full h-[48px] px-2 text-sm placeholder:text-sm" placeholder="ค้นหาด้วย ใบรับเข้าคลัง">
-            </div>
-            <div class="col-span-2">
-              <button (click)="toggleFilters()" class="w-full h-[48px] border-2 border-[#DF0B12] rounded flex items-center justify-center space-x-2">
-                <mat-icon svgIcon="heroicons_outline:adjustments-horizontal" class="text-[#DF0B12] icon-size-4"></mat-icon>
-                <p class="text-[#DF0B12] text-xs font-medium pt-[3px]">ค้นหาโดยใช้ตัวกรอง</p>
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <!-- ตัวกรองขั้นสูง -->
-        <div *ngIf="showAdvancedFilters">
-          <p class="md:text-base font-medium tracking-tight leading-7 sm:leading-10 truncate">ตัวกรองขั้นสูง</p>
-          <div class="border-b-2 w-full my-5"></div>
-          <div class="grid grid-cols-8 gap-8">
-            <!-- ฟิลด์กรองต่างๆ -->
-            <div class="col-span-1">
-              <p class="md:text-sm font-medium tracking-tight leading-7 sm:leading-10 truncate">ช่วงวันเริ่มต้น</p>
-              <mat-form-field class="w-full">
-                <input matInput [matDatepicker]="picker_start" placeholder="เลือกวันที่" formControlName="date_start">
-                <mat-datepicker-toggle matSuffix [for]="picker_start"></mat-datepicker-toggle>
-                <mat-datepicker #picker_start></mat-datepicker>
+      <div *ngIf="showFilters">
+        <p class="md:text-sm font-medium tracking-tight leading-7 sm:leading-10 truncate">ช่วงที่ทำการออกรายการ</p>
+        <div class="grid grid-cols-12 gap-8 mb-4">
+          <!-- ส่วนของวันที่และการค้นหา -->
+          <div class="col-span-2">
+            <mat-form-field class="w-full">
+              <input matInput [matDatepicker]="picker" placeholder="เลือกวันที่" class="border-2 rounded h-[32px]">
+              <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+              <mat-datepicker #picker></mat-datepicker>
             </mat-form-field>
-            </div>
-            <div class="col-span-1">
-              <p class="md:text-sm font-medium tracking-tight leading-7 sm:leading-10 truncate">ช่วงวันสิ้นสุด</p>
-              <mat-form-field class="w-full">
-                <input matInput [matDatepicker]="picker_end" placeholder="เลือกวันที่" formControlName="date_end">
-                <mat-datepicker-toggle matSuffix [for]="picker_end"></mat-datepicker-toggle>
-                <mat-datepicker #picker_end></mat-datepicker>
-              </mat-form-field>
-            </div>
-            <div class="col-span-2">
-                <p class="md:text-sm font-medium tracking-tight leading-7 sm:leading-10 truncate">PO / Tracking</p>
-                  <input class="border-2 rounded w-full h-[48px] px-2 text-sm placeholder:text-sm" placeholder="ค้นหาด้วย PO / Tracking">
-            </div>
-            <div class="col-span-2">
-                <p class="md:text-sm font-medium tracking-tight leading-7 sm:leading-10 truncate">ลูกค้า</p>
-                <input class="border-2 rounded w-full h-[48px] px-2 text-sm placeholder:text-sm" placeholder="ค้นหาด้วย ลูกค้า">
-            </div>
-            <div class="col-span-2">
-                <p class="md:text-sm font-medium tracking-tight leading-7 sm:leading-10 truncate">Shipment</p>
-                <input class="border-2 rounded w-full h-[48px] px-2 text-sm placeholder:text-sm" placeholder="ค้นหาด้วย Shipment">
-            </div>
           </div>
-          <div class="grid grid-cols-10 gap-8 mb-4">
-            <!-- ฟิลด์กรองต่างๆ -->
-            <div class="col-span-2">
-                <p class="md:text-sm font-medium tracking-tight leading-7 sm:leading-10 truncate">โกดัง</p>
-                  <input class="border-2 rounded w-full h-[48px] px-2 text-sm placeholder:text-sm" placeholder="ค้นหาด้วย โกดัง">
-            </div>
-            <div class="col-span-2">
-                <p class="md:text-sm font-medium tracking-tight leading-7 sm:leading-10 truncate">ประเภทพัสดุ</p>
-                  <input class="border-2 rounded w-full h-[48px] px-2 text-sm placeholder:text-sm" placeholder="ค้นหาด้วย ประเภทพัสดุ">
-            </div>
-            <div class="col-span-2">
-                <p class="md:text-sm font-medium tracking-tight leading-7 sm:leading-10 truncate">ขนส่งโดย</p>
-                  <input class="border-2 rounded w-full h-[48px] px-2 text-sm placeholder:text-sm" placeholder="ค้นหาด้วย ขนส่งโดย">
-            </div>
-            <div class="col-span-2">
-                <p class="md:text-sm font-medium tracking-tight leading-7 sm:leading-10 truncate">สถานะ</p>
-                <input class="border-2 rounded w-full h-[48px] px-2 text-sm placeholder:text-sm" placeholder="ค้นหาด้วย สถานะ">
-            </div>
-            <div class="col-span-2">
-                <p class="md:text-sm font-medium tracking-tight leading-7 sm:leading-10 truncate">Packing List</p>
-                <input class="border-2 rounded w-full h-[48px] px-2 text-sm placeholder:text-sm" placeholder="ค้นหาด้วย Packing List">
-            </div>
+          <div class="col-span-8">
+            <input class="border-2 rounded w-full h-[48px] px-2 text-sm placeholder:text-sm"
+              placeholder="ค้นหาด้วย ใบรับเข้าคลัง">
           </div>
-          <div class="flex justify-end space-x-8 mb-4">
-            <button (click)="toggleFilters()" class="w-[96px] h-[48px] rounded flex items-center justify-center space-x-2">
-              <p class="text-[#DF0B12] text-xs font-medium pt-[3px]">ปิดตัวกรอง</p>
-            </button>
-            <button class="w-[164px] h-[48px] border-2 border-[#DF0B12] rounded flex items-center justify-center space-x-2">
-              <mat-icon svgIcon="heroicons_outline:adjustments-horizontal" class="text-[#DF0B12] icon-size-4"></mat-icon>
-              <p class="text-[#DF0B12] text-xs font-medium pt-[3px]">ล้างตั้งค่าตัวกรอง</p>
-            </button>
-            <button class="w-[96px] h-[48px] border-2 border-[#DF0B12] bg-[#DF0B12] rounded flex items-center justify-center space-x-2">
-              <mat-icon svgIcon="heroicons_outline:magnifying-glass" class="text-white icon-size-4"></mat-icon>
-              <p class="text-white text-xs font-medium pt-[3px]">ค้นหา</p>
+          <div class="col-span-2">
+            <button (click)="toggleFilters()"
+              class="w-full h-[48px] border-2 border-[#DF0B12] rounded flex items-center justify-center space-x-2">
+              <mat-icon svgIcon="heroicons_outline:adjustments-horizontal"
+                class="text-[#DF0B12] icon-size-4"></mat-icon>
+              <p class="text-[#DF0B12] text-xs font-medium pt-[3px]">{{ 'buttons.advancedFilter' | transloco }}</p>
             </button>
           </div>
-          <div class="border-b-2 w-full my-5"></div>
         </div>
+      </div>
+
+      <!-- ตัวกรองขั้นสูง -->
+      <div *ngIf="showAdvancedFilters">
+        <p class="md:text-base font-medium tracking-tight leading-7 sm:leading-10 truncate">{{ 'buttons.advancedFilter'
+          | transloco }}</p>
+        <div class="border-b-2 w-full my-5"></div>
+        <div class="grid grid-cols-8 gap-8">
+          <!-- ฟิลด์กรองต่างๆ -->
+          <div class="col-span-1">
+            <p class="md:text-sm font-medium tracking-tight leading-7 sm:leading-10 truncate">ช่วงวันเริ่มต้น</p>
+            <mat-form-field class="w-full">
+              <input matInput [matDatepicker]="picker_start" placeholder="เลือกวันที่" formControlName="date_start">
+              <mat-datepicker-toggle matSuffix [for]="picker_start"></mat-datepicker-toggle>
+              <mat-datepicker #picker_start></mat-datepicker>
+            </mat-form-field>
+          </div>
+          <div class="col-span-1">
+            <p class="md:text-sm font-medium tracking-tight leading-7 sm:leading-10 truncate">ช่วงวันสิ้นสุด</p>
+            <mat-form-field class="w-full">
+              <input matInput [matDatepicker]="picker_end" placeholder="เลือกวันที่" formControlName="date_end">
+              <mat-datepicker-toggle matSuffix [for]="picker_end"></mat-datepicker-toggle>
+              <mat-datepicker #picker_end></mat-datepicker>
+            </mat-form-field>
+          </div>
+          <div class="col-span-2">
+            <p class="md:text-sm font-medium tracking-tight leading-7 sm:leading-10 truncate">PO / Tracking</p>
+            <input class="border-2 rounded w-full h-[48px] px-2 text-sm placeholder:text-sm"
+              placeholder="ค้นหาด้วย PO / Tracking">
+          </div>
+          <div class="col-span-2">
+            <p class="md:text-sm font-medium tracking-tight leading-7 sm:leading-10 truncate">ลูกค้า</p>
+            <input class="border-2 rounded w-full h-[48px] px-2 text-sm placeholder:text-sm"
+              placeholder="ค้นหาด้วย ลูกค้า">
+          </div>
+          <div class="col-span-2">
+            <p class="md:text-sm font-medium tracking-tight leading-7 sm:leading-10 truncate">Shipment</p>
+            <input class="border-2 rounded w-full h-[48px] px-2 text-sm placeholder:text-sm"
+              placeholder="ค้นหาด้วย Shipment">
+          </div>
+        </div>
+        <div class="grid grid-cols-10 gap-8 mb-4">
+          <!-- ฟิลด์กรองต่างๆ -->
+          <div class="col-span-2">
+            <p class="md:text-sm font-medium tracking-tight leading-7 sm:leading-10 truncate">โกดัง</p>
+            <input class="border-2 rounded w-full h-[48px] px-2 text-sm placeholder:text-sm"
+              placeholder="ค้นหาด้วย โกดัง">
+          </div>
+          <div class="col-span-2">
+            <p class="md:text-sm font-medium tracking-tight leading-7 sm:leading-10 truncate">ประเภทพัสดุ</p>
+            <input class="border-2 rounded w-full h-[48px] px-2 text-sm placeholder:text-sm"
+              placeholder="ค้นหาด้วย ประเภทพัสดุ">
+          </div>
+          <div class="col-span-2">
+            <p class="md:text-sm font-medium tracking-tight leading-7 sm:leading-10 truncate">ขนส่งโดย</p>
+            <input class="border-2 rounded w-full h-[48px] px-2 text-sm placeholder:text-sm"
+              placeholder="ค้นหาด้วย ขนส่งโดย">
+          </div>
+          <div class="col-span-2">
+            <p class="md:text-sm font-medium tracking-tight leading-7 sm:leading-10 truncate">สถานะ</p>
+            <input class="border-2 rounded w-full h-[48px] px-2 text-sm placeholder:text-sm"
+              placeholder="ค้นหาด้วย สถานะ">
+          </div>
+          <div class="col-span-2">
+            <p class="md:text-sm font-medium tracking-tight leading-7 sm:leading-10 truncate">Packing List</p>
+            <input class="border-2 rounded w-full h-[48px] px-2 text-sm placeholder:text-sm"
+              placeholder="ค้นหาด้วย Packing List">
+          </div>
+        </div>
+        <div class="flex justify-end space-x-8 mb-4">
+          <button (click)="toggleFilters()"
+            class="w-[96px] h-[48px] rounded flex items-center justify-center space-x-2">
+            <p class="text-[#DF0B12] text-xs font-medium pt-[3px]">{{ 'buttons.closeFilter' | transloco }}</p>
+          </button>
+          <button
+            class="w-[164px] h-[48px] border-2 border-[#DF0B12] rounded flex items-center justify-center space-x-2">
+            <mat-icon svgIcon="heroicons_outline:adjustments-horizontal" class="text-[#DF0B12] icon-size-4"></mat-icon>
+            <p class="text-[#DF0B12] text-xs font-medium pt-[3px]">{{ 'buttons.clearFilter' | transloco }}</p>
+          </button>
+          <button
+            class="w-[96px] h-[48px] border-2 border-[#DF0B12] bg-[#DF0B12] rounded flex items-center justify-center space-x-2">
+            <mat-icon svgIcon="heroicons_outline:magnifying-glass" class="text-white icon-size-4"></mat-icon>
+            <p class="text-white text-xs font-medium pt-[3px]">{{ 'buttons.search' | transloco }}</p>
+          </button>
+        </div>
+        <div class="border-b-2 w-full my-5"></div>
+      </div>
     </div>
     <div class="flex justify-end space-x-8 mb-4">
-        <div>
-            <p class="text-xs font-medium">จำนวนรายการ</p>
-            <div class="w-[140px] h-[32px] bg-gray-100 border-2 rounded flex items-center justify-center"></div>
-        </div>
-        <div>
-            <p class="text-xs font-medium">น้ำหนักรวม (Kg.)</p>
-            <div class="w-[140px] h-[32px] bg-gray-100 border-2 rounded flex items-center justify-center"></div>
-        </div>
-        <div>
-            <p class="text-xs font-medium">CBM รวม</p>
-            <div class="w-[140px] h-[32px] bg-gray-100 border-2 rounded flex items-center justify-center"></div>
-        </div>
+      <div>
+        <p class="text-xs font-medium">จำนวนรายการ</p>
+        <div class="w-[140px] h-[32px] bg-gray-100 border-2 rounded flex items-center justify-center"></div>
+      </div>
+      <div>
+        <p class="text-xs font-medium">น้ำหนักรวม (Kg.)</p>
+        <div class="w-[140px] h-[32px] bg-gray-100 border-2 rounded flex items-center justify-center"></div>
+      </div>
+      <div>
+        <p class="text-xs font-medium">CBM รวม</p>
+        <div class="w-[140px] h-[32px] bg-gray-100 border-2 rounded flex items-center justify-center"></div>
+      </div>
     </div>
-    <table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" class="row-border hover whitespace-nowrap overflow-auto">
+    <table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger"
+      class="row-border hover whitespace-nowrap overflow-auto">
     </table>
   </div>
 </div>
 
 <ng-template #btNg let-data="adtData">
   <button mat-icon-button [matMenuTriggerFor]="menu">
-    <mat-icon class="icon-size-5 text-[#DF0B12]" [svgIcon]="'heroicons_outline:trash'"></mat-icon>
+    <mat-icon class="icon-size-5 text-[#DF0B12]" [svgIcon]="'feather:trash'"></mat-icon>
   </button>
   <mat-menu #menu="matMenu">
     <button mat-menu-item (click)="clickDelete(data.id)">
-      <mat-icon [svgIcon]="'heroicons_outline:trash'"></mat-icon>
-      <span>ลบ</span>
+      <mat-icon [svgIcon]="'feather:trash'"></mat-icon>
+      <span>{{ 'buttons.delete' | transloco }}</span>
     </button>
   </mat-menu>
 </ng-template>
-

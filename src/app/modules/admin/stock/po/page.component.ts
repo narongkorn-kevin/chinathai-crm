@@ -1,5 +1,11 @@
 import { CommonModule, DatePipe } from '@angular/common';
-import { AfterViewInit, ChangeDetectionStrategy, Component, OnInit, ViewChild } from '@angular/core';
+import {
+    AfterViewInit,
+    ChangeDetectionStrategy,
+    Component,
+    OnInit,
+    ViewChild,
+} from '@angular/core';
 import { DataTableDirective, DataTablesModule } from 'angular-datatables';
 import { PoService } from './po.service';
 import { ADTSettings } from 'angular-datatables/src/models/settings';
@@ -17,10 +23,13 @@ import { MatNativeDateModule } from '@angular/material/core';
 import { MatInputModule } from '@angular/material/input';
 import { HttpClient } from '@angular/common/http';
 
+import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
+
 @Component({
     selector: 'app-stock-po',
     standalone: true,
     imports: [
+        TranslocoModule,
         CommonModule,
         DataTablesModule,
         MatButtonModule,
@@ -48,28 +57,22 @@ export class PoComponent implements OnInit, AfterViewInit {
     showAdvancedFilters: boolean = false;
     showFilters: boolean = true;
 
-
-
     constructor(
         private http: HttpClient,
         private _service: PoService,
         private fuseConfirmationService: FuseConfirmationService,
         private toastr: ToastrService,
         public dialog: MatDialog,
-        private datePipe: DatePipe,
-    ) {
-
-    }
+        private datePipe: DatePipe
+    ) {}
     ngOnInit(): void {
-        setTimeout(() =>
-            this.loadTable());
-
+        setTimeout(() => this.loadTable());
     }
 
     toggleFilters() {
         this.showAdvancedFilters = !this.showAdvancedFilters;
         this.showFilters = !this.showFilters;
-      }
+    }
 
     ngAfterViewInit() {
         setTimeout(() => {
@@ -85,16 +88,16 @@ export class PoComponent implements OnInit, AfterViewInit {
     loadTable(): void {
         this.dtOptions = {
             pagingType: 'full_numbers',
-            serverSide: false,  // Set to false because we are loading client-side data
+            serverSide: false, // Set to false because we are loading client-side data
             ajax: (dataTablesParameters: any, callback) => {
                 this.http.get('assets/data/po.json').subscribe({
                     next: (resp: any) => {
                         callback({
                             recordsTotal: resp.length,
                             recordsFiltered: resp.length,
-                            data: resp
+                            data: resp,
                         });
-                    }
+                    },
                 });
             },
             columns: [
@@ -104,19 +107,19 @@ export class PoComponent implements OnInit, AfterViewInit {
                     className: 'text-center',
                     render: (data, type, row) => {
                         return `<input type="checkbox" class="form-checkbox" />`;
-                    }
+                    },
                 },
                 {
                     title: '#',
                     data: 'no',
-                    className: 'w-15 text-center'
+                    className: 'w-15 text-center',
                 },
                 {
                     title: 'วันที่เข้าโกดัง',
                     data: 'createdAt',
                     ngPipeInstance: this.datePipe,
                     ngPipeArgs: ['yyyy-MM-dd'],
-                    className: 'text-center'
+                    className: 'text-center',
                 },
                 {
                     title: 'ใบรับเข้าคลัง',
@@ -124,57 +127,57 @@ export class PoComponent implements OnInit, AfterViewInit {
                     className: 'text-center',
                     render: (data, type, row) => {
                         return `<a href="/po-detail" class="text-[#DF0B12] hover:font-bold">${data}</a>`;
-                    }
+                    },
                 },
                 {
                     title: 'ลูกค้า',
                     data: 'customer',
-                    className: 'text-center'
+                    className: 'text-center',
                 },
                 {
                     title: 'Shipment',
                     data: 'shipment',
-                    className: 'text-center'
+                    className: 'text-center',
                 },
                 {
                     title: 'ขนส่งโดย',
                     data: 'delivery',
-                    className: 'text-center'
+                    className: 'text-center',
                 },
                 {
                     title: 'ประเภท',
                     data: 'type',
-                    className: 'text-center'
+                    className: 'text-center',
                 },
                 {
                     title: 'จำนวนลัง',
                     data: 'qty',
-                    className: 'text-center'
+                    className: 'text-center',
                 },
                 {
                     title: 'น้ำหนัก',
                     data: 'weight',
-                    className: 'text-center'
+                    className: 'text-center',
                 },
                 {
                     title: 'CBM',
                     data: 'cbm',
-                    className: 'text-center'
+                    className: 'text-center',
                 },
                 {
                     title: 'ค่าใช้จ่าย',
                     data: 'pay',
-                    className: 'text-center'
+                    className: 'text-center',
                 },
                 {
                     title: 'สถานะ',
                     data: 'status',
-                    className: 'text-center'
+                    className: 'text-center',
                 },
                 {
                     title: 'Packinng Code',
                     data: 'packing',
-                    className: 'text-center'
+                    className: 'text-center',
                 },
                 {
                     title: '',
@@ -183,18 +186,15 @@ export class PoComponent implements OnInit, AfterViewInit {
                     ngTemplateRef: {
                         ref: this.btNg,
                     },
-                    className: 'text-center'
+                    className: 'text-center',
                 },
             ],
             headerCallback: (thead, data, start, end, display) => {
                 // Apply gray background to header
                 $(thead).find('th').css('background-color', '#f2f2f2');
-            }
-        }
+            },
+        };
     }
-
-
-
 
     rerender(): void {
         this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
@@ -203,4 +203,3 @@ export class PoComponent implements OnInit, AfterViewInit {
         });
     }
 }
-

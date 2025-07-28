@@ -1,41 +1,41 @@
 <div class="flex flex-col flex-auto min-w-0">
     <div class="flex-auto  sm:p-10 bg-card m-4 p-4 rounded-md">
-        <div class="flex flex-row justify-between pb-2 my-5">
+        <div class="flex flex-row justify-between pb-2 my-5 gap-2">
             <div class="flex flex-col">
                 <div class="flex space-x-2">
-                    <button class="md:text-xl font-medium tracking-tight leading-7 sm:leading-10 truncate"
+                    <button class="md:text-sm font-medium tracking-tight leading-7 sm:leading-10 truncate"
                         routerLinkActive="router-link-active">
-                        รายการรวมพัสดุ
+                        {{ 'sack.title.package_summary_list' | transloco }}
                     </button>
                 </div>
                 <p class="md:text-2xl text-[#DF0B12] font-bold tracking-tight leading-7 sm:leading-10 truncate">
-                    กระสอบ
+                    {{ 'sack.title.sack' | transloco }}
             </div>
-            <div class="flex ml-auto space-x-4">
+            <div class="flex flex-col md:flex-row ml-auto gap-2">
                 <button mat-flat-button [color]="'warn'" (click)="opendialogdelete()"
                     [disabled]="!this.multiSelect.length">
-                    <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:trash'"></mat-icon>
-                    <span class="ml-2">ลบรายการ</span>
+                    <mat-icon class="icon-size-5" [svgIcon]="'feather:trash'"></mat-icon>
+                    <span class="ml-2">{{ 'buttons.delete_entry' | transloco }}</span>
                 </button>
                 <button mat-flat-button [color]="'primary'" (click)="openForm()">
                     <mat-icon class="icon-size-5 text-white" [svgIcon]="'heroicons_solid:plus'"></mat-icon>
-                    <span class="ml-2">เพิ่มรายการ</span>
+                    <span class="ml-2">{{ 'buttons.addItem' | transloco }}</span>
                 </button>
                 <ng-template #optionsMenu>
                     <div class="manage-menu bg-primary" cdkMenu>
                         <button class="manage-menu-item text-white" (click)="openForm()" cdkMenuItem>
                             <mat-icon class="icon-size-5 text-white" [svgIcon]="'heroicons_solid:plus'"></mat-icon>
-                            <span class="ml-2">เพิ่มรายการ</span>
+                            <span class="ml-2">{{ 'buttons.addItem' | transloco }}</span>
                         </button>
                         <button class="manage-menu-item text-white" (click)="openDialog()" cdkMenuItem>
                             <mat-icon class="icon-size-5 text-white"
                                 [svgIcon]="'heroicons_solid:square-2-stack'"></mat-icon>
-                            <span class="ml-2">จ่ายหน้าผู้รับและผู้ส่ง</span>
+                            <span class="ml-2">{{ 'buttons.addressManagement' | transloco }}</span>
                         </button>
                         <button class="manage-menu-item text-white" (click)="openFormSetting()" cdkMenuItem>
                             <mat-icon class="icon-size-5 text-white"
                                 [svgIcon]="'heroicons_solid:cog-6-tooth'"></mat-icon>
-                            <span class="ml-2">ตั้งค่าขนานมาตรฐาน</span>
+                            <span class="ml-2">{{ 'buttons.standardSettings' | transloco }}</span>
                         </button>
                     </div>
                 </ng-template>
@@ -43,29 +43,29 @@
                 <button [cdkMenuTriggerFor]="menu" mat-flat-button class="!text-white" [color]="'primary'">
                     <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:shopping-bag'"></mat-icon>
                     <div class="flex items-center gap-2">
-                        <span class="ml-2"> การจัดการข้อมูล </span>
+                        <span class="ml-2"> {{ 'buttons.dataManagement' | transloco }} </span>
                         <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:chevron-up'"></mat-icon>
                     </div>
                 </button>
 
                 <ng-template #menu>
                     <div class="manage-menu bg-primary" cdkMenu>
-                        <button class="manage-menu-item text-white" cdkMenuItem>
+                        <button class="manage-menu-item text-white" cdkMenuItem (click)="exportData('copy')">
                             <mat-icon class="icon-size-5 text-white"
                                 [svgIcon]="'heroicons_solid:document-duplicate'"></mat-icon>
                             <span class="ml-2">Copy to Clipboard</span>
                         </button>
-                        <button class="manage-menu-item text-white" cdkMenuItem>
+                        <button class="manage-menu-item text-white" cdkMenuItem (click)="exportData('csv')">
                             <mat-icon class="icon-size-5 text-white"
                                 [svgIcon]="'heroicons_solid:table-cells'"></mat-icon>
                             <span class="ml-2">CSV</span>
                         </button>
-                        <button class="manage-menu-item text-white" cdkMenuItem>
+                        <button class="manage-menu-item text-white" cdkMenuItem (click)="exportData('excel')">
                             <mat-icon class="icon-size-5 text-white"
                                 [svgIcon]="'heroicons_solid:table-cells'"></mat-icon>
                             <span class="ml-2">Excel</span>
                         </button>
-                        <button class="manage-menu-item text-white" cdkMenuItem>
+                        <button class="manage-menu-item text-white" cdkMenuItem (click)="exportData('print')">
                             <mat-icon class="icon-size-5 text-white" [svgIcon]="'heroicons_solid:printer'"></mat-icon>
                             <span class="ml-2">Print</span>
                         </button>
@@ -73,83 +73,80 @@
                 </ng-template>
             </div>
         </div>
-        <div class="grid grid-row-2 md:grid-cols-4 gap-2 w-full rounded-lg border-gray-500 border-2 p-4 mb-4">
-            <div class="col-span-4 text-3xl font-bold">
-                <diV>ภาพรวมพาเลท ทางรถ</diV>
+        <div class="grid grid-col-1 md:grid-cols-4 gap-2 w-full rounded-lg border-gray-500 border-2 p-4 mb-4">
+            <div class="col-span-1 md:col-span-4 text-xl md:text-3xl font-bold">
+                <div>{{ 'sack.road_pallet_overview' | transloco }}</div>
                 <mat-divider class="mb-4"></mat-divider>
             </div>
             <div class="p-4 flex w-full items-center">
                 <img class="flex w-14" src="assets/images/item/cart.png" alt="Logo image">
-                <div class="text-lg font-normal mx-4 w-full">จำนวนพาเรท</div>
+                <div class="text-lg font-normal mx-4 w-full">{{ 'sack.total_pallets' | transloco }}</div>
                 <div class="text-right w-full">
-                    <div class="text-4xl font-bold text-blue-95">{{ sumdashboard?.pallet_summary?.truck?.pallet_count |
+                    <div class="text-4xl font-bold text-blue-95">{{ dashboard_sack?.road?.total_pallets |
                         number }}</div>
                 </div>
             </div>
             <div class="p-4 flex w-full items-center">
                 <img class="flex w-14" src="assets/images/item/boxcheck.png" alt="Logo image">
-                <div class="text-lg font-normal mx-4  w-full">จำนวนพัสดุรวม</div>
+                <div class="text-lg font-normal mx-4  w-full">{{ 'sack.total_packages' | transloco }}</div>
                 <div class="text-right w-full">
-                    <div class="text-4xl font-bold text-blue-950">{{ sumdashboard?.pallet_summary.truck.total_packages |
+                    <div class="text-4xl font-bold text-blue-950">{{ dashboard_sack?.road?.total_packages |
                         number }}
                     </div>
                 </div>
             </div>
             <div class="p-4 flex w-full items-center">
                 <img class="flex w-14" src="assets/images/item/kg.png" alt="Logo image">
-                <div class="text-lg font-normal mx-4  w-full">จำนวนน้ำหนักรวม</div>
+                <div class="text-lg font-normal mx-4  w-full">{{ 'sack.total_weight_kg' | transloco }}</div>
                 <div class="text-right w-full">
-                    <div class="text-4xl font-bold text-blue-950">{{ sumdashboard?.pallet_summary.truck.total_weight_kg
+                    <div class="text-4xl font-bold text-blue-950">{{ dashboard_sack?.road?.total_weight_kg
                         | number }}
                     </div>
                 </div>
             </div>
             <div class="p-4 flex w-full items-center">
                 <img class="flex w-14" src="assets/images/item/cube.png" alt="Logo image">
-                <div class="text-lg font-normal mx-4  w-full">CBM รวม</div>
+                <div class="text-lg font-normal mx-4  w-full">{{ 'sack.total_cbm' | transloco }}</div>
                 <div class="text-right w-full">
-                    <div class="text-4xl font-bold text-blue-950">{{ sumdashboard?.pallet_summary.truck.total_cbm |
-                        number }}</div>
+                    <div class="text-4xl font-bold text-blue-950">{{ dashboard_sack?.road?.total_cbm | number : '1.4' }}</div>
                 </div>
             </div>
         </div>
-        <div class="grid grid-row-2 md:grid-cols-4 gap-2 w-full rounded-lg border-gray-500 border-2 p-4 mb-4">
-            <div class="col-span-4 text-3xl font-bold">
-                <diV>ภาพรวมพาเลท ทางเรือ</diV>
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-2 w-full rounded-lg border-gray-500 border-2 p-4 mb-4">
+            <div class="col-span-1 md:col-span-4 text-xl md:text-3xl font-bold">
+                <div>{{ 'sack.sea_pallet_overview' | transloco }}</div>
                 <mat-divider class="mb-4"></mat-divider>
             </div>
             <div class="p-4 flex w-full items-center">
                 <img class="flex w-14" src="assets/images/item/cart.png" alt="Logo image">
-                <div class="text-lg font-normal mx-4  w-full">จำนวนพาเรท</div>
+                <div class="text-lg font-normal mx-4  w-full">{{ 'sack.total_pallets' | transloco }}</div>
                 <div class="text-right w-full">
-                    <div class="text-4xl font-bold text-blue-95">{{ sumdashboard?.pallet_summary.ship.pallet_count |
-                        number }}</div>
+                    <div class="text-4xl font-bold text-blue-95">{{ dashboard_sack?.sea?.total_pallets | number  }}</div>
                 </div>
             </div>
             <div class="p-4 flex w-full items-center">
                 <img class="flex w-14" src="assets/images/item/boxcheck.png" alt="Logo image">
-                <div class="text-lg font-normal mx-4  w-full">จำนวนพัสดุรวม</div>
+                <div class="text-lg font-normal mx-4  w-full">{{ 'sack.total_packages' | transloco }}</div>
                 <div class="text-right w-full">
-                    <div class="text-4xl font-bold text-blue-950">{{ sumdashboard?.pallet_summary.ship.total_packages |
+                    <div class="text-4xl font-bold text-blue-950">{{ dashboard_sack?.sea?.total_packages |
                         number }}
                     </div>
                 </div>
             </div>
             <div class="p-4 flex w-full items-center">
                 <img class="flex w-14" src="assets/images/item/kg.png" alt="Logo image">
-                <div class="text-lg font-normal mx-4  w-full">จำนวนน้ำหนักรวม</div>
+                <div class="text-lg font-normal mx-4  w-full">{{ 'sack.total_weight_kg' | transloco }}</div>
                 <div class="text-right w-full">
-                    <div class="text-4xl font-bold text-blue-950">{{ sumdashboard?.pallet_summary.ship.total_weight_kg |
+                    <div class="text-4xl font-bold text-blue-950">{{ dashboard_sack?.sea?.total_weight_kg |
                         number }}
                     </div>
                 </div>
             </div>
             <div class="p-4 flex w-full items-center">
                 <img class="flex w-14" src="assets/images/item/cube.png" alt="Logo image">
-                <div class="text-lg font-normal mx-4  w-full">CBM รวม</div>
+                <div class="text-lg font-normal mx-4  w-full">{{ 'sack.total_cbm' | transloco }}</div>
                 <div class="text-right w-full">
-                    <div class="text-4xl font-bold text-blue-950">{{ sumdashboard?.pallet_summary.ship.total_cbm |
-                        number }}</div>
+                    <div class="text-4xl font-bold text-blue-950">{{ dashboard_sack?.sea?.total_cbm | number : '1.4' }}</div>
                 </div>
             </div>
         </div>
@@ -157,41 +154,40 @@
             <form *ngIf="!showFilterForm" [formGroup]="filterForm">
                 <div class="flex flex-col md:flex-row w-full gap-2 items-end">
                     <mat-form-field class="w-full" [ngClass]="formFieldHelpers">
-                        <mat-label>วันที่เข้าโกดัง</mat-label>
-                        <input matInput [matDatepicker]="picker" formControlName="date">
+                        <mat-label>{{ 'sack.warehouse_entry_date' | transloco }}</mat-label>
+                        <mat-date-range-input [rangePicker]="picker">
+                            <input matStartDate formControlName="start_date">
+                            <input matEndDate formControlName="end_date">
+                        </mat-date-range-input>
                         <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-                        <mat-datepicker #picker></mat-datepicker>
+                        <mat-date-range-picker #picker></mat-date-range-picker>
                     </mat-form-field>
                     <div class="w-full">
-                        <mat-form-field [ngClass]="formFieldHelpers" class="w-full" >
+                        <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
                             <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:magnifying-glass'"></mat-icon>
-                            <input matInput [placeholder]="'ค้นหาด้วยรหัสกระสอบ'">
+                            <input matInput formControlName="code" class="ml-2" [placeholder]="'sack.search_by_sack_code' | transloco">
                         </mat-form-field>
                     </div>
                     <div>
                         <button mat-flat-button [color]="'primary'" (click)="openfillter()" class="mb-5">
                             <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:bars-3'"></mat-icon>
-                            <span class="ml-2">ค้นหาโดยใช้ตัวกรอง</span>
+                            <span class="ml-2">{{ 'buttons.advancedFilter' | transloco }}</span>
                         </button>
                     </div>
-                    <div>
-                        <button mat-flat-button [color]="'primary'" class="mb-5">
-                            <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:cog-6-tooth'"></mat-icon>
-                        </button>
-                    </div>
+                    
                 </div>
             </form>
             <form [formGroup]="filterForm" class="p-4 rounded-md"
                 [@slideToggleFilter]="showFilterForm ? 'open' : 'closed'">
                 <div>
                     <h2 class="text-xl font-extrabold leading-7 tracking-tight truncate md:text-xl sm:leading-10">
-                        ตัวกรองขั้นสูง
+                        {{ 'lables.advanced_filter' | transloco }}
                     </h2>
                     <mat-divider></mat-divider>
                 </div>
                 <div class="grid md:grid-cols-3 md:flex-row w-full gap-x-2 mt-2">
                     <mat-form-field class="w-full" [ngClass]="formFieldHelpers">
-                        <mat-label>ช่วงวันเริ่มต้น</mat-label>
+                        <mat-label>{{ 'sack.start_date_range' | transloco }}</mat-label>
                         <mat-date-range-input [rangePicker]="picker">
                             <input matStartDate formControlName="start_date">
                             <input matEndDate formControlName="end_date">
@@ -201,39 +197,40 @@
                     </mat-form-field>
                     <div class="w-full">
                         <mat-form-field class="w-full" [ngClass]="formFieldHelpers">
-                            <mat-label>รหัสพาเลท</mat-label>
+                            <mat-label>{{ 'sack.pallet_code' | transloco }}</mat-label>
                             <input matInput formControlName="code">
                         </mat-form-field>
                     </div>
                     <div class="w-full">
                         <mat-form-field class="w-full" [ngClass]="formFieldHelpers">
-                            <mat-label>ขนส่งโดย</mat-label>
-                            <mat-select formControlName="shipment">
-                                <mat-option value="Car">ขนส่งทางรถ</mat-option>
-                                <mat-option value="Ship">ขนส่งทางเรือ</mat-option>
+                            <mat-label>{{ 'sack.car_transport' | transloco }}</mat-label>
+                            <mat-select formControlName="shipped_by">
+                                <mat-option value="Car">{{ 'sack.car_transport' | transloco }}</mat-option>
+                                <mat-option value="Ship">{{ 'sack.ship_transport' | transloco }}</mat-option>
+                                <mat-option value="Train">{{ 'pallet.train_transport' | transloco }}</mat-option>
                             </mat-select>
                         </mat-form-field>
                     </div>
                 </div>
                 <div class="w-full flex justify-end gap-2">
                     <button mat-flat-button [color]="'primary'" (click)="openfillter()">
-                        <span class="ml-2">ปิดตัวกรอง</span>
+                        <span class="ml-2">{{ 'buttons.closeFilter' | transloco }}</span>
                     </button>
                     <button mat-flat-button [color]="'primary'" (click)="clearFilter()">
                         <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:bars-3'"></mat-icon>
-                        <span class="ml-2">ล้างตั้งค่าตัวกรอง</span>
+                        <span class="ml-2">{{ 'buttons.clearFilter' | transloco }}</span>
                     </button>
                     <button mat-flat-button [color]="'primary'" (click)="applyFilter()">
                         <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:magnifying-glass'"></mat-icon>
-                        <span class="ml-2">ค้นหา</span>
+                        <span class="ml-2">{{ 'buttons.search' | transloco }}</span>
                     </button>
                 </div>
             </form>
-            <button class="mb-2" mat-flat-button [color]="'accent'" (click)="toggleSelectAll(!isAllSelected)">
-                {{ isAllSelected ? 'Unselect All' : 'Select All' }}
+            <button class="my-2 " mat-flat-button [color]="'primary'" (click)="toggleSelectAll(!isAllSelected)">
+                {{ isAllSelected ? ('buttons.deselectAll' | transloco) : ('buttons.selectAll' | transloco) }}
             </button>
             <div class="overflow-x-auto whitespace-nowrap mt-2 max-w-full">
-                <table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger"
+                <table #tableElement datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger"
                     class="table w-full bg-white row-border hover">
                 </table>
             </div>
@@ -242,17 +239,18 @@
 
     <ng-template #btNg let-data="adtData">
         <button mat-icon-button [matMenuTriggerFor]="menu">
-            <mat-icon class="icon-size-5 text-[#DF0B12]" [svgIcon]="'heroicons_outline:trash'"></mat-icon>
+            <mat-icon class="icon-size-5 text-[#DF0B12]" [svgIcon]="'feather:trash'"></mat-icon>
         </button>
         <mat-menu #menu="matMenu">
             <button mat-menu-item (click)="clickDelete(data.id)">
-                <mat-icon [svgIcon]="'heroicons_outline:trash'"></mat-icon>
-                <span>ลบ</span>
+                <mat-icon [svgIcon]="'feather:trash'"></mat-icon>
+                <span>{{ 'buttons.delete' | transloco }}</span>
             </button>
         </mat-menu>
     </ng-template>
     <ng-template #checkbox let-data="adtData">
-        <mat-checkbox [checked]="data.selected" (change)="onCheckboxChange($event, data.id)"></mat-checkbox>
+        <mat-checkbox class="text-white" [color]="'primary'" [checked]="data.selected"
+            (change)="onCheckboxChange($event, data.id)"></mat-checkbox>
     </ng-template>
     <ng-template #gotoRoute let-data="adtData">
         <a class="text-[#DF0B12CC]" [routerLink]="['/sack/view', data.id]"

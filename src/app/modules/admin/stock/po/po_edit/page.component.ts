@@ -1,5 +1,12 @@
 import { CommonModule, DatePipe } from '@angular/common';
-import { AfterViewInit, ChangeDetectionStrategy, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import {
+    AfterViewInit,
+    ChangeDetectionStrategy,
+    Component,
+    OnDestroy,
+    OnInit,
+    ViewChild,
+} from '@angular/core';
 import { DataTableDirective, DataTablesModule } from 'angular-datatables';
 import { Subject } from 'rxjs';
 import { MatDividerModule } from '@angular/material/divider';
@@ -13,23 +20,26 @@ import { Router } from '@angular/router';
 import { MatTabsModule } from '@angular/material/tabs';
 import { PoService } from '../po.service';
 import { ADTSettings } from 'angular-datatables/src/models/settings';
-import { DetailComponent } from "./detail/page.component";
-import { BarcodeComponent } from "./barcode/page.component";
+import { DetailComponent } from './detail/page.component';
+import { BarcodeComponent } from './barcode/page.component';
+
+import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 
 @Component({
     selector: 'app-stock-po-edit',
     standalone: true,
     imports: [
-    CommonModule,
-    DataTablesModule,
-    MatButtonModule,
-    MatMenuModule,
-    MatDividerModule,
-    MatIconModule,
-    MatTabsModule,
-    DetailComponent,
-    BarcodeComponent
-],
+        TranslocoModule,
+        CommonModule,
+        DataTablesModule,
+        MatButtonModule,
+        MatMenuModule,
+        MatDividerModule,
+        MatIconModule,
+        MatTabsModule,
+        DetailComponent,
+        BarcodeComponent,
+    ],
     templateUrl: './page.component.html',
     styleUrls: ['./page.component.scss'],
     changeDetection: ChangeDetectionStrategy.Default,
@@ -43,7 +53,8 @@ export class PoEditComponent implements OnInit, AfterViewInit, OnDestroy {
     dtOptions_3: any = {};
     dtTrigger_3: Subject<ADTSettings> = new Subject<ADTSettings>();
 
-    @ViewChild(DataTableDirective, { static: false }) dtElement: DataTableDirective;
+    @ViewChild(DataTableDirective, { static: false })
+    dtElement: DataTableDirective;
     selectedTab: string = 'รายละเอียดใบรับเข้าคลัง/PO';
 
     constructor(
@@ -52,11 +63,10 @@ export class PoEditComponent implements OnInit, AfterViewInit, OnDestroy {
         private _service: PoService,
         public dialog: MatDialog,
         private datePipe: DatePipe,
-        private _router: Router,
-    ) { }
+        private _router: Router
+    ) {}
 
-    ngOnInit(): void {
-    }
+    ngOnInit(): void {}
 
     ngAfterViewInit(): void {
         // setTimeout(() => {
@@ -82,23 +92,23 @@ export class PoEditComponent implements OnInit, AfterViewInit, OnDestroy {
                         callback({
                             recordsTotal: resp.meta.totalItems,
                             recordsFiltered: resp.meta.totalItems,
-                            data: resp.data
+                            data: resp.data,
                         });
-                    }
-                })
+                    },
+                });
             },
             columns: [
                 {
                     title: '#',
                     data: 'no',
-                    className: 'w-15 text-center'
+                    className: 'w-15 text-center',
                 },
                 {
                     title: 'วันที่เข้าโกดัง',
                     data: 'createdAt',
                     ngPipeInstance: this.datePipe,
                     ngPipeArgs: ['yyyy-MM-dd'],
-                    className: 'text-center'
+                    className: 'text-center',
                 },
                 {
                     title: 'ใบรับเข้าคลัง',
@@ -106,9 +116,9 @@ export class PoEditComponent implements OnInit, AfterViewInit, OnDestroy {
                     className: 'text-center',
                     render: (data, type, row) => {
                         return `<a href="/po-detail" class="text-[#DF0B12] hover:font-bold">${data}</a>`;
-                    }
-                }
-            ]
+                    },
+                },
+            ],
         };
     }
 
@@ -122,58 +132,58 @@ export class PoEditComponent implements OnInit, AfterViewInit, OnDestroy {
                         callback({
                             recordsTotal: resp.meta.totalItems,
                             recordsFiltered: resp.meta.totalItems,
-                            data: resp.data
+                            data: resp.data,
                         });
-                    }
+                    },
                 });
             },
             columns: [
                 {
                     title: 'รูปสินค้า',
                     data: 'no',
-                    className: 'w-15 text-center'
+                    className: 'w-15 text-center',
                 },
                 {
                     title: 'ประเภท',
                     data: 'change',
-                    className: 'text-center'
+                    className: 'text-center',
                 },
                 {
                     title: 'ชื่อผลิตภัณฑ์',
                     data: 'cash',
-                    className: 'text-center'
+                    className: 'text-center',
                 },
                 {
                     title: 'รูปแบบบรรจุภัณฑ์',
                     data: 'cash',
-                    className: 'text-center'
+                    className: 'text-center',
                 },
                 {
                     title: 'โลโก้',
                     data: 'cash',
-                    className: 'text-center'
+                    className: 'text-center',
                 },
                 {
                     title: 'จำนวนลัง',
                     data: 'cash',
-                    className: 'text-center'
+                    className: 'text-center',
                 },
                 {
                     title: 'จำนวนชิ้น',
                     data: 'cash',
-                    className: 'text-center'
+                    className: 'text-center',
                 },
                 {
                     title: 'น้ำหนัก',
                     data: 'cash',
-                    className: 'text-center'
+                    className: 'text-center',
                 },
                 {
                     title: 'CBM',
                     data: 'cash',
-                    className: 'text-center'
-                }
-            ]
+                    className: 'text-center',
+                },
+            ],
         };
     }
 
@@ -188,43 +198,43 @@ export class PoEditComponent implements OnInit, AfterViewInit, OnDestroy {
                         callback({
                             recordsTotal: resp.meta.totalItems,
                             recordsFiltered: resp.meta.totalItems,
-                            data: resp.data
+                            data: resp.data,
                         });
-                    }
+                    },
                 });
             },
             columns: [
                 {
                     title: '#',
                     data: 'no',
-                    className: 'w-15 text-center'
+                    className: 'w-15 text-center',
                 },
                 {
                     title: 'Tracking',
                     data: 'change',
-                    className: 'text-center'
+                    className: 'text-center',
                 },
                 {
                     title: 'Cargo in',
                     data: 'cash',
-                    className: 'text-center'
+                    className: 'text-center',
                 },
                 {
                     title: 'Cargo out',
                     data: 'cash',
-                    className: 'text-center'
+                    className: 'text-center',
                 },
                 {
                     title: 'Cargo Thai',
                     data: 'cash',
-                    className: 'text-center'
+                    className: 'text-center',
                 },
                 {
                     title: 'Status',
                     data: 'cash',
-                    className: 'text-center'
-                }
-            ]
+                    className: 'text-center',
+                },
+            ],
         };
     }
 

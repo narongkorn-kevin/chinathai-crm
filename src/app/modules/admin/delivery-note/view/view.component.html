@@ -1,91 +1,128 @@
 <div class="flex flex-col flex-auto justify-start items-center w-full">
     <div class="w-full flex-col justify-between items-center flex overflow-hidden">
         <div class="w-full flex-col justify-start items-start flex">
-            <div class="w-full px-10 pt-5 pb-2.5 bg-white justify-between items-center flex">
+            <div class="w-full px-4 md:px-10 pt-5 pb-2.5 bg-white justify-between items-center flex">
                 <div class="flex flex-col">
                     <div class="flex space-x-2">
-                        <button class="md:text-xl font-medium tracking-tight leading-7 sm:leading-10 truncate"
+                        <button class="md:text-sm font-medium tracking-tight leading-7 sm:leading-10 truncate"
                             [routerLink]="['/delivery-note']" routerLinkActive="router-link-active">
-                            เอกสาร
+                            {{ 'delivery_note.document' | transloco }}
                         </button>
                         <p class="md:text-sm font-medium tracking-tight leading-7 sm:leading-10 truncate">></p>
                         <button
                             class="md:text-sm font-medium tracking-tight leading-7 sm:leading-10 truncate text-[#DF0B12]"
                             [routerLink]="['/delivery-note']" routerLinkActive="router-link-active">
-                            ใบส่งของ
+                            {{ 'delivery_note.title' | transloco }}
                         </button>
                     </div>
 
                     <p class="md:text-2xl text-[#DF0B12] font-bold tracking-tight leading-7 sm:leading-10 truncate">
-                        หมายเลขจัดส่ง: {{ data?.code }}
+                        {{ 'delivery_note.view.delivery_number' | transloco }}: {{ data?.code }}
                     </p>
                 </div>
-                <div class="justify-end items-center gap-2 flex">
-                    <button mat-flat-button [color]="'warm'" (click)="print()">
-                        <mat-icon [svgIcon]="'heroicons_solid:trash'"></mat-icon>
-                        <span class="ml-2">พิมพ์</span>
+                <div class="gap-2 flex flex-col md:flex-row">
+                    <button mat-flat-button [color]="'warn'" (click)="print()">
+                        <mat-icon [svgIcon]="'feather:printer'"></mat-icon>
+                        <span class="ml-2">{{ 'delivery_note.view.print' | transloco }}</span>
                     </button>
                     <button mat-flat-button [color]="'primary'" (click)="edit()">
-                        <mat-icon [svgIcon]="'heroicons_solid:pencil-square'" class=""></mat-icon>
-                        <span class="ml-2">แก้ไข</span>
+                        <mat-icon [svgIcon]="'mat_outline:edit_note'" class=""></mat-icon>
+                        <span class="ml-2">{{ 'buttons.edit' | transloco }}</span>
                     </button>
                 </div>
             </div>
-            <div class="w-full px-10 flex flex-col gap-2 bg-white">
-                <div class="grid grid-cols-2 lg:grid-cols-4 gap-2 w-full mb-4">
-                    <div>
-                        <h2 class="font-semibold text-lg">รายละเอียดใบส่งของ</h2>
-                    </div>
+            <div class="w-full px-4 md:px-10 flex flex-col gap-2 bg-white pb-10">
+                <mat-divider class="my-2"></mat-divider>
+                <div class="flex flex-row md:flex-col">
+                    <div class="flex flex-col md:grid md:grid-cols-4 gap-2 w-full mb-4">
+                        <div>
+                            <h2 class="font-semibold text-lg">{{ 'delivery_note.view.details_title' | transloco }}</h2>
+                        </div>
 
-                    <div class="flex flex-col w-full">
-                        <div class="w-full font-bold">เลขที่ใบส่งของ:</div>
-                        <div class="w-full text-left">{{ data?.code ?? '-' }}</div>
-                    </div>
+                        <div class="flex flex-col w-full">
+                            <div class="w-full font-bold">{{ 'delivery_note.view.details_delivery_number' | transloco
+                                }}:</div>
+                            <div class="w-full text-left">{{ data?.code ?? '-' }}</div>
+                        </div>
 
-                    <div class="flex flex-col w-full">
-                        <div class="w-full font-bold">ช่องทางจัดส่ง:</div>
-                        <div class="w-full text-left">{{ data?.received_date ?? '-' }}</div>
-                    </div>
+                        <div class="flex flex-col w-full">
+                            <div class="w-full font-bold">{{ 'delivery_note.view.details_delivery_channel' | transloco
+                                }}:</div>
+                            <div class="w-full text-left">
+                                {{ data?.received_date ?? '-' }}
+                            </div>
+                        </div>
 
-                    <div class="flex flex-col w-full">
-                        <div class="w-full font-bold">สถานะการชำระ:</div>
-                        <div class="w-full text-left">{{ data?.shipped_by ?? '-' }}</div>
+                        <div class="flex flex-col w-full">
+                            <div class="w-full font-bold">{{ 'delivery_note.view.details_payment_status_title' |
+                                transloco }}:</div>
+                            <div class="w-full text-left">
+                                <div *ngIf="data.status === 'pending'" class="">
+                                    {{ 'delivery_note.view.details_payment_status_pending' | transloco }}</div>
+                                <div *ngIf="data.status === 'review'" class="">
+                                    {{ 'delivery_note.view.details_payment_status_review' | transloco }}</div>
+                                <div *ngIf="data.status === 'paid'" class="">
+                                    {{ 'delivery_note.view.details_payment_status_paid' | transloco }}</div>
+                                <div *ngIf="data.status === 'credit'" class="">
+                                    {{ 'delivery_note.view.details_payment_status_credit' | transloco }}</div>
+                                <div *ngIf="data.status === 'cancelled'" class="">
+                                    {{ 'delivery_note.view.details_payment_status_cancelled' | transloco }}</div>
+                            </div>
+                        </div>
+                    </div>
+                    <mat-divider class="my-2"></mat-divider>
+                    <div class="flex flex-col md:grid md:grid-cols-4 gap-2 w-full mb-4">
+                        <div>
+                            <h2 class="font-semibold text-lg">{{ 'delivery_note.view.customer_info_title' | transloco }}
+                            </h2>
+                        </div>
+
+                        <div class="flex flex-col w-full">
+                            <div class="w-full font-bold">{{ 'delivery_note.view.customer_info_importer_code' |
+                                transloco }}:</div>
+                            <div class="w-full text-left">{{ data?.member?.importer_code ?? '-' }}</div>
+                            <div class="w-full font-bold mt-2">{{ 'delivery_note.view.customer_info_address' | transloco
+                                }}:</div>
+                            <div class="w-full text-left">{{ data?.member_address?.address ?? '-' }} {{ data?.member_address?.province ?? '-' }} {{ data?.member_address?.district ?? '-' }} {{ data?.member_address?.sub_district ?? '-' }} {{ data?.member_address?.postal_code ?? '-' }}</div>
+                        </div>
+
+                        <div class="flex flex-col w-full">
+                            <div class="w-full font-bold">{{ 'delivery_note.view.customer_info_phone' | transloco }}:
+                            </div>
+                            <div class="w-full text-left">{{ data?.member?.phone ?? '-' }}</div>
+                        </div>
+
+                        <div class="flex flex-col w-full">
+                            <div class="w-full font-bold">{{ 'delivery_note.view.customer_info_convenient_time' |
+                                transloco }}:</div>
+                            <div class="w-full text-left"> {{
+                                data?.member?.avaliable_time === 'morning'
+                                ? 'ช่วงเช้า'
+                                : data?.member?.avaliable_time === 'afternoon'
+                                ? 'ช่วงบ่าย'
+                                : '-'
+                                }}</div>
+                        </div>
                     </div>
                 </div>
-                <div class="grid grid-cols-2 lg:grid-cols-4 gap-2 w-full mb-4">
-                    <div>
-                        <h2 class="font-semibold text-lg">ข้อมูลลูกค้า</h2>
-                    </div>
 
-                    <div class="flex flex-col w-full">
-                        <div class="w-full font-bold">รหัสผู้นำเข้า:</div>
-                        <div class="w-full text-left">{{ data?.code ?? '-' }}</div>
-                        <div class="w-full font-bold mt-2">ที่อยู่:</div>
-                        <div class="w-full text-left">{{ data?.code ?? '-' }}</div>
-                    </div>
-
-                    <div class="flex flex-col w-full">
-                        <div class="w-full font-bold">เบอร์โทร:</div>
-                        <div class="w-full text-left">{{ data?.received_date ?? '-' }}</div>
-                    </div>
-
-                    <div class="flex flex-col w-full">
-                        <div class="w-full font-bold">ช่วงเวลาที่สะดวกรับสินค้า:</div>
-                        <div class="w-full text-left">{{ data?.shipped_by ?? '-' }}</div>
-                    </div>
-                </div>
                 <div class="bg-[#fdeaeb] rounded-md p-4 flex flex-row">
                     <div class="mr-4 ">
                         <mat-icon [svgIcon]="'heroicons_outline:megaphone'" class="text-red-600"></mat-icon>
                     </div>
                     <div>
-                        <p class="text-red-600"> กำหนดการเข้าไทย: {{ data?.time }} </p>
-                        <p class="text-red-600"> หมายเหตุ: ขณะนี้ระยะเวลาขนส่ง 9-12 วัน กำหนดการดังกล่าวเป็นระยะเวลาโดยประมาณ อาจมรการเปลั้ยนแปลงได้หาดกเกิดเหตุสิุวิสัย เรียกตรวจสอบ ภัยพิบัติ และอื่นๆ</p>
+                        <p class="text-red-600"> {{ 'delivery_note.view.notifications_arrival_schedule' | transloco }}:
+                            {{ data?.time
+                            }} </p>
+                        <p class="text-red-600"> {{ 'delivery_note.view.notifications_shipping_note' | transloco }}</p>
                     </div>
                 </div>
-                <div class="w-full p-4 my-4 border border-gray-300 rounded-lg min-h-[300px] overflow-y-auto flex flex-col">
+                <div
+                    class="w-full p-4 my-4 border border-gray-300 rounded-lg min-h-[300px] overflow-y-auto flex flex-col">
                     <div class="flex flex-row w-full gap-2 mb-6">
-                        <div class="w-full text-3xl font-bold">รายการใบส่งของ</div>
+                        <div class="w-full text-xl md:text-3xl font-bold">{{ 'delivery_note.view.items_list_title' |
+                            transloco }}
+                        </div>
                     </div>
                     <form *ngIf="!showFilterForm" [formGroup]="filterForm">
                         <div class="flex flex-col md:flex-row w-full gap-2 items-end">
@@ -94,7 +131,7 @@
                                     <mat-icon class="icon-size-5 mr-2"
                                         [svgIcon]="'heroicons_solid:magnifying-glass'"></mat-icon>
                                     <input matInput formControlName="in_store"
-                                        [placeholder]="'ค้นหาด้วยรหัสใบรับเข้าคลัง'">
+                                        [placeholder]="'delivery_note.view.items_list_search_placeholder' | transloco">
                                 </mat-form-field>
                             </div>
                             <div>
@@ -108,26 +145,52 @@
                         <table class="whitespace-nowrap w-full">
                             <thead>
                                 <tr>
-                                    <th class="px-6 py-3 border border-l-0 w-10">#</th>
-                                    <th class="px-6 py-3 border border-x-0">รายการ</th>
-                                    <th class="px-6 py-3 border border-x-0">เลขที่ไปรษณีย์จีน</th>
-                                    <th class="px-6 py-3 border border-x-0">โกดัง</th>
-                                    <th class="px-6 py-3 border border-x-0">ประเภท</th>
-                                    <th class="px-6 py-3 border border-x-0">จำนวน</th>
-                                    <th class="px-6 py-3 border border-x-0">CBM</th>
-                                    <th class="px-6 py-3 border border-x-0">Kg.</th>
+                                    <th rowspan="2" class="px-6 py-3 border border-x-0 w-10 sticky left-0 bg-white">#
+                                    </th>
+
+                                    <th rowspan="2" class="px-6 py-3 border border-x-0">{{ 'invoice.view.item' |
+                                        transloco }}</th>
+                                    <th rowspan="2" class="px-6 py-3 border border-x-0">{{
+                                        'invoice.view.chinese_postal_code' | transloco }}</th>
+                                    <th rowspan="2" class="px-6 py-3 border border-x-0">{{
+                                        'invoice.view.warehouse_receipt_code' | transloco }}</th>
+                                    <th rowspan="2" class="px-6 py-3 border border-x-0">{{
+                                        'invoice.view.transport_method' | transloco }}</th>
+
+                                    <th rowspan="2" class="px-6 py-3 border border-x-0">{{ 'invoice.view.quantity' |
+                                        transloco }}</th>
+
+                                    <th rowspan="2" class="px-6 py-3 border border-x-0">{{ 'CBM' |
+                                        transloco }}</th>
+                                    <th rowspan="2" class="px-6 py-3 border border-x-0">{{ 'invoice.view.total_kg' |
+                                        transloco }}</th>
+
                                 </tr>
+
                             </thead>
                             <tbody>
                                 <tr *ngFor="let list of filteredDeliveryOrders; let i = index" class="text-center">
-                                    <td class="px-6 py-3 border border-l-0">{{ i + 1 }}</td>
-                                    <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order?.order?.name ?? '-' }}</td>
-                                    <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order?.code ?? '-' }}</td>
-                                    <td class="px-6 py-3 border border-x-0">{{ getShipmentMethod(list?.delivery_order?.shipped_by) }}</td>
-                                    <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order?.quantity_check ?? '-' }}</td>
-                                    <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order?.product_type?.name ?? '-' }}</td>
-                                    <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order?.weight ?? '-' }}</td>
-                                    <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order?.cbm ?? '-' }}</td>
+                                    <td class="px-6 py-3 border border-x-0 sticky left-0 bg-white">{{ i + 1 }}</td>
+                                    <td class="px-6 py-3 border border-x-0">{{
+                                        list?.delivery_order_thai_list?.delivery_order_list?.product_name ?? '-' }}
+                                    </td>
+                                    <td class="px-6 py-3 border border-x-0">{{
+                                        getShipmentMethod(list?.delivery_order?.shipped_by) }}</td>
+                                    <td class="px-6 py-3 border border-x-0">{{
+                                        list?.delivery_order_thai_list?.delivery_order.po_no ??
+                                        '-' }}</td>
+                                    <td class="px-6 py-3 border border-x-0">{{
+                                        getShipmentMethod(list?.delivery_order_thai_list?.delivery_order.shipment_by) }}
+                                    </td>
+
+
+                                    <td class="px-6 py-3 border border-x-0">{{
+                                        list?.delivery_order_thai_list?.delivery_order_list?.qty ?? '-' }}</td>
+                                    <td class="px-6 py-3 border border-x-0">{{
+                                        list?.delivery_order_thai_list?.delivery_order_list?.long ?? '-' }}</td>
+
+                                    <td class="px-6 py-3 border border-x-0">{{
+                                        calculateCBM(list?.delivery_order_thai_list?.delivery_order_list) }}</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -138,9 +201,15 @@
                         <mat-icon [svgIcon]="'heroicons_outline:exclamation-circle'" class="text-yellow-600"></mat-icon>
                     </div>
                     <div>
-                        <p class="text-yellow-600"> หากได้รับสินค้าแล้ว:</p>
-                        <li class="text-yellow-600">กรุณาตรวจสอบรายการสินค้า จำนวนพัสดุ/ขนาน/น้ำหนัก หากพบปัยหากรุณราติดต่อบริษัทภายใน 24 ชั่วโมง <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;มิฉะนั้นทางบริษัทขอสงวนสิทธิ์ในการไม่รับผิดชอบทุกกรณี</li>
-                        <li class="text-yellow-600">กรณีจัดส่งผ่านขนส่งเอกชนต่างๆ พบมีความเสียหาย ทางบริษัทขอสงวนสิทธิ์ไม่รับผิดชอบทุกกรณี</li>
+                        <p class="text-yellow-600"> {{ 'delivery_note.view.notifications_receipt_instructions_title' |
+                            transloco }}
+                        </p>
+                        <li class="text-yellow-600">{{ 'delivery_note.view.notifications_receipt_instructions_point1' |
+                            transloco }}
+                        </li>
+                        <li class="text-yellow-600">{{ 'delivery_note.view.notifications_receipt_instructions_point2' |
+                            transloco }}
+                        </li>
                     </div>
                 </div>
             </div>

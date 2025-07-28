@@ -1,6 +1,9 @@
 <div class="overflow-auto md:max-w-lg" *ngIf="this.data?.type === 'NEW'">
-    <div class="grid items-center w-full grid-cols-2 "><h1 mat-dialog-title class="mb-4 text-xl font-semibold" *ngIf="this.data?.type === 'NEW'">นำเข้าข้อมูลผู้ใช้</h1>
-        <a class="ml-auto mr-5 cursor-pointer" (click)="exportTemplate()">Export Template</a></div>
+    <div class="grid items-center w-full grid-cols-2 ">
+        <h1 mat-dialog-title class="mb-4 text-xl font-semibold" *ngIf="this.data?.type === 'NEW'">นำเข้าข้อมูลผู้ใช้
+        </h1>
+        <a class="ml-auto mr-5 cursor-pointer" (click)="exportTemplate()">Export Template</a>
+    </div>
     <div mat-dialog-content class="overflow-y-auto md:max-h-180">
         <form [formGroup]="form">
             <div class="px-3 mb-6 md:w-full md:mb-0">
@@ -20,10 +23,10 @@
     <!-- <div> check : {{this.form.value | json}}</div> -->
     <div mat-dialog-actions class="flex justify-end">
         <button class="px-6 ml-3" mat-flat-button [color]="'primary'" (click)="Submit()">
-            ตกลง
+            {{ 'buttons.submit' | transloco }}
         </button>
         <button class="px-6 ml-3" mat-flat-button [color]="'warn'" (click)="onClose()">
-            ยกเลิก
+            {{ 'buttons.cancel' | transloco }}
         </button>
     </div>
 </div>

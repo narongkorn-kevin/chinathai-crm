@@ -187,7 +187,7 @@ export class FormComponent implements OnInit {
                 cargo_website: [''],
                 cargo_image: [null],
                 order_quantity_in_thai: '150',//เอาจากแบบสอบถามหน้าสมัคร
-
+undertaker: '',
                 province_code: [''],
                 district_code: [''],
                 second_bookbank: [''],

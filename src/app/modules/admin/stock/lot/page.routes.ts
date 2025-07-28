@@ -14,6 +14,7 @@ export default [
         resolve: {
             standard_size: () => inject(LotService).getStandardSize(),
             packing_list: () => inject(LotService).getPackingList(),
+            dashboard_packing: () => inject(LotService).getDashboardPacking(),
             // tracking: () => inject(DeliveryOrdersService).gettacking(),
         },
     },
@@ -45,7 +46,7 @@ export default [
         path: 'view/:id',
         component: ViewComponent,
         resolve: {
-            data: (route) => inject(LotService).get(route.params['id']),
+            // data: (route) => inject(LotService).get(route.params['id']),
         }
     },
     {
@@ -53,6 +54,7 @@ export default [
         component: ViewDraftComponent,
         resolve: {
             data: (route) => inject(LotService).get(route.params['id']),
+            delivery_orders: () => inject(LotService).getDeliveryOrdersListInPallet(),
         }
     },
     {

@@ -53,77 +53,101 @@ import { SelectMemberComponent } from 'app/modules/common/select-member/select-m
 import { DialogQRCodeComponent } from 'app/modules/common/dialog-qrcode/dialog-qrcode.component';
 import { debounceTime } from 'rxjs/operators';
 
+import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
+import { Pallet } from '../../../../../app.interface';
+import { calculateCBM } from 'app/helper';
+
 @Component({
     selector: 'app-member-view-1',
     standalone: true,
     templateUrl: './view.component.html',
     styleUrl: './view.component.scss',
     imports: [
-    CommonModule,
-    DataTablesModule,
-    MatIconModule,
-    MatFormFieldModule,
-    MatInputModule,
-    FormsModule,
-    MatToolbarModule,
-    MatButtonModule,
-    MatSelectModule,
-    ReactiveFormsModule,
-    MatInputModule,
-    MatFormFieldModule,
-    MatRadioModule,
-    MatFormFieldModule,
-    MatDatepickerModule,
-    MatDivider,
-    RouterLink,
-    SelectMemberComponent,
-    CdkMenuModule,
-],
-animations: [
-    trigger('slideToggleFilter', [
-        state(
-            'open',
-            style({
-                height: '*',
-                opacity: 1,
-                overflow: 'hidden',
-            })
-        ),
-        state(
-            'closed',
-            style({
-                height: '0px',
-                opacity: 0,
-                overflow: 'hidden',
-            })
-        ),
-        transition('open <=> closed', [animate('300ms ease-in-out')]),
-    ]),
-],
+        TranslocoModule,
+        CommonModule,
+        DataTablesModule,
+        MatIconModule,
+        MatFormFieldModule,
+        MatInputModule,
+        FormsModule,
+        MatToolbarModule,
+        MatButtonModule,
+        MatSelectModule,
+        ReactiveFormsModule,
+        MatInputModule,
+        MatFormFieldModule,
+        MatRadioModule,
+        MatFormFieldModule,
+        MatDatepickerModule,
+        MatDivider,
+        RouterLink,
+        SelectMemberComponent,
+        CdkMenuModule,
+    ],
+    animations: [
+        trigger('slideToggleFilter', [
+            state(
+                'open',
+                style({
+                    height: '*',
+                    opacity: 1,
+                    overflow: 'hidden',
+                })
+            ),
+            state(
+                'closed',
+                style({
+                    height: '0px',
+                    opacity: 0,
+                    overflow: 'hidden',
+                })
+            ),
+            transition('open <=> closed', [animate('300ms ease-in-out')]),
+        ]),
+    ],
 })
 export class ViewComponent implements OnInit {
     formFieldHelpers: string[] = ['fuse-mat-dense'];
     dtOptions: DataTables.Settings = {};
     type: string;
     Id: number;
-    data: any;
+    data: Pallet;
+    poNoSubscribed = false;
     lists = [];
     filteredDeliveryOrders: any[] = []; // Add a new property to store filtered delivery orders
-
+    productType: any[] = []
     constructor(
+        private translocoService: TranslocoService,
         private FormBuilder: FormBuilder,
         public _service: PalletService,
         private fuseConfirmationService: FuseConfirmationService,
         private toastr: ToastrService,
         private _router: Router,
         private activated: ActivatedRoute,
-        public dialog: MatDialog,
+        public dialog: MatDialog
     ) {
         this.type = this.activated.snapshot.data.type;
         this.Id = this.activated.snapshot.params.id;
+        this._service.getProductType().subscribe({
+            next: (res: any) => {
+                if (res) {
+                    this.productType = res.data;
+                } else {
+                    this.toastr.error(
+                        this.translocoService.translate('toastr.error')
+                    );
+                }
+            }
+        })
         this.data = this.activated.snapshot.data.data?.data;
-        console.log(this.data, 'data');
 
+        this.data.pallet_lists.forEach((item) => {
+            item.delivery_order_list.cbm = calculateCBM(
+                +item.delivery_order_list.width,
+                +item.delivery_order_list.height,
+                +item.delivery_order_list.long
+            );
+        });
     }
 
     ngOnInit(): void {
@@ -131,27 +155,35 @@ export class ViewComponent implements OnInit {
             member_id: [''],
             in_store: [''],
             code: [''],
-            sack_code: [''],
+            sack_id: [''],
+            po_no: ['']
         });
-        this.filteredDeliveryOrders = this.data.pallet_lists;
+        this.filteredDeliveryOrders = this.data.pallet_lists.map((item: any) => {
+            const deliveryOrder = item.delivery_order_list;
+            const cbm = calculateCBM(deliveryOrder.width, deliveryOrder.long, deliveryOrder.height, 1);
+            return {
+                ...item,
+                cbm
+            };
+        });
+        this.filterForm.get('po_no')?.valueChanges.subscribe(() => {
+            this.applyFilter();
+        });
+        this.filterForm.valueChanges
+        .pipe(debounceTime(300))
+        .subscribe(() => {
+            this.applyFilter();
+        });
+        
 
-        this.filterForm.get('in_store').valueChanges.pipe(
-            debounceTime(500)
-        ).subscribe(value => {
-            if(this.filterForm.get('in_store').value !== null) {
-                this.filteredDeliveryOrders = this.data.pallet_lists.filter(order =>
-                    order.delivery_order.code.includes(value)
-                );
-            }
-        });
-    }
+}
 
     getShipmentMethod(shippedBy: string): string {
-        if (shippedBy === 'Car') {
+        if (shippedBy === 'Car' || shippedBy === 'car') {
             return 'ขนส่งทางรถ';
-        } else if (shippedBy === 'Ship') {
+        } else if (shippedBy === 'Ship' || shippedBy === 'ship') {
             return 'ขนส่งทางเรือ';
-        } else if (shippedBy === 'Train') {
+        } else if (shippedBy === 'Train' || shippedBy === 'train') {
             return 'ขนส่งทางรถไฟ';
         } else {
             return '-';
@@ -171,27 +203,46 @@ export class ViewComponent implements OnInit {
     }
 
     applyFilter() {
-        const { code, member_id, sack_code } = this.filterForm.value;
+        const { po_no, sack_id, member_id } = this.filterForm.value;
+
+        // กรณี member_id อาจเป็น object หรือ number
+        const memberIdValue = (typeof member_id === 'object' && member_id !== null) ? member_id.id : member_id;
+
+        if (!po_no && !sack_id && !memberIdValue) {
+            this.filteredDeliveryOrders = this.data.pallet_lists.slice();
+            console.log('No filters applied, showing all data');
+            return;
+        }
+
         this.filteredDeliveryOrders = this.data.pallet_lists.filter(order => {
-            return (!code || order.delivery_order.code.includes(code)) &&
-                   (!member_id || order.delivery_order.member_id.includes(member_id)) &&
-                   (!sack_code || order.delivery_order.sack_code.includes(sack_code));
+            const poNoMatch = !po_no || (order.delivery_order.po_no?.toLowerCase().includes(po_no.toLowerCase()));
+            const sackCodeMatch = !sack_id || (order.delivery_order.sack_id?.toLowerCase().includes(sack_id.toLowerCase()));
+            const memberMatch = !memberIdValue || order.delivery_order.member?.id === memberIdValue;
+
+            return poNoMatch && sackCodeMatch && memberMatch;
         });
+
+        console.log('Filtered data:', this.filteredDeliveryOrders);
     }
+
     clearFilter() {
         this.filterForm.reset();
         this.filteredDeliveryOrders = this.data.pallet_lists;
     }
     selectMember(event: any) {
+        console.log('Selected member:', event);
         this.filterForm.patchValue({
             member_id: event.id,
-        });
+        });        
     }
     opendialogdelete() {
         const confirmation = this.fuseConfirmationService.open({
-            title: 'คุณแน่ใจหรือไม่ว่าต้องการลบรายการ?',
-            message:
-                'คุณกำลังจะ ลบรายการ หากกดยืนยันแล้วจะไม่สามารถเอากลับมาอีกได้',
+            title: this.translocoService.translate(
+                'confirmation.delete_title2'
+            ),
+            message: this.translocoService.translate(
+                'confirmation.delete_message2'
+            ),
             icon: {
                 show: true,
                 name: 'heroicons_outline:exclamation-triangle',
@@ -200,12 +251,16 @@ export class ViewComponent implements OnInit {
             actions: {
                 confirm: {
                     show: true,
-                    label: 'ยืนยัน',
+                    label: this.translocoService.translate(
+                        'confirmation.confirm_button'
+                    ),
                     color: 'primary',
                 },
                 cancel: {
                     show: true,
-                    label: 'ยกเลิก',
+                    label: this.translocoService.translate(
+                        'confirmation.cancel_button'
+                    ),
                 },
             },
             dismissible: false,
@@ -215,17 +270,23 @@ export class ViewComponent implements OnInit {
             if (result == 'confirmed') {
                 this._service.delete(this.Id).subscribe({
                     error: (err) => {
-                        this.toastr.error('ไม่สามารถลบข้อมูลได้');
+                        this.toastr.error(
+                            this.translocoService.translate(
+                                'toastr.delete_fail'
+                            )
+                        );
                     },
                     complete: () => {
-                        this.toastr.success('ดำเนินการลบข้อมูลสำเร็จ');
+                        this.toastr.success(
+                            this.translocoService.translate('toastr.delete')
+                        );
                         this._router.navigate(['pallet']);
                     },
                 });
             }
         });
     }
-    opendialogqrcode(){
+    opendialogqrcode() {
         const DialogRef = this.dialog.open(DialogQRCodeComponent, {
             disableClose: true,
             width: '400px',
@@ -238,27 +299,54 @@ export class ViewComponent implements OnInit {
         });
         DialogRef.afterClosed().subscribe((result) => {
             if (result) {
-
                 console.log(this.lists, 'lists');
-
             }
         });
     }
     get totallist() {
         return this.data.pallet_lists?.length;
     }
-    get totalWeight() {
+    get totalWeight(): string {
         return this.data.pallet_lists
-            .reduce((total, item) => total + (isNaN(Number(item.delivery_order_list.weight)) ? 0 : Number(item.delivery_order_list.weight)), 0)
-            .toFixed(2);
+            .reduce((total, item: any) => {
+                const weight = Number(item.delivery_order_list?.weight) || 0;
+                return total + weight;
+            }, 0)
+            .toFixed(4);
     }
+
+
+
+
     get totalCBM() {
-        return this.data.pallet_lists
-            .reduce((total, item) => total + (isNaN(Number(item.delivery_order_list.cbm)) ? 0 : Number(item.delivery_order_list.cbm)), 0)
-            .toFixed(2);
+        return this.filteredDeliveryOrders
+            .reduce(
+                (total, item: any) =>
+                    total +
+                    (isNaN(Number(item?.cbm))
+                        ? 0
+                        : Number(item?.cbm)),
+                0
+            )
+            .toFixed(4);
     }
 
     palletedit() {
         this._router.navigate(['/pallet/edit/' + this.Id]);
     }
+
+    // แสดงชื่อประเภทสินค้า หากหาไม่เจอให้คืนค่า "-"
+    checkProductType(data: any): string {
+        const id = Number(data);
+        const productType = this.productType?.find((item: any) => item.id === id);
+        return productType?.name ?? '-';
+    }
+
+    // คำนวณน้ำหนักรวมของสินค้าในแถว (qty_box * weight) หากไม่มีค่าหรือเป็น null ให้ถือเป็น 0
+    getTotalWeight(data: any): number {
+        const weight = Number(data?.weight) || 0;
+        const qtyBox = Number(data?.qty_box) || 0;
+        return qtyBox * weight;
+    }
 }
+

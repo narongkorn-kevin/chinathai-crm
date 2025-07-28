@@ -1,48 +1,53 @@
 <div class="flex flex-col items-center justify-start flex-auto w-full">
     <div class="flex flex-col items-center justify-between w-full overflow-hidden">
         <div class="flex flex-col items-start justify-start w-full">
-            <div class="w-full px-10 pt-5 pb-2.5 bg-white justify-between items-center flex">
+            <div class="w-full px-4 md:px-10 pt-5 pb-2.5 bg-white justify-between items-center flex">
                 <div class="flex flex-col">
                     <div class="flex space-x-2">
                         <button class="font-medium leading-7 tracking-tight truncate md:text-sm sm:leading-10"
                             [routerLink]="['/sack']" routerLinkActive="router-link-active">
-                            รายการรวมพัสดุ
+                            {{ 'sack.title.package_summary_list' | transloco }}
                         </button>
                         <p class="font-medium leading-7 tracking-tight truncate md:text-sm sm:leading-10">></p>
-                        <p
-                            class="md:text-sm font-medium tracking-tight leading-7 sm:leading-10 truncate text-[#DF0B12]">
-                            กระสอบ
-                        </p>
+                        <button
+                            class="md:text-sm font-medium tracking-tight leading-7 sm:leading-10 truncate text-[#DF0B12]"
+                            [routerLink]="['/sack']" routerLinkActive="router-link-active">
+                            {{ 'sack.title.sack' | transloco }}
+                        </button>
                     </div>
 
                     <p class="md:text-2xl text-[#DF0B12] font-bold tracking-tight leading-7 sm:leading-10 truncate">
-                        <span *ngIf="type === 'NEW'">สร้างรายการกระสอบ</span>
-                        <span *ngIf="type === 'EDIT'">หมายเลขกระสอบ: {{ data.code }}</span>
+                        <span *ngIf="type === 'NEW'">{{ 'sack.form.create_sack' | transloco }}</span>
+                        <span *ngIf="type === 'EDIT'">{{ 'sack.form.sack_number' | transloco }}: {{ data.code }}</span>
                     </p>
                 </div>
-                <div class="flex items-center justify-end gap-2">
-                    <button mat-flat-button  (click)="Close()">
-                        <mat-icon [svgIcon]="'heroicons_solid:trash'"></mat-icon>
-                        <span class="ml-2">ยกเลิก</span>
-                    </button>
+                <div class="flex flex-col md:flex-row items-center justify-end gap-2">
+                    <div class="border border-black rounded-md">
+                        <button mat-flat-button (click)="Close()" class="hover-effect">
+                            <mat-icon svgIcon="feather:trash"></mat-icon>
+                            <span class="ml-2">{{ 'buttons.cancel' | transloco }}</span>
+                        </button>
+                    </div>
                     <button mat-flat-button [color]="'primary'" (click)="Submit()">
-                        <mat-icon [svgIcon]="'heroicons_solid:pencil-square'"></mat-icon>
-                        <span class="ml-2">บันทึก</span>
+                        <mat-icon [svgIcon]="'mat_outline:save'"></mat-icon>
+                        <span class="ml-2">{{ 'buttons.save' | transloco }}</span>
                     </button>
                 </div>
             </div>
-            <div class="flex flex-col w-full px-10 bg-white " [formGroup]="form">
+            <div class="flex flex-col w-full px-4 md:px-10 bg-white " [formGroup]="form">
                 <div class="grid w-full grid-flow-row md:grid-cols-2 gap-x-2 ">
                     <div class="w-full">
                         <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
-                            <mat-label>หมายเลขกระสอบ</mat-label>
-                            <input matInput [placeholder]="'หมายเลขกระสอบ'" formControlName="code">
+                            <mat-label>{{ 'sack.form.sack_number' | transloco }}</mat-label>
+                            <input matInput [placeholder]="'sack.form.sack_number' | transloco" formControlName="code"
+                                readonly>
                         </mat-form-field>
                     </div>
                     <div class="w-full">
                         <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
-                            <mat-label>วันที่เข้าโกดัง</mat-label>
-                            <input matInput [matDatepicker]="picker" [placeholder]="'วันที่เข้าโกดัง'"
+                            <mat-label>{{ 'sack.form.warehouse_entry_date' | transloco }}</mat-label>
+                            <input matInput [matDatepicker]="picker"
+                                [placeholder]="'sack.form.warehouse_entry_date' | transloco"
                                 formControlName="received_date">
                             <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
                             <mat-datepicker #picker></mat-datepicker>
@@ -50,69 +55,83 @@
                     </div>
                     <div class="w-full">
                         <mat-form-field class="w-full" [ngClass]="formFieldHelpers">
-                            <mat-label>ขนส่งโดย</mat-label>
+                            <mat-label>{{ 'sack.form.shipment_method' | transloco }}</mat-label>
                             <mat-select formControlName="shipped_by">
-                                <mat-option value="Car">ขนส่งทางรถ</mat-option>
-                                <mat-option value="Ship">ขนส่งทางเรือ</mat-option>
-                                <mat-option value="Train">ขนส่งทางรถไฟ</mat-option>
+                                <mat-option value="Car">{{ 'sack.form.car_transport' | transloco }}</mat-option>
+                                <mat-option value="Ship">{{ 'sack.form.ship_transport' | transloco }}</mat-option>
+                                <mat-option value="Train">{{ 'sack.form.train_transport' | transloco }}</mat-option>
                             </mat-select>
                         </mat-form-field>
                     </div>
                     <div class="w-full">
                         <mat-form-field class="w-full" [ngClass]="formFieldHelpers">
-                            <mat-label>ประเภท</mat-label>
+                            <mat-label>{{ 'sack.form.product_type' | transloco }}</mat-label>
                             <mat-select formControlName="product_type_id">
-                                <mat-option *ngFor="let product of product_types" [value]="product.id">{{ product.name }}</mat-option>
+                                <mat-option *ngFor="let product of product_types" [value]="product.id">
+                                    {{ product.name }}
+                                </mat-option>
                             </mat-select>
                         </mat-form-field>
                     </div>
                 </div>
                 <div>
                     <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
-                        <mat-label>หมายเหตุ</mat-label>
-                        <textarea matInput [placeholder]="'หมายเหตุ'" formControlName="remark"></textarea>
+                        <mat-label>{{ 'sack.form.note' | transloco }}</mat-label>
+                        <textarea matInput [placeholder]="'sack.form.note' | transloco"
+                            formControlName="remark"></textarea>
                     </mat-form-field>
                 </div>
-                <div
-                    class="w-full p-4 my-4 border border-gray-300 rounded-lg min-h-[300px] overflow-y-auto flex flex-col"
+                <div class="w-full p-4 my-4 border border-gray-300 rounded-lg min-h-[300px] overflow-y-auto flex flex-col"
                     formArrayName="delivery_order_lists">
                     <div class="flex flex-row w-full gap-2 mb-6">
-                        <div class="w-full text-3xl font-bold">รายการสินค้าในรายการกระสอบ</div>
+                        <div class="w-full text-xl md:text-3xl font-bold">{{ 'sack.form.products_in_sack' | transloco }}
+                        </div>
                         <div class="flex flex-row justify-end w-full gap-2">
-                            <div class="flex items-center gap-2">
-                                <div class="flex items-center gap-2">
-                                    <button mat-menu-item (click)="clickRemove()">
-                                        <mat-icon svgIcon="heroicons_solid:trash"></mat-icon>
-                                        <span>ลบ</span>
+                            <div class="flex flex-col md:flex-row items-end md:items-center gap-2 w-full">
+                                <div class="flex items-center gap-2 w-full">
+                                    <button mat-flat-button [color]="'warn'" class="w-full" (click)="clickRemove()">
+                                        <mat-icon svgIcon="feather:trash"></mat-icon>
+                                        <span class="ml-2">{{ 'buttons.delete' | transloco }}</span>
                                     </button>
                                 </div>
-                                <div class="flex items-center gap-2">
-                                    <button mat-flat-button [color]="'primary'" (click)="opendialoglist()">
+                                <div class="flex items-center gap-2 w-full">
+                                    <button mat-flat-button [color]="'primary'" class="w-full"
+                                        (click)="opendialoglist()">
                                         <mat-icon [svgIcon]="'heroicons_solid:plus'"></mat-icon>
-                                        <span class="ml-2">เพิ่มรายการ</span>
+                                        <span class="ml-2">{{ 'buttons.addItem' | transloco }}</span>
                                     </button>
                                 </div>
-                                <div class="flex items-center gap-2">
-                                    <button mat-flat-button [color]="'primary'" (click)="opendialogScan()">
+                                <div class="flex items-center gap-2 w-full">
+                                    <button mat-flat-button [color]="'primary'" class="w-full"
+                                        (click)="showScanbarCode = !showScanbarCode">
                                         <mat-icon [svgIcon]="'heroicons_solid:qr-code'"></mat-icon>
-                                        <span class="ml-2">สแกนผ่านกล้อง</span>
+                                        <span class="ml-2">{{ 'sack.form.scan_with_camera' | transloco }}</span>
                                     </button>
                                 </div>
                             </div>
                         </div>
                     </div>
+
+                    <div class="flex w-full justify-center">
+                        @if (showScanbarCode) {
+                        <app-scan-barcode (codeScanned)="codeScaned($event)"></app-scan-barcode>
+                        }
+                    </div>
+
                     <form *ngIf="!showFilterForm" [formGroup]="filterForm">
                         <div class="flex flex-col md:flex-row w-full gap-2 items-end">
                             <div class="w-full">
-                                <mat-form-field [ngClass]="formFieldHelpers" class="w-full" >
-                                    <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:magnifying-glass'"></mat-icon>
-                                    <input matInput [placeholder]="'ค้นหาด้วยรหัสใบรับเข้าคลัง'">
+                                <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                                    <mat-icon class="icon-size-5"
+                                        [svgIcon]="'heroicons_solid:magnifying-glass'"></mat-icon>
+                                    <input matInput class="ml-2"
+                                        [placeholder]="'sack.form.search_with_warehouse_receipt' | transloco">
                                 </mat-form-field>
                             </div>
                             <div>
                                 <button mat-flat-button [color]="'primary'" (click)="openfillter()" class="mb-5">
                                     <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:bars-3'"></mat-icon>
-                                    <span class="ml-2">ค้นหาโดยใช้ตัวกรอง</span>
+                                    <span class="ml-2">{{ 'buttons.advancedFilter' | transloco }}</span>
                                 </button>
                             </div>
                             <div>
@@ -125,82 +144,99 @@
                     <form [formGroup]="filterForm" class="p-4 rounded-md"
                         [@slideToggleFilter]="showFilterForm ? 'open' : 'closed'">
                         <div>
-                            <h2 class="text-xl font-extrabold leading-7 tracking-tight truncate md:text-xl sm:leading-10">
-                                ตัวกรองขั้นสูง
+                            <h2
+                                class="text-xl font-extrabold leading-7 tracking-tight truncate md:text-xl sm:leading-10">
+                                {{ 'lables.advanced_filter' | transloco }}
                             </h2>
                             <mat-divider></mat-divider>
                         </div>
                         <div class="grid md:grid-cols-2 md:flex-row w-full gap-x-2 mt-2">
-                            <div class="w-full">
-                                <asha-select-member (change)="selectMember($event)" class="w-full"></asha-select-member>
-                            </div>
+                        <div class="w-full">
+                            <mat-label>{{ 'dalivery_order.labels.customer' | transloco }}</mat-label>
+                            <asha-select-member
+                            (change)="selectMember($event)"
+                            class="w-full [&_input]:!mt-0 [&_input]:!pt-1 [&_input]:!pb-1 [&_.mdc-text-field]:!mt-0">
+                            </asha-select-member>
+                        </div>
                             <div class="w-full">
                                 <mat-form-field class="w-full" [ngClass]="formFieldHelpers">
-                                    <mat-label>รหัสใบรับเข้าคลัง</mat-label>
+                                    <mat-label>{{ 'sack.form.warehouse_receipt_code' | transloco }}</mat-label>
                                     <input matInput formControlName="in_store">
                                 </mat-form-field>
                             </div>
                         </div>
                         <div class="w-full flex justify-end gap-2">
                             <button mat-flat-button [color]="'primary'" (click)="openfillter()">
-                                <span class="ml-2">ปิดตัวกรอง</span>
+                                <span class="ml-2">{{ 'buttons.closeFilter' | transloco }}</span>
                             </button>
                             <button mat-flat-button [color]="'primary'" (click)="clearFilter()">
                                 <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:bars-3'"></mat-icon>
-                                <span class="ml-2">ล้างตั้งค่าตัวกรอง</span>
+                                <span class="ml-2">{{ 'buttons.clearFilter' | transloco }}</span>
                             </button>
                             <button mat-flat-button [color]="'primary'" (click)="applyFilter()">
                                 <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:magnifying-glass'"></mat-icon>
-                                <span class="ml-2">ค้นหา</span>
+                                <span class="ml-2">{{ 'buttons.search' | transloco }}</span>
                             </button>
                         </div>
                     </form>
                     <div class="overflow-x-auto">
                         <table class="whitespace-nowrap w-full">
                             <thead>
-                              <tr >
-                                <th class="px-6 py-3 border border-x-0">
-                                    <mat-checkbox [checked]="selectAll" [indeterminate]="someSelect()"
-                                    (change)="SelectAll($event.checked)"></mat-checkbox>
-                                </th>
-                                <th class="px-6 py-3 border border-x-0">#</th>
-                                <th class="px-6 py-3 border border-x-0">ลูกค้า</th>
-                                <th class="px-6 py-3 border border-x-0">เลขที่บาร์โค้ด</th>
-                                <th class="px-6 py-3 border border-x-0">รหัสใบรับเข้าคลัง</th>
-                                <th class="px-6 py-3 border border-x-0">ขนส่งโดย</th>
-                                <th class="px-6 py-3 border border-x-0">ตรวจสอบจำนวน</th>
-                                <th class="px-6 py-3 border border-x-0">ประเภทพัสดุ</th>
-                                <th class="px-6 py-3 border border-x-0">น้ำหนัก(Kg.)</th>
-                                <th class="px-6 py-3 border border-x-0">CBM</th>
-                              </tr>
+                                <tr>
+                                    <th class="px-6 py-3 border border-x-0">
+                                        <mat-checkbox class="text-white" [color]="'primary'" [checked]="selectAll"
+                                            [indeterminate]="someSelect()"
+                                            (change)="SelectAll($event.checked)"></mat-checkbox>
+                                    </th>
+                                    <th class="px-6 py-3 border border-x-0">#</th>
+                                    <th class="px-6 py-3 border border-x-0">{{ 'sack.form.customer' | transloco }}</th>
+                                    <th class="px-6 py-3 border border-x-0">{{ 'sack.form.barcode_number' | transloco }}
+                                    </th>
+                                    <th class="px-6 py-3 border border-x-0">{{ 'sack.form.warehouse_receipt_code' |
+                                        transloco
+                                        }}</th>
+                                    <th class="px-6 py-3 border border-x-0">{{ 'sack.form.shipment_method' | transloco
+                                        }}
+                                    </th>
+                                    <th class="px-6 py-3 border border-x-0">{{ 'sack.form.quantity_check' | transloco }}
+                                    </th>
+                                    <th class="px-6 py-3 border border-x-0">{{ 'sack.form.parcel_type' | transloco }}
+                                    </th>
+                                    <th class="px-6 py-3 border border-x-0">{{ 'sack.form.weight_kg' | transloco }}</th>
+                                    <th class="px-6 py-3 border border-x-0">{{ 'sack.form.cbm' | transloco }}</th>
+                                </tr>
                             </thead>
                             <tbody>
                                 <tr *ngFor="let list of lists; let i = index" class="text-center">
                                     <td>
-                                        <mat-checkbox [(ngModel)]="list.IsChecked" (ngModelChange)="updateAllselect()"
-                                        [ngModelOptions]="{standalone: true}"></mat-checkbox>
+                                        <mat-checkbox class="text-white" [color]="'primary'"
+                                            [(ngModel)]="list.IsChecked" (ngModelChange)="updateAllselect()"
+                                            [ngModelOptions]="{standalone: true}"></mat-checkbox>
                                     </td>
                                     <td>{{ i + 1 }}</td>
-                                    <td>{{ list?.customer ?? '-' }}</td>
-                                    <td>{{ list?.barcode ?? '-' }}</td>
-                                    <td>{{ list?.in_store_code ?? '-' }}</td>
-                                    <td>{{ list?.shipment ?? '-' }}</td>
-                                    <td>{{ list?.quantity_check ?? '-' }}</td>
-                                    <td>{{ list?.parcel_type ?? '-' }}</td>
-                                    <td>{{ list?.weight ?? '-' }}</td>
-                                    <td>{{ list?.cbm ?? '-' }}</td>
+                                    <td class="px-6 py-3 border border-x-0">{{ list?.importer_code ?? '-' }}</td>
+                                    <td class="px-6 py-3 border border-x-0">{{ list?.barcode ?? '-' }}</td>
+                                    <td class="px-6 py-3 border border-x-0">{{ list?.in_store_code ?? '-' }}</td>
+                                    <td class="px-6 py-3 border border-x-0">{{ list?.shipment ?? '-' }}</td>
+                                    <td class="px-6 py-3 border border-x-0">{{ list?.quantity_check ?? 0 }}</td>
+                                    <td class="px-6 py-3 border border-x-0">{{ list?.product_type ?? '-'}}</td>
+                                    <td class="px-6 py-3 border border-x-0">{{ list?.weight ?? 0 }}</td>
+                                    <td class="px-6 py-3 border border-x-0">{{ list?.cbm ?? 0}}</td>
                                 </tr>
                             </tbody>
                             <tfoot class="bg-gray-100">
-                              <tr class="text-center">
-                                <td colspan="8" class="px-6 py-3 border border-x-0 text-left"> ผลรวม {{ totallist }} รายการ </td>
-                                <td class="px-6 py-3 border border-x-0">{{ totalWeight }}</td>
-                                <td class="px-6 py-3 border border-x-0">{{ totalCBM }}</td>
-                              </tr>
+                                <tr class="text-center">
+                                    <td colspan="8" class="px-6 py-3 border border-x-0 text-left">
+                                        {{ 'sack.form.total_items' | transloco }} {{ totallist }} {{
+                                        'sack.form.list_unit' |
+                                        transloco }}
+                                    </td>
+                                    <td class="px-6 py-3 border border-x-0">{{ totalWeight }}</td>
+                                    <td class="px-6 py-3 border border-x-0">{{ totalCBM }}</td>
+                                </tr>
                             </tfoot>
-                          </table>
+                        </table>
                     </div>
-
                 </div>
             </div>
         </div>
@@ -208,5 +244,6 @@
 </div>
 
 <ng-template #checkbox let-data="adtData">
-    <mat-checkbox [checked]="data.selected" (change)="onCheckboxChange($event, data?.id)"></mat-checkbox>
+    <mat-checkbox class="text-white" [color]="'primary'" [checked]="data.selected"
+        (change)="onCheckboxChange($event, data?.id)"></mat-checkbox>
 </ng-template>

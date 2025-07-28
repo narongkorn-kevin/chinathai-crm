@@ -1,54 +1,69 @@
 <div class="flex flex-col flex-auto justify-start items-center w-full overflow-auto">
     <div class="w-full flex-col justify-between items-center flex overflow-hidden">
         <div class="w-full flex-col justify-start items-start flex">
-            <div class="w-full px-10 pt-5 pb-2.5 bg-white justify-between items-center flex">
+            <div
+                class="w-full px-10 pt-5 pb-2.5 bg-white justify-between items-start md:items-center flex flex-col md:flex-row">
                 <div class="flex flex-col">
                     <div class="flex space-x-2">
-                        <button class="md:text-xl font-medium tracking-tight leading-7 sm:leading-10 truncate"
-                            [routerLink]="['/member']" routerLinkActive="router-link-active">
-                            รายการรวมพัสดุ
+                        <button class="md:text-sm font-medium tracking-tight leading-7 sm:leading-10 truncate"
+                            [routerLink]="['/delivery']" routerLinkActive="router-link-active">
+                            {{ 'shipment.package_summary_list' | transloco }}
                         </button>
                         <p class="md:text-sm font-medium tracking-tight leading-7 sm:leading-10 truncate">></p>
-                        <p
-                            class="md:text-sm font-medium tracking-tight leading-7 sm:leading-10 truncate text-[#DF0B12] cursor-pointer" (click)="Close()">
-                            รายการ Shipment
-                        </p>
+                        <button
+                            class="md:text-sm font-medium tracking-tight leading-7 sm:leading-10 truncate text-[#DF0B12]"
+                            [routerLink]="['/delivery']" routerLinkActive="router-link-active">
+                            {{ 'shipment.shipment_list' | transloco }}
+                        </button>
                     </div>
 
                     <p class="md:text-2xl text-[#DF0B12] font-bold tracking-tight leading-7 sm:leading-10 truncate">
-                        ตั้งค่า
+                        {{ 'shipment.setting.settings' | transloco }}
                     </p>
                 </div>
-                <div class="flex ml-auto space-x-4">
-                    <button mat-flat-button [color]="'primary'" (click)="opendialogsetting()">
-                        <mat-icon [svgIcon]="'heroicons_solid:plus'"></mat-icon>
-                        <span class="ml-2">เพิมรายการ</span>
+                <div class="flex flex-col md:flex-row ml-auto gap-2">
+                    <button mat-flat-button [color]="'primary'" (click)="Submit()">
+                        <!-- <mat-icon [svgIcon]="'heroicons_solid:plus'"></mat-icon> -->
+                        <span class="ml-2">{{ 'shipment.setting.confirm' | transloco }}</span>
                     </button>
                 </div>
             </div>
             <div class="w-full px-10 flex flex-col gap-2 bg-white">
-                <div class="flex flex-col gap-2 w-full mb-4">
-                    <h2 class="font-semibold text-lg">รายการสร้าง Shipment</h2>
-                    <mat-divider class="mb-3"></mat-divider>
-                    <table class="whitespace-nowrap w-full">
+                <div class="flex flex-col gap-2 w-full mb-4" [formGroup]="form">
+                    <h2 class="font-semibold text-lg">{{ 'shipment.setting.shipment_creation_list' | transloco }}</h2>
+                    <!-- <mat-divider class="mb-3"></mat-divider> -->
+
+                    <table class="whitespace-nowrap w-full" formArrayName="shipments">
                         <thead>
-                            <tr >
+                            <tr>
                                 <th class="sticky left-12 z-10 bg-white w-10 px-6 py-3 border border-l-0">#</th>
-                                <th class="px-6 py-3 border border-x-0">รายการ</th>
-                                <th class="px-6 py-3 border border-x-0">กำหนดการเวลา</th>
+                                <th class="px-6 py-3 border border-x-0">
+                                    {{ 'shipment.setting.table_headers.item' | transloco }}
+                                </th>
+                                <th class="px-6 py-3 border border-x-0">
+                                    {{ 'shipment.setting.table_headers.schedule' | transloco }}
+                                </th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr *ngFor="let list of OrderShipment; let i = index" class="text-center">
+                            <tr *ngFor="let shipment of shipments.controls; let i = index" [formGroupName]="i"
+                                class="text-center">
                                 <td class="sticky left-12 z-10 bg-white py-3 border border-l-0">{{ i + 1 }}</td>
-                                <td class="px-6 py-3 border border-x-0">{{ getShipmentMethod(list?.type) }}</td>
-                                <!-- <td class="px-6 py-3 border border-x-0">{{ list?.delivery_time_end | date: 'dd/MM/yyyy' ?? '-' }}</td> -->
-                                <td class="px-6 py-3 border border-x-0">{{ list?.delivery_time_end | date: 'yyyy/MM/dd hh:mm a' ?? '-' }}</td>
+                                <td class="px-6 py-3 border border-x-0">
+                                    {{getShipmentMethod(shipment.get('type').value)}}
+                                </td>
+                                <td class="px-6 py-3 border border-x-0 text-center">
+                                    <mat-form-field [ngClass]="formFieldHelpers" class="w-40">
+                                        <input matInput formControlName="time" class="text-left" />
+                                        <mat-icon matSuffix>access_time</mat-icon>
+                                    </mat-form-field>
+                                </td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
             </div>
+
         </div>
     </div>
 </div>

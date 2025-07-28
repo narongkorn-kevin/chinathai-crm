@@ -6,9 +6,6 @@ import { DeliveryOrdersService } from './delivery-orders.service';
 import { inject } from '@angular/core';
 import { SettingComponent } from './setting/setting.component';
 import { StoreService } from '../stores/store.service';
-import { EditMultiPoComponent } from './edit-multi-po/edit.component';
-import { ItemTableComponent } from './item-table/item-table.component';
-import { ImportComponent } from './import-po/import.component';
 
 export default [
     {
@@ -21,6 +18,7 @@ export default [
             category_products: () => inject(DeliveryOrdersService).getcategory_product(),
             transports: () => inject(DeliveryOrdersService).getTransport(),
             product_types: () => inject(DeliveryOrdersService).getProductType(),
+            dashboard_delivery_order: () => inject(DeliveryOrdersService).getDashboardDeliveryOrder(),
         }
     },
     {
@@ -38,6 +36,8 @@ export default [
             unit: () => inject(DeliveryOrdersService).getUnit(),
             order: () => inject(DeliveryOrdersService).getOrder(),
             tracking: () => inject(DeliveryOrdersService).gettacking(),
+            packing_type: () => inject(DeliveryOrdersService).getpacking_type(),
+            delivery_orders: () => inject(DeliveryOrdersService).getDeliveryOrders(),
         }
     },
     {
@@ -66,25 +66,25 @@ export default [
             product_draft: () => inject(DeliveryOrdersService).getProductDraft(),
             on_services: () => inject(DeliveryOrdersService).getAddOnServices(),
             unit: () => inject(DeliveryOrdersService).getUnit(),
+            packing_type: () => inject(DeliveryOrdersService).getpacking_type(),
             data: (route) => inject(DeliveryOrdersService).get(route.params['id']),
         }
     },
     {
-        path: 'edit-multi-po',
-        component: EditMultiPoComponent,
+        path: 'setting',
+        component: SettingComponent,
         data:{
-            type: 'EDIT',
-        }
-       
-    },
-    {
-        path: 'item-table',
-        component: ItemTableComponent,
-    
-    },
-    {
-        path: 'import',
-        component: ImportComponent,
-    
-    },
+            // type: 'EDIT',
+        },
+        resolve: {
+            // transport: () => inject(DeliveryOrdersService).getTransport(),
+            // data: (route) => inject(DeliveryOrdersService).get(route.params['id']),
+        },
+        // children: [
+        //     {
+        //         path: 'form',
+        //         component: FormSettingComponent,
+        //     }
+        // ]
+    }
 ] as Routes;

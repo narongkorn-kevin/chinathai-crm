@@ -1,5 +1,11 @@
 import { CommonModule, DatePipe } from '@angular/common';
-import { AfterViewInit, ChangeDetectionStrategy, Component, OnInit, ViewChild } from '@angular/core';
+import {
+    AfterViewInit,
+    ChangeDetectionStrategy,
+    Component,
+    OnInit,
+    ViewChild,
+} from '@angular/core';
 import { DataTableDirective, DataTablesModule } from 'angular-datatables';
 // import { PoService } from './po.service';
 import { ADTSettings } from 'angular-datatables/src/models/settings';
@@ -14,17 +20,20 @@ import { MatIconModule } from '@angular/material/icon';
 import { Router } from '@angular/router';
 import { MatTabsModule } from '@angular/material/tabs';
 
+import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
+
 @Component({
     selector: 'app-stock-pallet-form',
     standalone: true,
     imports: [
+        TranslocoModule,
         CommonModule,
         DataTablesModule,
         MatButtonModule,
         MatMenuModule,
         MatDividerModule,
         MatIconModule,
-        MatTabsModule
+        MatTabsModule,
     ],
     templateUrl: './page.component.html',
     styleUrl: './page.component.scss',
@@ -46,14 +55,11 @@ export class PalletFormComponent implements OnInit, AfterViewInit {
         private toastr: ToastrService,
         public dialog: MatDialog,
         private datePipe: DatePipe,
-        private _router: Router,
-    ) {
-
-    }
+        private _router: Router
+    ) {}
     ngOnInit(): void {
         // setTimeout(() =>
         //     this.loadTable());
-
     }
 
     ngAfterViewInit() {
@@ -159,7 +165,7 @@ export class PalletFormComponent implements OnInit, AfterViewInit {
     //     }
     // }
 
-    backToPallet(){
+    backToPallet() {
         this._router.navigate(['/pallet']);
     }
 

@@ -6,97 +6,113 @@
                     <div class="flex space-x-2">
                         <button class="font-medium leading-7 tracking-tight truncate md:text-sm sm:leading-10"
                             [routerLink]="['/delivery-note']" routerLinkActive="router-link-active">
-                            เอกสาร
+                            {{ 'delivery_note.document' | transloco }}
                         </button>
                         <p class="font-medium leading-7 tracking-tight truncate md:text-sm sm:leading-10">></p>
                         <button class="font-medium leading-7 tracking-tight truncate md:text-sm sm:leading-10"
                             [routerLink]="['/delivery-note']" routerLinkActive="router-link-active">
-                            ใบส่งของ
+                            {{ 'delivery_note.title' | transloco }}
                         </button>
                     </div>
 
                     <p class="md:text-2xl text-[#DF0B12] font-bold tracking-tight leading-7 sm:leading-10 truncate">
-                        <span *ngIf="type === 'NEW'">เพิ่มรายการ Packing List</span>
-                        <span *ngIf="type === 'EDIT'">หมายเลขจัดส่ง: {{ data?.code }}</span>
+                        <span *ngIf="type === 'NEW'">{{ 'delivery_note.form.create_title' | transloco }}</span>
+                        <span *ngIf="type === 'EDIT'">{{ 'delivery_note.form.edit_title' | transloco }}: {{ data?.code
+                            }}</span>
                     </p>
                 </div>
-                <div class="flex items-center justify-end gap-2">
-                    <button mat-flat-button (click)="Close()">
-                        <mat-icon [svgIcon]="'heroicons_solid:trash'"></mat-icon>
-                        <span class="ml-2">ยกเลิก</span>
-                    </button>
+                <div class="flex flex-col md:flex-row items-center justify-end gap-2">
+                    <div class="border border-black rounded-md">
+                        <button mat-flat-button (click)="Close()" class="hover-effect">
+                            <mat-icon svgIcon="feather:trash"></mat-icon>
+                            <span class="ml-2">{{ 'buttons.cancel' | transloco }}</span>
+                        </button>
+                    </div>
                     <button mat-flat-button [color]="'primary'" (click)="Submit()">
-                        <mat-icon [svgIcon]="'heroicons_solid:pencil-square'"></mat-icon>
-                        <span class="ml-2">บันทึก</span>
+                        <mat-icon [svgIcon]="'mat_outline:save'"></mat-icon>
+                        <span class="ml-2">{{ 'buttons.save' | transloco }}</span>
                     </button>
                 </div>
             </div>
             <div class="flex flex-col w-full px-10 bg-white " [formGroup]="form">
-                <div class="flex flex-row gap-2">
+                <div class="flex flex-col md:flex-row gap-2">
                     <div class="w-full">
                         <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
-                            <mat-label>รหัสผู้นำเข้า</mat-label>
-                            <input matInput [placeholder]="'กรุณากรอก รหัสผู้นำเข้า'"
+                            <mat-label>{{ 'delivery_note.form.form_importer_code_label' | transloco }}</mat-label>
+                            <input matInput [placeholder]="'form.form_importer_code_placeholder' | transloco"
                                 formControlName="code">
                         </mat-form-field>
                     </div>
                     <div class="w-full">
                         <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
-                            <mat-label>หมายเลขจัดส่ง</mat-label>
-                            <input matInput [placeholder]="'หมายเลขจัดส่ง'" formControlName="send_no">
+                            <mat-label>{{ 'delivery_note.form.form_delivery_number_label' | transloco }}</mat-label>
+                            <input matInput [placeholder]="'form.form_delivery_number_placeholder' | transloco"
+                                formControlName="send_no">
                         </mat-form-field>
                     </div>
                 </div>
-                <div class="flex flex-row gap-2">
+                <div class="flex flex-col md:flex-row gap-2">
                     <div class="w-full">
                         <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
-                            <mat-label>รายละเอียดที่อยู่</mat-label>
-                            <input matInput [placeholder]="'กรุณากรอก รายละเอียดที่อยู่'"
+                            <mat-label>{{ 'delivery_note.form.form_address_label' | transloco }}</mat-label>
+                            <input matInput [placeholder]="'form.form_address_placeholder' | transloco"
                                 formControlName="address">
                         </mat-form-field>
                     </div>
                 </div>
-                <div class="flex flex-row gap-2">
+                <div class="flex flex-col md:flex-row gap-2">
                     <div class="w-full">
                         <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
-                            <mat-label>เบอร์โทร</mat-label>
-                            <input matInput [placeholder]="'กรุณากรอก Packinglist No.'"
+                            <mat-label>{{ 'delivery_note.form.form_phone_label' | transloco }}</mat-label>
+                            <input matInput [placeholder]="'form.form_phone_placeholder' | transloco"
                                 formControlName="phone">
                         </mat-form-field>
                     </div>
                     <div class="w-full">
                         <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
-                            <mat-label>ติดป้ายเป็น (ที่ทำงาน/บ้าน)</mat-label>
+                            <mat-label>{{ 'delivery_note.form.form_location_label' | transloco }}</mat-label>
                             <mat-select formControlName="location" placeholder="">
-                                <mat-option [value]="">ที่ทำงาน</mat-option>
-                                <mat-option [value]="">ที่บ้าน</mat-option>
+                                <mat-option [value]="'work'">{{ 'delivery_note.form.form_location_options_work' |
+                                    transloco
+                                    }}</mat-option>
+                                <mat-option [value]="'home'">{{ 'delivery_note.form.form_location_options_home' |
+                                    transloco
+                                    }}</mat-option>
                             </mat-select>
                         </mat-form-field>
                     </div>
                     <div class="w-full">
                         <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
-                            <mat-label>ช่วงเวลาที่สะดวกรับสินค้า</mat-label>
-                            <mat-select formControlName="convenient_time" placeholder="ช่วงเวลาที่สะดวกรับสินค้า">
-                                <mat-option [value]="">จันทร์-ศุกร์</mat-option>
-                                <mat-option [value]="">เสาร์-อาทิตย์</mat-option>
-                                <mat-option [value]="">สะดวกรับทุกวัน</mat-option>
+                            <mat-label>{{ 'delivery_note.form.form_convenient_time_label' | transloco }}</mat-label>
+                            <mat-select formControlName="convenient_time"
+                                [placeholder]="'form.form_convenient_time_label' | transloco ">
+                                <mat-option [value]="'weekdays'">{{
+                                    'delivery_note.form.form_convenient_time_options_weekdays' |
+                                    transloco }}</mat-option>
+                                <mat-option [value]="'weekend'">{{
+                                    'delivery_note.form.form_convenient_time_options_weekend' |
+                                    transloco }}</mat-option>
+                                <mat-option [value]="'anytime'">{{
+                                    'delivery_note.form.form_convenient_time_options_anytime' |
+                                    transloco }}</mat-option>
                             </mat-select>
                         </mat-form-field>
                     </div>
                 </div>
-                <div class="flex flex-row gap-2">
+                <div class="flex flex-col md:flex-row gap-2">
                     <div class="w-full">
                         <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
-                            <mat-label>ขนส่งไทย</mat-label>
-
+                            <mat-label>{{ 'delivery_note.form.form_thai_transport_label' | transloco }}</mat-label>
                             <mat-select formControlName="transport_id">
-                                <mat-option *ngFor="let transport of transports" [value]="transport.id">{{ transport.name }}</mat-option>
+                                <mat-option *ngFor="let transport of transports" [value]="transport.id">
+                                    {{ transport.name }}
+                                </mat-option>
                             </mat-select>
                         </mat-form-field>
                     </div>
                     <div class="w-full">
                         <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
-                            <mat-label>พื้นที่</mat-label>
+                            <mat-label>{{ 'delivery_note.form.form_area_label' | transloco }}</mat-label>
                             <input matInput formControlName="area">
                         </mat-form-field>
                     </div>

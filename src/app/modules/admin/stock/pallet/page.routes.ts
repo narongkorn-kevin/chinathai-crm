@@ -12,6 +12,7 @@ export default [
         component: PalletComponent,
         resolve: {
             standard_size: () => inject(PalletService).getStandardSize(),
+            dashboard_pallet: () => inject(PalletService).getDashboardPallet(),
             // tracking: () => inject(DeliveryOrdersService).gettacking(),
         },
     },

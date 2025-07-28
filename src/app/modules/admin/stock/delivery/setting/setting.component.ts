@@ -1,5 +1,5 @@
 import { CdkMenuModule } from '@angular/cdk/menu';
-import { Subject, Subscription } from 'rxjs';
+import { forkJoin, Subject, Subscription } from 'rxjs';
 import { Component, OnInit, OnChanges, Inject, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DataTableDirective, DataTablesModule } from 'angular-datatables';
@@ -90,12 +90,15 @@ export type ChartOptions = {
     legend: ApexLegend;
     colors: string[];
 };
+import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
+
 @Component({
     selector: 'app-member-setting',
     standalone: true,
     templateUrl: './setting.component.html',
     styleUrl: './setting.component.scss',
     imports: [
+        TranslocoModule,
         CommonModule,
         DataTablesModule,
         MatIconModule,
@@ -151,10 +154,11 @@ export class SettingComponent implements OnInit {
     lists = [];
     OrderShipment = [];
     filteredDeliveryOrders: any[] = [];
-    Form: FormGroup;
+    form: FormGroup;
     public chartOptions: Partial<ChartOptions> = {};
 
     constructor(
+        private translocoService: TranslocoService,
         private FormBuilder: FormBuilder,
         public _service: DeliveryService,
         private fuseConfirmationService: FuseConfirmationService,
@@ -167,8 +171,53 @@ export class SettingComponent implements OnInit {
         this.Id = this.activated.snapshot.params.id;
         this.data = this.activated.snapshot.data.data?.data;
         this.OrderShipment = this.activated.snapshot.data.OrderShipment?.data;
+
+        this.lang = translocoService.getActiveLang();
+        this.langues = localStorage.getItem('lang');
     }
-    ngOnInit(): void {}
+
+    langues: any;
+    lang: String;
+    languageUrl: any;
+    ngOnInit(): void {
+        this.form = this.FormBuilder.group({
+            shipments: this.FormBuilder.array([])
+        });
+
+        this.OrderShipment.forEach(item => {
+            this.shipments.push(this.FormBuilder.group({
+                id: [item.id],
+                type: [item.type],
+                time: ['20:00:00']
+            }));
+        });
+    }
+
+    get transportArray(): FormArray {
+        return this.form.get('transports') as FormArray;
+    }
+
+    get shipments(): FormArray {
+        return this.form.get('shipments') as FormArray;
+    }
+
+    createTransportGroup(): FormGroup {
+        return this.FormBuilder.group({
+            id: [null],
+            type: ['ship'], // ค่าตั้งต้น
+            time: ['20:00:00']
+        });
+    }
+
+    addTransport() {
+        this.transportArray.push(this.createTransportGroup());
+    }
+
+    removeTransport(index: number) {
+        this.transportArray.removeAt(index);
+    }
+
+
 
     getShipmentMethod(shippedBy: string): string {
         if (shippedBy === 'Car') {
@@ -220,9 +269,12 @@ export class SettingComponent implements OnInit {
     }
     opendialogdelete() {
         const confirmation = this.fuseConfirmationService.open({
-            title: 'คุณแน่ใจหรือไม่ว่าต้องการลบรายการ?',
-            message:
-                'คุณกำลังจะ ลบรายการ หากกดยืนยันแล้วจะไม่สามารถเอากลับมาอีกได้',
+            title: this.translocoService.translate(
+                'confirmation.delete_title2'
+            ),
+            message: this.translocoService.translate(
+                'confirmation.delete_message2'
+            ),
             icon: {
                 show: true,
                 name: 'heroicons_outline:exclamation-triangle',
@@ -231,12 +283,16 @@ export class SettingComponent implements OnInit {
             actions: {
                 confirm: {
                     show: true,
-                    label: 'ยืนยัน',
+                    label: this.translocoService.translate(
+                        'confirmation.confirm_button'
+                    ),
                     color: 'primary',
                 },
                 cancel: {
                     show: true,
-                    label: 'ยกเลิก',
+                    label: this.translocoService.translate(
+                        'confirmation.cancel_button'
+                    ),
                 },
             },
             dismissible: false,
@@ -246,10 +302,16 @@ export class SettingComponent implements OnInit {
             if (result == 'confirmed') {
                 this._service.delete(this.Id).subscribe({
                     error: (err) => {
-                        this.toastr.error('ไม่สามารถลบข้อมูลได้');
+                        this.toastr.error(
+                            this.translocoService.translate(
+                                'toastr.delete_fail'
+                            )
+                        );
                     },
                     complete: () => {
-                        this.toastr.success('ดำเนินการลบข้อมูลสำเร็จ');
+                        this.toastr.success(
+                            this.translocoService.translate('toastr.delete')
+                        );
                         this._router.navigate(['pallet']);
                     },
                 });
@@ -269,9 +331,7 @@ export class SettingComponent implements OnInit {
             },
         });
         DialogRef.afterClosed().subscribe((result) => {
-            if (result) {
-                console.log(this.lists, 'lists');
-            }
+            this.reloadShipment();
         });
     }
 
@@ -286,7 +346,7 @@ export class SettingComponent implements OnInit {
                     (isNaN(Number(item.weight)) ? 0 : Number(item.weight)),
                 0
             )
-            .toFixed(2);
+            .toFixed(4);
     }
     get totalCBM() {
         return this.data.delivery_orders
@@ -295,7 +355,7 @@ export class SettingComponent implements OnInit {
                     total + (isNaN(Number(item.cbm)) ? 0 : Number(item.cbm)),
                 0
             )
-            .toFixed(2);
+            .toFixed(4);
     }
 
     selectAll: boolean = false;
@@ -346,5 +406,90 @@ export class SettingComponent implements OnInit {
     }
     draft() {
         this._router.navigate(['/lot/draft/' + this.Id]);
+    }
+
+    reloadShipment() {
+        this._service.getShipment().subscribe({
+            next: (res: any) => {
+                this.OrderShipment = res.data;
+            },
+            error: (err) => {
+                this.toastr.error('โหลดข้อมูลไม่สำเร็จ');
+            },
+        });
+    }
+
+    Submit() {
+        if (this.form.invalid) {
+            this.toastr.error(
+                this.translocoService.translate('toastr.missing_fields')
+            );
+            this.form.markAllAsTouched();
+            return;
+        }
+        const Datacon = {
+            pleaseconfirm: { th: 'ยืนยันการบันทึกข้อมูล', en: 'Confirm data recording', cn: '确认保存数据' },
+            confirm: { th: 'ยืนยัน', en: 'Confirm', cn: '确认' },
+            cancel: { th: 'ยกเลิก', en: 'Cancel', cn: '取消' },
+            pleasefill: { th: 'กรุณากรอกข้อมูลให้ครบถ้วน', en: 'Please fill in all required fields', cn: '请填写完整信息' },
+            errorsave: { th: 'ไม่สามารถบันทึกข้อมูลได้', en: 'Unable to save data', cn: '无法保存数据' },
+            successadd: { th: 'ดำเนินการเพิ่มข้อมูลสำเร็จ', en: 'Successfully added data', cn: '成功添加数据' },
+            successedit: { th: 'ดำเนินการแก้ไขข้อมูลสำเร็จ', en: 'Successfully edited data', cn: '成功编辑数据' },
+        };
+
+        const formValue = {
+            ...this.form.value,
+        };
+
+        const confirmation = this.fuseConfirmationService.open({
+            title: Datacon.pleaseconfirm[this.langues],
+            icon: {
+                show: true,
+                name: 'heroicons_outline:exclamation-triangle',
+                color: 'primary',
+            },
+            actions: {
+                confirm: {
+                    show: true,
+                    label: Datacon.confirm[this.langues],
+                    color: 'primary',
+                },
+                cancel: {
+                    show: true,
+                    label: Datacon.cancel[this.langues],
+                },
+            },
+            dismissible: false,
+        });
+
+        confirmation.afterClosed().subscribe((result) => {
+            if (result == 'confirmed') {
+                let formValue = this.form.value;
+                forkJoin(
+                    formValue.shipments.map(item =>
+                        this._service.update(item.id,item) // ✅ ใช้ service ที่คุณกำหนดไว้
+                    )
+                ).subscribe({
+                    next: responses => {
+                        console.log('All shipments sent successfully', responses);
+
+                        this._service.update(this.data.value.id, this.form.value).subscribe({
+                            next: () => {
+                                this.toastr.success(Datacon.successedit[this.langues]);
+                                // this.dialogRef.close(true);
+                            },
+                            error: (err) => {
+                                this.toastr.error(Datacon.errorsave[this.langues]);
+                            }
+                        });
+                    },
+                    error: err => {
+                        console.error('Error sending shipments', err);
+                        this.toastr.error('เกิดข้อผิดพลาดในการส่งข้อมูล shipments');
+                    }
+                });
+
+            }
+        });
     }
 }

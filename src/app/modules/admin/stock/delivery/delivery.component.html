@@ -1,49 +1,49 @@
 <div class="flex flex-col flex-auto min-w-0">
-    <div class="flex-auto  sm:p-10 bg-card m-4 p-4 rounded-md">
+    <div class="flex-auto  md:p-10 bg-card p-4 m-4 rounded-md">
         <div class="flex flex-row justify-between pb-2">
             <div class="flex flex-col">
                 <div class="flex space-x-2">
-                    <button class="md:text-xl font-medium tracking-tight leading-7 sm:leading-10 truncate"
+                    <button class="md:text-sm font-medium tracking-tight leading-7 sm:leading-10 truncate"
                         routerLinkActive="router-link-active">
-                        รายการรวมพัสดุ
+                        {{ 'shipment.package_summary_list' | transloco }}
                     </button>
                 </div>
                 <p class="md:text-2xl text-[#DF0B12] font-bold tracking-tight leading-7 sm:leading-10 truncate">
-                    รายการ Shipment
+                    {{ 'shipment.shipment_list' | transloco }}
                 </p>
             </div>
-            <div class="flex ml-auto space-x-4">
+            <div class="flex flex-col md:flex-row ml-auto gap-2">
                 <button mat-flat-button [color]="'primary'" (click)="setting()">
                     <mat-icon [svgIcon]="'heroicons_solid:cog-6-tooth'"></mat-icon>
-                    <span class="ml-2">ตังค่า</span>
+                    <span class="ml-2">{{ 'shipment.settings' | transloco }}</span>
                 </button>
 
                 <button [cdkMenuTriggerFor]="menu" mat-flat-button class="!text-white" [color]="'primary'">
                     <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:shopping-bag'"></mat-icon>
                     <div class="flex items-center gap-2">
-                        <span class="ml-2"> การจัดการข้อมูล </span>
+                        <span class="ml-2"> {{ 'buttons.dataManagement' | transloco }} </span>
                         <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:chevron-up'"></mat-icon>
                     </div>
                 </button>
 
                 <ng-template #menu>
                     <div class="manage-menu bg-primary" cdkMenu>
-                        <button class="manage-menu-item text-white" cdkMenuItem>
+                        <button class="manage-menu-item text-white" cdkMenuItem (click)="exportData('copy')">
                             <mat-icon class="icon-size-5 text-white"
                                 [svgIcon]="'heroicons_solid:document-duplicate'"></mat-icon>
                             <span class="ml-2">Copy to Clipboard</span>
                         </button>
-                        <button class="manage-menu-item text-white" cdkMenuItem>
+                        <button class="manage-menu-item text-white" cdkMenuItem (click)="exportData('csv')">
                             <mat-icon class="icon-size-5 text-white"
                                 [svgIcon]="'heroicons_solid:table-cells'"></mat-icon>
                             <span class="ml-2">CSV</span>
                         </button>
-                        <button class="manage-menu-item text-white" cdkMenuItem>
+                        <button class="manage-menu-item text-white" cdkMenuItem (click)="exportData('excel')">
                             <mat-icon class="icon-size-5 text-white"
                                 [svgIcon]="'heroicons_solid:table-cells'"></mat-icon>
                             <span class="ml-2">Excel</span>
                         </button>
-                        <button class="manage-menu-item text-white" cdkMenuItem>
+                        <button class="manage-menu-item text-white" cdkMenuItem (click)="exportData('print')">
                             <mat-icon class="icon-size-5 text-white" [svgIcon]="'heroicons_solid:printer'"></mat-icon>
                             <span class="ml-2">Print</span>
                         </button>
@@ -56,7 +56,7 @@
             <form *ngIf="!showFilterForm" [formGroup]="filterForm">
                 <div class="flex flex-col md:flex-row w-full gap-2 items-end">
                     <mat-form-field class="w-full" [ngClass]="formFieldHelpers">
-                        <mat-label>วันที่เข้าโกดัง</mat-label>
+                        <mat-label>{{ 'shipment.warehouse_entry_date' | transloco }}</mat-label>
                         <mat-date-range-input [rangePicker]="picker">
                             <input matStartDate formControlName="start_date">
                             <input matEndDate formControlName="end_date">
@@ -67,18 +67,13 @@
                     <div class="w-full">
                         <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
                             <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:magnifying-glass'"></mat-icon>
-                            <input matInput [placeholder]="'ค้นหาด้วย Shipment No'">
+                            <input matInput class="ml-2" formControlName="code" [placeholder]="'shipment.search_by_shipment' | transloco">
                         </mat-form-field>
                     </div>
                     <div>
                         <button mat-flat-button [color]="'primary'" (click)="openfillter()" class="mb-5">
                             <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:bars-3'"></mat-icon>
-                            <span class="ml-2">ค้นหาโดยใช้ตัวกรอง</span>
-                        </button>
-                    </div>
-                    <div>
-                        <button mat-flat-button [color]="'primary'" class="mb-5">
-                            <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:cog-6-tooth'"></mat-icon>
+                            <span class="ml-2">{{ 'buttons.advancedFilter' | transloco }}</span>
                         </button>
                     </div>
                 </div>
@@ -87,13 +82,13 @@
                 [@slideToggleFilter]="showFilterForm ? 'open' : 'closed'">
                 <div>
                     <h2 class="text-xl font-extrabold leading-7 tracking-tight truncate md:text-xl sm:leading-10">
-                        ตัวกรองขั้นสูง
+                        {{ 'lables.advanced_filter' | transloco }}
                     </h2>
                     <mat-divider></mat-divider>
                 </div>
-                <div class="grid md:grid-cols-2 md:flex-row w-full gap-x-2 mt-2">
+                <div class="grid md:grid-cols-3 md:flex-row w-full gap-x-2 mt-2">
                     <mat-form-field class="w-full" [ngClass]="formFieldHelpers">
-                        <mat-label>ช่วงวันเริ่มต้น</mat-label>
+                        <mat-label>{{ 'shipment.date_range' | transloco }}</mat-label>
                         <mat-date-range-input [rangePicker]="picker">
                             <input matStartDate formControlName="start_date">
                             <input matEndDate formControlName="end_date">
@@ -103,53 +98,60 @@
                     </mat-form-field>
                     <div class="w-full">
                         <mat-form-field class="w-full" [ngClass]="formFieldHelpers">
-                            <mat-label>Shipment No</mat-label>
+                            <mat-label>{{ 'shipment.search_by_shipment' | transloco }}</mat-label>
                             <input matInput formControlName="code">
                         </mat-form-field>
                     </div>
                     <div class="w-full">
                         <mat-form-field class="w-full" [ngClass]="formFieldHelpers">
-                            <mat-label>รหัสใบรับเข้าคลัง</mat-label>
-                            <input matInput formControlName="code">
-                        </mat-form-field>
-                    </div>
-                    <div class="w-full">
-                        <mat-form-field class="w-full" [ngClass]="formFieldHelpers">
-                            <mat-label>สถานะ</mat-label>
-                            <mat-select formControlName="shipment">
-                                <mat-option value="warehouse">รับเข้าคลัง</mat-option>
-                                <mat-option value="pallet">ขึ้นพาเลท</mat-option>
-                                <mat-option value="transit_china">พัสดุเดินทางจากโกดังจีนไปหน้าด่าน</mat-option>
-                                <mat-option value="booking">จองตู้</mat-option>
-                                <mat-option value="close_container_china">ปิดตู้</mat-option>
-                                <mat-option value="customs_china">ดำเนินพิธีศุลกากรต้นทางจีน</mat-option>
-                                <mat-option value="inspection_china">ติดตรวจปล่อยพิธีศุลกากรต้นทางจีน</mat-option>
-                                <mat-option value="transit_china_thailand">พัสดุเดินทางระหว่าง จีน-ไทย</mat-option>
-                                <mat-option value="customs_thailand">ดำเนินพิธีศุลกากรปลายทางไทย</mat-option>
-                                <mat-option value="warehouse_arrival">พัสดุถึงโกดัง</mat-option>
-                                <mat-option value="customer_arrival">พัสดุถึงลูกค้าปลายทาง</mat-option>
-                                <mat-option value="customer_received">พัสดุถึงลูกค้าปลายทางเรียบร้อย</mat-option>
-                                <mat-option value="close_container_thai">ปิดตู้</mat-option>
+                            <mat-label>{{ 'shipment.status' | transloco }}</mat-label>
+                            <mat-select formControlName="status">
+                                <mat-option value="warehouse">{{ 'shipment.status_options.warehouse' | transloco
+                                    }}</mat-option>
+                                <mat-option value="pallet">{{ 'shipment.status_options.pallet' | transloco
+                                    }}</mat-option>
+                                <mat-option value="transit_china">{{ 'shipment.status_options.transit_china' | transloco
+                                    }}</mat-option>
+                                <mat-option value="booking">{{ 'shipment.status_options.booking' | transloco
+                                    }}</mat-option>
+                                <mat-option value="close_container_china">{{
+                                    'shipment.status_options.close_container_china' | transloco }}</mat-option>
+                                <mat-option value="customs_china">{{ 'shipment.status_options.customs_china' | transloco
+                                    }}</mat-option>
+                                <mat-option value="inspection_china">{{ 'shipment.status_options.inspection_china' |
+                                    transloco }}</mat-option>
+                                <mat-option value="transit_china_thailand">{{
+                                    'shipment.status_options.transit_china_thailand' | transloco }}</mat-option>
+                                <mat-option value="customs_thailand">{{ 'shipment.status_options.customs_thailand' |
+                                    transloco }}</mat-option>
+                                <mat-option value="warehouse_arrival">{{ 'shipment.status_options.warehouse_arrival' |
+                                    transloco }}</mat-option>
+                                <mat-option value="customer_arrival">{{ 'shipment.status_options.customer_arrival' |
+                                    transloco }}</mat-option>
+                                <mat-option value="customer_received">{{ 'shipment.status_options.customer_received' |
+                                    transloco }}</mat-option>
+                                <mat-option value="close_container_thai">{{
+                                    'shipment.status_options.close_container_thai' | transloco }}</mat-option>
                             </mat-select>
                         </mat-form-field>
                     </div>
                 </div>
                 <div class="w-full flex justify-end gap-2">
                     <button mat-flat-button [color]="'primary'" (click)="openfillter()">
-                        <span class="ml-2">ปิดตัวกรอง</span>
+                        <span class="ml-2">{{ 'buttons.closeFilter' | transloco }}</span>
                     </button>
                     <button mat-flat-button [color]="'primary'" (click)="clearFilter()">
                         <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:bars-3'"></mat-icon>
-                        <span class="ml-2">ล้างตั้งค่าตัวกรอง</span>
+                        <span class="ml-2">{{ 'buttons.clearFilter' | transloco }}</span>
                     </button>
                     <button mat-flat-button [color]="'primary'" (click)="applyFilter()">
                         <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:magnifying-glass'"></mat-icon>
-                        <span class="ml-2">ค้นหา</span>
+                        <span class="ml-2">{{ 'buttons.search' | transloco }}</span>
                     </button>
                 </div>
             </form>
             <div class="overflow-x-auto whitespace-nowrap mt-2 max-w-full">
-                <table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger"
+                <table #tableElement datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger"
                     class="table w-full bg-white row-border hover">
                 </table>
             </div>
@@ -160,18 +162,19 @@
 
 <ng-template #btNg let-data="adtData">
     <button mat-icon-button [matMenuTriggerFor]="menu">
-        <mat-icon class="icon-size-5 text-[#DF0B12]" [svgIcon]="'heroicons_outline:trash'"></mat-icon>
+        <mat-icon class="icon-size-5 text-[#DF0B12]" [svgIcon]="'feather:trash'"></mat-icon>
     </button>
     <mat-menu #menu="matMenu">
         <button mat-menu-item (click)="clickDelete(data.id)">
-            <mat-icon [svgIcon]="'heroicons_outline:trash'"></mat-icon>
-            <span>ลบ</span>
+            <mat-icon [svgIcon]="'feather:trash'"></mat-icon>
+            <span>{{ 'buttons.delete' | transloco }}</span>
         </button>
     </mat-menu>
 </ng-template>
 
 <ng-template #checkbox let-data="adtData">
-    <mat-checkbox [checked]="data.selected" (change)="onCheckboxChange($event, data.id)"></mat-checkbox>
+    <mat-checkbox class="text-white" [color]="'primary'" [checked]="data.selected"
+        (change)="onCheckboxChange($event, data.id)"></mat-checkbox>
 </ng-template>
 
 <ng-template #gotoRoute let-data="adtData">

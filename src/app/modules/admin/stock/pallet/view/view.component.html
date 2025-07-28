@@ -1,217 +1,270 @@
 <div class="flex flex-col flex-auto justify-start items-center w-full">
     <div class="w-full flex-col justify-between items-center flex overflow-hidden">
         <div class="w-full flex-col justify-start items-start flex">
-            <div class="w-full px-10 pt-5 pb-2.5 bg-white justify-between items-center flex">
+            <div class="w-full px-4 md:px-10 pt-5 pb-2.5 bg-white justify-between md:items-center flex">
                 <div class="flex flex-col">
                     <div class="flex space-x-2">
-                        <button class="md:text-xl font-medium tracking-tight leading-7 sm:leading-10 truncate"
+                        <button class="md:text-sm font-medium tracking-tight leading-7 sm:leading-10 truncate"
                             [routerLink]="['/member']" routerLinkActive="router-link-active">
-                            รายการรวมพัสดุ
+                            {{ 'pallet.title.package_summary_list' | transloco }}
                         </button>
                         <p class="md:text-sm font-medium tracking-tight leading-7 sm:leading-10 truncate">></p>
                         <p
                             class="md:text-sm font-medium tracking-tight leading-7 sm:leading-10 truncate text-[#DF0B12]">
-                            รายการพาเลท / Pallet
+                            {{ 'pallet.title.pallet_list' | transloco }}
                         </p>
                     </div>
 
                     <p class="md:text-2xl text-[#DF0B12] font-bold tracking-tight leading-7 sm:leading-10 truncate">
-                        รหัสพาเลท: {{ data.code }}
+                        {{ 'pallet.view.pallet_code_label' | transloco }}: {{ data.code }}
                     </p>
                 </div>
-                <div class="justify-end items-center gap-2 flex">
-                    <button mat-flat-button [color]="'primary'" (click)="opendialogdelete()">
-                        <mat-icon [svgIcon]="'heroicons_solid:trash'"></mat-icon>
-                        <span class="ml-2">ลบ</span>
-                    </button>
-                    <button mat-flat-button [color]="'primary'" (click)="palletedit()">
-                        <mat-icon [svgIcon]="'heroicons_solid:pencil-square'" class=""></mat-icon>
-                        <span class="ml-2">แก้ไข</span>
-                    </button>
-                    <button mat-flat-button [color]="'primary'" (click)="opendialogqrcode()">
+                <div class="justify-end items-end md:items-center gap-2 flex flex-col md:flex-row">
+                    <div class="border border-black rounded-md  w-full">
+                        <button mat-flat-button (click)="opendialogdelete()" class="hover-effect w-full">
+                            <mat-icon svgIcon="feather:trash"></mat-icon>
+                            <span class="ml-2">{{ 'buttons.delete_entry' | transloco }}</span>
+                        </button>
+                    </div>
+                    <div class="border border-red-600 rounded-md">
+                        <button mat-flat-button (click)="palletedit()" class="text-red-600  w-full">
+                            <mat-icon [svgIcon]="'mat_outline:edit_note'"></mat-icon>
+                            <span class="ml-2">{{ 'buttons.edit_entry' | transloco }}</span>
+                        </button>
+                    </div>
+                    <button mat-flat-button [color]="'primary'" class=" w-full" (click)="opendialogqrcode()">
                         <mat-icon [svgIcon]="'heroicons_solid:qr-code'"></mat-icon>
                         <span class="ml-2">QR Code</span>
                     </button>
                 </div>
             </div>
-            <div class="w-full px-10 flex flex-col gap-2 bg-white ">
+            <div class="w-full px-4 md:px-10 flex flex-col gap-2 bg-white ">
                 <div class="flex flex-col gap-2 w-full mb-4">
-                    <h2 class="font-semibold text-lg">รายละเอียดพาเลท / Pallet</h2>
+                    <h2 class="font-semibold text-lg">
+                        {{ 'pallet.view.pallet_details' | transloco }}
+                    </h2>
                     <mat-divider class="mb-3"></mat-divider>
 
-                    <div class="flex flex-row gap-2 w-full ">
+                    <div class="flex flex-col md:flex-row gap-2 w-full ">
                         <div class="flex justify-between w-full">
-                            <div class="w-full font-bold">รหัสพาเลท:</div>
+                            <div class="w-full font-bold">
+                                {{ 'pallet.view.pallet_code_label' | transloco }}:
+                            </div>
                             <div class="w-full text-left">{{ data.code ?? '-' }}</div>
                         </div>
                         <div class="flex justify-between w-full">
-                            <div class="w-full font-bold">วันที่เข้าโกดัง:</div>
+                            <div class="w-full font-bold">
+                                {{ 'pallet.view.warehouse_entry_date' | transloco }}:
+                            </div>
                             <div class="w-full text-left">{{ data.received_date ?? '-' }}</div>
                         </div>
                     </div>
 
-                    <div class="flex flex-row gap-2 w-full ">
+                    <div class="flex flex-col md:flex-row gap-2 w-full ">
                         <div class="flex justify-between w-full">
-                            <div class="w-full font-bold">ขนส่งโดย:</div>
+                            <div class="w-full font-bold">
+                                {{ 'pallet.view.shipped_by' | transloco }}:
+                            </div>
                             <div class="w-full text-left">{{ getShipmentMethod(data?.shipped_by) ?? '-' }}</div>
                         </div>
                         <div class="flex justify-between w-full">
-                            <div class="w-full font-bold">ประเภท:</div>
-                            <div class="w-full text-left">{{ data.product_type?.name  ?? '-' }}</div>
+                            <div class="w-full font-bold">
+                                {{ 'pallet.view.product_type' | transloco }}:
+                            </div>
+                            <div class="w-full text-left">{{ data.product_type?.name ?? '-' }}</div>
                         </div>
                     </div>
                     <div class="col-span-2 bg-[#fdeaeb] rounded-md p-4">
-                        <p class="font-bold text-red-600">หมายเหตุ</p>
+                        <p class="font-bold text-red-600">
+                            {{ 'pallet.view.note' | transloco }}
+                        </p>
                         <p class="text-red-600"> {{ data.remark ?? '-' }} </p>
                     </div>
                 </div>
                 <div
-                class="w-full p-4 my-4 border border-gray-300 rounded-lg min-h-[300px] overflow-y-auto flex flex-col">
-                <div class="flex flex-row w-full gap-2 mb-6">
-                    <div class="w-full text-3xl font-bold">รายการสินค้าในรายการพาเลท / Pallet</div>
-                    <div class="flex flex-row justify-end w-full gap-2">
-                        <button [cdkMenuTriggerFor]="menu" mat-flat-button class="!text-white" [color]="'primary'">
-                            <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:shopping-bag'"></mat-icon>
-                            <div class="flex items-center gap-2">
-                                <span class="ml-2"> การจัดการข้อมูล </span>
-                                <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:chevron-up'"></mat-icon>
-                            </div>
-                        </button>
-                        <ng-template #menu>
-                            <div class="manage-menu bg-primary" cdkMenu>
-                                <button class="manage-menu-item text-white" cdkMenuItem>
-                                    <mat-icon class="icon-size-5 text-white"
-                                        [svgIcon]="'heroicons_solid:document-duplicate'"></mat-icon>
-                                    <span class="ml-2">Copy to Clipboard</span>
-                                </button>
-                                <button class="manage-menu-item text-white" cdkMenuItem>
-                                    <mat-icon class="icon-size-5 text-white"
-                                        [svgIcon]="'heroicons_solid:table-cells'"></mat-icon>
-                                    <span class="ml-2">CSV</span>
-                                </button>
-                                <button class="manage-menu-item text-white" cdkMenuItem>
-                                    <mat-icon class="icon-size-5 text-white"
-                                        [svgIcon]="'heroicons_solid:table-cells'"></mat-icon>
-                                    <span class="ml-2">Excel</span>
-                                </button>
-                                <button class="manage-menu-item text-white" cdkMenuItem>
-                                    <mat-icon class="icon-size-5 text-white" [svgIcon]="'heroicons_solid:printer'"></mat-icon>
-                                    <span class="ml-2">Print</span>
-                                </button>
-                            </div>
-                        </ng-template>
-                    </div>
-                </div>
-                <form *ngIf="!showFilterForm" [formGroup]="filterForm">
-                    <div class="flex flex-col md:flex-row w-full gap-2 items-end">
-                        <div class="w-full">
-                            <mat-form-field [ngClass]="formFieldHelpers" class="w-full" >
-                                <mat-icon class="icon-size-5 mr-2" [svgIcon]="'heroicons_solid:magnifying-glass'"></mat-icon>
-                                <input matInput formControlName="in_store" [placeholder]="'ค้นหาด้วยรหัสใบรับเข้าคลัง'">
-                            </mat-form-field>
+                    class="w-full p-4 my-4 border border-gray-300 rounded-lg min-h-[300px] overflow-y-auto flex flex-col">
+                    <div class="flex flex-col md:flex-row w-full gap-2 mb-6">
+                        <div class="w-full text-xl md:text-3xl font-bold">
+                            {{ 'pallet.view.products_in_pallet' | transloco }}  
                         </div>
+                        <div class="flex flex-row md:justify-end w-full gap-2">
+                            <button [cdkMenuTriggerFor]="menu" mat-flat-button class="!text-white" [color]="'primary'">
+                                <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:shopping-bag'"></mat-icon>
+                                <div class="flex items-center gap-2">
+                                    <span class="ml-2"> {{ 'pallet.view.data_management' | transloco }} </span>
+                                    <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:chevron-up'"></mat-icon>
+                                </div>
+                            </button>
+                            <ng-template #menu>
+                                <div class="manage-menu bg-primary" cdkMenu>
+                                    <button class="manage-menu-item text-white" cdkMenuItem>
+                                        <mat-icon class="icon-size-5 text-white"
+                                            [svgIcon]="'heroicons_solid:document-duplicate'"></mat-icon>
+                                        <span class="ml-2">Copy to Clipboard</span>
+                                    </button>
+                                    <button class="manage-menu-item text-white" cdkMenuItem>
+                                        <mat-icon class="icon-size-5 text-white"
+                                            [svgIcon]="'heroicons_solid:table-cells'"></mat-icon>
+                                        <span class="ml-2">CSV</span>
+                                    </button>
+                                    <button class="manage-menu-item text-white" cdkMenuItem>
+                                        <mat-icon class="icon-size-5 text-white"
+                                            [svgIcon]="'heroicons_solid:table-cells'"></mat-icon>
+                                        <span class="ml-2">Excel</span>
+                                    </button>
+                                    <button class="manage-menu-item text-white" cdkMenuItem>
+                                        <mat-icon class="icon-size-5 text-white"
+                                            [svgIcon]="'heroicons_solid:printer'"></mat-icon>
+                                        <span class="ml-2">Print</span>
+                                    </button>
+                                </div>
+                            </ng-template>
+                        </div>
+                    </div>
+                    <form *ngIf="!showFilterForm" [formGroup]="filterForm">
+                        <div class="flex flex-col md:flex-row w-full gap-2 items-end">
+                            <div class="w-full">
+                                <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                                    <mat-icon class="icon-size-5 mr-2"
+                                        [svgIcon]="'heroicons_solid:magnifying-glass'"></mat-icon>
+                                    <input matInput formControlName="po_no"
+                                        [placeholder]=" 'pallet.view.search_with_warehouse_receipt' | transloco ">
+                                </mat-form-field>
+                            </div>
+                            <div>
+                                <button mat-flat-button [color]="'primary'" (click)="openfillter()" class="mb-5">
+                                    <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:bars-3'"></mat-icon>
+                                    <span class="ml-2">{{ 'buttons.advancedFilter' | transloco }}</span>
+                                </button>
+                            </div>
+
+                        </div>
+                    </form>
+                    <form [formGroup]="filterForm" class="p-4 rounded-md"
+                        [@slideToggleFilter]="showFilterForm ? 'open' : 'closed'">
                         <div>
-                            <button mat-flat-button [color]="'primary'" (click)="openfillter()" class="mb-5">
+                            <h2
+                                class="text-xl font-extrabold leading-7 tracking-tight truncate md:text-xl sm:leading-10">
+                                {{ 'lables.advanced_filter' | transloco }}
+                            </h2>
+                            <mat-divider></mat-divider>
+                        </div>
+                        <div class="grid md:grid-cols-3 md:flex-row w-full gap-x-2 mt-2">
+                            <div class="w-full">
+                                <mat-label>{{ 'dalivery_order.labels.customer' | transloco }}</mat-label>
+                                <asha-select-member
+                                (change)="selectMember($event)"
+                                class="w-full [&_input]:!mt-0 [&_input]:!pt-1 [&_input]:!pb-1 [&_.mdc-text-field]:!mt-0">
+                                </asha-select-member>
+                            </div>
+                            <div class="w-full">
+                                <mat-form-field class="w-full" [ngClass]="formFieldHelpers">
+                                    <mat-label> {{ 'pallet.view.warehouse_receipt_code' | transloco }}</mat-label>
+                                    <input matInput formControlName="po_no">
+                                </mat-form-field>
+                            </div>
+                            <div class="w-full">
+                                <mat-form-field class="w-full" [ngClass]="formFieldHelpers">
+                                    <mat-label> {{ 'pallet.view.sack_number' | transloco }}</mat-label>
+                                    <input matInput formControlName="sack_id">
+                                </mat-form-field>
+                            </div>
+                        </div>
+                        <div class="w-full flex justify-end gap-2">
+                            <button mat-flat-button [color]="'primary'" (click)="openfillter()">
+                                <span class="ml-2">{{ 'buttons.closeFilter' | transloco }}</span>
+                            </button>
+                            <button mat-flat-button [color]="'primary'" (click)="clearFilter()">
                                 <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:bars-3'"></mat-icon>
-                                <span class="ml-2">ค้นหาโดยใช้ตัวกรอง</span>
+                                <span class="ml-2">{{ 'buttons.clearFilter' | transloco }}</span>
+                            </button>
+                            <button mat-flat-button [color]="'primary'" (click)="applyFilter()">
+                                <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:magnifying-glass'"></mat-icon>
+                                <span class="ml-2">{{ 'buttons.search' | transloco }}</span>
                             </button>
                         </div>
-                        <div>
-                            <button mat-flat-button [color]="'primary'" class="mb-5">
-                                <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:cog-6-tooth'"></mat-icon>
-                            </button>
-                        </div>
+                    </form>
+                    <div class="overflow-x-auto">
+                        <table class="whitespace-nowrap w-full">
+                            <thead>
+                                <tr>
+                                    <th class="px-6 py-3 border border-l-0">#</th>
+                                    <th class="px-6 py-3 border border-x-0">
+                                        {{ 'pallet.view.customer' | transloco }}
+                                    </th>
+                                    <th class="px-6 py-3 border border-x-0">
+                                        {{ 'pallet.view.sack_code' | transloco }}
+                                    </th>
+                                    <th class="px-6 py-3 border border-x-0">
+                                        {{ 'pallet.view.barcode_number' | transloco }}
+                                    </th>
+                                    <th class="px-6 py-3 border border-x-0">
+                                        {{ 'pallet.view.warehouse_receipt_code_table' | transloco }}
+                                    </th>
+                                    <th class="px-6 py-3 border border-x-0">
+                                        {{ 'pallet.view.shipment_method' | transloco }}
+                                    </th>
+                                    <th class="px-6 py-3 border border-x-0">
+                                        {{ 'pallet.view.quantity_check' | transloco }}
+                                    </th>
+                                    <th class="px-6 py-3 border border-x-0">
+                                        {{ 'pallet.view.parcel_type' | transloco }}
+                                    </th>
+                                    <th class="px-6 py-3 border border-x-0">
+                                        {{ 'pallet.view.weight_kg' | transloco }}
+                                    </th>
+                                    <th class="px-6 py-3 border border-x-0">
+                                        {{ 'pallet.view.cbm' | transloco }}
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let list of lists; let i = index" class="text-center">
+                                    <td>{{ i + 1 }}</td>
+                                    <td>{{ list?.customer }}</td>
+                                    <td>{{ list?.sack_id }}</td>
+                                    <td>{{ list?.barcode }}</td>
+                                    <td>{{ list?.in_store_code }}</td>
+                                    <td>{{ list?.shipment }}</td>
+                                    <td>{{ list?.quantity_check }}</td>
+                                    <td>{{ list?.parcel_type }}</td>
+                                    <td>{{ list?.weight }}</td>
+                                    <td>{{ list?.cbm }}</td>
+                                </tr>
+                                <tr *ngFor="let list of filteredDeliveryOrders; let i = index" class="text-center">
+                                    <td class="px-6 py-3 border border-l-0">{{ i + 1 }}</td>
+                                    <td class="px-6 py-3 border border-x-0">{{
+                                        list?.delivery_order?.member?.importer_code ??
+                                        '-' }}</td>
+                                    <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order_list?.sack_id ??
+                                        '-' }}</td>
+                                    <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order_list_items?.barcode ?? '-'
+                                        }}</td>
+                                    <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order?.po_no ?? '-' }}
+                                    </td>
+                                    <td class="px-6 py-3 border border-x-0">{{ getShipmentMethod(data?.shipped_by) ??
+                                        '-' }}</td>
+                                    <td class="px-6 py-3 border border-x-0">1</td>
+                                    <td class="px-6 py-3 border border-x-0">
+                                        {{(checkProductType(list?.delivery_order?.product_type_id)) ?? '-' }}
+                                    </td>
+                                    <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order_list.weight
+                                        ?? '-' }}</td>
+                                    <td class="px-6 py-3 border border-x-0">{{ list?.cbm ?? '-' }}
+                                    </td>
+                            </tbody>
+                            <tfoot class="bg-gray-100">
+                                <tr class="text-center">
+                                    <td colspan="8" class="px-6 py-3 border border-x-0 text-left">
+                                        {{ 'pallet.view.total_items' | transloco }} {{ totallist }} {{
+                                        'pallet.view.list_unit' | transloco }}
+                                    </td>
+                                    <td class="px-6 py-3 border border-x-0"> {{ totalWeight | number : '1.2'}} </td>
+                                    <td class="px-6 py-3 border border-x-0"> {{ totalCBM | number}} </td>
+                                </tr>
+                            </tfoot>
+                        </table>
                     </div>
-                </form>
-                <form [formGroup]="filterForm" class="p-4 rounded-md"
-                    [@slideToggleFilter]="showFilterForm ? 'open' : 'closed'">
-                    <div>
-                        <h2 class="text-xl font-extrabold leading-7 tracking-tight truncate md:text-xl sm:leading-10">
-                            ตัวกรองขั้นสูง
-                        </h2>
-                        <mat-divider></mat-divider>
-                    </div>
-                    <div class="grid md:grid-cols-3 md:flex-row w-full gap-x-2 mt-2">
-                        <div class="w-full">
-                            <asha-select-member (change)="selectMember($event)" class="w-full"></asha-select-member>
-                        </div>
-                        <div class="w-full">
-                            <mat-form-field class="w-full" [ngClass]="formFieldHelpers">
-                                <mat-label>รหัสใบรับเข้าคลัง</mat-label>
-                                <input matInput formControlName="code">
-                            </mat-form-field>
-                        </div>
-                        <div class="w-full">
-                            <mat-form-field class="w-full" [ngClass]="formFieldHelpers">
-                                <mat-label>หมายเลขกระสอบ</mat-label>
-                                <input matInput formControlName="sack_code">
-                            </mat-form-field>
-                        </div>
-                    </div>
-                    <div class="w-full flex justify-end gap-2">
-                        <button mat-flat-button [color]="'primary'" (click)="openfillter()">
-                            <span class="ml-2">ปิดตัวกรอง</span>
-                        </button>
-                        <button mat-flat-button [color]="'primary'" (click)="clearFilter()">
-                            <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:bars-3'"></mat-icon>
-                            <span class="ml-2">ล้างตั้งค่าตัวกรอง</span>
-                        </button>
-                        <button mat-flat-button [color]="'primary'" (click)="applyFilter()">
-                            <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:magnifying-glass'"></mat-icon>
-                            <span class="ml-2">ค้นหา</span>
-                        </button>
-                    </div>
-                </form>
-                <div class="overflow-x-auto">
-                    <table class="whitespace-nowrap w-full">
-                        <thead>
-                          <tr >
-                            <th class="px-6 py-3 border border-l-0">#</th>
-                            <th class="px-6 py-3 border border-x-0">ลูกค้า</th>
-                            <th class="px-6 py-3 border border-x-0">รหัสกระสอบ</th>
-                            <th class="px-6 py-3 border border-x-0">เลขที่บาร์โค้ด</th>
-                            <th class="px-6 py-3 border border-x-0">รหัสใบรับเข้าคลัง</th>
-                            <th class="px-6 py-3 border border-x-0">ขนส่งโดย</th>
-                            <th class="px-6 py-3 border border-x-0">ตรวจสอบจำนวน</th>
-                            <th class="px-6 py-3 border border-x-0">ประเภทพัสดุ</th>
-                            <th class="px-6 py-3 border border-x-0">น้ำหนัก(Kg.)</th>
-                            <th class="px-6 py-3 border border-x-0">CBM</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                            <tr *ngFor="let list of lists; let i = index" class="text-center">
-                                <td>{{ i + 1 }}</td>
-                                <td>{{ list.customer }}</td>
-                                <td>{{ list.sack_code }}</td>
-                                <td>{{ list.barcode }}</td>
-                                <td>{{ list.in_store_code }}</td>
-                                <td>{{ list.shipment }}</td>
-                                <td>{{ list.quantity_check }}</td>
-                                <td>{{ list.parcel_type }}</td>
-                                <td>{{ list.weight }}</td>
-                                <td>{{ list.cbm }}</td>
-                            </tr>
-                            <tr *ngFor="let list of filteredDeliveryOrders; let i = index" class="text-center">
-                                <td class="px-6 py-3 border border-l-0">{{ i + 1 }}</td>
-                                <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order_list?.member_id ?? '-' }}</td>
-                                <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order_list?.sack_code ?? '-' }}</td>
-                                <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order_list?.barcode ?? '-' }}</td>
-                                <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order_list?.code ?? '-' }}</td>
-                                <td class="px-6 py-3 border border-x-0">{{ getShipmentMethod(list?.delivery_order_list?.shipped_by) }}</td>
-                                <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order_list?.quantity_check ?? '-' }}</td>
-                                <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order_list?.product_type?.name ?? '-' }}</td>
-                                <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order_list?.weight ?? '-' }}</td>
-                                <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order_list?.cbm ?? '-' }}</td>
-                        </tbody>
-                        <tfoot class="bg-gray-100">
-                          <tr class="text-center">
-                            <td colspan="8" class="px-6 py-3 border border-x-0 text-left"> ผลรวม {{ totallist }} รายการ </td>
-                            <td class="px-6 py-3 border border-x-0"> {{ totalWeight }} </td>
-                            <td class="px-6 py-3 border border-x-0"> {{ totalCBM }} </td>
-                          </tr>
-                        </tfoot>
-                      </table>
-                </div>
                 </div>
             </div>
         </div>

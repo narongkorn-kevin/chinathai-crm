@@ -57,54 +57,57 @@ import { DialogPoComponent } from '../dialog-po/dialog-po.component';
 import { DialogTrackingComponent } from '../dialog-tracking/dialog-tracking.component';
 import { UploadImageComponent } from 'app/modules/common/upload-image/upload-image.component';
 
+import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
+
 @Component({
     selector: 'app-delivery-note-view-order-after-1',
     standalone: true,
     templateUrl: './view-order-after.component.html',
     styleUrl: './view-order-after.component.scss',
     imports: [
-    CommonModule,
-    DataTablesModule,
-    MatIconModule,
-    MatFormFieldModule,
-    MatInputModule,
-    FormsModule,
-    MatToolbarModule,
-    MatButtonModule,
-    MatSelectModule,
-    ReactiveFormsModule,
-    MatInputModule,
-    MatFormFieldModule,
-    MatRadioModule,
-    MatFormFieldModule,
-    MatDatepickerModule,
-    MatDivider,
-    RouterLink,
-    SelectMemberComponent,
-    CdkMenuModule,
-    UploadFileComponent,
-],
-animations: [
-    trigger('slideToggleFilter', [
-        state(
-            'open',
-            style({
-                height: '*',
-                opacity: 1,
-                overflow: 'hidden',
-            })
-        ),
-        state(
-            'closed',
-            style({
-                height: '0px',
-                opacity: 0,
-                overflow: 'hidden',
-            })
-        ),
-        transition('open <=> closed', [animate('300ms ease-in-out')]),
-    ]),
-],
+        TranslocoModule,
+        CommonModule,
+        DataTablesModule,
+        MatIconModule,
+        MatFormFieldModule,
+        MatInputModule,
+        FormsModule,
+        MatToolbarModule,
+        MatButtonModule,
+        MatSelectModule,
+        ReactiveFormsModule,
+        MatInputModule,
+        MatFormFieldModule,
+        MatRadioModule,
+        MatFormFieldModule,
+        MatDatepickerModule,
+        MatDivider,
+        RouterLink,
+        SelectMemberComponent,
+        CdkMenuModule,
+        UploadFileComponent,
+    ],
+    animations: [
+        trigger('slideToggleFilter', [
+            state(
+                'open',
+                style({
+                    height: '*',
+                    opacity: 1,
+                    overflow: 'hidden',
+                })
+            ),
+            state(
+                'closed',
+                style({
+                    height: '0px',
+                    opacity: 0,
+                    overflow: 'hidden',
+                })
+            ),
+            transition('open <=> closed', [animate('300ms ease-in-out')]),
+        ]),
+    ],
 })
 export class ViewOrderAfterComponent implements OnInit {
     formFieldHelpers: string[] = ['fuse-mat-dense'];
@@ -120,15 +123,15 @@ export class ViewOrderAfterComponent implements OnInit {
 
     status_type: string;
 
-
     constructor(
+        private translocoService: TranslocoService,
         private FormBuilder: FormBuilder,
         public _service: DeliveryService,
         private fuseConfirmationService: FuseConfirmationService,
         private toastr: ToastrService,
         private _router: Router,
         private activated: ActivatedRoute,
-        public dialog: MatDialog,
+        public dialog: MatDialog
     ) {
         this.type = this.activated.snapshot.data.type;
         this.Id = this.activated.snapshot.params.id;
@@ -147,7 +150,7 @@ export class ViewOrderAfterComponent implements OnInit {
             licenseNumber: [''],
             carRegistration: [''],
             shippedBy: [''],
-            area: ['']
+            area: [''],
         });
 
         this.filterForm = this.FormBuilder.group({
@@ -158,30 +161,30 @@ export class ViewOrderAfterComponent implements OnInit {
         });
         this.filteredDeliveryOrders = this.data?.delivery_orders;
 
-        this.filterForm.get('in_store').valueChanges.pipe(
-            debounceTime(500)
-        ).subscribe(value => {
-            if(this.filterForm.get('in_store').value !== null) {
-                this.filteredDeliveryOrders = this.data.delivery_orders.filter(order =>
-                    order.delivery_order.code.includes(value)
-                );
-            }
-        });
-
+        this.filterForm
+            .get('in_store')
+            .valueChanges.pipe(debounceTime(500))
+            .subscribe((value) => {
+                if (this.filterForm.get('in_store').value !== null) {
+                    this.filteredDeliveryOrders =
+                        this.data.delivery_orders.filter((order) =>
+                            order.delivery_order.code.includes(value)
+                        );
+                }
+            });
     }
 
     getShipmentMethod(shippedBy: string): string {
-        if (shippedBy === 'Car') {
+        if (shippedBy === 'Car' || shippedBy === 'car') {
             return 'ขนส่งทางรถ';
-        } else if (shippedBy === 'Ship') {
+        } else if (shippedBy === 'Ship' || shippedBy === 'ship') {
             return 'ขนส่งทางเรือ';
-        } else if (shippedBy === 'Train') {
+        } else if (shippedBy === 'Train' || shippedBy === 'train') {
             return 'ขนส่งทางรถไฟ';
         } else {
             return '-';
         }
     }
-
 
     filterForm: FormGroup;
     showFilterForm: boolean = false;
@@ -193,11 +196,17 @@ export class ViewOrderAfterComponent implements OnInit {
 
     applyFilter() {
         const { code, member_id, sack_code } = this.filterForm.value;
-        this.filteredDeliveryOrders = this.data.delivery_orders.filter(order => {
-            return (!code || order.delivery_order.code.includes(code)) &&
-                   (!member_id || order.delivery_order.member_id.includes(member_id)) &&
-                   (!sack_code || order.delivery_order.sack_code.includes(sack_code));
-        });
+        this.filteredDeliveryOrders = this.data.delivery_orders.filter(
+            (order) => {
+                return (
+                    (!code || order.delivery_order.code.includes(code)) &&
+                    (!member_id ||
+                        order.delivery_order.member_id.includes(member_id)) &&
+                    (!sack_code ||
+                        order.delivery_order.sack_code.includes(sack_code))
+                );
+            }
+        );
     }
 
     clearFilter() {
@@ -205,10 +214,10 @@ export class ViewOrderAfterComponent implements OnInit {
         this.filteredDeliveryOrders = this.data.delivery_orders;
     }
 
-    close(){
+    close() {
         this._router.navigate(['/delivery-note']);
     }
-    edit(){
+    edit() {
         this._router.navigate(['/delivery-note/view-order/' + this.Id]);
     }
     opendialogpo() {
@@ -218,8 +227,7 @@ export class ViewOrderAfterComponent implements OnInit {
             maxHeight: '90vh',
             enterAnimationDuration: 300,
             exitAnimationDuration: 300,
-            data: {
-            },
+            data: {},
         });
         DialogRef.afterClosed().subscribe((result) => {
             if (result) {
@@ -234,8 +242,7 @@ export class ViewOrderAfterComponent implements OnInit {
             maxHeight: '90vh',
             enterAnimationDuration: 300,
             exitAnimationDuration: 300,
-            data: {
-            },
+            data: {},
         });
         DialogRef.afterClosed().subscribe((result) => {
             if (result) {

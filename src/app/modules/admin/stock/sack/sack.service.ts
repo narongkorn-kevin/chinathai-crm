@@ -36,7 +36,16 @@ export class SackService {
                 })
             );
     }
-
+    datatableorderlistBox(dataTablesParameters: any) {
+        return this.http
+            .post('/api/delivery_order_list_item_none_pallet_and_sack', dataTablesParameters)
+            .pipe(
+                map((resp: any) => {
+                    return resp;
+                })
+            );
+    }
+    
     create(data: any) {
         return this.http.post('/api/sack', data);
     }
@@ -47,6 +56,9 @@ export class SackService {
 
     get(id: any) {
         return this.http.get('/api/sack/' + id);
+    }
+    getCode() {
+        return this.http.get('/api/get_last_code_packing_list_pallet_sack/sack');
     }
 
     delete(id: number) {
@@ -65,4 +77,18 @@ export class SackService {
     getProductNoneSack() {
         return this.http.get('/api/get_delivery_order_list_none_sack');
     }
+  
+    getDashboardSack() {
+        return this.http.get('/api/dashboard_sack');
+    }
+
+    getDashboardSackFilter(param: any) {
+        return this.http.get('/api/dashboard_sack', {params: param});
+    }
+
+    getMember() {
+        return this.http.get('/api/get_member');
+    }
+
+
 }

@@ -1,41 +1,43 @@
 <div class="flex flex-col flex-auto justify-start items-center w-full">
     <div class="w-full flex-col justify-between items-center flex overflow-hidden">
         <div class="w-full flex-col justify-start items-start flex">
-            <div class="w-full px-10 pt-5 pb-2.5 bg-white justify-between items-center flex">
+            <div class="w-full px-4 md:px-10 pt-5 pb-2.5 bg-white justify-between items-center flex">
                 <div class="flex flex-col">
                     <div class="flex space-x-2">
-                        <button class="md:text-xl font-medium tracking-tight leading-7 sm:leading-10 truncate"
+                        <button class="md:text-sm font-medium tracking-tight leading-7 sm:leading-10 truncate"
                             [routerLink]="['/delivery-note']" routerLinkActive="router-link-active">
-                            เอกสาร
+                            {{ 'delivery_note.document' | transloco }}
                         </button>
                         <p class="md:text-sm font-medium tracking-tight leading-7 sm:leading-10 truncate">></p>
                         <button
                             class="md:text-sm font-medium tracking-tight leading-7 sm:leading-10 truncate text-[#DF0B12]"
                             [routerLink]="['/delivery-note']" routerLinkActive="router-link-active">
-                            ใบส่งของ
+                            {{ 'delivery_note.title' | transloco }}
                         </button>
                     </div>
 
                     <p class="md:text-2xl text-[#DF0B12] font-bold tracking-tight leading-7 sm:leading-10 truncate">
-                        สร้างใบส่งของ
+                        {{ 'delivery_note.view_order_after.create' | transloco }}
                     </p>
                 </div>
                 <div class="justify-end items-center gap-2 flex">
                     <button mat-flat-button [color]="'primary'" (click)="edit()">
-                        <mat-icon [svgIcon]="'feather:save'" class=""></mat-icon>
-                        <span class="ml-2">แก้ไข</span>
+                        <mat-icon [svgIcon]="'mat_outline:edit_note'" class=""></mat-icon>
+                        <span class="ml-2">{{ 'buttons.edit' | transloco }}</span>
                     </button>
                 </div>
             </div>
 
-            <div class="w-full px-10 flex flex-col gap-2 bg-white">
-                <div class="flex flex-col md:flex-row items-center justify-between w-full">
+            <div class="w-full px-4 md:px-10 flex flex-col gap-2 bg-white">
+                <div class="flex flex-row items-center justify-between w-full">
                     <!-- Step 1 -->
-                    <div class="flex flex-col items-center">
+                    <div class="flex flex-col items-center mt-6 md:mt-0">
                         <div class="w-12 h-12 rounded-full bg-red-600 flex items-center justify-center mb-3">
                             <mat-icon class="text-white" svgIcon="heroicons_solid:user"></mat-icon>
                         </div>
-                        <p class="text-red-600 font-medium text-center whitespace-nowrap">ข้อมูลการจัดส่ง</p>
+                        <p class="text-red-600 font-medium text-center whitespace-nowrap">
+                            {{ 'delivery_note.view_order_after.steps_delivery_info' | transloco }}
+                        </p>
                     </div>
 
                     <!-- Connecting Line 1 -->
@@ -48,7 +50,9 @@
                         <div class="w-12 h-12 rounded-full bg-red-600 flex items-center justify-center mb-3">
                             <mat-icon class="text-white" svgIcon="heroicons_solid:qr-code"></mat-icon>
                         </div>
-                        <p class="text-red-600 font-medium text-center whitespace-nowrap">สแกนขาออก</p>
+                        <p class="text-red-600 font-medium text-center whitespace-nowrap">
+                            {{ 'delivery_note.view_order_after.steps_scan_out' | transloco }}
+                        </p>
                     </div>
 
                     <!-- Connecting Line 2 -->
@@ -61,7 +65,9 @@
                         <div class="w-12 h-12 rounded-full bg-red-600 flex items-center justify-center mb-3">
                             <mat-icon class="text-white" svgIcon="heroicons_solid:photo"></mat-icon>
                         </div>
-                        <p class="text-red-600 font-medium text-center whitespace-nowrap">รูปภาพอ้างอิง</p>
+                        <p class="text-red-600 font-medium text-center whitespace-nowrap">
+                            {{ 'delivery_note.view_order_after.steps_reference_images' | transloco }}
+                        </p>
                     </div>
 
                     <!-- Connecting Line 3 -->
@@ -74,26 +80,36 @@
                         <div class="w-12 h-12 rounded-full bg-red-600 flex items-center justify-center mb-3">
                             <mat-icon class="text-white" svgIcon="heroicons_solid:clipboard"></mat-icon>
                         </div>
-                        <p class="text-red-600 font-medium text-center whitespace-nowrap">ตรวจสอบข้อมูล</p>
+                        <p class="text-red-600 font-medium text-center whitespace-nowrap">
+                            {{ 'delivery_note.view_order_after.steps_verify_info' | transloco }}
+                        </p>
                     </div>
                 </div>
 
                 <div class="w-full flex-col gap-2 flex mt-5">
                     <div class="w-full flex-col flex">
-                        <div class="text-lg font-bold">ข้อมูลสมาชิก</div>
+                        <div class="text-lg font-bold">
+                            {{ 'delivery_note.view_order_after.member_info_title' | transloco }}
+                        </div>
                         <mat-divider></mat-divider>
                     </div>
-                    <div class="w-full grid grid-flow-row grid-cols-2 gap-2 ">
+                    <div class="w-full flex flex-col md:grid md:grid-cols-2 gap-2 ">
                         <div class="w-full flex flex-row">
-                            <div class="font-bold w-full"> รหัสลูกค้า (ที่อยู่จัดส่ง):</div>
+                            <div class="font-bold w-full">
+                                {{ 'delivery_note.view_order_after.member_info_customer_code' | transloco }}
+                            </div>
                             <div class="w-full"> {{ this.data?.code ?? '-' }} </div>
                         </div>
                         <div class="w-full flex flex-row">
-                            <div class="font-bold w-full"> วันที่เข้ามารับ:</div>
+                            <div class="font-bold w-full">
+                                {{ 'delivery_note.view_order_after.member_info_pickup_date' | transloco }}
+                            </div>
                             <div class="w-full"> {{ this.data?.date ?? '-' }} </div>
                         </div>
                         <div class="col-span-2 bg-[#fdeaeb] rounded-md p-4 flex flex-row">
-                            <p class="font-bold text-red-600">หมายเหตุ</p>
+                            <p class="font-bold text-red-600">
+                                {{ 'delivery_note.view_order_after.member_info_note' | transloco }}
+                            </p>
                             <p class="text-red-600"> {{ data?.remark ?? '-' }} </p>
                         </div>
                     </div>
@@ -101,51 +117,82 @@
 
                 <div class="w-full flex-col gap-2 flex mt-5" *ngIf="status_type ==='send'">
                     <div class="w-full flex-col flex">
-                        <div class="text-lg font-bold">ข้อมูลการจัดส่ง</div>
+                        <div class="text-lg font-bold">
+                            {{ 'delivery_note.view_order_after.delivery_info_title' | transloco }}
+                        </div>
                         <mat-divider></mat-divider>
                     </div>
-                    <div class="w-full grid grid-flow-row grid-cols-2 lg:grid-cols-4 gap-2 justify-between">
-                        <div class="font-bold w-full"> ชื่อนามสกุล:</div>
+                    <div class="w-full flex flex-col md:grid md:grid-cols-2 lg:grid-cols-4 gap-2 justify-between">
+                        <div class="font-bold w-full">
+                            {{ 'delivery_note.view_order_after.delivery_info_send_full_name' | transloco }}
+                        </div>
                         <div class="w-full"> {{ this.data?.name ?? '-' }} </div>
-                        <div class="font-bold w-full"> เบอร์โทรคนขับ:</div>
+                        <div class="font-bold w-full">
+                            {{ 'delivery_note.view_order_after.delivery_info_send_driver_phone' | transloco }}
+                        </div>
                         <div class="w-full"> {{ this.data?.name ?? '-' }} </div>
-                        <div class="font-bold w-full"> เลขที่บัตรใบขับขี่:</div>
+                        <div class="font-bold w-full">
+                            {{ 'delivery_note.view_order_after.delivery_info_send_license_number' | transloco }}
+                        </div>
                         <div class="w-full"> {{ this.data?.name ?? '-' }} </div>
-                        <div class="font-bold w-full"> ทะเบียนรถ:</div>
+                        <div class="font-bold w-full">
+                            {{ 'delivery_note.view_order_after.delivery_info_send_plate_number' | transloco }}
+                        </div>
                         <div class="w-full"> {{ this.data?.name ?? '-' }} </div>
-                        <div class="font-bold w-full"> ขนส่งโดย:</div>
+                        <div class="font-bold w-full">
+                            {{ 'delivery_note.view_order_after.delivery_info_send_shipped_by' | transloco }}
+                        </div>
                         <div class="w-full"> {{ this.data?.name ?? '-' }} </div>
-                        <div class="font-bold w-full"> พื่นที่:</div>
+                        <div class="font-bold w-full">
+                            {{ 'delivery_note.view_order_after.delivery_info_send_area' | transloco }}
+                        </div>
                         <div class="w-full"> {{ this.data?.name ?? '-' }} </div>
-                        <div class="font-bold w-full"> รูปบัตรประชาชน:</div>
+                        <div class="font-bold w-full">
+                            {{ 'delivery_note.view_order_after.delivery_info_send_id_card_image' | transloco }}
+                        </div>
                         <div class="w-full">
-                            <img [src]="this.data?.idCardImage ?? 'assets/images/item/ID_card.png'" (error)="this.src='assets/images/item/ID_card.png'" alt="ID Card" />
+                            <img [src]="this.data?.idCardImage ?? 'assets/images/item/ID_card.png'"
+                                (error)="this.src='assets/images/item/ID_card.png'" alt="ID Card" />
                         </div>
                     </div>
                 </div>
 
                 <div class="w-full flex-col gap-2 flex mt-5" *ngIf="status_type ==='pick'">
                     <div class="w-full flex-col flex">
-                        <div class="text-lg font-bold">ข้อมูลการจัดส่ง</div>
+                        <div class="text-lg font-bold">
+                            {{ 'delivery_note.view_order_after.delivery_info_title' | transloco }}
+                        </div>
                         <mat-divider></mat-divider>
                     </div>
-                    <div class="w-full grid grid-flow-row grid-cols-2 lg:grid-cols-4 gap-2 justify-between">
-                        <div class="font-bold w-full"> ผู้รับสินค้า:</div>
-                        <div class="w-full"> {{ this.data?.name ?? '-' }} </div>
-                        <div class="font-bold w-full"> เบอร์โทร:</div>
-                        <div class="w-full"> {{ this.data?.name ?? '-' }} </div>
-                        <div class="font-bold w-full"> รูปภาพบัตรประชาชน:</div>
-                        <div class="w-full">
-                            <img [src]="this.data?.idCardImage ?? 'assets/ID_card.png'" (error)="this.src='assets/ID_card.png'" alt="ID Card" />
+                    <div class="w-full flex flex-col md:grid md:grid-cols-2 lg:grid-cols-4 gap-2 justify-between">
+                        <div class="font-bold w-full">
+                            {{ 'delivery_note.view_order_after.delivery_info_pick_receiver' | transloco }}
                         </div>
-                        <div class="font-bold w-full"> ขนส่งโดย:</div>
+                        <div class="w-full"> {{ this.data?.name ?? '-' }} </div>
+                        <div class="font-bold w-full">
+                            {{ 'delivery_note.view_order_after.delivery_info_pick_phone' | transloco }}
+                        </div>
+                        <div class="w-full"> {{ this.data?.name ?? '-' }} </div>
+                        <div class="font-bold w-full">
+                            {{ 'delivery_note.view_order_after.delivery_info_pick_id_card_image' | transloco }}
+                        </div>
+                        <div class="w-full">
+                            <img [src]="this.data?.idCardImage ?? 'assets/ID_card.png'"
+                                (error)="this.src='assets/ID_card.png'" alt="ID Card" />
+                        </div>
+                        <div class="font-bold w-full">
+                            {{ 'delivery_note.view_order_after.delivery_info_pick_shipped_by' | transloco }}
+                        </div>
                         <div class="w-full"> {{ this.data?.name ?? '-' }} </div>
                     </div>
                 </div>
 
-                <div class="w-full p-4 my-4 border border-gray-300 rounded-lg min-h-[300px] overflow-y-auto flex flex-col">
+                <div
+                    class="w-full p-4 my-4 border border-gray-300 rounded-lg min-h-[300px] overflow-y-auto flex flex-col">
                     <div class="flex flex-row w-full gap-2 mb-6">
-                        <div class="w-full text-3xl font-bold">รายการใบส่งของ</div>
+                        <div class="w-full text-xl md:text-3xl font-bold">
+                            {{ 'delivery_note.view_order_after.tables_delivery_orders_title' | transloco }}
+                        </div>
                         <mat-divider></mat-divider>
                     </div>
                     <form *ngIf="!showFilterForm" [formGroup]="filterForm">
@@ -155,7 +202,7 @@
                                     <mat-icon class="icon-size-5 mr-2"
                                         [svgIcon]="'heroicons_solid:magnifying-glass'"></mat-icon>
                                     <input matInput formControlName="in_store"
-                                        [placeholder]="'ค้นหาด้วยรหัสใบรับเข้าคลัง'">
+                                        [placeholder]="'delivery_note.view_order_after.tables_delivery_orders_search_placeholder' | transloco">
                                 </mat-form-field>
                             </div>
                             <div>
@@ -170,24 +217,43 @@
                             <thead>
                                 <tr>
                                     <th class="px-6 py-3 border border-l-0 w-10">#</th>
-                                    <th class="px-6 py-3 border border-x-0">วันที่</th>
-                                    <th class="px-6 py-3 border border-x-0">สถานะ</th>
-                                    <th class="px-6 py-3 border border-x-0">รหัสใบรับเข้าคลัง</th>
-                                    <th class="px-6 py-3 border border-x-0">ลูกค้า</th>
-                                    <th class="px-6 py-3 border border-x-0">ที่อยู่</th>
-                                    <th class="px-6 py-3 border border-x-0">ขนส่ง</th>
-                                    <th class="px-6 py-3 border border-x-0">ช่วงเวลา</th>
+                                    <th class="px-6 py-3 border border-x-0">
+                                        {{ 'delivery_note.view_order_after.tables_delivery_orders_headers_date' | transloco }}
+                                    </th>
+                                    <th class="px-6 py-3 border border-x-0">
+                                        {{ 'delivery_note.view_order_after.tables_delivery_orders_headers_status' | transloco }}
+                                    </th>
+                                    <th class="px-6 py-3 border border-x-0">
+                                        {{ 'delivery_note.view_order_after.tables_delivery_orders_headers_warehouse_receipt' | transloco }}
+                                    </th>
+                                    <th class="px-6 py-3 border border-x-0">
+                                        {{ 'delivery_note.view_order_after.tables_delivery_orders_headers_customer' | transloco }}
+                                    </th>
+                                    <th class="px-6 py-3 border border-x-0">
+                                        {{ 'delivery_note.view_order_after.tables_delivery_orders_headers_address' | transloco }}
+                                    </th>
+                                    <th class="px-6 py-3 border border-x-0">
+                                        {{ 'delivery_note.view_order_after.tables_delivery_orders_headers_transport' | transloco }}
+                                    </th>
+                                    <th class="px-6 py-3 border border-x-0">
+                                        {{ 'delivery_note.view_order_after.tables_delivery_orders_headers_time_range' | transloco }}
+                                    </th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr *ngFor="let list of filteredDeliveryOrders; let i = index" class="text-center">
                                     <td class="px-6 py-3 border border-l-0">{{ i + 1 }}</td>
-                                    <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order?.order?.name ?? '-' }}</td>
-                                    <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order?.code ?? '-' }}</td>
-                                    <td class="px-6 py-3 border border-x-0">{{ getShipmentMethod(list?.delivery_order?.shipped_by) }}</td>
-                                    <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order?.quantity_check ?? '-' }}</td>
-                                    <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order?.product_type?.name ?? '-' }}</td>
-                                    <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order?.weight ?? '-' }}</td>
+                                    <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order?.order?.name ?? '-'
+                                        }}</td>
+                                    <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order?.po_no ?? '-' }}</td>
+                                    <td class="px-6 py-3 border border-x-0">{{
+                                        getShipmentMethod(list?.delivery_order?.shipped_by) }}</td>
+                                    <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order?.quantity_check ??
+                                        '-' }}</td>
+                                    <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order?.product_type?.name
+                                        ?? '-' }}</td>
+                                    <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order?.weight ?? '-' }}
+                                    </td>
                                     <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order?.cbm ?? '-' }}</td>
                                 </tr>
                             </tbody>
@@ -195,9 +261,12 @@
                     </div>
                 </div>
 
-                <div class="w-full p-4 my-4 border border-gray-300 rounded-lg min-h-[300px] overflow-y-auto flex flex-col">
+                <div
+                    class="w-full p-4 my-4 border border-gray-300 rounded-lg min-h-[300px] overflow-y-auto flex flex-col">
                     <div class="flex flex-row w-full gap-2 mb-6">
-                        <div class="w-full text-3xl font-bold">สแกนขาออก</div>
+                        <div class="w-full text-xl md:text-3xl font-bold">
+                            {{ 'delivery_note.view_order_after.tables_scan_out_title' | transloco }}
+                        </div>
                     </div>
                     <form *ngIf="!showFilterForm" [formGroup]="filterForm">
                         <div class="flex flex-col md:flex-row w-full gap-2 items-end">
@@ -206,7 +275,7 @@
                                     <mat-icon class="icon-size-5 mr-2"
                                         [svgIcon]="'heroicons_solid:magnifying-glass'"></mat-icon>
                                     <input matInput formControlName="in_store"
-                                        [placeholder]="'ค้นหาด้วยรหัสใบรับเข้าคลัง'">
+                                        [placeholder]="'delivery_note.view_order_after.tables_delivery_orders_search_placeholder' | transloco">
                                 </mat-form-field>
                             </div>
                             <div>
@@ -221,55 +290,89 @@
                             <thead>
                                 <tr>
                                     <th class="px-6 py-3 border border-l-0 w-10">#</th>
-                                    <th class="px-6 py-3 border border-x-0">หมายเลขจัดส่ง</th>
-                                    <th class="px-6 py-3 border border-x-0">รหัสลูกค้า</th>
-                                    <th class="px-6 py-3 border border-x-0">รหัสใบรับเข้าคลัง</th>
-                                    <th class="px-6 py-3 border border-x-0">Tracking</th>
-                                    <th class="px-6 py-3 border border-x-0">สแกนออก</th>
-                                    <th class="px-6 py-3 border border-x-0">ผู้ดำเนินการสแกน</th>
+                                    <th class="px-6 py-3 border border-x-0">
+                                        {{ 'delivery_note.view_order_after.tables_scan_out_headers_delivery_number' | transloco }}
+                                    </th>
+                                    <th class="px-6 py-3 border border-x-0">
+                                        {{ 'delivery_note.view_order_after.tables_scan_out_headers_customer_code' | transloco }}
+                                    </th>
+                                    <th class="px-6 py-3 border border-x-0">
+                                        {{ 'delivery_note.view_order_after.tables_scan_out_headers_warehouse_receipt' | transloco }}
+                                    </th>
+                                    <th class="px-6 py-3 border border-x-0">
+                                        {{ 'delivery_note.view_order_after.tables_scan_out_headers_tracking' | transloco }}
+                                    </th>
+                                    <th class="px-6 py-3 border border-x-0">
+                                        {{ 'delivery_note.view_order_after.tables_scan_out_headers_scan_out' | transloco }}
+                                    </th>
+                                    <th class="px-6 py-3 border border-x-0">
+                                        {{ 'delivery_note.view_order_after.tables_scan_out_headers_scanned_by' | transloco }}
+                                    </th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr *ngFor="let list of filteredOut; let i = index" class="text-center">
                                     <td class="px-6 py-3 border border-l-0">{{ i + 1 }}</td>
-                                    <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order?.order?.name ?? '-' }}</td>
-                                    <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order?.code ?? '-' }}</td>
-                                    <td class="px-6 py-3 border border-x-0">{{ getShipmentMethod(list?.delivery_order?.shipped_by) }}</td>
-                                    <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order?.quantity_check ?? '-' }}</td>
-                                    <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order?.product_type?.name ?? '-' }}</td>
-                                    <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order?.weight ?? '-' }}</td>
+                                    <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order?.order?.name ?? '-'
+                                        }}</td>
+                                    <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order?.po_no ?? '-' }}</td>
+                                    <td class="px-6 py-3 border border-x-0">{{
+                                        getShipmentMethod(list?.delivery_order?.shipped_by) }}</td>
+                                    <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order?.quantity_check ??
+                                        '-' }}</td>
+                                    <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order?.product_type?.name
+                                        ?? '-' }}</td>
+                                    <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order?.weight ?? '-' }}
+                                    </td>
                                 </tr>
                             </tbody>
                         </table>
                     </div>
                 </div>
 
-                <div class="w-full p-4 my-4 border border-gray-300 rounded-lg min-h-[300px] overflow-y-auto flex flex-col">
+                <div
+                    class="w-full p-4 my-4 border border-gray-300 rounded-lg min-h-[300px] overflow-y-auto flex flex-col">
                     <div class="flex flex-row w-full gap-2 mb-6">
-                        <div class="w-full text-3xl font-bold">รายการ Tracking</div>
+                        <div class="w-full text-xl md:text-3xl font-bold">
+                            {{ 'delivery_note.view_order_after.tables_tracking_title' | transloco }}
+                        </div>
                     </div>
                     <div class="overflow-x-auto">
                         <table class="whitespace-nowrap w-full">
                             <thead>
                                 <tr>
                                     <th class="px-6 py-3 border border-l-0 w-10">#</th>
-                                    <th class="px-6 py-3 border border-x-0">หมายเลขจัดส่ง</th>
-                                    <th class="px-6 py-3 border border-x-0">รหัสลูกค้า</th>
-                                    <th class="px-6 py-3 border border-x-0">Tracking</th>
-                                    <th class="px-6 py-3 border border-x-0">Tracking</th>
-                                    <th class="px-6 py-3 border border-x-0">วันที่</th>
-                                    <th class="px-6 py-3 border border-x-0">ผู้บันทึก</th>
+                                    <th class="px-6 py-3 border border-x-0">
+                                        {{ 'delivery_note.view_order_after.tables_tracking_headers_delivery_number' | transloco }}
+                                    </th>
+                                    <th class="px-6 py-3 border border-x-0">
+                                        {{ 'delivery_note.view_order_after.tables_tracking_headers_customer_code' | transloco }}
+                                    </th>
+                                    <th class="px-6 py-3 border border-x-0">
+                                        {{ 'delivery_note.view_order_after.tables_tracking_headers_tracking' | transloco }}
+                                    </th>
+                                    <th class="px-6 py-3 border border-x-0">
+                                        {{ 'delivery_note.view_order_after.tables_tracking_headers_date' | transloco }}
+                                    </th>
+                                    <th class="px-6 py-3 border border-x-0">
+                                        {{ 'delivery_note.view_order_after.tables_tracking_headers_recorded_by' | transloco }}
+                                    </th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr *ngFor="let list of filteredtracking; let i = index" class="text-center">
                                     <td class="px-6 py-3 border border-l-0">{{ i + 1 }}</td>
-                                    <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order?.order?.name ?? '-' }}</td>
-                                    <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order?.code ?? '-' }}</td>
-                                    <td class="px-6 py-3 border border-x-0">{{ getShipmentMethod(list?.delivery_order?.shipped_by) }}</td>
-                                    <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order?.quantity_check ?? '-' }}</td>
-                                    <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order?.product_type?.name ?? '-' }}</td>
-                                    <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order?.weight ?? '-' }}</td>
+                                    <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order?.order?.name ?? '-'
+                                        }}</td>
+                                    <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order?.po_no ?? '-' }}</td>
+                                    <td class="px-6 py-3 border border-x-0">{{
+                                        getShipmentMethod(list?.delivery_order?.shipped_by) }}</td>
+                                    <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order?.quantity_check ??
+                                        '-' }}</td>
+                                    <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order?.product_type?.name
+                                        ?? '-' }}</td>
+                                    <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order?.weight ?? '-' }}
+                                    </td>
                                 </tr>
                             </tbody>
                         </table>
@@ -277,16 +380,21 @@
                 </div>
 
                 <div class="w-full grid grid-cols-2 gap-4 gap-x-6">
-                    <div class="w-full p-4 border border-gray-300 rounded-lg min-h-[300px] overflow-y-auto flex flex-col">
+                    <div
+                        class="w-full p-4 border border-gray-300 rounded-lg min-h-[300px] overflow-y-auto flex flex-col">
                         <div class="flex flex-row w-full gap-2 mb-6">
-                            <div class="w-full text-3xl font-bold">รูปรถ</div>
+                            <div class="w-full text-xl md:text-3xl font-bold">
+                                {{ 'delivery_note.view_order_after.tables_images_car' | transloco }}
+                            </div>
                         </div>
                         <div class="overflow-x-auto">
                             <table class="whitespace-nowrap w-full">
                                 <thead>
                                     <tr>
                                         <th class="px-6 py-3 border border-l-0 w-10">#</th>
-                                        <th class="px-6 py-3 border border-x-0">รูปรถ</th>
+                                        <th class="px-6 py-3 border border-x-0">
+                                            {{ 'delivery_note.view_order_after.tables_images_car' | transloco }}
+                                        </th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -299,52 +407,66 @@
                         </div>
                     </div>
 
-                    <div class="w-full p-4 border border-gray-300 rounded-lg min-h-[300px] overflow-y-auto flex flex-col">
+                    <div
+                        class="w-full p-4 border border-gray-300 rounded-lg min-h-[300px] overflow-y-auto flex flex-col">
                         <div class="flex flex-row w-full gap-2 mb-6">
-                            <div class="w-full text-3xl font-bold">รูปสินค้า</div>
+                            <div class="w-full text-xl md:text-3xl font-bold">
+                                {{ 'delivery_note.view_order_after.tables_images_products' | transloco }}
+                            </div>
                         </div>
                         <div class="overflow-x-auto">
                             <table class="whitespace-nowrap w-full">
                                 <thead>
                                     <tr>
                                         <th class="px-6 py-3 border border-l-0 w-10">#</th>
-                                        <th class="px-6 py-3 border border-x-0">รูปสินค้า</th>
+                                        <th class="px-6 py-3 border border-x-0">
+                                            {{ 'delivery_note.view_order_after.tables_images_products' | transloco }}
+                                        </th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <tr *ngFor="let list of filteredtracking; let i = index" class="text-center">
                                         <td class="px-6 py-3 border border-l-0">{{ i + 1 }}</td>
-                                        <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order?.order?.name ?? '-' }}</td>
+                                        <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order?.order?.name ??
+                                            '-' }}</td>
                                     </tr>
                                 </tbody>
                             </table>
                         </div>
                     </div>
 
-                    <div class="w-full p-4 border border-gray-300 rounded-lg min-h-[300px] overflow-y-auto flex flex-col">
+                    <div
+                        class="w-full p-4 border border-gray-300 rounded-lg min-h-[300px] overflow-y-auto flex flex-col">
                         <div class="flex flex-row w-full gap-2 mb-6">
-                            <div class="w-full text-3xl font-bold">รูปใบส่งของ</div>
+                            <div class="w-full text-xl md:text-3xl font-bold">
+                                {{ 'delivery_note.view_order_after.tables_images_delivery_note' | transloco }}
+                            </div>
                         </div>
                         <div class="overflow-x-auto">
                             <table class="whitespace-nowrap w-full">
                                 <thead>
                                     <tr>
                                         <th class="px-6 py-3 border border-l-0 w-10">#</th>
-                                        <th class="px-6 py-3 border border-x-0">รูปใบส่งของ</th>
+                                        <th class="px-6 py-3 border border-x-0">
+                                            {{ 'delivery_note.view_order_after.tables_images_delivery_note' | transloco }}
+                                        </th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <tr *ngFor="let list of filteredtracking; let i = index" class="text-center">
                                         <td class="px-6 py-3 border border-l-0">{{ i + 1 }}</td>
-                                        <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order?.order?.name ?? '-' }}</td>
+                                        <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order?.order?.name ??
+                                            '-' }}</td>
                                     </tr>
                                 </tbody>
                             </table>
                         </div>
                     </div>
                 </div>
-                <div class="col-span-2 bg-[#fdeaeb] rounded-md p-4 flex flex-col mb-6" >
-                    <p class="font-bold text-red-600">หมายเหตุ</p>
+                <div class="col-span-2 bg-[#fdeaeb] rounded-md p-4 flex flex-col mb-6">
+                    <p class="font-bold text-red-600">
+                        {{ 'delivery_note.view_order_after.member_info_note' | transloco }}
+                    </p>
                     <p class="text-red-600"> {{ data?.remark ?? '-' }} </p>
                 </div>
             </div>

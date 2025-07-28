@@ -22,3 +22,13 @@ export function getFileNameFromUrl(urlString) {
     // Handle edge case where URL ends with a slash
     return fileName || "No file name found";
 }
+
+export const getPermissionName = () =>{
+  const user = JSON.parse(localStorage.getItem('user'));
+  // return 'operator';
+  return user?.permission?.name ?? null;
+}
+
+export const calculateCBM = (width: number, height: number, length: number, qty_box: number = 1) => {
+  return Number(((width * height * length * qty_box) / 1000000).toFixed(4));
+}

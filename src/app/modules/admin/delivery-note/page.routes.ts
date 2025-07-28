@@ -19,21 +19,21 @@ export default [
         path: 'view/:id',
         component: ViewComponent,
         resolve: {
-            // data: (route) => inject(DeliveryNoteService).get(route.params['id']),
+            data: (route) => inject(DeliveryNoteService).get(route.params['id']),
         }
     },
     {
         path: 'view-order/:id',
         component: ViewOrderComponent,
         resolve: {
-            // data: (route) => inject(DeliveryNoteService).get(route.params['id']),
+            data: (route) => inject(DeliveryNoteService).get(route.params['id']),
         }
     },
     {
         path: 'view-order-after/:id',
         component: ViewOrderAfterComponent,
         resolve: {
-            // data: (route) => inject(DeliveryNoteService).get(route.params['id']),
+            data: (route) => inject(DeliveryNoteService).get(route.params['id']),
         }
     },
     {
@@ -44,7 +44,7 @@ export default [
         },
         resolve: {
             transports: (route) => inject(DeliveryNoteService).getTransport(),
-            // data: (route) => inject(DeliveryNoteService).get(route.params['id']),
+            data: (route) => inject(DeliveryNoteService).get(route.params['id']),
         }
     },
 

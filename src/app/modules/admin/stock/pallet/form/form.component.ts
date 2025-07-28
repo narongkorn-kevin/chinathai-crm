@@ -78,12 +78,18 @@ import { SelectMemberComponent } from 'app/modules/common/select-member/select-m
 import { UploadFileComponent } from 'app/modules/common/upload-file/upload-file.component';
 import { DialogScanComponent } from 'app/modules/common/dialog-scan/dialog-scan.component';
 
+import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
+import { calculateCBM } from 'app/helper';
+import { DialogItemNonePalletSackComponent } from '../dialog-po-box/dialog-item-none-pallet-sack.component';
+import { ScanBarcodeComponent } from 'app/modules/shared/scan-barcode.component';
+
 @Component({
     selector: 'app-delivery-order-form-3',
     standalone: true,
     templateUrl: './form.component.html',
     styleUrl: './form.component.scss',
     imports: [
+        TranslocoModule,
         CommonModule,
         DataTablesModule,
         MatIconModule,
@@ -117,7 +123,8 @@ import { DialogScanComponent } from 'app/modules/common/dialog-scan/dialog-scan.
         MatBadgeModule,
         SelectImporterComponent,
         SelectMemberComponent,
-        UploadFileComponent
+        UploadFileComponent,
+        ScanBarcodeComponent,
     ],
     changeDetection: ChangeDetectionStrategy.Default,
     animations: [
@@ -143,6 +150,10 @@ import { DialogScanComponent } from 'app/modules/common/dialog-scan/dialog-scan.
     ],
 })
 export class FormComponent implements OnInit, AfterViewInit {
+
+    errorAudio = new Audio('assets/sounds/error.mp3');
+
+    members: any[] = [];
     formFieldHelpers: string[] = ['fuse-mat-dense'];
     @ViewChild(DataTableDirective, { static: false })
     dtElement: DataTableDirective;
@@ -164,15 +175,18 @@ export class FormComponent implements OnInit, AfterViewInit {
     tracking = [];
     on_services = [];
     product = [];
-    Id:number;
+    Id: number;
 
     imageUrl: string;
+    lastCode: string = ''
     data: any;
 
     datarowtacking = [];
     datarowPo = [];
+    showScanbarCode: boolean = false;
 
     constructor(
+        private translocoService: TranslocoService,
         private formBuilder: FormBuilder,
         public _service: PalletService,
         private fuseConfirmationService: FuseConfirmationService,
@@ -183,6 +197,9 @@ export class FormComponent implements OnInit, AfterViewInit {
         public dialog: MatDialog,
         private _changeDetectorRef: ChangeDetectorRef
     ) {
+        this._service.getMember().subscribe((resp: any) => {
+            this.members = resp.data;
+        })
         this.type = this.activated.snapshot.data?.type;
         this.product_types = this.activated.snapshot.data.product_type?.data;
         this.transports = this.activated.snapshot.data.transports?.data;
@@ -202,7 +219,7 @@ export class FormComponent implements OnInit, AfterViewInit {
             in_store: [''],
             sack_code: [''],
         });
-        if(this.type === 'EDIT'){
+        if (this.type === 'EDIT') {
             this.Id = this.activated.snapshot.params.id;
             this.data = this.activated.snapshot.data.data?.data;
             this.form.patchValue({
@@ -211,26 +228,33 @@ export class FormComponent implements OnInit, AfterViewInit {
             });
 
             // Patch delivery_order_lists
-            const deliveryOrderLists = this.data.pallet_lists.map(order => ({
-                delivery_order_id: order.delivery_order_id ,
+            const deliveryOrderLists = this.data.pallet_lists.map((order) => ({
+                delivery_order_list_item_id:order.delivery_order_list_items.id,
+                importer_code: order?.delivery_order?.member?.importer_code,
+                delivery_order_id: order.delivery_order_id,
                 delivery_order_list_id: order.delivery_order_list_id,
-                //==============
-                customer: order.delivery_order_list?.member_id ?? '-',
-                id: order.id ?? '-',
-                sack_code: order.sack_id ?? '-',
-                barcode: order.delivery_order_list?.barcode?? '-' ,
-                in_store_code: order.delivery_order_list?.code ?? '-',
-                shipment: '-',
-                quantity_check: '-',
-                parcel_type: '-',
+                delivery_order: order.delivery_order,
+                id: order.id,
+                sack_code: order.sack_id,
+                barcode: order.delivery_order_list_items?.barcode,
+                in_store_code: order.delivery_order.po_no,
+                shipment: this.getShipmentMethod(order?.delivery_order?.shipment_by),
+                quantity_check: order?.delivery_order_list?.qty_box,
+                product_type: this.convertProductType(order.delivery_order?.product_type_id,),
                 weight: order.delivery_order_list?.weight ?? 0,
-                cbm: order.delivery_order_list?.cbm ?? 0,
+                cbm: this.rowCBM(order.delivery_order_list),
                 IsChecked: false,
             }));
-
-            const listArray = this.form.get('delivery_order_lists') as FormArray;
-            deliveryOrderLists.forEach(item => listArray.push(this.formBuilder.group(item)));
+            const listArray = this.form.get(
+                'delivery_order_lists'
+            ) as FormArray;
+            deliveryOrderLists.forEach((item) =>
+                listArray.push(this.formBuilder.group(item))
+            );
             this.lists = listArray.value;
+
+
+
         }
     }
     get listArray(): FormArray {
@@ -238,6 +262,7 @@ export class FormComponent implements OnInit, AfterViewInit {
     }
     createListItem(): FormGroup {
         return this.formBuilder.group({
+            delivery_order_list_item_id: '',
             delivery_order_id: [''],
             delivery_order_list_id: [''],
             //==============
@@ -256,6 +281,14 @@ export class FormComponent implements OnInit, AfterViewInit {
     }
 
     ngOnInit(): void {
+        if (this.type !== 'EDIT') {
+            this._service.getCode().subscribe((resp: any) => {
+                this.lastCode = resp.last_code
+                this.form.patchValue({
+                    code: this.lastCode,
+                })
+            })
+        }
         // setTimeout(() => this.loadTable());
     }
     ngAfterViewInit() {
@@ -279,17 +312,21 @@ export class FormComponent implements OnInit, AfterViewInit {
 
     Submit() {
         if (this.form.invalid) {
-            console.log('form', this.form.value);
+            this.toastr.error(
+                this.translocoService.translate('toastr.missing_fields')
+            );
             this.form.markAllAsTouched();
             return;
         }
 
         // Format the date before submitting
         const formValue = { ...this.form.value };
-        formValue.received_date = new Date(formValue.received_date).toISOString().split('T')[0];
+        formValue.received_date = new Date(formValue.received_date)
+            .toISOString()
+            .split('T')[0];
 
         const confirmation = this.fuseConfirmationService.open({
-            title: 'ยืนยันการบันทึกข้อมูล',
+            title: this.translocoService.translate('confirmation.save_title'),
             icon: {
                 show: true,
                 name: 'heroicons_outline:exclamation-triangle',
@@ -298,12 +335,16 @@ export class FormComponent implements OnInit, AfterViewInit {
             actions: {
                 confirm: {
                     show: true,
-                    label: 'ยืนยัน',
+                    label: this.translocoService.translate(
+                        'confirmation.confirm_button'
+                    ),
                     color: 'primary',
                 },
                 cancel: {
                     show: true,
-                    label: 'ยกเลิก',
+                    label: this.translocoService.translate(
+                        'confirmation.cancel_button'
+                    ),
                 },
             },
             dismissible: false,
@@ -313,24 +354,36 @@ export class FormComponent implements OnInit, AfterViewInit {
             if (result == 'confirmed') {
                 const payload = { ...formValue };
                 if (this.type === 'NEW') {
-                    console.log('form', payload);
+                    // console.log('form', payload);
                     this._service.create(payload).subscribe({
                         next: (resp: any) => {
-                            this.toastr.success('บันทึกข้อมูลสำเร็จ');
+                            this.toastr.success(
+                                this.translocoService.translate(
+                                    'toastr.success'
+                                )
+                            );
                             this._router.navigate(['pallet']);
                         },
                         error: (err) => {
-                            this.toastr.error('บันทึกข้อมูลไม่สำเร็จ');
+                            this.toastr.error(
+                                this.translocoService.translate('toastr.error')
+                            );
                         },
                     });
                 } else {
                     this._service.update(payload, this.Id).subscribe({
                         next: (resp: any) => {
-                            this.toastr.success('แก้ไขข้อมูลสำเร็จ');
+                            this.toastr.success(
+                                this.translocoService.translate('toastr.edit')
+                            );
                             this._router.navigate(['pallet']);
                         },
                         error: (err) => {
-                            this.toastr.error('แก้ไขข้อมูลไม่สำเร็จ');
+                            this.toastr.error(
+                                this.translocoService.translate(
+                                    'toastr.edit_error'
+                                )
+                            );
                         },
                     });
                 }
@@ -342,68 +395,19 @@ export class FormComponent implements OnInit, AfterViewInit {
         this._router.navigate(['pallet']);
     }
 
-    // loadTable(): void {
-    //     this.dtOptions = {
-    //         pagingType: 'full_numbers',
-    //         serverSide: true,
-    //         ajax: (dataTablesParameters: any, callback) => {
-    //             this._service
-    //                 .datatable(dataTablesParameters)
-    //                 .pipe(map((resp: { data: any }) => resp.data))
-    //                 .subscribe({
-    //                     next: (resp: any) => {
-    //                         console.log('resp', resp);
-    //                         this.datarowtacking = resp.data;
-    //                         callback({
-    //                             recordsTotal: resp.total,
-    //                             recordsFiltered: resp.total,
-    //                             data: resp.data,
-    //                         });
-    //                     },
-    //                 });
-    //         },
-    //         columns: [
-    //             {
-    //                 title: '',
-    //                 data: null,
-    //                 defaultContent: '',
-    //                 ngTemplateRef: {
-    //                     ref: this.checkboxtack,
-    //                 },
-    //                 className: 'w-10 text-center',
-    //             },
-    //             {
-    //                 title: '#',
-    //                 data: 'No',
-    //                 className: 'w-10 text-center',
-    //             },
-    //             {
-    //                 title: 'วันที่สร้าง',
-    //                 data: 'date',
-    //                 className: 'text-center',
-    //                 // ngTemplateRef: {
-    //                 //     ref: this.date,
-    //                 // },
-    //             },
-    //             {
-    //                 title: 'Tracking / เลขพัสดุ',
-    //                 data: 'track_no',
-    //                 className: 'text-center',
-    //             },
-    //         ],
-    //     };
-    // }
     selectAll: boolean = false;
 
     someSelect(): boolean {
         if (this.lists == null) {
             return false;
         }
-        return this.lists.filter(t => t.IsChecked).length > 0 && !this.selectAll;
+        return (
+            this.lists.filter((t) => t.IsChecked).length > 0 && !this.selectAll
+        );
     }
 
     clearSelection() {
-        this.lists.forEach(item => {
+        this.lists.forEach((item) => {
             item.IsChecked = false;
         });
 
@@ -417,23 +421,25 @@ export class FormComponent implements OnInit, AfterViewInit {
     }
 
     updateAllselect() {
-        this.selectAll = this.lists != null && this.lists.every(t => t.IsChecked);
+        this.selectAll =
+            this.lists != null && this.lists.every((t) => t.IsChecked);
         const listArray = this.listArray;
         this.lists.forEach((item, index) => {
             listArray.at(index).get('IsChecked').setValue(item.IsChecked);
         });
-        console.log(this.lists, 'list');
-
+        // console.log(this.lists, 'list');
     }
     get seletedList() {
-        return this.lists != null && this.lists.filter(t => t.IsChecked).map(e => e.id);
+        return (
+            this.lists != null &&
+            this.lists.filter((t) => t.IsChecked).map((e) => e.id)
+        );
     }
 
     clickRemove() {
         const confirmation = this.fuseConfirmationService.open({
-            title: 'คุณแน่ใจหรือไม่ว่าต้องการนำรายการออก',
-            message:
-                'คุณกำลังนำรายการออก กรุณายืนยันเพื่อดำเนินการต่อ',
+            title: this.translocoService.translate('confirmation.remove_title'),
+            message: this.translocoService.translate('confirmation.remove_message'),
             icon: {
                 show: true,
                 name: 'heroicons_outline:exclamation-triangle',
@@ -442,12 +448,16 @@ export class FormComponent implements OnInit, AfterViewInit {
             actions: {
                 confirm: {
                     show: true,
-                    label: 'ยืนยัน',
+                    label: this.translocoService.translate(
+                        'confirmation.confirm_button'
+                    ),
                     color: 'primary',
                 },
                 cancel: {
                     show: true,
-                    label: 'ยกเลิก',
+                    label: this.translocoService.translate(
+                        'confirmation.cancel_button'
+                    ),
                 },
             },
             dismissible: false,
@@ -455,8 +465,8 @@ export class FormComponent implements OnInit, AfterViewInit {
 
         confirmation.afterClosed().subscribe((result) => {
             if (result == 'confirmed') {
-                this.lists = this.lists.filter(item => !item.IsChecked);
-                const listArray = this.listArray
+                this.lists = this.lists.filter((item) => !item.IsChecked);
+                const listArray = this.listArray;
                 for (let i = listArray.length - 1; i >= 0; i--) {
                     if (listArray.at(i).get('IsChecked').value) {
                         listArray.removeAt(i);
@@ -467,7 +477,8 @@ export class FormComponent implements OnInit, AfterViewInit {
     }
     lists = [];
     opendialoglist() {
-        const DialogRef = this.dialog.open(DialogPoComponent, {
+        
+        const DialogRef = this.dialog.open(DialogItemNonePalletSackComponent, {
             disableClose: true,
             width: '70%',
             maxHeight: '90vh',
@@ -475,43 +486,54 @@ export class FormComponent implements OnInit, AfterViewInit {
             exitAnimationDuration: 300,
             data: {
                 type: '',
+                value: this.form.value
             },
         });
         DialogRef.afterClosed().subscribe((result) => {
             if (result) {
-                const listArray = this.listArray;
-                const existingIds = listArray.value.map(item => item.delivery_order_list_id);
-                const duplicateCodes = [];
-                result.forEach((item: any) => {
-                    if (existingIds.includes(item.id)) {
-                        duplicateCodes.push(item?.delivery_order?.code);
-                    } else {
-                        const listItem = this.createListItem();
-                        listItem.patchValue({
-                            delivery_order_id: item.delivery_order_id,
-                            delivery_order_list_id: item.id,
-                            //==============
-                            customer: '-',
-                            id: item.id,
-                            sack_code: item.sack?.code ?? '-',
-                            barcode: item.barcode ?? '-',
-                            in_store_code: item.delivery_order?.code ?? '-',
-                            shipment: item.shipment ?? '-',
-                            quantity_check: item.quantity_check ?? '-',
-                            parcel_type: item.product_type?.name ?? '-',
-                            weight: item.weight ?? 0,
-                            cbm: item.cbm ?? 0,
-                        });
-                        listArray.push(listItem);
-                    }
-                });
-                this.lists = listArray.value;
-                if (duplicateCodes.length > 0) {
-                    this.toastr.warning(`มีสินค้าอยู่ในพาเลทแล้ว: ${duplicateCodes.join(', ')}`);
-                }
+                this.addToPallet(result);
             }
         });
     }
+
+    private addToPallet(result: any[]) {
+        const listArray = this.listArray;
+        const existingIds = listArray.value.map((item) => item.delivery_order_list_item_id);
+        const duplicateCodes = [];
+        result.forEach((item: any) => {
+            if (existingIds.includes(item.id)) {
+                duplicateCodes.push(item?.delivery_order?.po_no);
+            } else {
+                const listItem = this.formBuilder.group({
+                    delivery_order_id: item.delivery_order.id,
+                    delivery_order_list_id: item.delivery_order_list.id,
+                    importer_code: this.findMemberName(item.delivery_order?.member_id),
+                    delivery_order_list: item,
+                    delivery_order_list_item_id: item.id,
+                    //==============
+                    sack_code: item.sack?.code,
+                    barcode: item.barcode,
+                    in_store_code: item.delivery_order?.po_no,
+                    shipment: this.getShipmentMethod(item.delivery_order?.shipment_by),
+                    product_type_id: item.product_type_id,
+                    quantity_check: 1,
+                    product_type: this.convertProductType(item.delivery_order.product_type_id),
+                    weight: item.delivery_order_list.weight ?? 0,
+                    cbm: calculateCBM(item.delivery_order_list.width, item.delivery_order_list.long, item.delivery_order_list.height, 1),
+                });
+                listArray.push(listItem);
+                this.lists = [];
+                this.lists = listArray.value;
+            }
+        });
+        this.lists = listArray.value;
+        if (duplicateCodes.length > 0) {
+            this.toastr.warning(
+                `มีสินค้าอยู่ในพาเลทแล้ว: ${duplicateCodes.join(', ')}`
+            );
+        }
+    }
+
     opendialogScan() {
         const DialogRef = this.dialog.open(DialogScanComponent, {
             disableClose: true,
@@ -520,35 +542,45 @@ export class FormComponent implements OnInit, AfterViewInit {
             enterAnimationDuration: 300,
             exitAnimationDuration: 300,
             data: {
-                value: this.product
+                value: this.product,
             },
         });
         DialogRef.afterClosed().subscribe((result) => {
             if (result) {
                 const listArray = this.listArray;
-                const existingIds = listArray.value.map(item => item.delivery_order_list_id);
+                const existingIds = listArray.value.map(
+                    (item) => item.delivery_order_list_id
+                );
                 if (existingIds.includes(result.id)) {
-                    this.toastr.warning(`มีสินค้าอยู่ในพาเลทแล้ว: ${result.delivery_order?.code}`);
+                    this.toastr.warning(
+                        `มีสินค้าอยู่ในพาเลทแล้ว: ${result.delivery_order?.po_no}`
+                    );
                 } else {
-                    const listItem = this.createListItem();
-                    listItem.patchValue({
+
+                    // const listItem = this.createListItem();
+                    const listItem = this.formBuilder.group({
                         delivery_order_id: result.delivery_order_id,
                         delivery_order_list_id: result.id,
+                        importer_code: result.delivery_order?.member?.importer_code,
+                        delivery_order_list: result,
+
                         //==============
                         customer: '-',
                         id: result.id,
-                        sack_code: result.sack?.code ?? '-',
-                        barcode: result.barcode ?? '-',
-                        in_store_code: result.delivery_order?.code ?? '-',
-                        shipment: result.shipment ?? '-',
-                        quantity_check: result.quantity_check ?? '-',
-                        parcel_type: result.product_type?.name ?? '-',
+                        sack_code: result.sack?.code,
+                        barcode: result.barcode,
+                        in_store_code: result.delivery_order?.po_no,
+                        shipment: this.getShipmentMethod(result.delivery_order?.shipment_by),
+                        product_type_id: result.product_type_id,
+                        quantity_check: 1,
+                        product_type: this.convertProductType(result.product_type_id),
                         weight: result.weight ?? 0,
-                        cbm: result.cbm ?? 0,
-                    });
+                        // cbm: result.cbm_per_unit ?? 0,
+                        cbm: calculateCBM(result.width, result.long, result.height, 1),
+                    })
                     listArray.push(listItem);
+                    this.lists = []
                     this.lists = listArray.value;
-                    console.log(this.lists, 'lists');
                 }
             }
         });
@@ -562,7 +594,7 @@ export class FormComponent implements OnInit, AfterViewInit {
 
     applyFilter() {
         const filterValues = this.filterForm.value;
-        console.log(filterValues);
+        // console.log(filterValues);
     }
     clearFilter() {
         this.filterForm.reset();
@@ -576,14 +608,80 @@ export class FormComponent implements OnInit, AfterViewInit {
     get totallist() {
         return this.form.get('delivery_order_lists').value.length;
     }
+
     get totalWeight() {
-        return this.form.get('delivery_order_lists').value
-            .reduce((total, item) => total + Number(item.weight), 0)
-            .toFixed(2);
+        return this.lists.reduce((total, item) => {
+            const weight = Number(item.weight) || 0;
+            return total + weight;
+        }, 0).toFixed(4);
     }
+
+
+
+
     get totalCBM() {
-        return this.form.get('delivery_order_lists').value
-            .reduce((total, item) => total + Number(item.cbm), 0)
-            .toFixed(2);
+        return this.lists.reduce((total, item) => total + Number(item.cbm), 0)
+            .toFixed(4);
+    }
+
+
+
+    convertProductType(data: any) {
+        const productType = this.product_types.find(
+            (type) => type.id === data
+        );
+        return productType ? productType.name : '';
+    }
+
+    rowCBM(data: any) {
+        return calculateCBM(data.width, data.long, data.height, 1);
+    }
+
+    getShipmentMethod(shippedBy: string): string {
+        if (shippedBy === 'Car' || shippedBy === 'car') {
+            return 'ขนส่งทางรถ';
+        } else if (shippedBy === 'Ship' || shippedBy === 'ship') {
+            return 'ขนส่งทางเรือ';
+        } else if (shippedBy === 'Train' || shippedBy === 'train') {
+            return 'ขนส่งทางรถไฟ';
+        } else {
+            return '-';
+        }
+    }
+
+    findMemberName(memberId: any): string {
+        const member = this.members.find((m) => m.id === +memberId);
+        return member ? member.importer_code : '-';
+    }
+
+    codeScaned(code: string) {
+        this.searchCode(code);
+    }
+
+    searchCode(code: string) {
+        console.log('searchCode', code);
+        
+        const body = {
+            columns: [],
+            order: [{ column: 0, dir: 'asc' }],
+            start: 0,
+            length: 1,
+            search: { value: code.trim(), regex: false },
+        };
+
+        this._service
+            .datatableorderlistBox(body)
+            .subscribe((resp: any) => {
+                if (resp?.data?.data.length > 0) {
+                    const data = resp.data.data;
+                    this.addToPallet(data);
+                } else {
+                    this.toastr.error('Not Found');
+                    this.errorAudio.currentTime = 0;
+                    this.errorAudio.play().catch((e) => {
+                        console.warn('Error sound failed to play', e);
+                    });
+                }
+            });
     }
 }

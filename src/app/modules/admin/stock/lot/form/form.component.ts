@@ -78,12 +78,15 @@ import { SelectMemberComponent } from 'app/modules/common/select-member/select-m
 import { UploadFileComponent } from 'app/modules/common/upload-file/upload-file.component';
 import { DialogScanComponent } from 'app/modules/common/dialog-scan/dialog-scan.component';
 
+import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
+
 @Component({
     selector: 'app-delivery-order-form',
     standalone: true,
     templateUrl: './form.component.html',
     styleUrl: './form.component.scss',
     imports: [
+        TranslocoModule,
         CommonModule,
         DataTablesModule,
         MatIconModule,
@@ -144,7 +147,26 @@ import { DialogScanComponent } from 'app/modules/common/dialog-scan/dialog-scan.
 })
 export class FormComponent implements OnInit, AfterViewInit {
     formFieldHelpers: string[] = ['fuse-mat-dense'];
-
+    shipping_thailand: any[] = [
+        {
+            id: 1,
+            name: 'SHIPPING TH 1',
+        },
+        {
+            id: 2,
+            name: 'SHIPPING TH 2',
+        },
+    ]
+    shipping_china: any[] = [
+        {
+            id: 1,
+            name: 'SHIPPING CH 1',
+        },
+        {
+            id: 2,
+            name: 'SHIPPING CH 2',
+        },
+    ]
     form: FormGroup;
     type: string;
 
@@ -155,6 +177,7 @@ export class FormComponent implements OnInit, AfterViewInit {
     transportBy: string;
 
     constructor(
+        private translocoService: TranslocoService,
         private formBuilder: FormBuilder,
         public _service: LotService,
         private fuseConfirmationService: FuseConfirmationService,
@@ -168,24 +191,21 @@ export class FormComponent implements OnInit, AfterViewInit {
         this.type = this.activated.snapshot.data?.type;
         this.Id = this.activated.snapshot.params?.id;
         this.data = this.activated.snapshot.data?.data?.data;
-        console.log('type',this.type);
-        console.log('data',this.data);
-
         this.form = this.formBuilder.group({
             packinglist_no: ['', Validators.required],
             container_no: ['', Validators.required],
             truck_license_plate: ['', Validators.required],
             closing_date: ['', Validators.required],
             estimated_arrival_date: ['', Validators.required],
-            shipping_china: ['', Validators.required],
+            shipment_china: ['', Validators.required],
             shipping_thailand: ['', Validators.required],
             transport_by: ['', Validators.required],
             destination: ['', Validators.required],
             remark: [''],
         });
-        if(this.type === 'EDIT') {
+        if (this.type === 'EDIT') {
             this.form.patchValue({
-                ...this.data
+                ...this.data,
             });
         }
     }
@@ -195,9 +215,16 @@ export class FormComponent implements OnInit, AfterViewInit {
             this.provinces = data;
         });
         this.transportBy = this.form.get('transport_by')?.value;
+        if (this.type === 'NEW') {
+            // this._service.getCode().subscribe((resp: any) => {
+            //     this.form.patchValue({
+            //         packinglist_no: resp.last_code
+            //     })
+            // })
+        }
     }
-    ngAfterViewInit() {}
-    ngOnDestroy(): void {}
+    ngAfterViewInit() { }
+    ngOnDestroy(): void { }
 
     onTransportByChange(value: string): void {
         this.transportBy = value;
@@ -205,20 +232,24 @@ export class FormComponent implements OnInit, AfterViewInit {
     }
 
     Submit() {
-        console.log('form', this.form.value);
-
         if (this.form.invalid) {
-            console.log('form', this.form.value);
+            this.toastr.error(
+                this.translocoService.translate('toastr.missing_fields')
+            );
             this.form.markAllAsTouched();
             return;
         }
 
         // Format the date before submitting
-        const formValue = { ...this.form.value };
-        // formValue.date = new Date(formValue.date).toISOString().split('T')[0];
+        const formValue = {
+            ...this.form.value,
+
+        };
+
+        formValue.packinglist_no = this.updateFullCode()
 
         const confirmation = this.fuseConfirmationService.open({
-            title: 'ยืนยันการบันทึกข้อมูล',
+            title: this.translocoService.translate('confirmation.save_title'),
             icon: {
                 show: true,
                 name: 'heroicons_outline:exclamation-triangle',
@@ -227,12 +258,16 @@ export class FormComponent implements OnInit, AfterViewInit {
             actions: {
                 confirm: {
                     show: true,
-                    label: 'ยืนยัน',
+                    label: this.translocoService.translate(
+                        'confirmation.confirm_button'
+                    ),
                     color: 'primary',
                 },
                 cancel: {
                     show: true,
-                    label: 'ยกเลิก',
+                    label: this.translocoService.translate(
+                        'confirmation.cancel_button'
+                    ),
                 },
             },
             dismissible: false,
@@ -245,21 +280,33 @@ export class FormComponent implements OnInit, AfterViewInit {
                     console.log('form', payload);
                     this._service.create(payload).subscribe({
                         next: (resp: any) => {
-                            this.toastr.success('บันทึกข้อมูลสำเร็จ');
+                            this.toastr.success(
+                                this.translocoService.translate(
+                                    'toastr.success'
+                                )
+                            );
                             this._router.navigate(['lot']);
                         },
                         error: (err) => {
-                            this.toastr.error('บันทึกข้อมูลไม่สำเร็จ');
+                            this.toastr.error(
+                                this.translocoService.translate('toastr.error')
+                            );
                         },
                     });
                 } else {
                     this._service.update(payload, this.Id).subscribe({
                         next: (resp: any) => {
-                            this.toastr.success('แก้ไขข้อมูลสำเร็จ');
+                            this.toastr.success(
+                                this.translocoService.translate('toastr.edit')
+                            );
                             this._router.navigate(['lot']);
                         },
                         error: (err) => {
-                            this.toastr.error('แก้ไขข้อมูลไม่สำเร็จ');
+                            this.toastr.error(
+                                this.translocoService.translate(
+                                    'toastr.edit_error'
+                                )
+                            );
                         },
                     });
                 }
@@ -269,5 +316,22 @@ export class FormComponent implements OnInit, AfterViewInit {
 
     Close() {
         this._router.navigate(['lot']);
+    }
+
+    updateFullCode() {
+        const formValue = this.form.value;
+        const prefix = formValue.packinglist_no;
+
+        // --- generate suffix จากวันที่ (MMDD) ---
+        const today = new Date();
+        const mm = String(today.getMonth() + 1).padStart(2, '0');
+        const dd = String(today.getDate()).padStart(2, '0');
+        const suffixDate = `${mm}${dd}`;
+
+        // --- ตัดเลข 4 หลักท้าย + เติม 0 ด้านหน้า ถ้าไม่ครบ 4 ---
+        const rawNumber = formValue.container_no || '';
+        const last4 = rawNumber.slice(-4).padStart(4, '0');
+
+        return `${prefix}-${suffixDate}-${last4}`;
     }
 }

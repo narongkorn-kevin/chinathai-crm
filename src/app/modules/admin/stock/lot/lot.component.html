@@ -1,37 +1,37 @@
 <div class="flex flex-col flex-auto min-w-0">
-    <div class="flex-auto  sm:p-10 bg-card m-4 p-4 rounded-md">
-        <div class="flex flex-row justify-between pb-2 my-5">
+    <div class="flex-auto sm:p-10 bg-card m-4 p-4 rounded-md">
+        <div class="flex flex-row justify-between pb-2 my-5 gap-2">
             <div class="flex flex-col">
                 <div class="flex space-x-2">
-                    <button class="md:text-xl font-medium tracking-tight leading-7 sm:leading-10 truncate"
+                    <button class="md:text-sm font-medium tracking-tight leading-7 sm:leading-10 truncate"
                         routerLinkActive="router-link-active">
-                        รายการรวมพัสดุ
+                        {{ 'packing_list.package_summary_list' | transloco }}
                     </button>
                 </div>
                 <p class="md:text-2xl text-[#DF0B12] font-bold tracking-tight leading-7 sm:leading-10 truncate">
-                    Packing List
+                    {{ 'packing_list.packing_list' | transloco }}
                 </p>
             </div>
-            <div class="flex ml-auto space-x-4">
+            <div class="flex flex-col md:flex-row ml-auto gap-2">
                 <button mat-flat-button [color]="'warn'" (click)="opendialogdelete()"
                     [disabled]="!this.multiSelect.length">
-                    <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:trash'"></mat-icon>
-                    <span class="ml-2">ลบรายการ</span>
+                    <mat-icon class="icon-size-5" [svgIcon]="'feather:trash'"></mat-icon>
+                    <span class="ml-2">{{ 'buttons.delete_entry' | transloco }}</span>
                 </button>
                 <button mat-flat-button [cdkMenuTriggerFor]="optionsMenu" [color]="'primary'">
                     <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:bars-3'"></mat-icon>
-                    <span class="ml-2">ตัวเลือก</span>
+                    <span class="ml-2">{{ 'packing_list.options' | transloco }}</span>
                 </button>
                 <ng-template #optionsMenu>
                     <div class="manage-menu bg-primary" cdkMenu>
                         <button class="manage-menu-item text-white" (click)="openForm()" cdkMenuItem>
                             <mat-icon class="icon-size-5 text-white" [svgIcon]="'heroicons_solid:plus'"></mat-icon>
-                            <span class="ml-2">สร้าง Lots</span>
+                            <span class="ml-2">{{ 'packing_list.create_lots' | transloco }}</span>
                         </button>
                         <button class="manage-menu-item text-white" (click)="openDialogall()" cdkMenuItem>
                             <mat-icon class="icon-size-5 text-white"
                                 [svgIcon]="'heroicons_solid:arrow-path'"></mat-icon>
-                            <span class="ml-2">เปลี่ยนตู้</span>
+                            <span class="ml-2">{{ 'packing_list.change_container' | transloco }}</span>
                         </button>
                     </div>
                 </ng-template>
@@ -39,29 +39,29 @@
                 <button [cdkMenuTriggerFor]="menu" mat-flat-button class="!text-white" [color]="'primary'">
                     <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:shopping-bag'"></mat-icon>
                     <div class="flex items-center gap-2">
-                        <span class="ml-2"> การจัดการข้อมูล </span>
+                        <span class="ml-2"> {{ 'buttons.dataManagement' | transloco }} </span>
                         <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:chevron-up'"></mat-icon>
                     </div>
                 </button>
 
                 <ng-template #menu>
                     <div class="manage-menu bg-primary" cdkMenu>
-                        <button class="manage-menu-item text-white" cdkMenuItem>
+                        <button class="manage-menu-item text-white" cdkMenuItem (click)="exportData('copy')">
                             <mat-icon class="icon-size-5 text-white"
                                 [svgIcon]="'heroicons_solid:document-duplicate'"></mat-icon>
                             <span class="ml-2">Copy to Clipboard</span>
                         </button>
-                        <button class="manage-menu-item text-white" cdkMenuItem>
+                        <button class="manage-menu-item text-white" cdkMenuItem (click)="exportData('csv')">
                             <mat-icon class="icon-size-5 text-white"
                                 [svgIcon]="'heroicons_solid:table-cells'"></mat-icon>
                             <span class="ml-2">CSV</span>
                         </button>
-                        <button class="manage-menu-item text-white" cdkMenuItem>
+                        <button class="manage-menu-item text-white" cdkMenuItem (click)="exportData('excel')">
                             <mat-icon class="icon-size-5 text-white"
                                 [svgIcon]="'heroicons_solid:table-cells'"></mat-icon>
                             <span class="ml-2">Excel</span>
                         </button>
-                        <button class="manage-menu-item text-white" cdkMenuItem>
+                        <button class="manage-menu-item text-white" cdkMenuItem (click)="exportData('print')">
                             <mat-icon class="icon-size-5 text-white" [svgIcon]="'heroicons_solid:printer'"></mat-icon>
                             <span class="ml-2">Print</span>
                         </button>
@@ -72,9 +72,9 @@
         <div class="flex flex-col lg:flex-row justify-between pb-2 my-2 gap-2">
             <div class="flex flex-row gap-2 w-full rounded-lg border-gray-500 border-2 p-4 mb-4">
                 <div class="flex flex-col justify-between w-full">
-                    <div class="text-lg font-normal w-full">จำนวนสถานะออกเดินทาง</div>
-                    <div class="text-4xl font-bold text-blue-900">{{ sumdashboard?.sack_summary?.truck?.pallet_count |
-                        number }}</div>
+                    <div class="text-lg font-normal w-full">{{ 'packing_list.departed_status' | transloco }}</div>
+                    <div class="text-4xl font-bold text-blue-900">{{ dashboard_packing?.status_traveling?.value | number
+                        }}</div>
                 </div>
                 <div>
                     <img class="flex w-14" src="assets/images/item/cart.png" alt="Logo image">
@@ -82,9 +82,10 @@
             </div>
             <div class="flex flex-row gap-2 w-full rounded-lg border-gray-500 border-2 p-4 mb-4">
                 <div class="flex flex-col justify-between w-full">
-                    <div class="text-lg font-normal w-full">จำนวนสถานะดำเนินพิธีการสุลากากรขาเข้า</div>
-                    <div class="text-4xl font-bold text-blue-900">{{ sumdashboard?.sack_summary?.truck?.pallet_count |
-                        number }}</div>
+                    <div class="text-lg font-normal w-full">{{ 'packing_list.customs_clearance_status' | transloco }}
+                    </div>
+                    <div class="text-4xl font-bold text-blue-900">{{ dashboard_packing?.status_customs?.value | number
+                        }}</div>
                 </div>
                 <div>
                     <img class="flex w-14" src="assets/images/item/kg.png" alt="Logo image">
@@ -92,9 +93,9 @@
             </div>
             <div class="flex flex-row gap-2 w-full rounded-lg border-gray-500 border-2 p-4 mb-4">
                 <div class="flex flex-col justify-between w-full">
-                    <div class="text-lg font-normal w-full">จำนวนสถานะติดด่าน</div>
-                    <div class="text-4xl font-bold text-blue-900">{{ sumdashboard?.sack_summary?.truck?.pallet_count |
-                        number }}</div>
+                    <div class="text-lg font-normal w-full">{{ 'packing_list.customs_hold_status' | transloco }}</div>
+                    <div class="text-4xl font-bold text-blue-900">{{ dashboard_packing?.status_border?.value | number }}
+                    </div>
                 </div>
                 <div>
                     <img class="flex w-14" src="assets/images/item/cube.png" alt="Logo image">
@@ -105,7 +106,7 @@
             <form *ngIf="!showFilterForm" [formGroup]="filterForm">
                 <div class="flex flex-col md:flex-row w-full gap-2 items-end">
                     <mat-form-field class="w-full" [ngClass]="formFieldHelpers">
-                        <mat-label>วันที่</mat-label>
+                        <mat-label>{{ 'packing_list.date' | transloco }}</mat-label>
                         <mat-date-range-input [rangePicker]="picker">
                             <input matStartDate formControlName="start_date">
                             <input matEndDate formControlName="end_date">
@@ -116,33 +117,30 @@
                     <div class="w-full">
                         <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
                             <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:magnifying-glass'"></mat-icon>
-                            <input matInput [placeholder]="'ค้นหาด้วย Packing List'">
+                            <input matInput class="ml-2" formControlName="packinglist_no"
+                                [placeholder]="'packing_list.search_by_packing' | transloco">
                         </mat-form-field>
                     </div>
                     <div>
                         <button mat-flat-button [color]="'primary'" (click)="openfillter()" class="mb-5">
                             <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:bars-3'"></mat-icon>
-                            <span class="ml-2">ค้นหาโดยใช้ตัวกรอง</span>
+                            <span class="ml-2">{{ 'buttons.advancedFilter' | transloco }}</span>
                         </button>
                     </div>
-                    <div>
-                        <button mat-flat-button [color]="'primary'" class="mb-5">
-                            <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:cog-6-tooth'"></mat-icon>
-                        </button>
-                    </div>
+
                 </div>
             </form>
             <form [formGroup]="filterForm" class="p-4 rounded-md"
                 [@slideToggleFilter]="showFilterForm ? 'open' : 'closed'">
                 <div>
                     <h2 class="text-xl font-extrabold leading-7 tracking-tight truncate md:text-xl sm:leading-10">
-                        ตัวกรองขั้นสูง
+                        {{ 'lables.advanced_filter' | transloco }}
                     </h2>
                     <mat-divider></mat-divider>
                 </div>
-                <div class="grid md:grid-cols-4 md:flex-row w-full gap-x-2 mt-2">
+                <div class="grid md:grid-cols-3 md:flex-row w-full gap-x-2 mt-2">
                     <mat-form-field class="w-full" [ngClass]="formFieldHelpers">
-                        <mat-label>ช่วงวันเริ่มต้น</mat-label>
+                        <mat-label>{{ 'packing_list.date_range' | transloco }}</mat-label>
                         <mat-date-range-input [rangePicker]="picker">
                             <input matStartDate formControlName="start_date">
                             <input matEndDate formControlName="end_date">
@@ -152,39 +150,85 @@
                     </mat-form-field>
                     <div class="w-full">
                         <mat-form-field class="w-full" [ngClass]="formFieldHelpers">
-                            <mat-label>รหัสกระสอบ</mat-label>
-                            <input matInput formControlName="code">
+                            <mat-label>{{ 'packing_list.packing_list_form' | transloco }}</mat-label>
+                            <input matInput formControlName="packinglist_no">
                         </mat-form-field>
                     </div>
+                <div class="w-full">
+                        <mat-form-field class="w-full" [ngClass]="formFieldHelpers">
+                            <mat-label>{{ 'packing_list.container_number' | transloco }}</mat-label>
+                            <input matInput formControlName="container_no">
+                        </mat-form-field>
+                    </div>
+                </div>
+                <div class="grid md:grid-cols-3 md:flex-row w-full gap-x-2 mt-2">
+                    
+                 <div class="w-full">
+                    <mat-form-field class="w-full" [ngClass]="formFieldHelpers">
+                        <mat-label>{{ 'dalivery_order.labels.shipment' | transloco }}</mat-label>
+                        <mat-select formControlName="transport_by">
+                            <mat-option value="Ship">{{ 'dalivery_order.transport_methods.ship' | transloco
+                                }}</mat-option>
+                            <mat-option value="Car">{{ 'dalivery_order.transport_methods.car' | transloco
+                                }}</mat-option>
+                            <mat-option value="Train">{{ 'dalivery_order.transport_methods.train' | transloco
+                                }}</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
                     <div class="w-full">
                         <mat-form-field class="w-full" [ngClass]="formFieldHelpers">
-                            <mat-label>ขนส่งโดย</mat-label>
-                            <mat-select formControlName="shipment">
-                                <mat-option value="Car">ขนส่งทางรถ</mat-option>
-                                <mat-option value="Ship">ขนส่งทางเรือ</mat-option>
+                            <mat-label>{{ 'packing_list.status_form' | transloco }}</mat-label>
+                            <mat-select formControlName="status">
+                            <mat-option value="Warehouse receiving">{{ 'common.dialog_update_status.status_options.warehouse' | transloco
+                                }}</mat-option>
+                            <mat-option value="Pallet loading">{{ 'common.dialog_update_status.status_options.pallet' | transloco
+                                }}</mat-option>
+                            <mat-option value="Shipment in transit from China warehouse to border">{{ 'common.dialog_update_status.status_options.transit_china' | transloco
+                                }}</mat-option>
+                            <mat-option value="Container booking">{{ 'common.dialog_update_status.status_options.booking' | transloco
+                                }}</mat-option>
+                            <mat-option value="Close container (China)">{{ 'common.dialog_update_status.status_options.close_container_china' | transloco
+                                }}</mat-option>
+                            <mat-option value="China origin customs processing">{{ 'common.dialog_update_status.status_options.customs_china' | transloco
+                                }}</mat-option>
+                            <mat-option value="China customs inspection hold">{{ 'common.dialog_update_status.status_options.inspection_china' | transloco
+                                }}</mat-option>
+                            <mat-option value="Shipment in transit between China-Thailand">{{ 'common.dialog_update_status.status_options.transit_china_thailand' | transloco
+                                }}</mat-option>
+                            <mat-option value="Thailand destination customs processing">{{ 'common.dialog_update_status.status_options.customs_thailand' | transloco
+                                }}</mat-option>
+                            <mat-option value="Shipment arrived at warehouse">{{ 'common.dialog_update_status.status_options.warehouse_arrival' | transloco
+                                }}</mat-option>
+                            <mat-option value="Shipment arrived at customer location">{{ 'common.dialog_update_status.status_options.customer_arrival' | transloco
+                                }}</mat-option>
+                            <mat-option value="Shipment successfully delivered to customer">{{ 'common.dialog_update_status.status_options.customer_received' | transloco
+                                }}</mat-option>
+                            <mat-option value="Close container (Thailand)">{{ 'common.dialog_update_status.status_options.close_container_thai' | transloco
+                                }}</mat-option>
                             </mat-select>
                         </mat-form-field>
                     </div>
                 </div>
                 <div class="w-full flex justify-end gap-2">
                     <button mat-flat-button [color]="'primary'" (click)="openfillter()">
-                        <span class="ml-2">ปิดตัวกรอง</span>
+                        <span class="ml-2">{{ 'buttons.closeFilter' | transloco }}</span>
                     </button>
                     <button mat-flat-button [color]="'primary'" (click)="clearFilter()">
                         <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:bars-3'"></mat-icon>
-                        <span class="ml-2">ล้างตั้งค่าตัวกรอง</span>
+                        <span class="ml-2">{{ 'buttons.clearFilter' | transloco }}</span>
                     </button>
                     <button mat-flat-button [color]="'primary'" (click)="applyFilter()">
                         <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:magnifying-glass'"></mat-icon>
-                        <span class="ml-2">ค้นหา</span>
+                        <span class="ml-2">{{ 'buttons.search' | transloco }}</span>
                     </button>
                 </div>
             </form>
-            <button class="mb-2" mat-flat-button [color]="'accent'" (click)="toggleSelectAll(!isAllSelected)">
-                {{ isAllSelected ? 'Unselect All' : 'Select All' }}
+            <button class="my-2 " mat-flat-button [color]="'primary'" (click)="toggleSelectAll(!isAllSelected)">
+                {{ isAllSelected ? ('buttons.deselectAll' | transloco) : ('buttons.selectAll' | transloco) }}
             </button>
             <div class="overflow-x-auto whitespace-nowrap mt-2 max-w-full">
-                <table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger"
+                <table #tableElement datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger"
                     class="table w-full bg-white row-border hover">
                 </table>
             </div>
@@ -194,20 +238,129 @@
 
 <ng-template #btNg let-data="adtData">
     <button mat-icon-button [matMenuTriggerFor]="menu">
-        <mat-icon class="icon-size-5 text-[#DF0B12]" [svgIcon]="'heroicons_outline:trash'"></mat-icon>
+        <mat-icon class="icon-size-5 text-[#DF0B12]" [svgIcon]="'feather:trash'"></mat-icon>
     </button>
     <mat-menu #menu="matMenu">
         <button mat-menu-item (click)="clickDelete(data.id)">
-            <mat-icon [svgIcon]="'heroicons_outline:trash'"></mat-icon>
-            <span>ลบ</span>
+            <mat-icon [svgIcon]="'feather:trash'"></mat-icon>
+            <span>{{ 'buttons.delete' | transloco }}</span>
         </button>
     </mat-menu>
 </ng-template>
 <ng-template #checkbox let-data="adtData">
-    <mat-checkbox [checked]="data.selected" (change)="onCheckboxChange($event, data.id)"></mat-checkbox>
+    <mat-checkbox class="text-white" [color]="'primary'" [checked]="data.selected"
+        (change)="onCheckboxChange($event, data.id)"></mat-checkbox>
 </ng-template>
 
 <ng-template #gotoRoute let-data="adtData">
     <a class="text-[#DF0B12CC]" [routerLink]="['/lot/view', data.id]"
-        routerLinkActive="router-link-active">{{data?.code}}</a>
+        routerLinkActive="router-link-active">{{data?.packinglist_no}}</a>
+</ng-template>
+
+<ng-template #statusshipment let-data="adtData">
+    <div>
+        <!-- เดิม -->
+        <div *ngIf="data.status == 'pending'"
+            class="px-4 py-1.5 rounded-full text-sm inline-flex items-center justify-center font-medium bg-gray-100 text-gray-700 border border-gray-300">
+            {{ 'dalivery_order.shipment_statuses.pending' | transloco }}
+        </div>
+
+        <div *ngIf="data.status == 'sealed'"
+            class="px-4 py-1.5 rounded-full text-sm inline-flex items-center justify-center font-medium bg-blue-100 text-blue-700 border border-blue-300">
+            {{ 'dalivery_order.shipment_statuses.sealed' | transloco }}
+        </div>
+
+        <div *ngIf="data.status == 'departed_china'"
+            class="px-4 py-1.5 rounded-full text-sm inline-flex items-center justify-center font-medium bg-yellow-100 text-yellow-800 border border-yellow-300">
+            {{ 'dalivery_order.shipment_statuses.departed_china' | transloco }}
+        </div>
+
+        <div *ngIf="data.status == 'arrived_thailand'"
+            class="px-4 py-1.5 rounded-full text-sm inline-flex items-center justify-center font-medium bg-green-100 text-green-800 border border-green-300">
+            {{ 'dalivery_order.shipment_statuses.arrived_thailand' | transloco }}
+        </div>
+
+        <div *ngIf="data.status == 'arrived_china_warehouse'"
+            class="px-4 py-1.5 rounded-full text-sm inline-flex items-center justify-center font-medium bg-gray-50 text-gray-600 border border-gray-200">
+            {{ 'dalivery_order.shipment_statuses.arrived_china_warehouse' | transloco }}
+        </div>
+
+        <div *ngIf="data.status == 'in_transit'"
+            class="px-4 py-1.5 rounded-full text-sm inline-flex items-center justify-center font-medium bg-indigo-50 text-indigo-700 border border-indigo-200">
+            {{ 'dalivery_order.shipment_statuses.in_transit' | transloco }}
+        </div>
+
+        <div *ngIf="data.status == 'arrived_thailand_warehouse'"
+            class="px-4 py-1.5 rounded-full text-sm inline-flex items-center justify-center font-medium bg-gray-200 text-gray-800 border border-gray-300">
+            {{ 'dalivery_order.shipment_statuses.arrived_thailand_warehouse' | transloco }}
+        </div>
+
+        <div *ngIf="data.status == 'awaiting_payment'"
+            class="px-4 py-1.5 rounded-full text-sm inline-flex items-center justify-center font-medium bg-orange-100 text-orange-700 border border-orange-300">
+            {{ 'dalivery_order.shipment_statuses.awaiting_payment' | transloco }}
+        </div>
+
+        <div *ngIf="data.status == 'delivered'"
+            class="px-4 py-1.5 rounded-full text-sm inline-flex items-center justify-center font-medium bg-green-50 text-green-700 border border-green-300">
+            {{ 'dalivery_order.shipment_statuses.delivered' | transloco }}
+        </div>
+
+        <!-- เพิ่มตาม mat-option -->
+        <div *ngIf="data.status == 'received'"
+            class="bg-gray-100 text-gray-800 border border-gray-300 px-4 py-1.5 rounded-full text-sm inline-flex items-center font-medium">
+            {{ 'common.dialog_update_status.status_options.warehouse' | transloco }}
+        </div>
+
+        <div *ngIf="data.status == 'palletized'"
+            class="bg-blue-50 text-blue-700 border border-blue-300 px-4 py-1.5 rounded-full text-sm inline-flex items-center font-medium">
+            {{ 'common.dialog_update_status.status_options.pallet' | transloco }}
+        </div>
+
+        <div *ngIf="data.status == 'to_border'"
+            class="bg-yellow-50 text-yellow-700 border border-yellow-300 px-4 py-1.5 rounded-full text-sm inline-flex items-center font-medium">
+            {{ 'common.dialog_update_status.status_options.transit_china' | transloco }}
+        </div>
+
+        <div *ngIf="data.status == 'booked'"
+            class="bg-purple-50 text-purple-700 border border-purple-300 px-4 py-1.5 rounded-full text-sm inline-flex items-center font-medium">
+            {{ 'common.dialog_update_status.status_options.booking' | transloco }}
+        </div>
+
+        <div *ngIf="data.status == 'cn_customs'"
+            class="bg-red-50 text-red-700 border border-red-300 px-4 py-1.5 rounded-full text-sm inline-flex items-center font-medium">
+            {{ 'common.dialog_update_status.status_options.close_container_china' | transloco }}
+        </div>
+
+        <div *ngIf="data.status == 'cn_hold'"
+            class="bg-orange-50 text-orange-700 border border-orange-300 px-4 py-1.5 rounded-full text-sm inline-flex items-center font-medium">
+            {{ 'common.dialog_update_status.status_options.customs_china' | transloco }}
+        </div>
+
+        <div *ngIf="data.status == 'th_customs'"
+            class="bg-pink-50 text-pink-700 border border-pink-300 px-4 py-1.5 rounded-full text-sm inline-flex items-center font-medium">
+            {{ 'common.dialog_update_status.status_options.inspection_china' | transloco }}
+        </div>
+
+        <div *ngIf="data.status == 'delivering'"
+            class="bg-green-50 text-green-700 border border-green-300 px-4 py-1.5 rounded-full text-sm inline-flex items-center font-medium">
+            {{ 'common.dialog_update_status.status_options.transit_china_thailand' | transloco }}
+        </div>
+
+        <div *ngIf="data.status == 'closed'"
+            class="bg-gray-300 text-gray-900 border border-gray-400 px-4 py-1.5 rounded-full text-sm inline-flex items-center font-medium">
+            {{ 'common.dialog_update_status.status_options.close_container_thai' | transloco }}
+        </div>
+    </div>
+</ng-template>
+
+
+<ng-template #transpot let-data="adtData">
+    <span>
+        {{ (data?.transport_by === 'Car' || data?.transport_by === 'car') ? ('thai_warehouse.transport_by_car' |
+        transloco) :
+        (data?.transport_by === 'Ship' || data?.transport_by === 'ship')? ('thai_warehouse.transport_by_ship' |
+        transloco) :
+        (data?.transport_by === 'Train' || data?.transport_by === 'train') ? ('thai_warehouse.transport_by_train' |
+        transloco) : '' }}
+    </span>
 </ng-template>

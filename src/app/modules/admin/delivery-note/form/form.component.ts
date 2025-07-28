@@ -78,12 +78,15 @@ import { UploadFileComponent } from 'app/modules/common/upload-file/upload-file.
 import { DialogScanComponent } from 'app/modules/common/dialog-scan/dialog-scan.component';
 import { DeliveryNoteService } from '../delivery-note.service';
 
+import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
+
 @Component({
     selector: 'app-delivery-order-form',
     standalone: true,
     templateUrl: './form.component.html',
     styleUrl: './form.component.scss',
     imports: [
+        TranslocoModule,
         CommonModule,
         DataTablesModule,
         MatIconModule,
@@ -150,12 +153,13 @@ export class FormComponent implements OnInit, AfterViewInit {
 
     data: any;
     lists = [];
-    transports= [];
+    transports = [];
     provinces = [];
     Id: number;
     transportBy: string;
 
     constructor(
+        private translocoService: TranslocoService,
         private formBuilder: FormBuilder,
         public _service: DeliveryNoteService,
         private fuseConfirmationService: FuseConfirmationService,
@@ -179,37 +183,42 @@ export class FormComponent implements OnInit, AfterViewInit {
             location: [''],
             convenient_time: [''],
             transport_id: [''],
-            area: ['']
+            area: [''],
         });
-        if(this.type === 'EDIT') {
+        if (this.type === 'EDIT') {
             this.form.patchValue({
-                ...this.data
+                code: this.data?.member?.importer_code,
+                send_no: this.data?.code,
+                address: this.data?.member_address?.address + ' ' + this.data?.member_address?.province + ' ' + this.data?.member_address?.district + ' ' + this.data?.member_address?.sub_district + ' ' + this.data?.member_address?.postal_code,
+                phone: this.data?.member?.phone,
+                location: this.data?.location,
+                convenient_time: this.data?.member?.avaliable_time,
+                transport_id: this.data?.member?.transport_id,
+                area: this.data?.area,
             });
         }
     }
 
-    ngOnInit(): void {
-        
-    }
+    ngOnInit(): void {}
     ngAfterViewInit() {}
     ngOnDestroy(): void {}
 
-
     Submit() {
-        console.log('form', this.form.value);
-
         if (this.form.invalid) {
-            console.log('form', this.form.value);
+            this.toastr.error(
+                this.translocoService.translate('toastr.missing_fields')
+            );
             this.form.markAllAsTouched();
             return;
         }
+        console.log('form', this.form.value);
 
         // Format the date before submitting
         const formValue = { ...this.form.value };
         // formValue.date = new Date(formValue.date).toISOString().split('T')[0];
 
         const confirmation = this.fuseConfirmationService.open({
-            title: 'ยืนยันการบันทึกข้อมูล',
+            title: this.translocoService.translate('confirmation.save_title'),
             icon: {
                 show: true,
                 name: 'heroicons_outline:exclamation-triangle',
@@ -218,12 +227,16 @@ export class FormComponent implements OnInit, AfterViewInit {
             actions: {
                 confirm: {
                     show: true,
-                    label: 'ยืนยัน',
+                    label: this.translocoService.translate(
+                        'confirmation.confirm_button'
+                    ),
                     color: 'primary',
                 },
                 cancel: {
                     show: true,
-                    label: 'ยกเลิก',
+                    label: this.translocoService.translate(
+                        'confirmation.cancel_button'
+                    ),
                 },
             },
             dismissible: false,
@@ -232,29 +245,31 @@ export class FormComponent implements OnInit, AfterViewInit {
         confirmation.afterClosed().subscribe((result) => {
             if (result == 'confirmed') {
                 const payload = { ...formValue };
-                // if (this.type === 'NEW') {
-                //     console.log('form', payload);
-                //     this._service.create(payload).subscribe({
-                //         next: (resp: any) => {
-                //             this.toastr.success('บันทึกข้อมูลสำเร็จ');
-                //             this._router.navigate(['lot']);
-                //         },
-                //         error: (err) => {
-                //             this.toastr.error('บันทึกข้อมูลไม่สำเร็จ');
-                //         },
-                //     });
-                // } else {
-                //     this._service.update(payload, this.Id).subscribe({
-                //         next: (resp: any) => {
-                //             this.toastr.success('แก้ไขข้อมูลสำเร็จ');
-                //             this._router.navigate(['lot']);
-                //         },
-                //         error: (err) => {
-                //             this.toastr.error('แก้ไขข้อมูลไม่สำเร็จ');
-                //         },
-                //     });
-                // }
-                this.toastr.success('แก้ไขข้อมูลสำเร็จ');
+                if (this.type === 'NEW') {
+                    console.log('form', payload);
+                    this._service.create(payload).subscribe({
+                        next: (resp: any) => {
+                            this.toastr.success(this.translocoService.translate('toastr.success'));
+                            this._router.navigate(['lot']);
+                        },
+                        error: (err) => {
+                            this.toastr.error(this.translocoService.translate('toastr.error'));
+                        },
+                    });
+                } else {
+                    this._service.update(payload, this.Id).subscribe({
+                        next: (resp: any) => {
+                            this.toastr.success(this.translocoService.translate('toastr.edit'));
+                            this._router.navigate(['lot']);
+                        },
+                        error: (err) => {
+                            this.toastr.error(this.translocoService.translate('toastr.edit_error'));
+                        },
+                    });
+                }
+                this.toastr.success(
+                    this.translocoService.translate('toastr.edit')
+                );
                 this._router.navigate(['delivery-note/view/' + this.Id]);
             }
         });

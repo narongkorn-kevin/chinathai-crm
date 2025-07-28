@@ -2,74 +2,99 @@
     <div class="flex items-center">
         <div class="bg-white rounded-lg w-full">
             <div class="flex justify-start">
-                <h2 class="text-lg mb-4">เพิ่มรายการ</h2>
+                <h2 class="text-lg mb-4">{{ 'buttons.addItem' | transloco }}</h2>
             </div>
 
             <form [formGroup]="shipmentForm">
                 <div class="border-t border-gray-300 my-2"></div>
 
-                <!-- Table Header -->
-                <div class="grid grid-cols-4 gap-2">
-                    <span>รายการ</span>
-                    <span>วันที่เริ่มต้น</span>
-                    <span>ตั้งค่าใช้งานในอีก (วัน)</span>
-                    <span>ลบรายการ</span>
-                </div>
+                <table class="w-full">
+                    <!-- Table Header -->
+                    <thead>
+                        <tr>
+                            <th class="py-2">{{ 'shipment.dialog_setting.table_headers.item' | transloco }}</th>
+                            <th class="py-2">{{ 'shipment.dialog_setting.table_headers.start_datetime' | transloco }}</th>
+                            <th class="py-2">{{ 'shipment.dialog_setting.table_headers.end_datetime' | transloco }}</th>
+                            <th class="py-2">{{ 'shipment.dialog_setting.table_headers.days_to_activate' | transloco }}</th>
+                            <th class="py-2">{{ 'buttons.delete_entry' | transloco }}</th>
+                        </tr>
+                    </thead>
 
-                <!-- Table Body -->
-                <div formArrayName="shipments">
-                    <div *ngFor="let item of shipmentList.controls; let i = index" [formGroupName]="i"
-                         class="grid grid-cols-4 gap-2 items-center my-2">
-                        <!-- Dropdown -->
-                        <div class="w-full">
-                            <mat-form-field class="w-full" [ngClass]="formFieldHelpers">
-                                <mat-select formControlName="type">
-                                    <mat-option value="Car">ทางรถ</mat-option>
-                                    <mat-option value="Ship">ทางเรือ</mat-option>
-                                    <mat-option value="Train">ทางรถไฟ</mat-option>
-                                </mat-select>
-                            </mat-form-field>
-                        </div>
+                    <!-- Table Body -->
+                    <tbody formArrayName="shipments">
+                        <tr *ngFor="let item of shipmentList.controls; let i = index" [formGroupName]="i"
+                            class="border-t border-gray-200">
+                            <!-- Dropdown -->
+                            <td class="p-2 pt-6">
+                                <mat-form-field class="w-full" [ngClass]="formFieldHelpers">
+                                    <mat-select formControlName="type">
+                                        <mat-option value="Car">{{ 'shipment.dialog_setting.transport_types.car' | transloco
+                                            }}</mat-option>
+                                        <mat-option value="Ship">{{ 'shipment.dialog_setting.transport_types.ship' | transloco
+                                            }}</mat-option>
+                                        <mat-option value="Train">{{ 'shipment.dialog_setting.transport_types.train' | transloco
+                                            }}</mat-option>
+                                    </mat-select>
+                                </mat-form-field>
+                            </td>
 
-                        <!-- Date Range Picker -->
-                        <mat-form-field class="w-full" [ngClass]="formFieldHelpers">
-                            <mat-date-range-input [rangePicker]="picker">
-                                <input matStartDate formControlName="delivery_time_start">
-                                <input matEndDate formControlName="delivery_time_end">
-                            </mat-date-range-input>
-                            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-                            <mat-date-range-picker #picker></mat-date-range-picker>
-                        </mat-form-field>
+                            <!-- Date Range Picker -->
+                            <td class="p-2">
+                                <div class="flex flex-col mb-1 md:flex md:flex-row md:gap-4">
+                                    <div class="w-full">
+                                        <input
+                                            class="form-control fc-datepicker hasDatepicker w-full border border-[#cbd5e1] h-12 rounded-md px-2 mt-1"
+                                            placeholder="MM/DD/YYYY" type="datetime-local"
+                                            formControlName="delivery_time_start" />
+                                    </div>
+                                </div>
+                            </td>
 
-                        <!-- Days Input -->
-                        <div class="w-full">
-                            <mat-form-field class="w-full" [ngClass]="formFieldHelpers">
-                                <input matInput formControlName="day_to_start" type="number" placeholder="0">
-                            </mat-form-field>
-                        </div>
+                            <td class="p-2">
+                                <div class="flex flex-col mb-1 md:flex md:flex-row md:gap-4">
+                                    <div class="w-full">
+                                        <input
+                                            class="form-control fc-datepicker hasDatepicker w-full border border-[#cbd5e1]  h-12 rounded-md px-2 mt-1"
+                                            placeholder="MM/DD/YYYY" type="datetime-local"
+                                            formControlName="delivery_time_end" />
+                                    </div>
+                                </div>
+                            </td>
 
-                        <!-- Delete Button -->
-                        <button type="button" (click)="removeItem(i)" class="text-gray-600 hover:text-red-500">
-                            <mat-icon [svgIcon]="'heroicons_solid:trash'"></mat-icon>
-                        </button>
-                    </div>
-                </div>
+                            <!-- Days Input -->
+                            <td class="p-2  pt-6">
+                                <mat-form-field class="w-full" [ngClass]="formFieldHelpers">
+                                    <input matInput formControlName="day_to_start" type="number" placeholder="0">
+                                </mat-form-field>
+                            </td>
+
+                            <!-- Delete Button -->
+                            <td class="p-2 ">
+                                <button type="button" (click)="removeItem(i)" class="text-gray-600 hover:text-red-500">
+                                    <mat-icon [svgIcon]="'feather:trash'"></mat-icon>
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
 
                 <!-- Add Button -->
-                <div class="flex justify-start gap-2">
+                <div class="flex justify-start gap-2 mt-4">
                     <button type="button" mat-flat-button color="primary" (click)="addItem()">
                         <mat-icon [svgIcon]="'heroicons_solid:plus'"></mat-icon>
-                        <span class="ml-2">เพิ่มรายการ</span>
+                        <span class="ml-2">{{ 'buttons.addItem' | transloco }}</span>
                     </button>
                 </div>
 
                 <!-- Actions -->
                 <div class="flex justify-end gap-2 mt-6">
-                    <button type="button" mat-flat-button (click)="closeDialog()">
-                        <span class="ml-2">ยกเลิก</span>
-                    </button>
+                    <div class="border border-black rounded-md">
+                        <button mat-flat-button (click)="closeDialog()" class="hover-effect">
+                            <span class="ml-2">{{ 'buttons.cancel' | transloco }}</span>
+                        </button>
+                    </div>
                     <button type="button" mat-flat-button color="primary" (click)="submitData()">
-                        <span class="ml-2">ยืนยัน</span>
+                        <span class="ml-2">{{ 'shipment.dialog_setting.confirm_button' | transloco }}</span>
                     </button>
                 </div>
             </form>

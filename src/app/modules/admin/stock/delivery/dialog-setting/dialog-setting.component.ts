@@ -16,11 +16,14 @@ import { DeliveryService } from '../delivery.service';
 import { ToastrService } from 'ngx-toastr';
 import { Router } from '@angular/router';
 
+import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
+
 @Component({
     selector: 'app-shipment-dialog',
     templateUrl: './dialog-setting.component.html',
     standalone: true,
     imports: [
+        TranslocoModule,
         CommonModule,
         MatFormFieldModule,
         MatInputModule,
@@ -38,13 +41,14 @@ export class DialogSettingComponent {
     formFieldHelpers: string[] = ['fuse-mat-dense'];
 
     constructor(
+        private translocoService: TranslocoService,
         private dialogRef: MatDialogRef<DialogSettingComponent>,
         private fb: FormBuilder,
         private http: HttpClient,
         private fuseConfirmationService: FuseConfirmationService,
         private _service: DeliveryService,
         private toastr: ToastrService,
-        private _router: Router,
+        private _router: Router
     ) {
         this.shipmentForm = this.fb.group({
             shipments: this.fb.array([]),
@@ -74,6 +78,13 @@ export class DialogSettingComponent {
     }
 
     submitData() {
+        if (this.shipmentForm.invalid) {
+            this.toastr.error(
+                this.translocoService.translate('toastr.missing_fields')
+            );
+            this.shipmentForm.markAllAsTouched();
+            return;
+        }
         if (this.shipmentForm.valid) {
             const formattedData = this.shipmentList.value.map((item: any) => ({
                 type: item.type,
@@ -83,7 +94,7 @@ export class DialogSettingComponent {
             }));
 
             const confirmation = this.fuseConfirmationService.open({
-                title: 'คุณแน่ใจหรือไม่ว่าต้องการสร้างรายการ?',
+                title: this.translocoService.translate('confirmation.save_title'),
                 icon: {
                     show: true,
                     name: 'heroicons_outline:exclamation-triangle',
@@ -92,12 +103,16 @@ export class DialogSettingComponent {
                 actions: {
                     confirm: {
                         show: true,
-                        label: 'ยืนยัน',
+                        label: this.translocoService.translate(
+                            'confirmation.confirm_button'
+                        ),
                         color: 'primary',
                     },
                     cancel: {
                         show: true,
-                        label: 'ยกเลิก',
+                        label: this.translocoService.translate(
+                            'confirmation.cancel_button'
+                        ),
                     },
                 },
                 dismissible: false,
@@ -107,11 +122,17 @@ export class DialogSettingComponent {
                 if (result == 'confirmed') {
                     this._service.create(formattedData).subscribe({
                         next: (resp: any) => {
-                            this.toastr.success('บันทึกข้อมูลสำเร็จ');
+                            this.toastr.success(
+                                this.translocoService.translate(
+                                    'toastr.success'
+                                )
+                            );
                             this.dialogRef.close();
                         },
                         error: (err) => {
-                            this.toastr.error('บันทึกข้อมูลไม่สำเร็จ');
+                            this.toastr.error(
+                                this.translocoService.translate('toastr.error')
+                            );
                         },
                     });
                 }

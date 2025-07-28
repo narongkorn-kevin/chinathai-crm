@@ -1,32 +1,31 @@
 <div class="overflow-y-auto flex flex-col w-full">
     <div class="flex flex-row items-start justify-between w-full">
-        <h1 mat-dialog-title class="px-0 pb-1 mb-2 text-xl font-bold text-primary">รูปภาพ</h1>
+        <h1 mat-dialog-title class="px-0 pb-1 mb-2 text-xl font-semibold">{{ 'dalivery_order.dialog_image.scan_with_camera' | transloco }}</h1>
     </div>
     <!-- <h1 mat-dialog-title class="mb-4 text-xl font-semibold" *ngIf="this.data?.type === 'EDIT'">แก้ไขค่าบริการ</h1> -->
     <form [formGroup]="form" class="flex flex-col w-full overflow-scroll">
-        <div class="flex flex-col gap-2 items-start justify-between w-full mt-2">
-            <p class="text-lg font-normal">เพิ่มรูปสินค้า</p>
-            <span class="text-slate-400 font-light text-sm">อัปโหลดรูปภาพ (.png, .jpg)</span>
+        <div class="flex flex-row items-start justify-between w-full border-t-2">
+            <h1 mat-dialog-title class="px-0 pb-1 mb-2 text-xl font-semibold">{{ 'dalivery_order.dialog_image.upload_image' | transloco }}</h1>
         </div>
         <div class="flex flex-row w-full gap-4">
             <div class="flex flex-col w-1/2">
                 <div class="md:w-full">
                     <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
                         <!-- <mat-label>วางลิ้งของคุณที่นี่</mat-label> -->
-                        <input matInput [placeholder]="'วางลิ้งของคุณที่นี่'" formControlName="image_url">
+                        <input matInput [placeholder]="'lables.paste_your_link' | transloco " formControlName="image_url">
                     </mat-form-field>
                 </div>
             </div>
             <div class="flex items-center">
-                <p>หรือ</p>
+                <p>{{ 'lables.or' | transloco }}</p>
             </div>
             <div class="flex flex-col w-1/2">
                 <div class="md:w-full">
                     <!-- การลากไฟล์หรือเลือกไฟล์ -->
                     <label for="fileInput"
-                        class="block p-4 text-sm text-center text-gray-600 bg-gray-100 border-black-2 border- border-dashed rounded-lg cursor-pointer">
-                        ลากไฟล์ของคุณมาหรือ
-                        <span class="font-medium text-red-500">เลือกจากไฟล์ที่มี</span>
+                        class="block p-4 text-sm text-center text-gray-600 bg-gray-100 border-2 border-red-500 border-dashed rounded-lg cursor-pointer">
+                        {{ 'lables.drag_or_select_file' | transloco }}
+                        <span class="font-medium text-red-500">{{ 'lables.select_from_existing' | transloco }}</span>
                         <input type="file" id="fileInput" class="hidden" (change)="onFilesSelected($event)" />
                     </label>
                 </div>
@@ -62,12 +61,11 @@
 
         </div>
         <div mat-dialog-actions class="flex justify-end pt-4 border-t-2">
-        
-            <button class="px-6 ml-3" mat-flat-button [color]="'warn'" (click)="onClose()">
-                ยกเลิก
+            <button class="px-6 ml-3" mat-flat-button [color]="'primary'" (click)="Submit()">
+                {{ 'buttom.save' | transloco }}
             </button>
-                <button class="px-6 ml-3" mat-flat-button [color]="'primary'" (click)="Submit()">
-                ยืนยัน
+            <button class="px-6 ml-3" mat-flat-button [color]="'warn'" (click)="onClose()">
+                {{ 'buttom.cancel' | transloco }}
             </button>
         </div>
 
