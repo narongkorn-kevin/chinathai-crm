@@ -1,6 +1,12 @@
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { CommonModule, CurrencyPipe } from '@angular/common';
-import { AfterViewInit, ChangeDetectionStrategy, Component, OnInit, ViewChild } from '@angular/core';
+import {
+    AfterViewInit,
+    ChangeDetectionStrategy,
+    Component,
+    OnInit,
+    ViewChild,
+} from '@angular/core';
 import { DataTableDirective, DataTablesModule } from 'angular-datatables';
 import { ADTSettings } from 'angular-datatables/src/models/settings';
 import { map, Subject } from 'rxjs';
@@ -12,7 +18,12 @@ import { ToastrService } from 'ngx-toastr';
 import { FuseConfirmationService } from '@fuse/services/confirmation';
 import { MatDialog } from '@angular/material/dialog';
 import { Router, RouterLink } from '@angular/router';
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import {
+    FormBuilder,
+    FormGroup,
+    FormsModule,
+    ReactiveFormsModule,
+} from '@angular/forms';
 import { MatSelectModule } from '@angular/material/select';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -27,10 +38,13 @@ import {
 import { DialogComposeArticleCategoryComponent } from './dialog-compose-article-category/dialog-compose-article-category.component';
 import { ArticleService } from '../article.service';
 
+import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
+
 @Component({
-    selector: 'app-vendor',
+    selector: 'app-article-category',
     standalone: true,
     imports: [
+        TranslocoModule,
         CommonModule,
         DataTablesModule,
         MatButtonModule,
@@ -47,9 +61,7 @@ import { ArticleService } from '../article.service';
         RouterLink,
         MatIcon,
     ],
-    providers: [
-        CurrencyPipe
-    ],
+    providers: [CurrencyPipe],
     animations: [
         trigger('slideToggleFilter', [
             state(
@@ -96,6 +108,7 @@ export class ArticleCategoryComponent implements OnInit, AfterViewInit {
     dtElement: DataTableDirective;
 
     constructor(
+        private translocoService: TranslocoService,
         private _service: ArticleService,
         private fuseConfirmationService: FuseConfirmationService,
         private toastr: ToastrService,
@@ -103,9 +116,7 @@ export class ArticleCategoryComponent implements OnInit, AfterViewInit {
         private currencyPipe: CurrencyPipe,
         private _router: Router,
         private _fb: FormBuilder
-
     ) {
-
         this.filterForm = this._fb.group({
             name: [''],
             start_date: [''],
@@ -113,10 +124,27 @@ export class ArticleCategoryComponent implements OnInit, AfterViewInit {
             code: [''],
             phone: [''],
         });
+        this.langues = localStorage.getItem('lang');
     }
+    langues: any;
+    languageUrl: any;
+
     ngOnInit(): void {
-        setTimeout(() =>
-            this.loadTable());
+        if (this.langues === 'en') {
+            this.languageUrl =
+                'https://cdn.datatables.net/plug-ins/1.11.3/i18n/en-gb.json';
+        } else if (this.langues === 'th') {
+            this.languageUrl =
+                'https://cdn.datatables.net/plug-ins/1.11.3/i18n/th.json';
+        } else if (this.langues === 'cn') {
+            this.languageUrl =
+                'https://cdn.datatables.net/plug-ins/1.11.3/i18n/zh.json';
+        } else {
+            this.languageUrl =
+                'https://cdn.datatables.net/plug-ins/1.11.3/i18n/th.json';
+        }
+
+        setTimeout(() => this.loadTable());
     }
 
     ngAfterViewInit() {
@@ -131,20 +159,31 @@ export class ArticleCategoryComponent implements OnInit, AfterViewInit {
     }
 
     onChangeType() {
-        this.rerender()
+        this.rerender();
     }
 
     rows: any[] = [];
 
     loadTable(): void {
+        const menuTitles = {
+            category_name: {
+                th: 'ชื่อหมวดหมู่',
+                en: 'Category Name',
+                cn: '分类名称',
+            },
+        };
+
         this.dtOptions = {
             pagingType: 'full_numbers',
             serverSide: true,
+            scrollX: true,
+            language: {
+                url: this.languageUrl,
+            },
             ajax: (dataTablesParameters: any, callback) => {
-                this._service.datatable(dataTablesParameters)
-                    .pipe(
-                        map((resp: { data: any }) => resp.data)
-                    )
+                this._service
+                    .datatabletype(dataTablesParameters)
+                    .pipe(map((resp: { data: any }) => resp.data))
                     .subscribe({
                         next: (resp: any) => {
                             callback({
@@ -152,10 +191,10 @@ export class ArticleCategoryComponent implements OnInit, AfterViewInit {
                                 recordsFiltered: resp.total,
                                 data: resp.data,
                             });
-                        }
-                    })
+                        },
+                    });
             },
-            order: [[3, 'asc']],
+            order: [[0, 'desc']],
             columns: [
                 {
                     title: '',
@@ -184,15 +223,13 @@ export class ArticleCategoryComponent implements OnInit, AfterViewInit {
                     orderable: false,
                 },
                 {
-                    title: 'ชื่อหมวดหมู่',
-                    data: 'category',
+                    title: menuTitles.category_name[this.langues],
+                    data: 'name',
                     className: 'text-center',
                 },
-            ]
-        }
+            ],
+        };
     }
-
-
 
     rerender(): void {
         this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
@@ -208,75 +245,108 @@ export class ArticleCategoryComponent implements OnInit, AfterViewInit {
     }
 
     openDialogAdd() {
-        this.dialog.open(DialogComposeArticleCategoryComponent, {
-            width: '50%',
-            data: {
-                action: 'NEW'
+        const DialogRef = this.dialog.open(
+            DialogComposeArticleCategoryComponent,
+            {
+                width: '50%',
+                maxHeight: '90vh',
+                data: {
+                    action: 'NEW',
+                },
             }
-        })
+        );
+        DialogRef.afterClosed().subscribe((result) => {
+            if (result) {
+                this.rerender();
+            }
+        });
     }
 
     openDialogEdit(data: any) {
-        this.dialog.open(DialogComposeArticleCategoryComponent, {
-            width: '50%',
-            data: {
-                action: 'EDIT'
+        const DialogRef = this.dialog.open(
+            DialogComposeArticleCategoryComponent,
+            {
+                width: '50%',
+                maxHeight: '90vh',
+                data: {
+                    action: 'EDIT',
+                    value: data,
+                },
             }
-        })
+        );
+        DialogRef.afterClosed().subscribe((result) => {
+            if (result) {
+                this.rerender();
+            }
+        });
     }
 
     opendialogdelete() {
         const confirmation = this.fuseConfirmationService.open({
-            title: "คุณแน่ใจหรือไม่ว่าต้องการลบรายการ ?",
-            message: "คุณกำลังจะลบรายการ หากกดยืนยันแล้วจะไม่สามารถเอากลับมาอีกได้",
+            title: this.translocoService.translate(
+                'confirmation.delete_title2'
+            ),
+            message: this.translocoService.translate(
+                'confirmation.delete_message2'
+            ),
             icon: {
                 show: true,
-                name: "heroicons_outline:exclamation-triangle",
-                color: "warn"
+                name: 'heroicons_outline:exclamation-triangle',
+                color: 'warn',
             },
             actions: {
                 confirm: {
                     show: true,
-                    label: "ยืนยัน",
-                    color: "primary"
+                    label: this.translocoService.translate(
+                        'confirmation.confirm_button'
+                    ),
+                    color: 'primary',
                 },
                 cancel: {
                     show: true,
-                    label: "ยกเลิก"
-                }
+                    label: this.translocoService.translate(
+                        'confirmation.cancel_button'
+                    ),
+                },
             },
-            dismissible: false
-        })
+            dismissible: false,
+        });
 
-        confirmation.afterClosed().subscribe(
-            result => {
-                if (result == 'confirmed') {
-                    const id = this.multiSelect;
+        confirmation.afterClosed().subscribe((result) => {
+            if (result == 'confirmed') {
+                const id = this.multiSelect;
 
-                    for (let i = 0; i < id.length; i++) {
-                        // this._service.delete(id[i]).subscribe({
-                        //     error: (err) => {
-                        //         this.toastr.error('ลบรายการสมาชิก ล้มเหลว โปรดลองใหม่อีกครั้งภายหลัง');
-                        //         console.log(err, 'err');
-                        //     },
-                        //     complete: () => {
-                        //         if (i == id.length - 1) {
-                        //             this.multiSelect = [];
-                        this.toastr.success('ลบรายการสมาชิก สำเร็จ');
-                        this.rerender();
-                        //         }
-                        //     },
-                        // });
-                    }
-                    if (id.length === 1) {
-                        this.rerender();
-                    }
+                for (let i = 0; i < id.length; i++) {
+                    this._service.deletetype(id[i]).subscribe({
+                        error: (err) => {
+                            this.toastr.error(
+                                this.translocoService.translate(
+                                    'toastr.delete_error'
+                                )
+                            );
+                            console.log(err, 'err');
+                        },
+                        complete: () => {
+                            if (i == id.length - 1) {
+                                this.multiSelect = [];
+                                this.toastr.success(
+                                    this.translocoService.translate(
+                                        'toastr.delete'
+                                    )
+                                );
+                                this.rerender();
+                            }
+                        },
+                    });
+                }
+                if (id.length === 1) {
+                    this.rerender();
                 }
             }
-        )
+        });
     }
 
-    multiSelect: any[] = []
+    multiSelect: any[] = [];
     isAllSelected: boolean = false; // ใช้เก็บสถานะเลือกทั้งหมด
 
     toggleSelectAll(isSelectAll: boolean): void {
@@ -327,5 +397,4 @@ export class ArticleCategoryComponent implements OnInit, AfterViewInit {
         this.filterForm.reset();
         this.rerender();
     }
-
 }

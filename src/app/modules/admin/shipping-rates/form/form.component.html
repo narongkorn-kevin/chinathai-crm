@@ -1,0 +1,113 @@
+<div class="flex flex-col flex-auto justify-start items-center w-full">
+    <div class="w-full flex-col justify-between items-center flex overflow-hidden">
+        <div class="w-full flex-col justify-start items-start flex">
+            <div class="w-full px-4 md:px-10 pt-5 pb-2.5 bg-white justify-between items-center flex gap-2">
+                <div class="flex flex-col">
+                    <div class="flex space-x-2">
+                        <button class="md:text-sm font-medium tracking-tight leading-7 sm:leading-10 truncate" (click)="Submit()">
+                            {{ 'shipping_rate.member_list' | transloco }}
+                        </button>
+                        <p class="md:text-sm font-medium tracking-tight leading-7 sm:leading-10 truncate">></p>
+                        <button
+                            class="md:text-sm font-medium tracking-tight leading-7 sm:leading-10 truncate text-[#DF0B12]"
+                            [routerLink]="['/shipping-rates']" routerLinkActive="router-link-active">
+                            {{ 'shipping_rate.shipping_rates' | transloco }}
+                        </button>
+                    </div>
+
+                    <p class="md:text-2xl text-[#DF0B12] font-bold tracking-tight leading-7 sm:leading-10 truncate"
+                        *ngIf="this.type !== 'EDIT'">
+                        {{ 'shipping_rate.form.add_item' | transloco }}
+                    </p>
+                    <p class="md:text-2xl text-[#DF0B12] font-bold tracking-tight leading-7 sm:leading-10 truncate"
+                        *ngIf="this.type === 'EDIT'">
+                        {{ 'shipping_rate.form.shipping_rate_code' | transloco }} : {{this.data?.code}}
+                    </p>
+                </div>
+                <div class="justify-end items-center gap-2 flex flex-col md:flex-row">
+                    <!-- <button mat-flat-button (click)="Close()">
+                        <span class="">{{ 'buttons.cancel' | transloco }}</span>
+                    </button> -->
+                    <div class="border border-black rounded-md">
+                        <button mat-flat-button (click)="Close()" class="hover-effect">
+                            <mat-icon svgIcon="feather:trash"></mat-icon>
+                            <span class="ml-2">{{ 'buttons.cancel' | transloco }}</span>
+                        </button>
+                    </div>
+                    <button mat-flat-button [color]="'primary'" class="!text-white" (click)="Submit()">
+                        <mat-icon svgIcon="mat_outline:save"></mat-icon>
+                        <span class="ml-2">{{ 'buttons.save' | transloco }}</span>
+                    </button>
+                </div>
+            </div>
+            <div class="w-full px-4 md:px-10 flex flex-col gap-2 bg-white ">
+                <form [formGroup]="form" class="space-y-4">
+                    <!-- ข้อมูลทั่วไป -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <mat-form-field appearance="fill">
+                            <mat-label>รหัสเรทค่าขนส่ง</mat-label>
+                            <input matInput formControlName="code">
+                        </mat-form-field>
+
+                        <mat-form-field appearance="fill">
+                            <mat-label>ชื่อเรทค่าขนส่ง</mat-label>
+                            <input matInput formControlName="name">
+                        </mat-form-field>
+
+                        <mat-form-field appearance="fill">
+                            <mat-label>เรทขั้นต่ำ</mat-label>
+                            <input matInput type="number" formControlName="min_rate">
+                        </mat-form-field>
+                    </div>
+
+                    <mat-form-field appearance="fill" class="w-full">
+                        <mat-label>หมายเหตุ</mat-label>
+                        <textarea matInput formControlName="remark" rows="2"></textarea>
+                    </mat-form-field>
+
+                    <!-- ตาราง transport_type -->
+                    <div formArrayName="transport_type">
+                        <div *ngFor="let typeCtrl of transportTypes.controls; let i = index" [formGroupName]="i"
+                            class="border-t pt-4">
+                            <h3 class="text-lg font-bold mb-2">
+                                เรทค่าขนส่ง {{ transportTypeLabel(typeCtrl.get('transport_type_id')?.value) }}
+                            </h3>
+
+                            <!-- Header -->
+                            <div class="grid grid-cols-9 gap-2 font-semibold mb-2">
+                                <div></div>
+                                <div *ngFor="let label of shippingZones">{{ label.code }}</div>
+                            </div>
+
+                            <!-- CBM -->
+                            <div class="grid grid-cols-9 gap-2 items-start">
+                                <div>ราคา CBM</div>
+                                <ng-container *ngFor="let zone of shippingZones">
+                                    <ng-container *ngIf="getRateControl(typeCtrl.get('cbm'), zone.id) as cbmCtrl">
+                                        <mat-form-field appearance="fill" class="w-full">
+                                            <input matInput type="number" [formControl]="cbmCtrl.get('rate_price')"
+                                                class="w-full">
+                                        </mat-form-field>
+                                    </ng-container>
+                                </ng-container>
+                            </div>
+
+                            <!-- KG -->
+                            <div class="grid grid-cols-9 gap-2 items-start">
+                                <div>ราคา KG.</div>
+                                <ng-container *ngFor="let zone of shippingZones">
+                                    <ng-container *ngIf="getRateControl(typeCtrl.get('kg'), zone.id) as kgCtrl">
+                                        <mat-form-field appearance="fill" class="w-full">
+                                            <input matInput type="number" [formControl]="kgCtrl.get('rate_price')"
+                                                class="w-full">
+                                        </mat-form-field>
+                                    </ng-container>
+                                </ng-container>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

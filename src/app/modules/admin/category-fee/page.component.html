@@ -1,14 +1,14 @@
 <div class="flex flex-col flex-auto min-w-0">
   <div class="flex-auto  sm:p-10 bg-card m-4 p-4 rounded-md">
-    <div class="flex flex-row justify-between pb-2 my-5">
+    <div class="flex flex-col md:flex-row justify-between pb-2 my-5">
       <div>
         <h2 class="text-2xl md:text-xl font-extrabold tracking-tight leading-7 sm:leading-10 truncate">
-          รายการประเภทค่าธรรมเนียม
+          {{ 'category-fee.title.listfeetype' | transloco}}
         </h2>
       </div>
       <button mat-flat-button [color]="'primary'" (click)="opendialogapro()">
         <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:plus-circle'"></mat-icon>
-        <span class="ml-2"> เพิ่มประเภทค่าธรรมเนียม</span>
+        <span class="ml-2"> {{ 'category-fee.title.addfeetype' | transloco}}</span>
       </button>
     </div>
     <table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" class="row-border hover w-full">
@@ -22,13 +22,13 @@
   </button>
   <mat-menu #menu="matMenu">
     <button mat-menu-item (click)="openDialogEdit(data)">
-      <mat-icon [svgIcon]="'heroicons_solid:pencil-square'"></mat-icon>
-      <span>แก้ไข</span>
+      <mat-icon [svgIcon]="'mat_outline:edit_note'"></mat-icon>
+      <span>{{ 'buttons.edit' | transloco }}</span>
     </button>
     <mat-divider></mat-divider>
     <button mat-menu-item (click)="clickDelete(data.id)">
-      <mat-icon [svgIcon]="'heroicons_solid:trash'"></mat-icon>
-      <span>ลบ</span>
+      <mat-icon [svgIcon]="'feather:trash'"></mat-icon>
+      <span>{{ 'buttons.delete' | transloco }}</span>
     </button>
   </mat-menu>
 </ng-template>

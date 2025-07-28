@@ -1,6 +1,6 @@
 <div class="md:max-w-lg">
-    <h1 mat-dialog-title class="text-xl font-semibold mb-4" *ngIf="this.data?.type === 'NEW'">เพิ่มข้อมูล</h1>
-    <h1 mat-dialog-title class="text-xl font-semibold mb-4" *ngIf="this.data?.type === 'EDIT'">แก้ไขข้อมูล</h1>
+    <h1 mat-dialog-title class="text-xl font-semibold mb-4" *ngIf="this.data?.type === 'NEW'">{{ 'contact_customers.adddata' | transloco }}</h1>
+    <h1 mat-dialog-title class="text-xl font-semibold mb-4" *ngIf="this.data?.type === 'EDIT'">{{ 'contact_customers.editdata' | transloco }}</h1>
     <form [formGroup]="form">
         <div mat-dialog-content class="overflow-y-auto md:max-h-180">
             <div class="flex-auto">
@@ -13,12 +13,13 @@
                     </div>
                 </div> -->
                 <div class="flex w-full flex-col justify-center gap-2" *ngIf="this.type === 'file'">
-                    <input type="file"(change)="handleFilesUpload($event)">
+                    <input type="file" (change)="handleFilesUpload($event)">
                 </div>
 
                 <div class="flex w-full flex-col justify-center gap-2" *ngIf="this.type === 'image'">
                     <div class="flex w-full justify-center">
-                        <asha-image-upload [initial]="null" (uploadSuccess)="uploadSuccess($event)" accept="image/*"></asha-image-upload>
+                        <asha-image-upload [initial]="null" (uploadSuccess)="uploadSuccess($event)"
+                            accept="image/*"></asha-image-upload>
                     </div>
 
                     <div class="flex justify-center w-full">
@@ -30,10 +31,10 @@
         <!-- <div> check : {{this.form.value | json}}</div> -->
         <div mat-dialog-actions class="flex justify-end">
             <button class="px-6 ml-3" mat-flat-button [color]="'primary'" (click)="Submit()">
-                ตกลง
+                {{ 'buttons.submit' | transloco }}
             </button>
             <button class="px-6 ml-3" mat-flat-button [color]="'warn'" (click)="onClose()">
-                ยกเลิก
+                {{ 'buttons.cancel' | transloco }}
             </button>
         </div>
     </form>

@@ -1,0 +1,26 @@
+<div class="image-viewer-container">
+    <div class="toolbar">
+        <div class="zoom-controls">
+            <button mat-icon-button (click)="zoomOut()" class="control-button">
+                <mat-icon>remove</mat-icon>
+            </button>
+            <span>{{ zoomLevel }}%</span>
+            <button mat-icon-button (click)="zoomIn()" class="control-button">
+                <mat-icon>add</mat-icon>
+            </button>
+        </div>
+        <button mat-icon-button (click)="closeDialog()" class="close-button">
+            <mat-icon>close</mat-icon>
+        </button>
+    </div>
+    <div class="image-wrapper">
+        <div #imageContainer class="image-container"
+            [style.transform]="'scale(' + (zoomLevel / 100) + ')'"
+            [style.transform-origin]="transformOrigin"
+            [style.left.px]="positionX"
+            [style.top.px]="positionY"
+            (mousedown)="startDrag($event)" (touchstart)="startTouchDrag($event)">
+            <img [src]="imageUrl" alt="Preview Image" (error)="handleImageError()">
+        </div>
+    </div>
+</div>

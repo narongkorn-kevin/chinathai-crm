@@ -1,53 +1,54 @@
 <div class="w-full">
     @if (data.action == 'NEW') {
-    <h1 mat-dialog-title class="mb-4 pb-4 text-xl font-semibold border-b-2">เพิ่มรายการ</h1>
+    <h1 mat-dialog-title class="mb-4 pb-4 text-xl font-semibold border-b-2">{{ 'buttons.addItem' | transloco }}</h1>
     }
     @if (data.action == 'EDIT') {
-    <h1 mat-dialog-title class="mb-4 pb-4 text-xl font-semibold border-b-2">แก้ไขรายการ</h1>
+    <h1 mat-dialog-title class="mb-4 pb-4 text-xl font-semibold border-b-2">{{ 'buttons.edit_entry' | transloco }}</h1>
     }
-    <div mat-dialog-content class="md:max-h-180">
+    <div mat-dialog-content class="overflow-y-auto">
         <form [formGroup]="form">
             <div class="flex-auto">
                 <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
-                    <mat-label>ชื่อหมวดหมู่</mat-label>
-                    <mat-select>
-                        <mat-option *ngFor="let item of category$ | async">
-                            {{item}}
+                    <mat-label>{{ 'article.dialog_compose.category_name' | transloco }}</mat-label>
+                    <mat-select formControlName="category_newss_id">
+                        <mat-option *ngFor="let item of category$ | async" [value]="item.id">
+                            {{item.name}}
                         </mat-option>
                     </mat-select>
                 </mat-form-field>
 
                 <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
-                    <mat-label>หัวข้อบทความ</mat-label>
-                    <input matInput [placeholder]="''">
+                    <mat-label>{{ 'article.dialog_compose.article_title' | transloco }}</mat-label>
+                    <input matInput formControlName="name" [placeholder]="''">
                 </mat-form-field>
 
                 <div class="w-full">
-                    <mat-label class="text-black">เนื้อหาบทความ</mat-label>
-                    <quill-editor [styles]="{height: '200px'}"></quill-editor>
+                    <mat-label class="text-black">{{ 'article.dialog_compose.article_content' | transloco }}</mat-label>
+                    <quill-editor formControlName="description" [styles]="{height: '200px'}"></quill-editor>
                 </div>
 
                 <div class="w-full">
-                    <mat-label class="text-default">แนบรูปภาพ</mat-label>
-                    <asha-upload-file></asha-upload-file>
+                    <mat-label class="text-default">{{ 'article.dialog_compose.attach_image' | transloco }}</mat-label>
+                    <asha-upload-file [existingImage]="form.get('image_url').value"
+                        (filesChanged)="onFilesChanged($event)"></asha-upload-file>
                 </div>
 
                 <div class="flex flex-col w-full">
-                    <mat-label class="text-default">สถานะ</mat-label>
+                    <mat-label class="text-default">{{ 'article.dialog_compose.status' | transloco }}</mat-label>
                     <mat-radio-group color="primary">
-                        <mat-radio-button [value]="true">เปิดการใช้งาน</mat-radio-button>
-                        <mat-radio-button [value]="false">ปิดการใช้งาน</mat-radio-button>
+                        <mat-radio-button [value]="true">{{ 'article.dialog_compose.enable_status' | transloco }}</mat-radio-button>
+                        <mat-radio-button [value]="false">{{ 'article.dialog_compose.disable_status' | transloco }}</mat-radio-button>
                     </mat-radio-group>
                 </div>
             </div>
-            <div mat-dialog-actions class="flex justify-end border-t-2 pt-4">
-                <button class="px-6 ml-3" mat-flat-button [color]="'warn'" (click)="onClose()">
-                    ยกเลิก
-                </button>
-                <button class="px-6 ml-3" mat-flat-button [color]="'primary'" (click)="Submit()">
-                    บันทึก
-                </button>
-            </div>
         </form>
+    </div>
+    <div mat-dialog-actions class="flex justify-end border-t-2 pt-4">
+        <button class="px-6 ml-3" mat-flat-button [color]="'warn'" (click)="onClose()">
+            {{ 'buttons.cancel' | transloco }}
+        </button>
+        <button class="px-6 ml-3" mat-flat-button [color]="'primary'" (click)="Submit()">
+            {{ 'buttons.save' | transloco }}
+        </button>
     </div>
 </div>

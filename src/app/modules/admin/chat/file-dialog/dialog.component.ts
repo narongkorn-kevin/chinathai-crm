@@ -12,7 +12,12 @@ import {
     MatDialogRef,
     MAT_DIALOG_DATA,
 } from '@angular/material/dialog';
-import { FormBuilder, FormGroup, FormsModule, Validators } from '@angular/forms';
+import {
+    FormBuilder,
+    FormGroup,
+    FormsModule,
+    Validators,
+} from '@angular/forms';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -24,13 +29,22 @@ import { serialize } from 'object-to-formdata';
 import { ImageUploadComponent } from 'app/modules/common/image-upload/image-upload.component';
 import { ChatService } from '../chat.service';
 
+import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
+
 @Component({
     selector: 'app-file-dialog',
     standalone: true,
     templateUrl: './dialog.component.html',
     styleUrl: './dialog.component.scss',
-    imports: [CommonModule, DataTablesModule, MatIconModule, MatFormFieldModule, MatInputModule,
-        FormsModule, MatToolbarModule,
+    imports: [
+        TranslocoModule,
+        CommonModule,
+        DataTablesModule,
+        MatIconModule,
+        MatFormFieldModule,
+        MatInputModule,
+        FormsModule,
+        MatToolbarModule,
         MatButtonModule,
         MatDialogTitle,
         MatDialogContent,
@@ -41,10 +55,9 @@ import { ChatService } from '../chat.service';
         MatFormFieldModule,
         MatRadioModule,
         ImageUploadComponent,
-    ]
+    ],
 })
 export class FileDialogForm implements OnInit {
-
     form: FormGroup;
     stores: any[] = [];
     formFieldHelpers: string[] = ['fuse-mat-dense'];
@@ -53,112 +66,128 @@ export class FileDialogForm implements OnInit {
     imageUrl: string;
     type: string;
     constructor(
+        private translocoService: TranslocoService,
         private dialogRef: MatDialogRef<FileDialogForm>,
         @Inject(MAT_DIALOG_DATA) public data: any,
         public dialog: MatDialog,
         private FormBuilder: FormBuilder,
         public _service: ChatService,
         private fuseConfirmationService: FuseConfirmationService,
-        private toastr: ToastrService,
+        private toastr: ToastrService
     ) {
         this.type = data.type;
     }
 
     ngOnInit(): void {
         this.form = this.FormBuilder.group({
-            image:[''],
+            image: [''],
             file: [''],
             path: ['', Validators.required],
         });
     }
 
     Submit() {
-        console.log('form',this.form.value);
+        if (this.form.invalid) {
+            this.toastr.error(
+                this.translocoService.translate('toastr.missing_fields')
+            );
+            this.form.markAllAsTouched();
+            return;
+        }
+        console.log('form', this.form.value);
 
         let path = '';
-        if(this.type === 'image'){
+        if (this.type === 'image') {
             path = '/images/asset_chat_smg/';
-        }else{
+        } else {
             path = '/files/';
         }
         this.form.patchValue({
-            path: path
+            path: path,
         });
 
         if (this.form.invalid) {
-            return
+            return;
         }
 
-        console.log('form',this.form.value);
+        console.log('form', this.form.value);
 
         const confirmation = this.fuseConfirmationService.open({
-            title: "ยืนยันการบันทึกข้อมูล",
+            title: this.translocoService.translate('confirmation.save_title'),
             icon: {
                 show: true,
-                name: "heroicons_outline:exclamation-triangle",
-                color: "primary"
+                name: 'heroicons_outline:exclamation-triangle',
+                color: 'primary',
             },
             actions: {
                 confirm: {
                     show: true,
-                    label: "ยืนยัน",
-                    color: "primary"
+                    label: this.translocoService.translate(
+                        'confirmation.confirm_button'
+                    ),
+                    color: 'primary',
                 },
                 cancel: {
                     show: true,
-                    label: "ยกเลิก"
-                }
+                    label: this.translocoService.translate(
+                        'confirmation.cancel_button'
+                    ),
+                },
             },
-            dismissible: false
-        })
+            dismissible: false,
+        });
 
-        confirmation.afterClosed().subscribe(
-            result => {
-                if (result == 'confirmed') {
+        confirmation.afterClosed().subscribe((result) => {
+            if (result == 'confirmed') {
+                const formData = serialize({
+                    ...this.form.value,
+                });
+                if (this.data.type === 'file') {
+                    console.log('file');
 
-                    const formData = serialize({
-                        ...this.form.value,
+                    this._service.upload_file(formData).subscribe({
+                        error: (err) => {
+                            this.toastr.error(
+                                this.translocoService.translate(
+                                    'toastr.unable_to_save'
+                                )
+                            );
+                        },
+                        next: (res: any) => {
+                            this.dialogRef.close(res);
+                        },
                     });
-                    if (this.data.type === 'file') {
-                        console.log('file');
-
-                        this._service.upload_file(formData).subscribe({
-                            error: (err) => {
-                                this.toastr.error('ไม่สามารถบันทึกข้อมูลได้')
-                            },
-                            next: (res: any) => {
-                                this.dialogRef.close(res)
-                            },
-                        });
-                    } else {
-
-                        this._service.upload_image(formData).subscribe({
-                            error: (err) => {
-                                this.toastr.error('ไม่สามารถบันทึกข้อมูลได้')
-                            },
-                            next: (res: any) => {
-                                this.dialogRef.close(res)
-                            },
-                        });
-                    }
+                } else {
+                    this._service.upload_image(formData).subscribe({
+                        error: (err) => {
+                            this.toastr.error(
+                                this.translocoService.translate(
+                                    'toastr.unable_to_save'
+                                )
+                            );
+                        },
+                        next: (res: any) => {
+                            this.dialogRef.close(res);
+                        },
+                    });
                 }
             }
-        )
+        });
     }
 
     onClose() {
-        this.dialogRef.close()
+        this.dialogRef.close();
     }
 
     uploadSuccess(file: File): void {
         this.form.patchValue({
-            image: file
+            image: file,
         });
     }
 
     handleFilesUpload(event: any) {
         this.form.patchValue({
-            file: event.target.files[0]
+            file: event.target.files[0],
         });
     }
 }

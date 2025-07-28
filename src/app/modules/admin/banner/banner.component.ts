@@ -1,5 +1,11 @@
 import { CommonModule } from '@angular/common';
-import { AfterViewInit, ChangeDetectionStrategy, Component, OnInit, ViewChild } from '@angular/core';
+import {
+    AfterViewInit,
+    ChangeDetectionStrategy,
+    Component,
+    OnInit,
+    ViewChild,
+} from '@angular/core';
 import { DataTableDirective, DataTablesModule } from 'angular-datatables';
 import { BannerService } from './banner.service';
 import { ADTSettings } from 'angular-datatables/src/models/settings';
@@ -16,17 +22,20 @@ import { Router } from '@angular/router';
 import { PictureComponent } from '../picture/picture.component';
 import { BannerComposeComponent } from './dialog/banner-compose/banner-compose.component';
 
+import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
+
 @Component({
     selector: 'app-banner-banner',
     standalone: true,
     imports: [
+        TranslocoModule,
         CommonModule,
         DataTablesModule,
         MatButtonModule,
         MatIconModule,
         FilePickerModule,
         MatMenuModule,
-        MatDividerModule
+        MatDividerModule,
     ],
     templateUrl: './banner.component.html',
     styleUrl: './banner.component.scss',
@@ -43,19 +52,15 @@ export class BannerComponent implements OnInit, AfterViewInit {
     @ViewChild('textStatus') textStatus: any;
 
     constructor(
+        private translocoService: TranslocoService,
         private _service: BannerService,
         private fuseConfirmationService: FuseConfirmationService,
         private toastr: ToastrService,
         public dialog: MatDialog,
         private _router: Router
-
-    ) {
-
-    }
+    ) {}
     ngOnInit(): void {
-        setTimeout(() =>
-            this.loadTable());
-
+        setTimeout(() => this.loadTable());
     }
 
     ngAfterViewInit() {
@@ -72,28 +77,27 @@ export class BannerComponent implements OnInit, AfterViewInit {
     loadTable(): void {
         this.dtOptions = {
             pagingType: 'full_numbers',
-            serverSide: true,     // Set the flag
+            serverSide: true, // Set the flag
             ajax: (dataTablesParameters: any, callback) => {
-
                 dataTablesParameters.filter = {
-                  'filter.category.id': '',
-                }
+                    'filter.category.id': '',
+                };
 
                 this._service.datatable(dataTablesParameters).subscribe({
                     next: (resp: any) => {
                         callback({
                             recordsTotal: resp.meta.totalItems,
                             recordsFiltered: resp.meta.totalItems,
-                            data: resp.data
+                            data: resp.data,
                         });
-                    }
-                })
+                    },
+                });
             },
             columns: [
                 {
                     title: 'ลำดับ',
                     data: 'no',
-                    className: 'w-15 text-center'
+                    className: 'w-15 text-center',
                 },
                 // {
                 //     title: 'รหัสสินค้า',
@@ -103,7 +107,7 @@ export class BannerComponent implements OnInit, AfterViewInit {
                 {
                     title: 'ชื่อแบนเนอร์',
                     data: 'title',
-                    className: 'text-center'
+                    className: 'text-center',
                 },
                 // {
                 //     title: 'ประเภทสินค้า',
@@ -116,7 +120,7 @@ export class BannerComponent implements OnInit, AfterViewInit {
                 //         // ตรวจสอบว่าประเภทของการแสดงคือแสดงข้อมูลหรือไม่
                 //         if (type === 'display') {
                 //             // จัดรูปแบบข้อมูลเป็นราคาที่มีลูกน้ำคั่นและทศนิยม 2 ตำแหน่ง
-                //             return parseFloat(data).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
+                //             return parseFloat(data).toFixed(4).replace(/\d(?=(\d{3})+\.)/g, '$&,');
                 //         }
                 //         // สำหรับประเภทอื่น ๆ คืนค่าข้อมูลเดิม
                 //         return data;
@@ -129,7 +133,7 @@ export class BannerComponent implements OnInit, AfterViewInit {
                     ngTemplateRef: {
                         ref: this.btPicture,
                     },
-                    className: 'w-20 text-center'
+                    className: 'w-20 text-center',
                 },
 
                 {
@@ -139,7 +143,7 @@ export class BannerComponent implements OnInit, AfterViewInit {
                     ngTemplateRef: {
                         ref: this.textStatus,
                     },
-                    className: 'w-30 text-center'
+                    className: 'w-30 text-center',
                 },
 
                 {
@@ -149,14 +153,11 @@ export class BannerComponent implements OnInit, AfterViewInit {
                     ngTemplateRef: {
                         ref: this.btNg,
                     },
-                    className: 'w-15 text-center'
-                }
-
-            ]
-        }
+                    className: 'w-15 text-center',
+                },
+            ],
+        };
     }
-
-
 
     rerender(): void {
         this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
@@ -168,71 +169,74 @@ export class BannerComponent implements OnInit, AfterViewInit {
     }
 
     openDialogEdit(item: any) {
-        console.log(item)
-        this._service.get(item).subscribe((resp: any) =>{
-        const DialogRef = this.dialog.open(BannerComposeComponent, {
-            disableClose: true,
-            width: '600px',
-            height: '600px',
-            data: {
-                type: 'EDIT',
-                value: resp
-            },
-            // panelClass: 'overflow-auto'
+        console.log(item);
+        this._service.get(item).subscribe((resp: any) => {
+            const DialogRef = this.dialog.open(BannerComposeComponent, {
+                disableClose: true,
+                width: '600px',
+                height: '600px',
+                data: {
+                    type: 'EDIT',
+                    value: resp,
+                },
+                // panelClass: 'overflow-auto'
+            });
+            DialogRef.afterClosed().subscribe((result) => {
+                if (result) {
+                    console.log(result, 'result');
+                    this.rerender();
+                }
+            });
         });
-        DialogRef.afterClosed().subscribe((result) => {
-            if (result) {
-                console.log(result, 'result')
-                this.rerender();
-            }
-        });
-
-    });
-}
-
-
+    }
 
     clickDelete(id: any) {
         const confirmation = this.fuseConfirmationService.open({
-            title: "ยืนยันลบข้อมูล",
-            message: "กรุณาตรวจสอบข้อมูล หากลบข้อมูลแล้วจะไม่สามารถนำกลับมาได้",
+            title: this.translocoService.translate('confirmation.delete_title'),
+            message: this.translocoService.translate(
+                'confirmation.delete_message'
+            ),
             icon: {
                 show: true,
-                name: "heroicons_outline:exclamation-triangle",
-                color: "warn"
+                name: 'heroicons_outline:exclamation-triangle',
+                color: 'warn',
             },
             actions: {
                 confirm: {
                     show: true,
-                    label: "ยืนยัน",
-                    color: "primary"
+                    label: this.translocoService.translate(
+                        'confirmation.confirm_button'
+                    ),
+                    color: 'primary',
                 },
                 cancel: {
                     show: true,
-                    label: "ยกเลิก"
-                }
+                    label: this.translocoService.translate(
+                        'confirmation.cancel_button'
+                    ),
+                },
             },
-            dismissible: false
-        })
+            dismissible: false,
+        });
 
-        confirmation.afterClosed().subscribe(
-            result => {
-                if (result == 'confirmed') {
-                    this._service.delete(id).subscribe({
-                        error: (err) => {
-
-                        },
-                        complete: () => {
-                            this.toastr.success('ดำเนินการลบสำเร็จ');
-                            this.rerender();
-                        },
-                    });
-                }
+        confirmation.afterClosed().subscribe((result) => {
+            if (result == 'confirmed') {
+                this._service.delete(id).subscribe({
+                    error: (err) => {},
+                    complete: () => {
+                        this.toastr.success(
+                            this.translocoService.translate(
+                                'toastr.del_successfully'
+                            )
+                        );
+                        this.rerender();
+                    },
+                });
             }
-        )
+        });
     }
     showPicture(imgObject: string): void {
-        console.log(imgObject)
+        console.log(imgObject);
         this.dialog
             .open(PictureComponent, {
                 autoFocus: false,
@@ -254,13 +258,13 @@ export class BannerComponent implements OnInit, AfterViewInit {
             // enterAnimationDuration: 300,
             // exitAnimationDuration: 300,
             data: {
-                type: 'NEW'
+                type: 'NEW',
             },
             // panelClass: 'overflow-auto'
         });
         DialogRef.afterClosed().subscribe((result) => {
             if (result) {
-                console.log(result, 'result')
+                console.log(result, 'result');
                 this.rerender();
             }
         });

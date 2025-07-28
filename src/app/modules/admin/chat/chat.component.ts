@@ -26,14 +26,16 @@ import { ActivatedRoute } from '@angular/router';
 import { ChatService } from './chat.service';
 import { FormsModule } from '@angular/forms';
 import { environment } from 'environments/environment';
-import { SocketService } from "../../../socket.service";
+import { SocketService } from '../../../socket.service';
 import { FileDialogForm } from './file-dialog/dialog.component';
 
+import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 
 @Component({
     selector: 'app-chat-device',
     standalone: true,
     imports: [
+        TranslocoModule,
         CommonModule,
         DataTablesModule,
         MatButtonModule,
@@ -59,19 +61,35 @@ export class ChatComponent implements OnInit, AfterViewInit {
     private socketSubscription: any;
 
     constructor(
+        private translocoService: TranslocoService,
         private _service: ChatService,
         private fuseConfirmationService: FuseConfirmationService,
         private toastr: ToastrService,
         public dialog: MatDialog,
         private activated: ActivatedRoute,
         private socketService: SocketService,
-        private _changeDetectorRef: ChangeDetectorRef,
-
+        private _changeDetectorRef: ChangeDetectorRef
     ) {
         this.data = this.activated.snapshot.data.data.data;
+        this.langues = localStorage.getItem('lang');
     }
+    langues: any;
+    languageUrl: any;
 
     ngOnInit(): void {
+        if (this.langues === 'en') {
+            this.languageUrl =
+                'https://cdn.datatables.net/plug-ins/1.11.3/i18n/en-gb.json';
+        } else if (this.langues === 'th') {
+            this.languageUrl =
+                'https://cdn.datatables.net/plug-ins/1.11.3/i18n/th.json';
+        } else if (this.langues === 'cn') {
+            this.languageUrl =
+                'https://cdn.datatables.net/plug-ins/1.11.3/i18n/zh.json';
+        } else {
+            this.languageUrl =
+                'https://cdn.datatables.net/plug-ins/1.11.3/i18n/th.json';
+        }
         setTimeout(() => this.loadTable());
     }
 
@@ -90,9 +108,34 @@ export class ChatComponent implements OnInit, AfterViewInit {
     }
 
     loadTable(): void {
+        const menuTitles = {
+            sequence: {
+                th: 'ลำดับ',
+                en: 'No.',
+                cn: '序号',
+            },
+            customer_code: {
+                th: 'รหัสลูกค้า',
+                en: 'Customer Code',
+                cn: '客户代码',
+            },
+            customer_name: {
+                th: 'ชื่อลูกค้า',
+                en: 'Customer Name',
+                cn: '客户姓名',
+            },
+            management: {
+                th: 'จัดการ',
+                en: 'Manage',
+                cn: '管理',
+            },
+        };
         this.dtOptions = {
             pagingType: 'full_numbers',
             serverSide: true, // Set the flag
+            language: {
+                url: this.languageUrl,
+            },
             ajax: (dataTablesParameters: any, callback) => {
                 this._service
                     .datatable(dataTablesParameters)
@@ -109,27 +152,26 @@ export class ChatComponent implements OnInit, AfterViewInit {
             },
             columns: [
                 {
-                    title: 'ลำดับ',
+                    title: menuTitles.sequence[this.langues],
                     data: 'No',
                     className: 'w-15 text-center',
                 },
-
                 {
-                    title: 'รหัสลูกค้า',
+                    title: menuTitles.customer_code[this.langues],
                     data: function (row: any) {
                         return row.member?.code;
                     },
                     className: 'text-center',
                 },
                 {
-                    title: 'ชื่อลูกค้า',
+                    title: menuTitles.customer_name[this.langues],
                     data: function (row: any) {
                         return row.member?.fname + ' ' + row.member?.lname;
                     },
                     className: 'text-center',
                 },
                 {
-                    title: 'จัดการ',
+                    title: menuTitles.management[this.langues],
                     data: null,
                     defaultContent: '',
                     ngTemplateRef: {
@@ -185,8 +227,10 @@ export class ChatComponent implements OnInit, AfterViewInit {
 
     clickDelete(id: any) {
         const confirmation = this.fuseConfirmationService.open({
-            title: 'ยืนยันลบข้อมูล',
-            message: 'กรุณาตรวจสอบข้อมูล หากลบข้อมูลแล้วจะไม่สามารถนำกลับมาได้',
+            title: this.translocoService.translate('confirmation.delete_title'),
+            message: this.translocoService.translate(
+                'confirmation.delete_message'
+            ),
             icon: {
                 show: true,
                 name: 'heroicons_outline:exclamation-triangle',
@@ -195,12 +239,16 @@ export class ChatComponent implements OnInit, AfterViewInit {
             actions: {
                 confirm: {
                     show: true,
-                    label: 'ยืนยัน',
+                    label: this.translocoService.translate(
+                        'confirmation.confirm_button'
+                    ),
                     color: 'primary',
                 },
                 cancel: {
                     show: true,
-                    label: 'ยกเลิก',
+                    label: this.translocoService.translate(
+                        'confirmation.cancel_button'
+                    ),
                 },
             },
             dismissible: false,
@@ -211,7 +259,11 @@ export class ChatComponent implements OnInit, AfterViewInit {
                 this._service.delete(id).subscribe({
                     error: (err) => {},
                     complete: () => {
-                        this.toastr.success('ดำเนินการลบสำเร็จ');
+                        this.toastr.success(
+                            this.translocoService.translate(
+                                'toastr.del_successfully'
+                            )
+                        );
                         this.rerender();
                     },
                 });
@@ -243,25 +295,28 @@ export class ChatComponent implements OnInit, AfterViewInit {
         // this.profile = chat.member;
         // this.selectedChat = chat.chat_msgs;
 
-        this.socketSubscription = this.socketService.onEvent(`teg-${chatId}`, (data) => {
-            const stringData = data;
-            const jsonData = JSON.parse(stringData);
-            console.log('jsonData', jsonData);
+        this.socketSubscription = this.socketService.onEvent(
+            `teg-${chatId}`,
+            (data) => {
+                const stringData = data;
+                const jsonData = JSON.parse(stringData);
+                console.log('jsonData', jsonData);
 
-            const form = {
-                chat_id: jsonData.chat_id,
-                message: jsonData.message,
-                user_id: jsonData.messagePosition === 'admin' ? 0 : null,
-                member_id: jsonData.messagePosition !== 'admin' ? 0 : null,
-                type: jsonData.messageType,
-            };
-            this.selectedChat.push(form);
-            this._changeDetectorRef.markForCheck();
-            setTimeout(() => {
-                const container = this.chatContainer.nativeElement;
-                container.scrollTop = container.scrollHeight;
-            }, 500);
-        });
+                const form = {
+                    chat_id: jsonData.chat_id,
+                    message: jsonData.message,
+                    user_id: jsonData.messagePosition === 'admin' ? 0 : null,
+                    member_id: jsonData.messagePosition !== 'admin' ? 0 : null,
+                    type: jsonData.messageType,
+                };
+                this.selectedChat.push(form);
+                this._changeDetectorRef.markForCheck();
+                setTimeout(() => {
+                    const container = this.chatContainer.nativeElement;
+                    container.scrollTop = container.scrollHeight;
+                }, 500);
+            }
+        );
 
         setTimeout(() => {
             const container = this.chatContainer.nativeElement;
@@ -288,7 +343,9 @@ export class ChatComponent implements OnInit, AfterViewInit {
                 },
                 error: (err) => {
                     console.log('err', err);
-                    this.toastr.error('เกิดข้อผิดพลาดไม่สามารถส่งข้อความได้');
+                    this.toastr.error(this.translocoService.translate(
+                        'toastr.error_occurred'
+                    ));
                 },
             });
             this.newMessage = '';
@@ -305,7 +362,7 @@ export class ChatComponent implements OnInit, AfterViewInit {
         });
         DialogRef.afterClosed().subscribe((result) => {
             if (result) {
-                console.log('result',result);
+                console.log('result', result);
                 const newChatMessage = {
                     chat_id: this.chatId,
                     message: result.data,
@@ -320,13 +377,16 @@ export class ChatComponent implements OnInit, AfterViewInit {
                         }, 500);
                     },
                     error: (err) => {
-                        this.toastr.error('เกิดข้อผิดพลาดไม่สามารถส่งรูปภาพได้');
+                        this.toastr.error(
+                            this.translocoService.translate(
+                                'toastr.error_occurred'
+                            )
+                        );
                         console.log('err', err);
                     },
                 });
             }
         });
-
     }
     sendFile() {
         const DialogRef = this.dialog.open(FileDialogForm, {
@@ -339,7 +399,7 @@ export class ChatComponent implements OnInit, AfterViewInit {
         });
         DialogRef.afterClosed().subscribe((result) => {
             if (result) {
-                console.log('result',result);
+                console.log('result', result);
                 const newChatMessage = {
                     chat_id: this.chatId,
                     message: result.path,
@@ -354,7 +414,10 @@ export class ChatComponent implements OnInit, AfterViewInit {
                         }, 500);
                     },
                     error: (err) => {
-                        this.toastr.error('เกิดข้อผิดพลาดไม่สามารถส่งไฟล์ได้');
+                        this.toastr.error(
+                            this.translocoService.translate(
+                                'toastr.error_occurred'
+                            ));
                         console.log('err', err);
                     },
                 });
@@ -395,7 +458,4 @@ export class ChatComponent implements OnInit, AfterViewInit {
             console.error('Scroll to bottom failed', err);
         }
     }
-
-
-
 }

@@ -21,25 +21,34 @@ import { MatRadioModule } from '@angular/material/radio';
 import { OrderProductsService } from '../../order-products/order-products.service';
 import { UploadedFile } from '../form-dialog/dialog.component';
 import { MatDivider } from '@angular/material/divider';
+import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
+import { DepositPayProductsService } from '../deposit-pay-products.service';
+import { environment } from 'environments/environment';
 @Component({
     selector: 'app-dialog-update-payment-new-product-form-addressed-1',
     standalone: true,
     templateUrl: './dialog-update-payment.component.html',
     styleUrl: './dialog-update-payment.component.scss',
-    imports: [CommonModule, DataTablesModule, MatIconModule, MatFormFieldModule, MatInputModule,
-    FormsModule, MatToolbarModule,
-    MatButtonModule,
-    MatDialogActions,
-    MatSelectModule,
-    ReactiveFormsModule,
-    MatInputModule,
-    MatFormFieldModule,
-    MatRadioModule,
-    MatDivider
-]
+    imports: [
+        TranslocoModule,
+        CommonModule,
+        DataTablesModule,
+        MatIconModule,
+        MatFormFieldModule,
+        MatInputModule,
+        FormsModule,
+        MatToolbarModule,
+        MatButtonModule,
+        MatDialogActions,
+        MatSelectModule,
+        ReactiveFormsModule,
+        MatInputModule,
+        MatFormFieldModule,
+        MatRadioModule,
+        MatDivider,
+    ],
 })
 export class DialogUpdatePaymentComponent implements OnInit {
-
     form: FormGroup;
     stores: any[] = [];
     formFieldHelpers: string[] = ['fuse-mat-dense'];
@@ -50,38 +59,70 @@ export class DialogUpdatePaymentComponent implements OnInit {
     uploadedFiles: UploadedFile[] = [];
 
     constructor(
+        private translocoService: TranslocoService,
         private dialogRef: MatDialogRef<DialogUpdatePaymentComponent>,
         @Inject(MAT_DIALOG_DATA) public data: any,
         public dialog: MatDialog,
         private FormBuilder: FormBuilder,
         private fuseConfirmationService: FuseConfirmationService,
         private toastr: ToastrService,
-        private service: OrderProductsService
+        private service: OrderProductsService,
+        private _service: DepositPayProductsService
     ) {
-        this.order = data.order
-        this.type = data.type
+        console.log(this.data, 'data');
 
-        this.form = this.FormBuilder.group({
-            payment_type: ['upload'],
-            member_id: this.order?.member_id,
-            ref_no: this.order?.code,
-            date: new Date(),
-            total_price: +this.order?.total_price,
-            note: null,
-            image: null,
-            order_type: ['order']
-        });
+        this.order = data.order;
+        this.type = data.type;
+        if (this.type === 'QR') {
+            this.form = this.FormBuilder.group({
+                id: this.data.value.id,
+                payment_type: ['upload'],
+                member_id: this.order?.member_id,
+                ref_no: this.order?.code,
+                date: new Date(),
+                total_price: +this.data.value.amount + (+this.data.value.fee),
+                image: null,
+                order_type: ['order'],
+
+                image_slip: this.data.value?.image_slip,
+                image_slip_url: this.data.value?.image_slip_url,
+                note: this.data.value?.note,
+            });
+        } else {
+            this.form = this.FormBuilder.group({
+                id: this.data.value.id,
+                payment_type: ['upload'],
+                member_id: this.data.value.member_id,
+                ref_no: this.order?.code,
+                date: new Date(),
+                total_price: +this.data.value.amount + (+this.data.value.fee),
+                image_slip: this.data.value?.image_slip,
+                image_slip_url: this.data.value?.image_slip_url,
+                note: this.data.value?.note,
+                transaction: this.data.value?.transaction,
+                amount: this.data.value?.amount,
+                fee:  this.data.value?.fee,
+                account_number: this.data.value?.account_number,
+                account_name: this.data.value?.account_name,
+                bank_name: this.data.value?.bank_name,
+                phone: this.data.value?.phone,
+                transfer_at: this.data.value?.transfer_at,
+                image: this.data.value?.image,
+          
+
+            });
+        }
+
     }
 
-    ngOnInit(): void {
-    }
+    ngOnInit(): void { }
 
     uploadImage() {
         return new Promise((resolve, reject) => {
             const file = this.uploadedFiles[0]?.file;
 
             if (!file) {
-                reject(new Error("No file selected"));
+                reject(new Error('No file selected'));
                 return;
             }
 
@@ -91,64 +132,97 @@ export class DialogUpdatePaymentComponent implements OnInit {
 
             this.service.upload(formData).subscribe({
                 next: (resp: any) => resolve(resp),
-                error: (err: any) => reject(err)
+                error: (err: any) => reject(err),
             });
         });
     }
 
-
     Submit() {
         if (this.form.invalid) {
-            return
+            this.toastr.error(
+                this.translocoService.translate('toastr.missing_fields')
+            );
+            this.form.markAllAsTouched();
+            return;
         }
 
         const confirmation = this.fuseConfirmationService.open({
-            title: "ยืนยันการบันทึกข้อมูล",
+            title: this.translocoService.translate('confirmation.save_title'),
             icon: {
                 show: true,
-                name: "heroicons_outline:exclamation-triangle",
-                color: "primary"
+                name: 'heroicons_outline:exclamation-triangle',
+                color: 'primary',
             },
             actions: {
                 confirm: {
                     show: true,
-                    label: "ยืนยัน",
-                    color: "primary"
+                    label: this.translocoService.translate(
+                        'confirmation.confirm_button'
+                    ),
+                    color: 'primary',
                 },
                 cancel: {
                     show: true,
-                    label: "ยกเลิก"
-                }
+                    label: this.translocoService.translate(
+                        'confirmation.cancel_button'
+                    ),
+                },
             },
-            dismissible: false
-        })
+            dismissible: false,
+        });
 
-        confirmation.afterClosed().subscribe(
-            async result => {
-                if (result == 'confirmed') {
-                    const slip: any = await this.uploadImage();
-
+        confirmation.afterClosed().subscribe(async (result) => {
+            if (result == 'confirmed') {
+                const slip: any = await this.uploadImage();
+                if (this.type === 'QR') {
                     const formValue = {
                         ...this.form.value,
-                        image: slip?.data
-                    }
-
-                    this.service.paymentOrder(formValue).subscribe({
+                        image_slip: slip?.data,
+                    };
+                    this._service.updateSlip(formValue).subscribe({
                         error: (err) => {
-                            this.toastr.error(err?.error?.message ?? 'ไม่สามารถบันทึกข้อมูลได้')
+                            this.toastr.error(
+                                err?.error?.message ?? 'ไม่สามารถบันทึกข้อมูลได้'
+                            );
                         },
                         complete: () => {
-                            this.toastr.success('ดำเนินการเพิ่มข้อมูลสำเร็จ')
-                            this.dialogRef.close(true)
+                            this.toastr.success(
+                                this.translocoService.translate(
+                                    'toastr.data_addition_successful'
+                                )
+                            );
+                            this.dialogRef.close(true);
                         },
                     });
+                } else {
+                    const formValue = {
+                        ...this.form.value,
+                        image: slip?.data,
+                    };
+                    this._service.updatePayment(formValue).subscribe({
+                        error: (err) => {
+                            this.toastr.error(
+                                err?.error?.message ?? 'ไม่สามารถบันทึกข้อมูลได้'
+                            );
+                        },
+                        complete: () => {
+                            this.toastr.success(
+                                this.translocoService.translate(
+                                    'toastr.data_addition_successful'
+                                )
+                            );
+                            this.dialogRef.close(true);
+                        },
+                    });
+
                 }
+
             }
-        )
+        });
     }
 
     onClose() {
-        this.dialogRef.close()
+        this.dialogRef.close();
     }
 
     onFilesSelected(event: Event): void {

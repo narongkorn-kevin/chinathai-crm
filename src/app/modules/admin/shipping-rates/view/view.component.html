@@ -1,0 +1,110 @@
+<div class="flex flex-col flex-auto justify-start items-center">
+    <div class="w-full flex-col justify-between items-center flex overflow-hidden">
+        <div class="w-full flex-col justify-start items-start flex">
+            <div class="w-full px-4 md:px-10 pt-5 pb-2.5 bg-white justify-between items-center flex gap-2">
+                <div class="flex flex-col">
+                    <div class="flex space-x-2">
+                        <button class="md:text-sm font-medium tracking-tight leading-7 sm:leading-10 truncate"
+                            [routerLink]="['/shipping-rates']" routerLinkActive="router-link-active">
+                            {{ 'shipping_rate.member_list' | transloco }}
+                        </button>
+                        <p class="md:text-sm font-medium tracking-tight leading-7 sm:leading-10 truncate">></p>
+                        <button
+                            class="md:text-sm font-medium tracking-tight leading-7 sm:leading-10 truncate text-[#DF0B12]"
+                            [routerLink]="['/shipping-rates']" routerLinkActive="router-link-active">
+                            {{ 'shipping_rate.shipping_rates' | transloco }}
+                        </button>
+
+                    </div>
+
+                    <p class="md:text-2xl text-[#DF0B12] font-bold tracking-tight leading-7 sm:leading-10 truncate">
+                        {{ 'shipping_rate.view.shipping_rate_code' | transloco }}: {{ data?.code }}
+                    </p>
+                </div>
+                <div class="flex flex-col md:flex-row justify-end gap-2">
+                    <div class="justify-end items-center gap-2 flex">
+                        <button mat-flat-button [color]="'primary'" (click)="setDefault()">
+                            <div class="flex flex-row">
+                                <img class="w-3 h-auto" src="assets/images/flags/flags_white.png" alt="flags">
+                                <a class="ml-2">{{ 'shipping_rate.view.set_as_default' | transloco }}</a>
+                            </div>
+                        </button>
+                    </div>
+                    <div class="justify-end items-center gap-2 flex" [routerLink]="['/shipping-rates/edit', data.id]"
+                        routerLinkActive="router-link-active">
+                        <button mat-flat-button [color]="'primary'">
+                            <mat-icon svgIcon="mat_outline:edit_note"></mat-icon>
+                            <a class="ml-2">{{ 'buttons.edit' | transloco }}</a>
+                        </button>
+                    </div>
+                </div>
+
+
+            </div>
+            <div class="w-full px-4 md:px-10 flex flex-col gap-2 bg-white ">
+                <h2 class="font-semibold text-2xl">{{ 'shipping_rate.view.shipping_rate_details' | transloco }}</h2>
+                <mat-divider class="mb-3"></mat-divider>
+                <div class="flex flex-col md:grid md:grid-cols-3">
+                    <div class="flex justify-between">
+                        <div class="w-full font-bold">{{ 'shipping_rate.view.shipping_rate_code' | transloco }}:</div>
+                        <div class="w-full text-left">{{ data?.code ?? '-' }}</div>
+                    </div>
+                    <div class="flex justify-between">
+                        <div class="w-full font-bold">{{ 'shipping_rate.view.shipping_rate_name' | transloco }}:</div>
+                        <div class="w-full text-left">{{ data?.name ?? '-' }}</div>
+                    </div>
+                    <div class="flex justify-between">
+                        <div class="w-full font-bold">{{ 'shipping_rate.view.minimum_rate' | transloco }}</div>
+                        <div class="w-full text-left">{{ data?.min_rate ?? '-' }}</div>
+                    </div>
+                </div>
+                <div class="col-span-2 bg-[#fdeaeb] rounded-md p-4">
+                    <p class="font-bold text-red-600">{{ 'shipping_rate.view.note' | transloco }}</p>
+                    <p class="text-red-600"> {{ data?.remark ?? '-' }} </p>
+                </div>
+
+                <div *ngFor="let group of typeTransport" class="mb-2">
+                    <!-- หัวข้อ: ชื่อ transport type -->
+                    <h3 class="text-lg font-bold mb-2">
+                        {{ transportTypeLabel(group.transport_type_id) }}
+                    </h3>
+
+                    <!-- Header -->
+                    <div class="grid grid-cols-9 gap-2 font-semibold mb-2">
+                        <div></div>
+                        <div *ngFor="let zone of shippingZones">{{ zone.code }}</div>
+                    </div>
+
+                    <!-- CBM row -->
+                    <div class="grid grid-cols-9 gap-2 items-center">
+                        <div>ราคา CBM</div>
+
+                        <ng-container *ngFor="let zone of shippingZones">
+                            <ng-container *ngIf="findRate(group.cbm, zone.id) as cbm">
+                                <div>{{ cbm.rate_price }}</div>
+                            </ng-container>
+                            <ng-container *ngIf="!findRate(group.cbm, zone.id)">
+                                <div>-</div>
+                            </ng-container>
+                        </ng-container>
+                    </div>
+
+                    <!-- KG row -->
+                    <div class="grid grid-cols-9 gap-2 items-center">
+                        <div>ราคา KG.</div>
+                        <ng-container *ngFor="let zone of shippingZones">
+                            <ng-container *ngIf="findRate(group.kg, zone.id) as kg">
+                                <div>{{ kg.rate_price }}</div>
+                            </ng-container>
+                            <ng-container *ngIf="!findRate(group.kg, zone.id)">
+                                <div>-</div>
+                            </ng-container>
+                        </ng-container>
+                    </div>
+                    <hr>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>

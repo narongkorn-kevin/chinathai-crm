@@ -14,7 +14,13 @@ import {
     MatDialogRef,
     MAT_DIALOG_DATA,
 } from '@angular/material/dialog';
-import { FormBuilder, FormControl, FormGroup, FormsModule, Validators } from '@angular/forms';
+import {
+    FormBuilder,
+    FormControl,
+    FormGroup,
+    FormsModule,
+    Validators,
+} from '@angular/forms';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -23,7 +29,7 @@ import { MatInputModule } from '@angular/material/input';
 
 import { FuseConfirmationService } from '@fuse/services/confirmation';
 import { ToastrService } from 'ngx-toastr';
-import {MatRadioModule} from '@angular/material/radio';
+import { MatRadioModule } from '@angular/material/radio';
 import { AliplayService } from '../aliplay.service';
 import { createFileFromBlob } from 'app/modules/shared/helper';
 import { MatDivider } from '@angular/material/divider';
@@ -33,13 +39,22 @@ export interface UploadedFile {
     size: number;
     imagePreview: string;
 }
+import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
+
 @Component({
     selector: 'app-member-form-view-2',
     standalone: true,
     templateUrl: './dialog.component.html',
     styleUrl: './dialog.component.scss',
-    imports: [CommonModule, DataTablesModule, MatIconModule, MatFormFieldModule, MatInputModule,
-        FormsModule, MatToolbarModule,
+    imports: [
+        TranslocoModule,
+        CommonModule,
+        DataTablesModule,
+        MatIconModule,
+        MatFormFieldModule,
+        MatInputModule,
+        FormsModule,
+        MatToolbarModule,
         MatButtonModule,
         MatDialogTitle,
         MatDialogContent,
@@ -50,29 +65,27 @@ export interface UploadedFile {
         MatInputModule,
         MatFormFieldModule,
         MatRadioModule,
-        MatDivider
-    ]
+        MatDivider,
+    ],
 })
-
 export class DialogStatus implements OnInit {
-
     form: FormGroup;
-    stores: any[]=[];
+    stores: any[] = [];
     formFieldHelpers: string[] = ['fuse-mat-dense'];
     dtOptions: DataTables.Settings = {};
     addForm: FormGroup;
 
     status: any[] = [
-        { id: 1, name: 'ยังไม่ชำระเงิน' },
-        { id: 2, name: 'รอตรวจสอบ' },
-        { id: 3, name: 'ชำระเงินแล้ว' },
-        { id: 4, name: 'ยกเลิก' },
+        { value: 'awaiting_payment', name: 'รอชำระ' },
+        { value: 'in_progress', name: 'อยู่ระหว่างตรวจสอบ' },
+        { value: 'completed', name: 'ชำระเงินสำเร็จ' },
+        { value: 'cancelled', name: 'ยกเลิก/ล้มเหลว' },
     ];
 
-     uploadedFiles: UploadedFile[] = [];
-
+    uploadedFiles: UploadedFile[] = [];
 
     constructor(
+        private translocoService: TranslocoService,
         private dialogRef: MatDialogRef<DialogStatus>,
         @Inject(MAT_DIALOG_DATA) public data: any,
         public dialog: MatDialog,
@@ -80,45 +93,33 @@ export class DialogStatus implements OnInit {
         public _service: AliplayService,
         private fuseConfirmationService: FuseConfirmationService,
         private userService: AliplayService,
-        private toastr: ToastrService,
-
-    )
-    {
+        private toastr: ToastrService
+    ) {
         console.log(' this.form', this.data);
-        if(this.data.type === 'EDIT') {
-            this.form = this.FormBuilder.group({
-                file: '',
-                file_name: '',
-             });
-        } else {
-            this.form = this.FormBuilder.group({
-                file: '',
-                file_name: '',
-             });
-        }
-
-
+        this.form = this.FormBuilder.group({
+            status: this.data.value?.status,
+            id: this.data.value.id
+        })
         // console.log('1111',this.data?.type);
-
     }
 
     ngOnInit(): void {
-         if (this.data.type === 'EDIT') {
-        //   this.form.patchValue({
-        //     ...this.data.value,
-        //     roleId: +this.data.value?.role?.id
-        //   })
-
+        if (this.data.type === 'EDIT') {
+            //   this.form.patchValue({
+            //     ...this.data.value,
+            //     roleId: +this.data.value?.role?.id
+            //   })
         } else {
             console.log('New');
         }
     }
-    exportTemplate(){
+    exportTemplate() {
         this.userService.export(this.form.value).subscribe({
             next: (resp: Blob) => {
-              let fileName = `member.xlsx`;
-              createFileFromBlob(resp, fileName);
-            },})
+                let fileName = `member.xlsx`;
+                createFileFromBlob(resp, fileName);
+            },
+        });
 
         // const formData = new FormData();
         //     this.userService.export(formData).subscribe({
@@ -127,62 +128,60 @@ export class DialogStatus implements OnInit {
         //             createFileFromBlob(resp, fileName);
         //           },
         //     })
-
-        }
-
-
+    }
     Submit() {
-
+        if (this.form.invalid) {
+            this.toastr.error(
+                this.translocoService.translate('toastr.missing_fields')
+            );
+            this.form.markAllAsTouched();
+            return;
+        }
         const confirmation = this.fuseConfirmationService.open({
-            title: "ยืนยันการบันทึกข้อมูล",
+            title: this.translocoService.translate('confirmation.save_title'),
             icon: {
                 show: true,
-                name: "heroicons_outline:exclamation-triangle",
-                color: "primary"
+                name: 'heroicons_outline:exclamation-triangle',
+                color: 'primary',
             },
             actions: {
                 confirm: {
                     show: true,
-                    label: "ยืนยัน",
-                    color: "primary"
+                    label: this.translocoService.translate(
+                        'confirmation.confirm_button'
+                    ),
+                    color: 'primary',
                 },
                 cancel: {
                     show: true,
-                    label: "ยกเลิก"
-                }
+                    label: this.translocoService.translate(
+                        'confirmation.cancel_button'
+                    ),
+                },
             },
-            dismissible: false
-        })
+            dismissible: false,
+        });
 
-        confirmation.afterClosed().subscribe(
-            result => {
-                if (result == 'confirmed') {
-                        // const formData = new FormData();
-                        // Object.entries(this.form.value).forEach(
-                        //     ([key, value]: any[]) => {
-                        //         if (value !== '' && value !== 'null' && value !== null) {
-                        //             formData.append(key, value);
-                        //           }
-                        //     }
-                        // );
-
-                        // this.userService.import(formData).subscribe({
-                        //     error: (err) => {
-                        //         this.toastr.error('ไม่สามารถบันทึกข้อมูลได้')
-                        //     },
-                        //     complete: () => {
-                        //         this.toastr.success('ดำเนินการเพิ่มข้อมูลสำเร็จ')
-                        //         this.dialogRef.close(true)
-                        //     },
-                        // });
+        confirmation.afterClosed().subscribe((result) => {
+            if (result == 'confirmed') {
+           
+                let formValue = this.form.value
+                this.userService.updateStatus(formValue).subscribe({
+                    error: (err) => {
+                        this.toastr.error('ไม่สามารถบันทึกข้อมูลได้')
+                    },
+                    complete: () => {
+                        this.toastr.success('ดำเนินการเพิ่มข้อมูลสำเร็จ')
                         this.dialogRef.close(true)
-                }
+                    },
+                });
+                this.dialogRef.close(true);
             }
-        )
+        });
     }
 
     onClose() {
-        this.dialogRef.close()
+        this.dialogRef.close();
     }
 
     fileError: string | null = null;
@@ -200,7 +199,7 @@ export class DialogStatus implements OnInit {
                         file_name: event[0].name,
                     });
                 } else {
-                    this.toastr.error('กรุณาเลือกไฟล์นามสกุล .xlsx เท่านั้น')
+                    this.toastr.error(this.translocoService.translate('toastr.please_select_xlsx'));
                     // this.fileError = '';
                 }
             }

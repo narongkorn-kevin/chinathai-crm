@@ -1,0 +1,342 @@
+<div class="flex flex-col flex-auto justify-start items-center w-full">
+    <div class="w-full flex-col justify-between items-center flex overflow-hidden">
+        <div class="w-full flex-col justify-start items-start flex">
+            <div class="w-full px-4 md:px-10 pt-5 pb-2.5 bg-white justify-between items-center flex">
+                <div class="flex flex-col">
+                    <div class="flex space-x-2">
+                        <button class="md:text-sm font-medium tracking-tight leading-7 sm:leading-10 truncate"
+                            [routerLink]="['/agent-group']" routerLinkActive="router-link-active">
+                            {{ 'agent_group.member_list' | transloco }}
+                        </button>
+                        <p class="md:text-sm font-medium tracking-tight leading-7 sm:leading-10 truncate">></p>
+                        <button
+                            class="md:text-sm font-medium tracking-tight leading-7 sm:leading-10 truncate text-[#DF0B12]"
+                            [routerLink]="['/agent-group']" routerLinkActive="router-link-active">
+                            {{ 'agent_group.agent_group' | transloco }}
+                        </button>
+                    </div>
+
+                    <p class="md:text-2xl text-[#DF0B12] font-bold tracking-tight leading-7 sm:leading-10 truncate">
+                        {{ 'agent_group.view.agent_group_number' | transloco }}: {{ data.code }}
+                    </p>
+                </div>
+                <div class="justify-end items-center gap-2 flex">
+                    <button mat-flat-button [color]="'primary'" [routerLink]="['/agent-group/edit', data.id]"
+                        routerLinkActive="router-link-active">
+                        <a class="">{{ 'buttons.edit' | transloco }}</a>
+                    </button>
+                </div>
+            </div>
+            <div class="w-full px-4 md:px-10 flex flex-col gap-2 bg-white ">
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div class="flex flex-col gap-2">
+                        <h2 class="font-semibold text-lg">{{ 'agent_group.view.agent_details' | transloco }}</h2>
+                        <mat-divider class="mb-3"></mat-divider>
+                        <div class="flex justify-between">
+                            <div class="w-full font-bold">{{ 'agent_group.view.agent_code' | transloco }}:</div>
+                            <div class="w-full text-left">{{ data?.code ?? '-' }}</div>
+                        </div>
+                        <div class="flex justify-between">
+                            <div class="w-full font-bold">{{ 'agent_group.view.password' | transloco }}:</div>
+                            <div class="w-full text-left">{{ data?.password ?? '-' }}</div>
+                        </div>
+                        <div class="flex justify-between">
+                            <div class="w-full font-bold">{{ 'agent_group.view.type' | transloco }}:</div>
+                            <div class="w-full text-left">{{ data?.member_type ?? '-' }}</div>
+                        </div>
+                        <!-- <div class="flex justify-between">
+                            <div class="w-full font-bold">รหัสผ่าน:</div>
+                            <div class="w-full text-left">{{ form.get('password')?.value }}</div>
+                        </div> -->
+                        <h2 class="font-semibold text-lg mt-5">{{ 'agent_group.view.personal_information' | transloco }}</h2>
+                        <mat-divider class="mb-3"></mat-divider>
+                        <div class="flex justify-between">
+                            <div class="w-full font-bold">{{ 'agent_group.view.full_name' | transloco }}</div>
+                            <div class="w-full text-left">{{ data?.fname ?? '-' }} {{ data?.lname ?? '-' }}</div>
+                        </div>
+                        <div class="flex justify-between">
+                            <div class="w-full font-bold">{{ 'agent_group.view.gender' | transloco }}:</div>
+                            <div class="w-full text-left">{{ getgender(data?.gender) }}</div>
+                        </div>
+                        <div class="flex justify-between">
+                            <div class="w-full font-bold">{{ 'agent_group.view.phone_number' | transloco }}:</div>
+                            <div class="w-full text-left">{{ data?.phone ?? '-' }}</div>
+                        </div>
+                        <div class="flex justify-between">
+                            <div class="w-full font-bold">{{ 'agent_group.view.backup_phone' | transloco }}:</div>
+                            <div class="w-full text-left">{{ data?.phone2 ?? '-' }}</div>
+                        </div>
+                        <div class="flex justify-between">
+                            <div class="w-full font-bold">{{ 'agent_group.view.language' | transloco }}:</div>
+                            <div class="w-full text-left">{{ getlanguage(data?.language) }}</div>
+                        </div>
+                        <div class="flex justify-between">
+                            <div class="w-full font-bold">{{ 'agent_group.view.birth_date' | transloco }}:</div>
+                            <div class="w-full text-left">{{ data?.birth_date ?? '-' }}</div>
+                        </div>
+
+                        <h2 class="font-semibold text-lg mt-5">{{ 'agent_group.view.additional_contact' | transloco }}</h2>
+                        <mat-divider class="mb-3"></mat-divider>
+                        <div class="flex justify-between">
+                            <div class="w-full font-bold">Email:</div>
+                            <div class="w-full text-left">{{ data?.email ?? '-' }}</div>
+                        </div>
+                        <div class="flex justify-between">
+                            <div class="w-full font-bold">Facebook:</div>
+                            <div class="w-full text-left">{{ data?.facebook ?? '-'}}</div>
+                        </div>
+                        <div class="flex justify-between">
+                            <div class="w-full font-bold">Line ID:</div>
+                            <div class="w-full text-left">{{ data?.line_id ?? '-'}}</div>
+                        </div>
+                        <div class="flex justify-between">
+                            <div class="w-full font-bold">{{ 'agent_group.view.wechat' | transloco }}:</div>
+                            <div class="w-full text-left">{{ data?.wechat ?? '-' }}</div>
+                        </div>
+                        <div class="flex justify-between">
+                            <div class="w-full font-bold">{{ 'agent_group.view.notifications' | transloco }}:</div>
+                            <div class="w-full text-left">
+                                <div class="flex flex-wrap gap-2 mt-0">
+                                    <span *ngIf="data?.notify_facebook" class="">Facebook</span>
+                                    <span *ngIf="data?.notify_line" class="">Line</span>
+                                    <span *ngIf="data?.notify_email" class="">Email</span>
+                                    <span *ngIf="!data?.notify_facebook && !data?.notify_line && !data?.notify_email"
+                                        class="">-</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex flex-col gap-2">
+                        <h2 class="font-semibold text-lg">{{ 'agent_group.view.company_information' | transloco }}</h2>
+                        <mat-divider class="mb-3"></mat-divider>
+                        <div class="flex justify-between">
+                            <div class="w-full font-bold">{{ 'agent_group.view.company_name' | transloco }}:</div>
+                            <div class="w-full text-left">{{ data?.detail?.comp_name }}
+                            </div>
+                        </div>
+                        <div class="flex justify-between">
+                            <div class="w-full font-bold">{{ 'agent_group.view.tax_id' | transloco }}:</div>
+                            <div class="w-full text-left">{{ data?.detail?.comp_tax ?? '-' }}</div>
+                        </div>
+                        <div class="flex justify-between">
+                            <div class="w-full font-bold">{{ 'agent_group.view.address_details' | transloco }}:</div>
+                            <div class="w-full text-left">{{ data?.detail?.address ?? '-' }}</div>
+                        </div>
+                        <div class="flex justify-between">
+                            <div class="w-full font-bold">{{ 'agent_group.view.province' | transloco }}:</div>
+                            <div class="w-full text-left">{{ data?.detail?.province ?? '-' }}</div>
+                        </div>
+                        <div class="flex justify-between">
+                            <div class="w-full font-bold">{{ 'agent_group.view.district' | transloco }}:</div>
+                            <div class="w-full text-left">{{ data?.detail?.district ?? '-' }}</div>
+                        </div>
+                        <div class="flex justify-between">
+                            <div class="w-full font-bold">{{ 'agent_group.view.sub_district' | transloco }}:</div>
+                            <div class="w-full text-left">{{ data?.detail?.sub_district ?? '-' }}</div>
+                        </div>
+                        <div class="flex justify-between">
+                            <div class="w-full font-bold">{{ 'agent_group.view.postal_code' | transloco }}:</div>
+                            <div class="w-full text-left">{{ data?.detail?.postal_code ?? '-' }}</div>
+                        </div>
+
+
+                        <h2 class="font-semibold text-lg mt-4">{{ 'agent_group.view.main_shipping_address' | transloco }}</h2>
+                        <mat-divider class="mb-3"></mat-divider>
+                        <div class="flex justify-between">
+                            <div class="w-full font-bold">{{ 'agent_group.view.address_details' | transloco }}:</div>
+                            <div class="w-full text-left">{{ data?.address ?? '-' }}</div>
+                        </div>
+                        <div class="flex justify-between">
+                            <div class="w-full font-bold">{{ 'agent_group.view.province' | transloco }}:</div>
+                            <div class="w-full text-left">{{ data?.province ?? '-' }}</div>
+                        </div>
+                        <div class="flex justify-between">
+                            <div class="w-full font-bold">{{ 'agent_group.view.district' | transloco }}:</div>
+                            <div class="w-full text-left">{{ data?.district ?? '-' }}</div>
+                        </div>
+                        <div class="flex justify-between">
+                            <div class="w-full font-bold">{{ 'agent_group.view.sub_district' | transloco }}:</div>
+                            <div class="w-full text-left">{{ data?.sub_district ?? '-' }}</div>
+                        </div>
+                        <div class="flex justify-between">
+                            <div class="w-full font-bold">{{ 'agent_group.view.postal_code' | transloco }}:</div>
+                            <div class="w-full text-left">{{ data?.postal_code ?? '-' }}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- เอกสาร -->
+                <div class="mt-6">
+                    <h2 class="font-semibold text-lg">{{ 'agent_group.view.documents' | transloco }}</h2>
+                    <mat-divider class="mb-3"></mat-divider>
+                    <div class="p-1">
+                        <mat-label>{{ 'agent_group.view.cargo_image' | transloco }}</mat-label>
+                        <div class="flex overflow-x-auto w-full">
+                            <table class=" whitespace-nowrap w-full overflow-x-auto">
+                                <thead class="">
+                                    <tr>
+                                        <th class="px-6 py-3 tracking-wider border border-l-0 w-10">#</th>
+                                        <th class="px-6 py-3 text-left tracking-wider border border-r-0">{{
+                                            'agent_group.view.creation_date' | transloco }}
+                                        </th>
+                                        <th class="px-6 py-3 text-left tracking-wider border border-r-0">{{
+                                            'agent_group.view.download' | transloco }} </th>
+                                    </tr>
+                                </thead>
+                                <tbody class="">
+                                    <tr>
+                                        <td class="px-6 py-4 text-center border border-l-0">1</td>
+                                        <td class="px-6 py-4 border border-r-0">YYYY-MM-DD</td>
+                                        <td class="px-6 py-4 border border-r-0">
+                                            <a href="{{ data?.detail?.cargo_image }}" target="_blank"
+                                                class="text-red-600 hover:text-red-700 hover:underline">{{
+                                                data?.detail?.cargo_image }}</a>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ช่องทางเพิ่มเติม -->
+                <div class="mt-6 gap-2">
+                    <div class="flex flex-col md:flex-row w-full gap-4">
+                        <span>{{ 'agent_group.view.shipping_stats' | transloco }}</span>
+                        <span> {{ data?.detail?.order_quantity ?? '-' }} </span>
+                        <span>{{ 'agent_group.view.existing_customers' | transloco }}</span>
+                        <span> {{ data?.detail?.have_any_customers ?? '-' }} </span>
+                        <span>{{ 'agent_group.view.import_experience' | transloco }}</span>
+                        <span> {{ data?.detail?.order_in ?? '-' }} </span>
+                        <span>{{ 'agent_group.view.needs' | transloco }}</span>
+                        <span> {{ data?.detail?.want ?? '-' }} </span>
+                    </div>
+                </div>
+                <!-- <div class="mt-6 gap-2">
+                    <h2 class="font-semibold text-lg">{{ 'agent_group.view.first_service_priority' | transloco }}</h2>
+                    <mat-divider class="mb-3"></mat-divider>
+                    <div class="flex flex-wrap gap-2 mt-2 mb-4">
+                        <span class="bg-red-200 text-red-600 px-3 py-1 rounded">{{
+                            'view.update_and_track_status_24_hours' | transloco }}</span>
+                        <span class="bg-red-200 text-red-600 px-3 py-1 rounded">{{
+                            'view.prevent_damage_to_packaging_boxes' | transloco }}</span>
+                        <span class="bg-red-200 text-red-600 px-3 py-1 rounded">{{
+                            'view.ordering_system_or_ordering_service' | transloco }}</span>
+                    </div>
+                </div> -->
+
+                <div
+                    class="w-full p-4 my-4 border border-gray-300 rounded-lg min-h-[300px] overflow-y-auto flex flex-col">
+                    <div class="flex flex-row w-full gap-2 mb-6">
+                        <div class="w-full text-xl md:text-3xl font-bold">{{ 'agent_group.view.network_details' | transloco }}
+                        </div>
+                    </div>
+                    <form *ngIf="!showFilterForm" [formGroup]="filterForm">
+                        <div class="flex flex-col md:flex-row w-full gap-2 items-end">
+                            <mat-form-field class="w-2/3" [ngClass]="formFieldHelpers">
+                                <mat-label>{{ 'agent_group.view.creation_date' | transloco }}</mat-label>
+                                <mat-date-range-input [rangePicker]="picker">
+                                    <input matStartDate formControlName="start_date">
+                                    <input matEndDate formControlName="end_date">
+                                </mat-date-range-input>
+                                <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                                <mat-date-range-picker #picker></mat-date-range-picker>
+                            </mat-form-field>
+                            <div class="w-full">
+                                <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                                    <mat-icon class="icon-size-5"
+                                        [svgIcon]="'heroicons_solid:magnifying-glass'"></mat-icon>
+                                    <input matInput class="ml-2"
+                                        [placeholder]="'agent_group.view.search_by_customer_code' | transloco">
+                                </mat-form-field>
+                            </div>
+                            <div>
+                                <button mat-flat-button [color]="'primary'" (click)="openfillter()" class="mb-5">
+                                    <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:bars-3'"></mat-icon>
+                                    <span class="ml-2">{{ 'buttons.advancedFilter' | transloco }}</span>
+                                </button>
+                            </div>
+
+                        </div>
+                    </form>
+                    <form [formGroup]="filterForm" class="p-4 rounded-md"
+                        [@slideToggleFilter]="showFilterForm ? 'open' : 'closed'">
+                        <div>
+                            <h2
+                                class="text-xl font-extrabold leading-7 tracking-tight truncate md:text-xl sm:leading-10">
+                                {{ 'lables.advanced_filter' | transloco }}
+                            </h2>
+                            <mat-divider></mat-divider>
+                        </div>
+                        <div class="grid md:grid-cols-2 md:flex-row w-full gap-x-2 mt-2">
+                            <div class="w-full">
+                                <mat-form-field class="w-full" [ngClass]="formFieldHelpers">
+                                    <mat-label>{{ 'agent_group.view.creation_date' | transloco }}</mat-label>
+                                    <mat-date-range-input [rangePicker]="picker">
+                                        <input matStartDate formControlName="start_date">
+                                        <input matEndDate formControlName="end_date">
+                                    </mat-date-range-input>
+                                    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                                    <mat-date-range-picker #picker></mat-date-range-picker>
+                                </mat-form-field>
+                            </div>
+                            <div class="w-full">
+                                <mat-form-field class="w-full" [ngClass]="formFieldHelpers">
+                                    <mat-label>{{ 'agent_group.view.customer_code' | transloco }}</mat-label>
+                                    <input matInput formControlName="member">
+                                </mat-form-field>
+                            </div>
+                            <div class="w-full">
+                                <mat-form-field class="w-full" [ngClass]="formFieldHelpers">
+                                    <mat-label>{{ 'agent_group.view.customer_name' | transloco }}</mat-label>
+                                    <input matInput formControlName="member_name">
+                                </mat-form-field>
+                            </div>
+                            <div class="w-full">
+                                <mat-form-field class="w-full" [ngClass]="formFieldHelpers">
+                                    <mat-label>{{ 'agent_group.view.phone_number' | transloco }}</mat-label>
+                                    <input matInput formControlName="phone">
+                                </mat-form-field>
+                            </div>
+                        </div>
+                        <div class="w-full flex justify-end gap-2">
+                            <button mat-flat-button [color]="'primary'" (click)="openfillter()">
+                                <span class="ml-2">{{ 'buttons.closeFilter' | transloco }}</span>
+                            </button>
+                            <button mat-flat-button [color]="'primary'" (click)="clearFilter()">
+                                <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:bars-3'"></mat-icon>
+                                <span class="ml-2">{{ 'buttons.clearFilter' | transloco }}</span>
+                            </button>
+                            <button mat-flat-button [color]="'primary'" (click)="applyFilter()">
+                                <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:magnifying-glass'"></mat-icon>
+                                <span class="ml-2">{{ 'buttons.search' | transloco }}</span>
+                            </button>
+                        </div>
+                    </form>
+                    <div class="overflow-x-auto">
+                        <table class="whitespace-nowrap w-full">
+                            <thead>
+                                <tr>
+                                    <th class="px-6 py-3 border border-x-0">#</th>
+                                    <th class="px-6 py-3 border border-x-0">{{ 'agent_group.view.creation_date' | transloco }}</th>
+                                    <th class="px-6 py-3 border border-x-0">{{ 'agent_group.view.customer_code' | transloco }}</th>
+                                    <th class="px-6 py-3 border border-x-0">{{ 'agent_group.view.customer_name' | transloco }}</th>
+                                    <th class="px-6 py-3 border border-x-0">{{ 'agent_group.view.phone_number' | transloco }}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let list of data?.lists; let i = index" class="text-center">
+                                    <td>{{ i + 1 }}</td>
+                                    <td>{{ list?.customer ?? '-' }}</td>
+                                    <td>{{ list?.barcode ?? '-' }}</td>
+                                    <td>{{ list?.in_store_code ?? '-' }}</td>
+                                    <td>{{ list?.shipment ?? '-' }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

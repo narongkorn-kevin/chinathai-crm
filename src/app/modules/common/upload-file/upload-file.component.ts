@@ -10,31 +10,50 @@ export interface UploadedFile {
     imagePreview: string;
 }
 
+import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
+
 @Component({
     selector: 'asha-upload-file',
     standalone: true,
-    imports: [CommonModule, MatFormFieldModule, MatInputModule],
+    imports: [
+        TranslocoModule,
+        CommonModule,
+        MatFormFieldModule,
+        MatInputModule,
+    ],
     templateUrl: './upload-file.component.html',
-    styleUrl: './upload-file.component.scss'
+    styleUrl: './upload-file.component.scss',
 })
 export class UploadFileComponent {
-
     @Input() multiple: boolean = false;
+    @Input() existingImage: string | null = null;
     @Output() filesChanged = new EventEmitter<UploadedFile[]>(); // ส่งค่าออก
 
     uploadedFiles: UploadedFile[] = [];
+    ngOnInit() {
+        if (this.existingImage) {
+            this.uploadedFiles = [
+                {
+                    file: null as any,
+                    name: 'existing-image',
+                    size: 0,
+                    imagePreview: this.existingImage,
+                },
+            ];
+        }
+    }
 
     onFilesSelected(event: Event): void {
         const input = event.target as HTMLInputElement;
         if (input.files) {
-            let filePromises = Array.from(input.files).map(file => {
+            let filePromises = Array.from(input.files).map((file) => {
                 return new Promise<UploadedFile>((resolve) => {
                     const reader = new FileReader();
                     const uploadedFile: UploadedFile = {
                         file,
                         name: file.name,
                         size: Math.round(file.size / 1024),
-                        imagePreview: "",
+                        imagePreview: '',
                     };
                     reader.onload = () => {
                         uploadedFile.imagePreview = reader.result as string;
@@ -44,7 +63,7 @@ export class UploadFileComponent {
                 });
             });
 
-            Promise.all(filePromises).then(newFiles => {
+            Promise.all(filePromises).then((newFiles) => {
                 if (!this.multiple) {
                     this.uploadedFiles = newFiles.slice(0, 1);
                 } else {
@@ -55,7 +74,7 @@ export class UploadFileComponent {
         }
 
         // รีเซ็ตค่า input เพื่อให้สามารถเลือกไฟล์เดิมได้อีกครั้ง
-        input.value = "";
+        input.value = '';
     }
 
     removeFile(index: number): void {

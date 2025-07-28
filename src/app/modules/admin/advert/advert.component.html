@@ -3,122 +3,88 @@
         <div class="flex flex-row justify-between pb-2 my-5">
             <div>
                 <h2 class="text-2xl font-extrabold leading-7 tracking-tight truncate md:text-xl sm:leading-10">
-                    โฆษณาติดขอบ
+                    {{ 'banner_ads_header.banner_ads_header' | transloco }}
                 </h2>
             </div>
-            <div class="flex ml-auto space-x-4">
-                <button mat-flat-button [color]="'accent'" (click)="opendialogdelete()"
+            <div class="flex flex-col md:flex-row ml-auto gap-2">
+                <button mat-flat-button [color]="'warn'" (click)="opendialogdelete()"
                     [disabled]="!this.multiSelect.length">
-                    <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:trash'"></mat-icon>
-                    <span class="ml-2">ลบรายการ</span>
+                    <mat-icon class="icon-size-5" [svgIcon]="'feather:trash'"></mat-icon>
+                    <span class="ml-2">{{ 'buttons.delete_entry' | transloco }}</span>
                 </button>
 
                 <button mat-flat-button [color]="'primary'" (click)="openDialogAdd()">
                     <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:plus-circle'"></mat-icon>
-                    <span class="ml-2 "> เพิ่มรายการ</span>
+                    <span class="ml-2 "> {{ 'buttons.addItem' | transloco }}</span>
+                </button>
+
+                <button mat-flat-button color="primary" (click)="updateBannerSequence()">
+                    <mat-icon class="icon-size-5">save</mat-icon>
+                    <span class="ml-2">{{ 'banner_ads_header.save_sequence' | transloco }}</span>
                 </button>
             </div>
         </div>
-        <form *ngIf="!showFilterForm" [formGroup]="filterForm">
-            <div class="flex flex-col md:flex-row w-full gap-2 items-end">
-                <div class="w-full">
-                    <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
-                        <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:magnifying-glass'"></mat-icon>
-                        <input matInput [placeholder]="'ค้นหาด้วยชื่อ'">
-                    </mat-form-field>
-                </div>
-                <!-- <div>
-                    <button mat-flat-button [color]="'primary'" (click)="openfillter()" class="mb-5">
-                        <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:bars-3'"></mat-icon>
-                        <span class="ml-2">ค้นหาโดยใช้ตัวกรอง</span>
-                    </button>
-                </div> -->
-                <div>
-                    <button mat-flat-button [color]="'primary'" class="mb-5">
-                        <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:cog-6-tooth'"></mat-icon>
-                    </button>
-                </div>
-            </div>
-        </form>
-        <form [formGroup]="filterForm" class="p-4 rounded-md" [@slideToggleFilter]="showFilterForm ? 'open' : 'closed'">
-            <div>
-                <h2 class="text-xl font-extrabold leading-7 tracking-tight truncate md:text-xl sm:leading-10">
-                    ตัวกรองขั้นสูง
-                </h2>
-                <mat-divider></mat-divider>
-            </div>
-            <div class="grid grid-cols-2 md:flex-row w-full gap-x-2 mt-2">
-                <mat-form-field class="w-full" [ngClass]="formFieldHelpers">
-                    <mat-label>เลือกที่สร้าง</mat-label>
-                    <mat-date-range-input [rangePicker]="picker">
-                        <input matStartDate formControlName="start_date">
-                        <input matEndDate formControlName="end_date">
-                    </mat-date-range-input>
-                    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-                    <mat-date-range-picker #picker></mat-date-range-picker>
-                </mat-form-field>
-                <div class="w-full">
-                    <mat-form-field class="w-full">
-                        <mat-label>รหัสลูกค้า</mat-label>
-                        <input matInput formControlName="code">
-                    </mat-form-field>
-                </div>
-                <div class="w-full">
-                    <mat-form-field class="w-full">
-                        <mat-label>ชื่อลูกค้า</mat-label>
-                        <input matInput formControlName="name">
-                    </mat-form-field>
-                </div>
-                <div class="w-full">
-                    <mat-form-field class="w-full">
-                        <mat-label>เบอร์โทร</mat-label>
-                        <input matInput formControlName="phone">
-                    </mat-form-field>
-                </div>
-            </div>
-            <div class="w-full flex justify-end gap-2">
-                <button mat-flat-button [color]="'primary'" (click)="openfillter()">
-                    <span class="ml-2">ปิดตัวกรอง</span>
-                </button>
-                <button mat-flat-button [color]="'primary'" (click)="clearFilter()">
-                    <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:bars-3'"></mat-icon>
-                    <span class="ml-2">ล้างตั้งค่าตัวกรอง</span>
-                </button>
-                <button mat-flat-button [color]="'primary'" (click)="rerender()">
-                    <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:magnifying-glass'"></mat-icon>
-                    <span class="ml-2">ค้นหา</span>
-                </button>
-            </div>
-        </form>
-        <button class="mb-2" mat-flat-button [color]="'accent'" (click)="toggleSelectAll(!isAllSelected)">
-            {{ isAllSelected ? 'Unselect All' : 'Select All' }}
+
+        <button class="my-2 " mat-flat-button [color]="'primary'" (click)="toggleSelectAll(!isAllSelected)">
+            {{ isAllSelected ? ('buttons.deselectAll' | transloco) : ('buttons.selectAll' | transloco) }}
         </button>
-        <table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger"
-            class="table w-full bg-white row-border hover whitespace-nowrap">
-        </table>
+        <!-- <table #tableElement datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" id="tableData"
+                class="table w-full bg-white row-border hover whitespace-nowrap">
+            </table> -->
+
+        <div class="w-full overflow-x-auto">
+            <table class="w-full border-collapse banner-list">
+                <thead class="bg-gray-100">
+                    <tr>
+                        <th class="p-3 text-center w-30">{{ 'banner_ads_header.sort_column' | transloco }}</th>
+                        <th class="p-3 text-center w-16">{{ 'banner_ads_header.select_column' | transloco }}</th>
+                        <th class="p-3 text-center w-16">{{ 'banner_ads_header.edit_column' | transloco }}</th>
+                        <th class="p-3 text-center">{{ 'banner_ads_header.sequence_column' | transloco }}</th>
+                        <th class="p-3 text-center">{{ 'banner_ads_header.link_column' | transloco }}</th>
+                        <th class="p-3 text-center">{{ 'banner_ads_header.image_column' | transloco }}</th>
+                    </tr>
+                </thead>
+                <tbody cdkDropList (cdkDropListDropped)="dropBanner($event)">
+                    <tr *ngFor="let ads of get_ads" cdkDrag
+                        class="banner-row border-b hover:bg-gray-50 bg-white transition-colors duration-200">
+                        <td class="p-3 text-center" cdkDragHandle>
+                            <mat-icon class="cursor-move text-gray-500">drag_handle</mat-icon>
+                        </td>
+
+                        <td class="p-3 text-center">
+                            <mat-checkbox [color]="'primary'" [checked]="ads.selected"
+                                (change)="onCheckboxChange($event, ads.id)">
+                            </mat-checkbox>
+                        </td>
+
+                        <td class="p-3 text-center">
+                            <button mat-icon-button (click)="openDialogEdit(ads)"
+                                class="bg-accent rounded-md p-2 shadow-md">
+                                <mat-icon svgIcon="mat_outline:edit_note" class="text-white"></mat-icon>
+                            </button>
+                        </td>
+
+                        <td class="p-3 text-center">
+                            <span class="font-medium">{{ ads.seq }}</span>
+                        </td>
+
+                        <td class="p-3 text-center">
+                            <span class="font-medium">{{ ads.url }}</span>
+                        </td>
+                        <td class="p-3 text-center">
+                            <img [src]="ads.icon" alt="ads" class="w-auto h-40 object-cover rounded-md mx-auto" />
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
 
 
-<ng-template #btNg let-data="adtData">
-    <button mat-icon-button color="primary" [matMenuTriggerFor]="menu">
-        <mat-icon class="icon-size-5" svgIcon="heroicons_solid:cog-8-tooth"></mat-icon>
-    </button>
-    <mat-menu #menu="matMenu">
-        <button mat-menu-item (click)="openDialogEdit(data)">
-            <mat-icon svgIcon="heroicons_solid:pencil-square"></mat-icon>
-            <span>แก้ไข</span>
-        </button>
-        <mat-divider></mat-divider>
-        <button mat-menu-item (click)="clickDelete(data.id)">
-            <mat-icon svgIcon="heroicons_solid:trash"></mat-icon>
-            <span>ลบ</span>
-        </button>
-    </mat-menu>
-</ng-template>
-
 <ng-template #checkbox let-data="adtData">
-    <mat-checkbox [checked]="data.selected" (change)="onCheckboxChange($event, data.id)"></mat-checkbox>
+    <mat-checkbox class="text-white" [color]="'primary'" [checked]="data.selected"
+        (change)="onCheckboxChange($event, data.id)"></mat-checkbox>
 </ng-template>
 
 <ng-template #action let-data="adtData">
@@ -129,11 +95,6 @@
 
 <ng-template #pic let-data="adtData">
     <div class="flex flex-row justify-center">
-        <img [src]="data.image"
-            alt="Image" class="rounded-md w-10 h-15 text-center" />
+        <img [src]="data.image" alt="Image" class="rounded-md w-auto h-60 text-center" />
     </div>
-</ng-template>
-
-<ng-template #link let-data="adtData">
-    <a [href]="data.url" target="_blank">{{data.url}}</a>
 </ng-template>

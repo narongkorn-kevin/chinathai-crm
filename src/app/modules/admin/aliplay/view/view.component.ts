@@ -14,7 +14,13 @@ import {
     MatDialogRef,
     MAT_DIALOG_DATA,
 } from '@angular/material/dialog';
-import { FormBuilder, FormControl, FormGroup, FormsModule, Validators } from '@angular/forms';
+import {
+    FormBuilder,
+    FormControl,
+    FormGroup,
+    FormsModule,
+    Validators,
+} from '@angular/forms';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -34,13 +40,23 @@ export interface UploadedFile {
     size: number;
     imagePreview: string;
 }
+import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
+import { OrderProductsService } from '../../order-products/order-products.service';
+
 @Component({
     selector: 'app-member-form-view-3',
     standalone: true,
     templateUrl: './view.component.html',
     styleUrl: './view.component.scss',
-    imports: [CommonModule, DataTablesModule, MatIconModule, MatFormFieldModule, MatInputModule,
-        FormsModule, MatToolbarModule,
+    imports: [
+        TranslocoModule,
+        CommonModule,
+        DataTablesModule,
+        MatIconModule,
+        MatFormFieldModule,
+        MatInputModule,
+        FormsModule,
+        MatToolbarModule,
         MatButtonModule,
         MatDialogTitle,
         MatDialogContent,
@@ -52,12 +68,10 @@ export interface UploadedFile {
         MatFormFieldModule,
         MatRadioModule,
         MatDivider,
-        MatDatepickerModule
-    ]
+        MatDatepickerModule,
+    ],
 })
-
 export class ViewComponent implements OnInit {
-
     form: FormGroup;
     stores: any[] = [];
     formFieldHelpers: string[] = ['fuse-mat-dense'];
@@ -65,11 +79,10 @@ export class ViewComponent implements OnInit {
     addForm: FormGroup;
     type: string;
 
-
     uploadedFiles: UploadedFile[] = [];
 
-
     constructor(
+        private translocoService: TranslocoService,
         private dialogRef: MatDialogRef<ViewComponent>,
         @Inject(MAT_DIALOG_DATA) public data: any,
         public dialog: MatDialog,
@@ -78,19 +91,22 @@ export class ViewComponent implements OnInit {
         private fuseConfirmationService: FuseConfirmationService,
         private userService: AliplayService,
         private toastr: ToastrService,
-
+        private service: OrderProductsService,
     ) {
         console.log(' this.form', this.data);
         this.form = this.FormBuilder.group({
-            alipay: [0],
-            fee: [0],
-            total: [0],
+            phone: this.data.value.phone,
+            alipay: this.data.value.amount,
+            fee: this.data.value.fee,
+            total: (+this.data.value.amount) + (+this.data.value.fee),
+            image_slip: null,
+            image_slip_url: [''],
             note: [''],
+            id: this.data.value.id
         });
         this.type = this.data?.type;
 
         // console.log('1111',this.data?.type);
-
     }
 
     ngOnInit(): void {
@@ -106,7 +122,7 @@ export class ViewComponent implements OnInit {
                 let fileName = `member.xlsx`;
                 createFileFromBlob(resp, fileName);
             },
-        })
+        });
 
         // const formData = new FormData();
         //     this.userService.export(formData).subscribe({
@@ -115,63 +131,95 @@ export class ViewComponent implements OnInit {
         //             createFileFromBlob(resp, fileName);
         //           },
         //     })
-
     }
 
 
     Submit() {
+        if (this.form.invalid) {
+            this.toastr.error(
+                this.translocoService.translate('toastr.missing_fields')
+            );
+            this.form.markAllAsTouched();
+            return;
+        }
 
         const confirmation = this.fuseConfirmationService.open({
-            title: "ยืนยันการบันทึกข้อมูล",
+            title: this.translocoService.translate('confirmation.save_title'),
             icon: {
                 show: true,
-                name: "heroicons_outline:exclamation-triangle",
-                color: "primary"
+                name: 'heroicons_outline:exclamation-triangle',
+                color: 'primary',
             },
             actions: {
                 confirm: {
                     show: true,
-                    label: "ยืนยัน",
-                    color: "primary"
+                    label: this.translocoService.translate(
+                        'confirmation.confirm_button'
+                    ),
+                    color: 'primary',
                 },
                 cancel: {
                     show: true,
-                    label: "ยกเลิก"
-                }
+                    label: this.translocoService.translate(
+                        'confirmation.cancel_button'
+                    ),
+                },
             },
-            dismissible: false
-        })
+            dismissible: false,
+        });
 
-        confirmation.afterClosed().subscribe(
-            result => {
-                if (result == 'confirmed') {
+        confirmation.afterClosed().subscribe(async (result) => {
+            if (result == 'confirmed') {
+                const slip: any = await this.uploadImage();
+                if (this.type === 'QR') {
+                    const formValue = {
+                        ...this.form.value,
+                        image_slip: slip?.data,
+                    };
+                    this._service.updateSlip(formValue).subscribe({
+                        error: (err) => {
+                            this.toastr.error(
+                                err?.error?.message ?? 'ไม่สามารถบันทึกข้อมูลได้'
+                            );
+                        },
+                        complete: () => {
+                            this.toastr.success(
+                                this.translocoService.translate(
+                                    'toastr.data_addition_successful'
+                                )
+                            );
+                            this.dialogRef.close(true);
+                        },
+                    });
+                } else {
+                    const formValue = {
+                        ...this.form.value,
+                        image: slip?.data,
+                    };
+                    this._service.updatePayment(formValue).subscribe({
+                        error: (err) => {
+                            this.toastr.error(
+                                err?.error?.message ?? 'ไม่สามารถบันทึกข้อมูลได้'
+                            );
+                        },
+                        complete: () => {
+                            this.toastr.success(
+                                this.translocoService.translate(
+                                    'toastr.data_addition_successful'
+                                )
+                            );
+                            this.dialogRef.close(true);
+                        },
+                    });
 
-                    // const formData = new FormData();
-                    // Object.entries(this.form.value).forEach(
-                    //     ([key, value]: any[]) => {
-                    //         if (value !== '' && value !== 'null' && value !== null) {
-                    //             formData.append(key, value);
-                    //             }
-                    //     }
-                    // );
-
-                    // this.userService.import(formData).subscribe({
-                    //     error: (err) => {
-                    //         this.toastr.error('ไม่สามารถบันทึกข้อมูลได้')
-                    //     },
-                    //     complete: () => {
-                    //         this.toastr.success('ดำเนินการเพิ่มข้อมูลสำเร็จ')
-                    //         this.dialogRef.close(true)
-                    //     },
-                    // });
-                    this.dialogRef.close(true)
                 }
+
             }
-        )
+        });
     }
 
     onClose() {
-        this.dialogRef.close()
+        this.dialogRef.close();
     }
 
     fileError: string | null = null;
@@ -189,11 +237,35 @@ export class ViewComponent implements OnInit {
                         file_name: event[0].name,
                     });
                 } else {
-                    this.toastr.error('กรุณาเลือกไฟล์นามสกุล .xlsx เท่านั้น')
+                    this.toastr.error(
+                        this.translocoService.translate(
+                            'toastr.please_select_xlsx'
+                        )
+                    );
                     // this.fileError = '';
                 }
             }
         }
+    }
+
+    uploadImage() {
+        return new Promise((resolve, reject) => {
+            const file = this.uploadedFiles[0]?.file;
+
+            if (!file) {
+                reject(new Error('No file selected'));
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('image', file);
+            formData.append('path', 'images/asset/');
+
+            this.service.upload(formData).subscribe({
+                next: (resp: any) => resolve(resp),
+                error: (err: any) => reject(err),
+            });
+        });
     }
 
     onFilesSelected(event: Event): void {

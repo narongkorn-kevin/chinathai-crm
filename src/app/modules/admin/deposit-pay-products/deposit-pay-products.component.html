@@ -4,50 +4,50 @@
             <div class="flex flex-col">
                 <div class="flex space-x-2">
                     <p class="md:text-sm font-medium tracking-tight leading-7 sm:leading-10 truncate">
-                        บริการ
+                        {{ 'deposit_pay_products.service' | transloco }}
                     </p>
                 </div>
 
                 <p class="md:text-2xl text-[#DF0B12] font-bold tracking-tight leading-7 sm:leading-10 truncate">
-                    ฝากชำระสินค้า
+                    {{ 'deposit_pay_products.deposit_payment' | transloco }}
                 </p>
             </div>
-            <div class="flex ml-auto space-x-4">
+            <div class="flex flex-col md:flex-row ml-auto gap-2">
                 <!-- <button mat-flat-button [color]="'accent'" (click)="opendialogdelete()" [disabled]="!this.multiSelect.length">
-                    <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:trash'"></mat-icon>
-                    <span class="ml-2">ลบรายการ</span>
+                    <mat-icon class="icon-size-5" [svgIcon]="'feather:trash'"></mat-icon>
+                    <span class="ml-2">{{ 'buttons.delete_entry' | transloco }}</span>
                 </button> -->
 
 
-                <button mat-flat-button [color]="'primary'" (click)="openDialogForm()" >
-                    <mat-icon class="icon-size-5"[svgIcon]="'heroicons_solid:plus'" ></mat-icon>
-                    <span>เพิ่มรายการ</span>
+                <button mat-flat-button [color]="'primary'" (click)="openDialogForm()">
+                    <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:plus'"></mat-icon>
+                    <span>{{ 'buttons.addItem' | transloco }}</span>
                 </button>
                 <button [cdkMenuTriggerFor]="menu" mat-flat-button class="!text-white" [color]="'primary'">
                     <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:shopping-bag'"></mat-icon>
                     <div class="flex items-center gap-2">
-                        <span class="ml-2"> การจัดการข้อมูล </span>
+                        <span class="ml-2"> {{ 'buttons.dataManagement' | transloco }} </span>
                         <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:chevron-up'"></mat-icon>
                     </div>
                 </button>
                 <ng-template #menu>
                     <div class="manage-menu bg-primary" cdkMenu>
-                        <button class="manage-menu-item text-white" cdkMenuItem>
+                        <button class="manage-menu-item text-white" cdkMenuItem (click)="exportData('copy')">
                             <mat-icon class="icon-size-5 text-white"
                                 [svgIcon]="'heroicons_solid:document-duplicate'"></mat-icon>
                             <span class="ml-2">Copy to Clipboard</span>
                         </button>
-                        <button class="manage-menu-item text-white" cdkMenuItem>
+                        <button class="manage-menu-item text-white" cdkMenuItem (click)="exportData('csv')">
                             <mat-icon class="icon-size-5 text-white"
                                 [svgIcon]="'heroicons_solid:table-cells'"></mat-icon>
                             <span class="ml-2">CSV</span>
                         </button>
-                        <button class="manage-menu-item text-white" cdkMenuItem>
+                        <button class="manage-menu-item text-white" cdkMenuItem (click)="exportData('excel')">
                             <mat-icon class="icon-size-5 text-white"
                                 [svgIcon]="'heroicons_solid:table-cells'"></mat-icon>
                             <span class="ml-2">Excel</span>
                         </button>
-                        <button class="manage-menu-item text-white" cdkMenuItem>
+                        <button class="manage-menu-item text-white" cdkMenuItem (click)="exportData('print')">
                             <mat-icon class="icon-size-5 text-white" [svgIcon]="'heroicons_solid:printer'"></mat-icon>
                             <span class="ml-2">Print</span>
                         </button>
@@ -59,7 +59,7 @@
             <div class="flex flex-col md:flex-row w-full gap-2 items-end">
                 <div class="w-full">
                     <mat-form-field class="w-full" [ngClass]="formFieldHelpers">
-                        <mat-label>วันที่</mat-label>
+                        <mat-label>{{ 'deposit_pay_products.date' | transloco }}</mat-label>
                         <mat-date-range-input [rangePicker]="picker">
                             <input matStartDate formControlName="start_date">
                             <input matEndDate formControlName="end_date">
@@ -69,34 +69,32 @@
                     </mat-form-field>
                 </div>
                 <div class="w-full">
-                    <mat-form-field [ngClass]="formFieldHelpers" class="w-full" formControlName="name">
+                    <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
                         <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:magnifying-glass'"></mat-icon>
-                        <input matInput [placeholder]="'ค้นหาด้วย รหัสฝากชำระ'">
+                        <input matInput class="ml-2"
+                            [placeholder]="'deposit_pay_products.search_by_deposit_code' | transloco"
+                            formControlName="code">
                     </mat-form-field>
                 </div>
                 <div>
                     <button mat-flat-button [color]="'primary'" (click)="openfillter()" class="mb-5">
                         <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:bars-3'"></mat-icon>
-                        <span class="ml-2">ค้นหาโดยใช้ตัวกรอง</span>
+                        <span class="ml-2">{{ 'deposit_pay_products.deposit_code' | transloco }}</span>
                     </button>
                 </div>
-                <div>
-                    <button mat-flat-button [color]="'primary'" class="mb-5">
-                        <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:cog-6-tooth'"></mat-icon>
-                    </button>
-                </div>
+
             </div>
         </form>
         <form [formGroup]="filterForm" class="p-4 rounded-md" [@slideToggleFilter]="showFilterForm ? 'open' : 'closed'">
             <div>
                 <h2 class="text-xl font-extrabold leading-7 tracking-tight truncate md:text-xl sm:leading-10">
-                    ตัวกรองขั้นสูง
+                    {{ 'lables.advanced_filter' | transloco }}
                 </h2>
                 <mat-divider></mat-divider>
             </div>
-            <div class="grid grid-cols-2 md:flex-row w-full gap-x-2 mt-2">
+            <div class="flex flex-col md:grid md:grid-cols-2 md:flex-row w-full gap-x-2 mt-2">
                 <mat-form-field class="w-full" [ngClass]="formFieldHelpers">
-                    <mat-label>วันที่</mat-label>
+                    <mat-label>{{ 'deposit_pay_products.date' | transloco }}</mat-label>
                     <mat-date-range-input [rangePicker]="picker">
                         <input matStartDate formControlName="start_date">
                         <input matEndDate formControlName="end_date">
@@ -105,50 +103,58 @@
                     <mat-date-range-picker #picker></mat-date-range-picker>
                 </mat-form-field>
                 <div class="w-full">
-                    <mat-form-field class="w-full">
-                        <mat-label>รหัสฝากชำระ</mat-label>
-                        <mat-select placeholder="" formControlName="code">
-                            <mat-option [value]=""></mat-option>
-                        </mat-select>
+                    <div class="w-full">
+                    <mat-form-field class="w-full" [ngClass]="formFieldHelpers">
+                        <mat-label>{{ 'deposit_pay_products.deposit_code' | transloco }}</mat-label>
+                        <input matInput formControlName="code">
+                    </mat-form-field>
+                </div>
+            </div>
+                <div class="w-full">
+                    <mat-form-field class="w-full" [ngClass]="formFieldHelpers">
+                        <mat-label>{{ 'deposit_pay_products.customer' | transloco }}</mat-label>
+                        <input matInput formControlName="name">
                     </mat-form-field>
                 </div>
                 <div class="w-full">
-                    <mat-form-field class="w-full">
-                        <mat-label>ลูกค้า</mat-label>
-                        <mat-select placeholder="" formControlName="name">
-                            <mat-option [value]=""></mat-option>
-                        </mat-select>
-                    </mat-form-field>
-                </div>
-                <div class="w-full">
-                    <mat-form-field class="w-full">
-                        <mat-label>สถานะ</mat-label>
-                        <mat-select placeholder="" formControlName="status">
-                            <mat-option [value]=""></mat-option>
+                    <mat-form-field class="w-full" [ngClass]="formFieldHelpers">
+                        <mat-label>{{ 'deposit_pay_products.status' | transloco }}</mat-label>
+                        <mat-select formControlName="status">
+                            <mat-option value="awaiting_payment">{{ 'deposit_pay_products.status_order.awaiting_payment' | transloco
+                                }}</mat-option>
+                            <mat-option value="in_progress">{{ 'deposit_pay_products.status_order.in_progress' | transloco
+                                }}</mat-option>
+                            <mat-option value="completed">{{ 'deposit_pay_products.status_order.completed' | transloco
+                                }}</mat-option>
+                            <mat-option value="cancelled">{{ 'deposit_pay_products.status_order.cancelled' | transloco
+                                }}</mat-option>
                         </mat-select>
                     </mat-form-field>
                 </div>
             </div>
             <div class="w-full flex justify-end gap-2">
                 <button mat-flat-button [color]="'primary'" (click)="openfillter()">
-                    <span class="ml-2">ปิดตัวกรอง</span>
+                    <span class="ml-2">{{ 'buttons.closeFilter' | transloco }}</span>
                 </button>
                 <button mat-flat-button [color]="'primary'" (click)="clearFilter()">
                     <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:bars-3'"></mat-icon>
-                    <span class="ml-2">ล้างตั้งค่าตัวกรอง</span>
+                    <span class="ml-2">{{ 'buttons.clearFilter' | transloco }}</span>
                 </button>
                 <button mat-flat-button [color]="'primary'" (click)="rerender()">
                     <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:magnifying-glass'"></mat-icon>
-                    <span class="ml-2">ค้นหา</span>
+                    <span class="ml-2">{{ 'buttons.search' | transloco }}</span>
                 </button>
             </div>
         </form>
         <!-- <button class="mb-2" mat-flat-button [color]="'accent'" (click)="toggleSelectAll(!isAllSelected)">
             {{ isAllSelected ? 'Unselect All' : 'Select All' }}
         </button> -->
-        <table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger"
-            class="table w-full bg-white row-border hover whitespace-nowrap overflow-auto">
-        </table>
+        <div class="overflow-auto">
+            <table #tableElement datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger"
+                class="table w-full bg-white row-border hover whitespace-nowrap overflow-auto">
+            </table>
+        </div>
+
     </div>
 </div>
 
@@ -159,13 +165,13 @@
     </button>
     <mat-menu #menu="matMenu">
         <button mat-menu-item (click)="openDialogEdit(data)">
-            <mat-icon svgIcon="heroicons_solid:pencil-square"></mat-icon>
-            <span>แก้ไข</span>
+            <mat-icon svgIcon="mat_outline:edit_note"></mat-icon>
+            <span>{{ 'buttons.edit' | transloco }}</span>
         </button>
         <mat-divider></mat-divider>
         <button mat-menu-item (click)="clickDelete(data.id)">
-            <mat-icon svgIcon="heroicons_solid:trash"></mat-icon>
-            <span>ลบ</span>
+            <mat-icon svgIcon="feather:trash"></mat-icon>
+            <span>{{ 'buttons.delete' | transloco }}</span>
         </button>
     </mat-menu>
 </ng-template>
@@ -178,47 +184,101 @@
 </ng-template> -->
 
 <ng-template #checkbox let-data="adtData">
-    <mat-checkbox [checked]="data.selected" (change)="onCheckboxChange($event, data.id)"></mat-checkbox>
+    <mat-checkbox class="text-white" [color]="'primary'" [checked]="data.selected"
+        (change)="onCheckboxChange($event, data.id)"></mat-checkbox>
 </ng-template>
 
 <ng-template #gotoRoute let-data="adtData">
-	<a class="text-[#DF0B12CC]" [routerLink]="['/member/view', data.id]"
-		routerLinkActive="router-link-active">{{data?.code}}</a>
+    <a class="text-[#DF0B12CC]" [routerLink]="['/member/view', data.id]"
+        routerLinkActive="router-link-active">{{data?.code}}</a>
 </ng-template>
 
 <ng-template #full_name let-data="adtData">
-    <div > {{data.fname}} {{data.lname}}</div>
+    <div> {{data.fname}} {{data.lname}}</div>
 </ng-template>
 
 <ng-template #date let-data="adtData">
-    <div > {{data.birth_date | date: 'dd/MM/yyyy'}}</div>
+    <div> {{data.birth_date | date: 'dd/MM/yyyy'}}</div>
 </ng-template>
 
 <ng-template #option let-data="adtData">
     <button [cdkMenuTriggerFor]="menuoption" mat-flat-button class="!text-white" [color]="'primary'">
         <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:shopping-bag'"></mat-icon>
         <div class="flex items-center gap-2">
-            <span class="ml-2"> ตัวเลือก </span>
+            <span class="ml-2"> {{ 'buttons.options' | transloco }} </span>
             <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:chevron-up'"></mat-icon>
         </div>
     </button>
     <ng-template #menuoption>
         <div class="manage-menu bg-primary" cdkMenu>
             <button class="manage-menu-item text-white" cdkMenuItem (click)="openDialogview(data)">
-                <mat-icon class="icon-size-5 text-white"
-                    [svgIcon]="'heroicons_solid:banknotes'"></mat-icon>
-                <span class="ml-2">บันทึกชำระเงิน</span>
+                <mat-icon class="icon-size-5 text-white" [svgIcon]="'heroicons_solid:banknotes'"></mat-icon>
+                <span class="ml-2">{{ 'deposit_pay_products.record_payment' | transloco }}</span>
             </button>
             <button class="manage-menu-item text-white" cdkMenuItem (click)="openDialogviewQR(data)">
-                <mat-icon class="icon-size-5 text-white"
-                    [svgIcon]="'heroicons_solid:plus'"></mat-icon>
-                <span class="ml-2">เติม ALIPLAY</span>
+                <mat-icon class="icon-size-5 text-white" [svgIcon]="'heroicons_solid:plus'"></mat-icon>
+                <span class="ml-2">{{ 'deposit_pay_products.product_deposit_fee' | transloco }}</span>
             </button>
             <button class="manage-menu-item text-white" cdkMenuItem (click)="openDialogStatus(data)">
-                <mat-icon class="icon-size-5 text-white"
-                    [svgIcon]="'heroicons_solid:table-cells'"></mat-icon>
-                <span class="ml-2">อัปเดตสถานะ</span>
+                <mat-icon class="icon-size-5 text-white" [svgIcon]="'heroicons_solid:table-cells'"></mat-icon>
+                <span class="ml-2">{{ 'deposit_pay_products.update_status' | transloco }}</span>
             </button>
         </div>
     </ng-template>
+</ng-template>
+<ng-template #pic let-data="adtData">
+    <div class="flex flex-row justify-center cursor-pointer">
+        <ng-container *ngIf="data?.fullImage; else noImage">
+            <div class="relative">
+                <img [src]="data.fullImage" alt="Image" class="rounded-md w-10 h-15"
+                    (click)="showPicture(data.fullImage)" (error)="onImageError(data.fullImage)"
+                    (load)="onImageLoad(data.fullImage)" />
+                <ng-container *ngIf="imageLoadedMap[data.image] === false">
+                    <mat-icon class="absolute inset-0 m-auto text-gray-400 text-6xl">
+                        image_not_supported
+                    </mat-icon>
+                </ng-container>
+            </div>
+        </ng-container>
+        <ng-template #noImage>
+            <mat-icon class="text-gray-400 text-6xl">image_not_supported</mat-icon>
+        </ng-template>
+    </div>
+</ng-template>
+
+<!-- This is the template for the slip image column ('หลักฐานการโอน') that shows the yellow 'GS' icon -->
+<ng-template #picSlip let-data="adtData">
+    <div class="flex flex-row justify-center cursor-pointer">
+        <ng-container *ngIf="data?.fullImageSlip; else noImageSlip">
+            <div class="relative">
+                <img [src]="data.fullImageSlip" alt="Image" class="rounded-md w-10 h-15"
+                    (click)="showPicture(data.fullImageSlip)" (error)="onImageError(data.fullImageSlip)"
+                    (load)="onImageLoad(data.fullImageSlip)" />
+                <ng-container *ngIf="imageLoadedMap[data.fullImageSlip] === false">
+                    <mat-icon class="absolute inset-0 m-auto text-gray-400 text-6xl">
+                        image_not_supported
+                    </mat-icon>
+                </ng-container>
+            </div>
+        </ng-container>
+        <ng-template #noImageSlip>
+            <mat-icon class="text-gray-400 text-6xl">image_not_supported</mat-icon>
+        </ng-template>
+    </div>
+</ng-template>
+<ng-template #status let-data="adtData">
+    <div>
+        <div *ngIf="data.status == 'awaiting_payment'"
+            class="px-4 py-1.5 rounded-full text-sm inline-flex items-center justify-center font-medium bg-yellow-50 text-yellow-600 border border-yellow-200">
+            {{ 'deposit_pay_products.status_order.awaiting_payment' | transloco }}</div>
+        <div *ngIf="data.status == 'in_progress'"
+            class="px-4 py-1.5 rounded-full text-sm inline-flex items-center justify-center font-medium bg-blue-50 text-blue-600 border border-blue-200">
+            {{ 'deposit_pay_products.status_order.in_progress' | transloco }}</div>
+        <div *ngIf="data.status == 'completed'"
+            class="px-4 py-1.5 rounded-full text-sm inline-flex items-center justify-center font-medium bg-teal-50 text-teal-600 border border-teal-200">
+            {{ 'deposit_pay_products.status_order.completed' | transloco }}</div>
+        <div *ngIf="data.status == 'cancelled'"
+            class="px-4 py-1.5 rounded-full text-sm inline-flex items-center justify-center font-medium bg-red-50 text-red-500 border border-red-200">
+            {{ 'deposit_pay_products.status_order.cancelled' | transloco }}</div>
+    </div>
 </ng-template>

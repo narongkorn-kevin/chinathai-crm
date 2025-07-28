@@ -8,7 +8,12 @@ import {
     MatDialogRef,
     MAT_DIALOG_DATA,
 } from '@angular/material/dialog';
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import {
+    FormBuilder,
+    FormGroup,
+    FormsModule,
+    ReactiveFormsModule,
+} from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
 import { FuseConfirmationService } from '@fuse/services/confirmation';
@@ -18,11 +23,14 @@ import { Observable, of } from 'rxjs';
 import { ArticleService } from '../../article.service';
 import { UserService } from 'app/core/user/user.service';
 
+import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
+
 @Component({
     selector: 'dialog-compose-article-category-component',
     standalone: true,
     templateUrl: './dialog-compose-article-category.component.html',
     imports: [
+        TranslocoModule,
         CommonModule,
         MatIconModule,
         MatFormFieldModule,
@@ -33,18 +41,20 @@ import { UserService } from 'app/core/user/user.service';
         ReactiveFormsModule,
         MatInputModule,
         MatFormFieldModule,
-    ]
+    ],
 })
 export class DialogComposeArticleCategoryComponent implements OnInit {
-
     form: FormGroup;
     formFieldHelpers: string[] = ['fuse-mat-dense'];
 
     category$: Observable<any>;
+    type: string;
+    value: any;
 
     constructor(
+        private translocoService: TranslocoService,
         private dialogRef: MatDialogRef<DialogComposeArticleCategoryComponent>,
-        @Inject(MAT_DIALOG_DATA) public data: { action: 'NEW' | 'EDIT' },
+        @Inject(MAT_DIALOG_DATA) public data: any,
         public dialog: MatDialog,
         private FormBuilder: FormBuilder,
         public _service: ArticleService,
@@ -56,29 +66,18 @@ export class DialogComposeArticleCategoryComponent implements OnInit {
     ) {
         // console.log(this.data.member_id.id);
 
-        // this.type = this.data.type
-        // this.shipAddress = this.data.shipAddress;
+        this.type = this.data?.action;
+        this.value = this.data?.value;
         this.form = this.FormBuilder.group({
             id: '',
-            member_id: '',
-            address: '',
-            province: '',
-            district: '',
-            sub_district: '',
-            postal_code: '',
-            latitude: '',
-            longitude: '',
-        })
-
+            name: '',
+        });
     }
 
     ngOnInit(): void {
-        this.category$ = of(['ทั่วไป', 'กีฬา'])
-
-        // this.form.patchValue({
-        //     ...this.shipAddress,
-        //     member_id: this.data.member_id.id
-        // })
+        this.form.patchValue({
+            ...this.value,
+        });
     }
 
     onClose() {
@@ -86,8 +85,15 @@ export class DialogComposeArticleCategoryComponent implements OnInit {
     }
 
     Submit() {
+        if (this.form.invalid) {
+            this.toastr.error(
+                this.translocoService.translate('toastr.missing_fields')
+            );
+            this.form.markAllAsTouched();
+            return;
+        }
         const confirmation = this.fuseConfirmationService.open({
-            title: 'ยืนยันการบันทึกข้อมูล',
+            title: this.translocoService.translate('confirmation.save_title'),
             icon: {
                 show: true,
                 name: 'heroicons_outline:exclamation-triangle',
@@ -96,12 +102,16 @@ export class DialogComposeArticleCategoryComponent implements OnInit {
             actions: {
                 confirm: {
                     show: true,
-                    label: 'ยืนยัน',
+                    label: this.translocoService.translate(
+                        'confirmation.confirm_button'
+                    ),
                     color: 'primary',
                 },
                 cancel: {
                     show: true,
-                    label: 'ยกเลิก',
+                    label: this.translocoService.translate(
+                        'confirmation.cancel_button'
+                    ),
                 },
             },
             dismissible: false,
@@ -109,30 +119,40 @@ export class DialogComposeArticleCategoryComponent implements OnInit {
 
         confirmation.afterClosed().subscribe((result) => {
             if (result == 'confirmed') {
-
                 if (this.data.action === 'NEW') {
-                    this.memberService.createAddress(this.form.value).subscribe({
+                    this.memberService.createtype(this.form.value).subscribe({
                         next: (resp: any) => {
-                            this.toastr.success('บันทึกข้อมูลสำเร็จ');
-                            this.dialogRef.close(true)
+                            this.toastr.success(
+                                this.translocoService.translate(
+                                    'toastr.success'
+                                )
+                            );
+                            this.dialogRef.close(true);
                         },
                         error: (err) => {
-                            this.toastr.error('บันทึกข้อมูลไม่สำเร็จ');
+                            this.toastr.error(
+                                this.translocoService.translate('toastr.error')
+                            );
                         },
                     });
                 } else {
-                    this.memberService.updateAddress(this.form.value).subscribe({
+                    this.memberService.updatetype(this.form.value).subscribe({
                         next: (resp: any) => {
-                            this.toastr.success('แก้ไขข้อมูลสำเร็จ');
-                            this.dialogRef.close()
+                            this.toastr.success(
+                                this.translocoService.translate('toastr.edit')
+                            );
+                            this.dialogRef.close(true);
                         },
                         error: (err) => {
-                            this.toastr.error('แก้ไขข้อมูลไม่สำเร็จ');
+                            this.toastr.error(
+                                this.translocoService.translate(
+                                    'toastr.edit_error'
+                                )
+                            );
                         },
                     });
                 }
             }
         });
     }
-
 }

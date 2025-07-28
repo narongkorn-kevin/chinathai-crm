@@ -14,22 +14,37 @@ import {
     MatDialogRef,
     MAT_DIALOG_DATA,
 } from '@angular/material/dialog';
-import { FormBuilder, FormControl, FormGroup, FormsModule, Validators } from '@angular/forms';
+import {
+    FormBuilder,
+    FormControl,
+    FormGroup,
+    FormsModule,
+    Validators,
+} from '@angular/forms';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
 import { FuseConfirmationService } from '@fuse/services/confirmation';
 import { ToastrService } from 'ngx-toastr';
-import {MatRadioModule} from '@angular/material/radio';
+import { MatRadioModule } from '@angular/material/radio';
 import { CategoryFeeService } from '../page.service';
+import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
+
 @Component({
     selector: 'app-category-form',
     standalone: true,
     templateUrl: './dialog.component.html',
     styleUrl: './dialog.component.scss',
-    imports: [CommonModule, DataTablesModule, MatIconModule, MatFormFieldModule, MatInputModule,
-        FormsModule, MatToolbarModule,
+    imports: [
+        TranslocoModule,
+        CommonModule,
+        DataTablesModule,
+        MatIconModule,
+        MatFormFieldModule,
+        MatInputModule,
+        FormsModule,
+        MatToolbarModule,
         MatButtonModule,
         MatDialogTitle,
         MatDialogContent,
@@ -39,16 +54,15 @@ import { CategoryFeeService } from '../page.service';
         ReactiveFormsModule,
         MatInputModule,
         MatFormFieldModule,
-        MatRadioModule
-    ]
+        MatRadioModule,
+    ],
 })
 export class DialogForm implements OnInit {
-
     form: FormGroup;
-    stores: any[]=[];
+    stores: any[] = [];
     formFieldHelpers: string[] = ['fuse-mat-dense'];
     dtOptions: DataTables.Settings = {};
-    addForm: FormGroup;   
+    addForm: FormGroup;
     constructor(
         private dialogRef: MatDialogRef<DialogForm>,
         @Inject(MAT_DIALOG_DATA) public data: any,
@@ -57,95 +71,113 @@ export class DialogForm implements OnInit {
         public _Service: CategoryFeeService,
         private fuseConfirmationService: FuseConfirmationService,
         private toastr: ToastrService,
-    ) 
-    {
+        private translocoService: TranslocoService
+    ) {
+        this.lang = translocoService.getActiveLang();
+        this.langues = localStorage.getItem('lang');
         console.log(' this.form', this.data);
-        if(this.data.type === 'EDIT') {
+        if (this.data.type === 'EDIT') {
             this.form = this.FormBuilder.group({
                 id: this.data.value.id,
                 name: this.data.value.name ?? '',
                 type: this.data.value.type ?? '',
-        
-           
-             });
+            });
         } else {
             this.form = this.FormBuilder.group({
                 name: '',
                 type: '',
-             });
+            });
         }
 
-
         // console.log('1111',this.data?.type);
-        
     }
-    
+    langues: any;
+    lang: String;
+    languageUrl: any;
+
     ngOnInit(): void {
-         if (this.data.type === 'EDIT') {
-        //   this.form.patchValue({
-        //     ...this.data.value,
-        //     roleId: +this.data.value?.role?.id
-        //   })  
-       
+        if (this.data.type === 'EDIT') {
+            //   this.form.patchValue({
+            //     ...this.data.value,
+            //     roleId: +this.data.value?.role?.id
+            //   })
         } else {
             console.log('New');
         }
     }
 
     Submit() {
-        let formValue = this.form.value
+        if (this.form.invalid) {
+            this.toastr.error(
+                this.translocoService.translate('toastr.missing_fields')
+            );
+            this.form.markAllAsTouched();
+            return;
+        }
+        
+        const formDatacon = {
+            pleaseconfirm: { th: 'ยืนยันการบันทึกข้อมูล', en: 'Confirm data recording', cn: '确认保存数据' },
+            confirm: { th: 'ยืนยัน', en: 'Confirm', cn: '确认' },
+            cancel: { th: 'ยกเลิก', en: 'Cancel', cn: '取消' },
+            pleasefill: { th: 'กรุณากรอกข้อมูลให้ครบถ้วน', en: 'Please fill in all required fields', cn: '请填写完整信息' },
+            errorsave: { th: 'ไม่สามารถบันทึกข้อมูลได้', en: 'Unable to save data', cn: '无法保存数据' },
+            successadd: { th: 'ดำเนินการเพิ่มข้อมูลสำเร็จ', en: 'Successfully added data', cn: '成功添加数据' },
+            successedit: { th: 'ดำเนินการแก้ไขข้อมูลสำเร็จ', en: 'Successfully edited data', cn: '成功编辑数据' },
+        };
+        let formValue = this.form.value;
         const confirmation = this.fuseConfirmationService.open({
-            title: "ยืนยันการบันทึกข้อมูล",
+            title: formDatacon.pleaseconfirm[this.langues],
             icon: {
                 show: true,
-                name: "heroicons_outline:exclamation-triangle",
-                color: "primary"
+                name: 'heroicons_outline:exclamation-triangle',
+                color: 'primary',
             },
             actions: {
                 confirm: {
                     show: true,
-                    label: "ยืนยัน",
-                    color: "primary"
+                    label: formDatacon.confirm[this.langues],
+                    color: 'primary',
                 },
                 cancel: {
                     show: true,
-                    label: "ยกเลิก"
-                }
+                    label: formDatacon.cancel[this.langues],
+                },
             },
-            dismissible: false
-        })
+            dismissible: false,
+        });
 
-        confirmation.afterClosed().subscribe(
-            result => {
-                if (result == 'confirmed') {
-                    if (this.data.type === 'NEW') {
-                        this._Service.create(formValue).subscribe({
+        confirmation.afterClosed().subscribe((result) => {
+            if (result == 'confirmed') {
+                if (this.data.type === 'NEW') {
+                    this._Service.create(formValue).subscribe({
+                        error: (err) => {
+                            this.toastr.error(formDatacon.errorsave[this.langues]);
+                        },
+                        complete: () => {
+                            this.toastr.success(formDatacon.successadd[this.langues]);
+                            this.dialogRef.close(true);
+                        },
+                    });
+                } else {
+                    this._Service
+                        .update(this.data.value.id, formValue)
+                        .subscribe({
                             error: (err) => {
-                                this.toastr.error('ไม่สามารถบันทึกข้อมูลได้')
+                                this.toastr.error(formDatacon.errorsave[this.langues]);
                             },
                             complete: () => {
-                                this.toastr.success('ดำเนินการเพิ่มข้อมูลสำเร็จ')
-                                this.dialogRef.close(true)
+                                this.toastr.success(
+                                    formDatacon.successedit[this.langues]
+                                );
+                                this.dialogRef.close(true);
                             },
                         });
-                    } else {
-                        this._Service.update(this.data.value.id ,formValue).subscribe({
-                            error: (err) => {
-                                this.toastr.error('ไม่สามารถบันทึกข้อมูลได้')
-                            },
-                            complete: () => {
-                                this.toastr.success('ดำเนินการแก้ไขข้อมูลสำเร็จ')
-                                this.dialogRef.close(true)
-                            },
-                        });
-                    }
                 }
             }
-        )
+        });
     }
 
     onClose() {
-        this.dialogRef.close()
+        this.dialogRef.close();
     }
-
 }

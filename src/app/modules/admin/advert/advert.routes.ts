@@ -1,9 +1,14 @@
 import { Routes } from '@angular/router';
-import { VendorComponent } from './advert.component';
+import { HomeBannerComponent } from './advert.component';
+import { AdvertService } from './advert.service';
+import { inject } from '@angular/core';
 
 export default [
     {
         path: '',
-        component: VendorComponent,
+        component: HomeBannerComponent,
+        resolve: {
+            get_ads: () => inject(AdvertService).getAds(),
+        },
     },
 ] as Routes;

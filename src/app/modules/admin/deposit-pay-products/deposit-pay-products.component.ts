@@ -1,9 +1,16 @@
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { CommonModule, CurrencyPipe } from '@angular/common';
-import { AfterViewInit, ChangeDetectionStrategy, Component, OnInit, ViewChild } from '@angular/core';
+import {
+    AfterViewInit,
+    ChangeDetectionStrategy,
+    Component,
+    ElementRef,
+    OnInit,
+    ViewChild,
+} from '@angular/core';
 import { DataTableDirective, DataTablesModule } from 'angular-datatables';
 import { ADTSettings } from 'angular-datatables/src/models/settings';
-import { map, Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged, map, merge, Subject } from 'rxjs';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIcon, MatIconModule } from '@angular/material/icon';
@@ -14,11 +21,16 @@ import { FuseConfirmationService } from '@fuse/services/confirmation';
 import { DialogRef } from '@angular/cdk/dialog';
 import { MatDialog } from '@angular/material/dialog';
 import { Router, RouterLink } from '@angular/router';
-import { PictureComponent } from '../picture/picture.component';
 import { ProductComposeComponent } from '../product/dialog/product-compose/product-compose.component';
 import { DepositPayProductsService } from './deposit-pay-products.service';
 import { DialogForm } from './form-dialog/dialog.component';
-import { FormArray, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import {
+    FormArray,
+    FormBuilder,
+    FormGroup,
+    FormsModule,
+    ReactiveFormsModule,
+} from '@angular/forms';
 import { MatSelectModule } from '@angular/material/select';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -34,10 +46,17 @@ import { CdkMenuModule } from '@angular/cdk/menu';
 import { ViewComponent } from './view/view.component';
 import { DialogStatus } from './status-dialog/dialog.component';
 import { DialogUpdatePaymentComponent } from './dialog-update-payment/dialog-update-payment.component';
+import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
+import { ExportService } from 'app/modules/shared/export.service';
+import { PictureComponent } from 'app/modules/shared/picture/picture.component';
+import { SelectMemberComponent } from 'app/modules/common/select-member/select-member.component';
+import { DateTime } from 'luxon';
+
 @Component({
     selector: 'app-deposit-pay-products',
     standalone: true,
     imports: [
+        TranslocoModule,
         CommonModule,
         DataTablesModule,
         MatButtonModule,
@@ -55,10 +74,9 @@ import { DialogUpdatePaymentComponent } from './dialog-update-payment/dialog-upd
         RouterLink,
         MatIcon,
         CdkMenuModule,
+        SelectMemberComponent
     ],
-    providers: [
-        CurrencyPipe
-    ],
+    providers: [CurrencyPipe],
     animations: [
         trigger('slideToggleFilter', [
             state(
@@ -89,38 +107,78 @@ export class DepositPayProductsComponent implements OnInit, AfterViewInit {
     dtTrigger: Subject<ADTSettings> = new Subject<ADTSettings>();
     formFieldHelpers: string[] = ['fuse-mat-dense'];
     dataRow: any[] = [];
-
+    
     filterForm: FormGroup;
     showFilterForm: boolean = false;
-
+    @ViewChild('pic') pic: any;
+    @ViewChild('picSlip') pic_url: any;
+    @ViewChild('status') status: any;
     @ViewChild('btNg') btNg: any;
     @ViewChild('option') option: any;
     @ViewChild(DataTableDirective, { static: false })
     dtElement: DataTableDirective;
-
-
+    @ViewChild('tableElement') tableElement!: ElementRef;
     constructor(
+        private translocoService: TranslocoService,
         private _service: DepositPayProductsService,
         private fuseConfirmationService: FuseConfirmationService,
         private toastr: ToastrService,
         public dialog: MatDialog,
         private currencyPipe: CurrencyPipe,
         private _router: Router,
-        private _fb: FormBuilder
-
+        private _fb: FormBuilder,
+        private exportService: ExportService
     ) {
-
         this.filterForm = this._fb.group({
             name: [''],
             start_date: [''],
             end_date: [''],
             code: [''],
             phone: [''],
+            status: ['']
         });
+        this.langues = localStorage.getItem('lang');
     }
+    langues: any;
+    languageUrl: any;
+
     ngOnInit(): void {
-        setTimeout(() =>
-            this.loadTable());
+        if (this.langues === 'en') {
+            this.languageUrl =
+                'https://cdn.datatables.net/plug-ins/1.11.3/i18n/en-gb.json';
+        } else if (this.langues === 'th') {
+            this.languageUrl =
+                'https://cdn.datatables.net/plug-ins/1.11.3/i18n/th.json';
+        } else if (this.langues === 'cn') {
+            this.languageUrl =
+                'https://cdn.datatables.net/plug-ins/1.11.3/i18n/zh.json';
+        } else {
+            this.languageUrl =
+                'https://cdn.datatables.net/plug-ins/1.11.3/i18n/th.json';
+        }
+
+        merge(
+            this.filterForm.get('start_date')!.valueChanges.pipe(distinctUntilChanged()),
+            this.filterForm.get('end_date')!.valueChanges.pipe(distinctUntilChanged())
+        )
+            .pipe(
+            debounceTime(500)
+        )
+            .subscribe(() => {
+            const start = this.filterForm.get('start_date')!.value;
+            const end = this.filterForm.get('end_date')!.value;
+                        
+            if (start && end) {
+                this.rerender();
+            }
+        });
+        setTimeout(() => this.loadTable());
+        this.filterForm
+                .get('code')
+                ?.valueChanges.pipe(debounceTime(500), distinctUntilChanged())
+                .subscribe(() => {
+                this.rerender();
+            });
     }
 
     ngAfterViewInit() {
@@ -135,41 +193,114 @@ export class DepositPayProductsComponent implements OnInit, AfterViewInit {
     }
 
     onChangeType() {
-        this.rerender()
+        this.rerender();
     }
 
     rows: any[] = [];
 
     loadTable(): void {
+        const menuTitles = {
+            operation: {
+                th: 'ดำเนินการ',
+                en: 'Action',
+                cn: '操作',
+            },
+            payment_code: {
+                th: 'รหัสฝากชำระ',
+                en: 'Payment Code',
+                cn: '付款代码',
+            },
+            customer: {
+                th: 'ลูกค้า',
+                en: 'Customer',
+                cn: '客户',
+            },
+            amount_due: {
+                th: 'ยอดที่ต้องชำระ',
+                en: 'Amount Due',
+                cn: '应付金额',
+            },
+            transfer_amount: {
+                th: 'ยอดโอน',
+                en: 'Transfer Amount',
+                cn: '转账金额',
+            },
+            transfer_evidence: {
+                th: 'หลักฐานการโอน',
+                en: 'Transfer Evidence',
+                cn: '转账凭证',
+            },
+            payment_datetime: {
+                th: 'วัน-เวลาที่ชำระเงิน',
+                en: 'Payment Date/Time',
+                cn: '付款日期/时间',
+            },
+            remark: {
+                th: 'หมายเหตุ',
+                en: 'Remark',
+                cn: '备注',
+            },
+            payment_channel: {
+                th: 'ช่องทางการฝากชำระ',
+                en: 'Payment Channel',
+                cn: '付款渠道',
+            },
+            payment_evidence: {
+                th: 'หลักฐานการฝากชำระ',
+                en: 'Payment Evidence',
+                cn: '付款凭证',
+            },
+            status: {
+                th: 'สถานะ',
+                en: 'Status',
+                cn: '状态',
+            },
+        };
+
         this.dtOptions = {
             pagingType: 'full_numbers',
             serverSide: true,
-            scrollX: true,
+            scrollX: false,
+            language: {
+                url: this.languageUrl,
+            },
             ajax: (dataTablesParameters: any, callback) => {
-                this._service.datatable(dataTablesParameters)
-                    .pipe(
-                        map((resp: { data: any }) => resp.data)
-                    )
+                if (this.filterForm.value.start_date && this.filterForm.value.end_date) {
+                    const start_date: DateTime = this.filterForm.value.start_date;
+                    const end_date: DateTime = this.filterForm.value.end_date;
+                                                
+                    dataTablesParameters.created_at = start_date.toFormat('yyyy-MM-dd');
+                    dataTablesParameters.end_date = end_date.toFormat('yyyy-MM-dd');
+                }
+                if (this.filterForm.value.code) {
+                    dataTablesParameters.code = this.filterForm.value.code;
+                }
+                if (this.filterForm.value.status) {
+                    dataTablesParameters.status = this.filterForm.value.status;
+                }
+                this._service
+                    .datatable(dataTablesParameters)
+                    .pipe(map((resp: { data: any }) => resp.data))
                     .subscribe({
                         next: (resp: any) => {
-                            console.log('resp',resp);
+                            console.log('resp', resp);
                             this.dataRow = resp.data;
                             callback({
                                 recordsTotal: resp.total,
                                 recordsFiltered: resp.total,
                                 data: resp.data,
                             });
-                        }
-                    })
+                        },
+                    });
             },
             columns: [
                 {
                     title: '#',
                     data: 'No',
-                    className: 'w-5 text-center'
+                    className: 'w-5 text-center',
                 },
                 {
-                    title: 'ดำเนินการ',
+                    title: menuTitles.operation[this.langues],
                     data: null,
                     defaultContent: '',
                     ngTemplateRef: {
@@ -178,70 +309,109 @@ export class DepositPayProductsComponent implements OnInit, AfterViewInit {
                     className: 'text-center',
                 },
                 {
-                    title: 'รหัสฝากชำระ',
-                    data: null,
+                    title: menuTitles.payment_code[this.langues],
+                    data: 'code',
                     defaultContent: '',
                     className: '',
                 },
                 {
-                    title: 'ลูกค้า',
-                    data: null,
+                    title: menuTitles.customer[this.langues],
+                    data: 'fullname',
                     defaultContent: '',
                     className: '',
                 },
                 {
-                    title: 'ยอดที่ต้องชำระ',
+                    title: menuTitles.amount_due[this.langues],
+                    data: 'total',
+                    defaultContent: '',
+                    className: 'text-center', // เพิ่ม class จัดตำแหน่งถ้าต้องการ
+                    render: function (data, type, row) {
+                        const value = parseFloat(data);
+                        return isNaN(value) ? '0.00' : value.toFixed(4);
+                    }
+                },
+                {
+                    title: menuTitles.transfer_amount[this.langues],
+                    data: 'amount',
+                    defaultContent: '',
+                    className: '',
+                    render: function (data, type, row) {
+                        const value = parseFloat(data);
+                        return isNaN(value) ? '0.00' : value.toFixed(4);
+                    }
+                },
+                {
+                    title: menuTitles.transfer_evidence[this.langues],
                     data: null,
+                    defaultContent: '',
+                    className: '',
+                    ngTemplateRef: {
+                        ref: this.pic,
+                    },
+                },
+                {
+                    title: menuTitles.payment_datetime[this.langues],
+                    data: 'transfer_at',
                     defaultContent: '',
                     className: '',
                 },
                 {
-                    title: 'ยอดโอน',
-                    data: null,
+                    title: menuTitles.remark[this.langues],
+                    data: 'note',
                     defaultContent: '',
                     className: '',
                 },
                 {
-                    title: 'หลักฐานการโอน',
+                    title: menuTitles.payment_channel[this.langues],
                     data: null,
-                    defaultContent: '',
+                    render: function (data, type, row) {
+                        const account = row?.account_number ?? '';
+                        const name = row?.account_name ?? '';
+                        const bank = row?.bank_name ?? '';
+                        return `<strong>${bank}</strong><br>${name}<br>${account}`;
+                    },
                     className: '',
                 },
                 {
-                    title: 'วัน-เวลาที่ชำระเงิน',
+                    title: menuTitles.payment_evidence[this.langues],
                     data: null,
                     defaultContent: '',
-                    className: '',
+                    ngTemplateRef: {
+                        ref: this.pic_url,
+                    },
                 },
                 {
-                    title: 'หมายเหตุ',
-                    data: null,
-                    defaultContent: '',
-                    className: '',
+                    title: menuTitles.status[this.langues],
+                    data: 'status',
+                    defaultContent: '-',
+                    className: 'text-center',
+                    ngTemplateRef: {
+                        ref: this.status,
+                    },
+                },
+            ],
+            // Declare the use of the extension in the dom parameter
+            dom: 'lfrtip',
+            buttons: [
+                {
+                    extend: 'copy',
+                    className: 'btn-csv-hidden'
                 },
                 {
-                    title: 'ช่องทางการฝากชำระ',
-                    data: null,
-                    defaultContent: '',
-                    className: '',
+                    extend: 'csv',
+                    className: 'btn-csv-hidden'
                 },
                 {
-                    title: 'หลักฐานการฝากชำระ',
-                    data: null,
-                    defaultContent: '',
-                    className: '',
+                    extend: 'excel',
+                    className: 'btn-csv-hidden'
                 },
                 {
-                    title: 'สถานะ',
-                    data: null,
-                    defaultContent: '',
-                    className: '',
-                }
+                    extend: 'print',
+                    className: 'btn-csv-hidden'
+                },
             ]
-        }
+        };
     }
-
-
 
     rerender(): void {
         this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
@@ -258,18 +428,26 @@ export class DepositPayProductsComponent implements OnInit, AfterViewInit {
         const DialogRef = this.dialog.open(DialogUpdatePaymentComponent, {
             disableClose: true,
             width: '600px',
+            height: 'auto',
             maxHeight: '90vh',
             enterAnimationDuration: 300,
             exitAnimationDuration: 300,
             data: {
-                value: data
-            }
+                type: 'NEW',
+                value: data,
+            },
         });
         DialogRef.afterClosed().subscribe((result) => {
             if (result) {
-                console.log(result, 'result')
+                console.log(result, 'result');
                 this.rerender();
             }
+        });
+    }
+
+    selectMember(item: any) {
+        this.filterForm.patchValue({
+            member_id: item?.id,
         });
     }
 
@@ -284,12 +462,12 @@ export class DepositPayProductsComponent implements OnInit, AfterViewInit {
             exitAnimationDuration: 300,
             data: {
                 type: 'QR',
-                value: data
-            }
+                value: data,
+            },
         });
         DialogRef.afterClosed().subscribe((result) => {
             if (result) {
-                console.log(result, 'result')
+                console.log(result, 'result');
                 this.rerender();
             }
         });
@@ -303,12 +481,12 @@ export class DepositPayProductsComponent implements OnInit, AfterViewInit {
             enterAnimationDuration: 300,
             exitAnimationDuration: 300,
             data: {
-                value: data
-            }
+                value: data,
+            },
         });
         DialogRef.afterClosed().subscribe((result) => {
             if (result) {
-                console.log(result, 'result')
+                console.log(result, 'result');
                 this.rerender();
             }
         });
@@ -322,12 +500,12 @@ export class DepositPayProductsComponent implements OnInit, AfterViewInit {
             enterAnimationDuration: 300,
             exitAnimationDuration: 300,
             data: {
-
-            }
+                type: 'NEW'
+            },
         });
         DialogRef.afterClosed().subscribe((result) => {
             if (result) {
-                console.log(result, 'result')
+                console.log(result, 'result');
                 this.rerender();
             }
         });
@@ -335,57 +513,70 @@ export class DepositPayProductsComponent implements OnInit, AfterViewInit {
 
     opendialogdelete() {
         const confirmation = this.fuseConfirmationService.open({
-            title: "คุณแน่ใจหรือไม่ว่าต้องการลบรายการ สมาชิก?",
-            message: "คุณกำลังจะลบรายการ สมาชิก หากกดยืนยันแล้วจะไม่สามารถเอากลับมาอีกได้",
+            title: this.translocoService.translate(
+                'confirmation.delete_member'
+            ),
+            message:
+                this.translocoService.translate('confirmation.delete_membermessage'),
             icon: {
                 show: true,
-                name: "heroicons_outline:exclamation-triangle",
-                color: "warn"
+                name: 'heroicons_outline:exclamation-triangle',
+                color: 'warn',
             },
             actions: {
                 confirm: {
                     show: true,
-                    label: "ยืนยัน",
-                    color: "primary"
+                    label: this.translocoService.translate(
+                        'confirmation.confirm_button'
+                    ),
+                    color: 'primary',
                 },
                 cancel: {
                     show: true,
-                    label: "ยกเลิก"
-                }
+                    label: this.translocoService.translate(
+                        'confirmation.cancel_button'
+                    ),
+                },
             },
-            dismissible: false
-        })
+            dismissible: false,
+        });
 
-        confirmation.afterClosed().subscribe(
-            result => {
-                if (result == 'confirmed') {
-                    const id = this.multiSelect;
-                    console.log(id, 'id');
+        confirmation.afterClosed().subscribe((result) => {
+            if (result == 'confirmed') {
+                const id = this.multiSelect;
+                console.log(id, 'id');
 
-                    for (let i = 0; i < id.length; i++) {
-                        this._service.delete(id[i]).subscribe({
-                            error: (err) => {
-                                this.toastr.error('ลบรายการสมาชิก ล้มเหลว โปรดลองใหม่อีกครั้งภายหลัง');
-                                console.log(err, 'err');
-                            },
-                            complete: () => {
-                                if (i == id.length - 1) {
-                                    this.multiSelect = [];
-                                    this.toastr.success('ลบรายการสมาชิก สำเร็จ');
-                                    this.rerender();
-                                }
-                            },
-                        });
-                    }
-                    if (id.length === 1) {
-                        this.rerender();
-                    }
+                for (let i = 0; i < id.length; i++) {
+                    this._service.delete(id[i]).subscribe({
+                        error: (err) => {
+                            this.toastr.error(
+                                this.translocoService.translate(
+                                    'toastr.delete_error'
+                                )
+                            );
+                            console.log(err, 'err');
+                        },
+                        complete: () => {
+                            if (i == id.length - 1) {
+                                this.multiSelect = [];
+                                this.toastr.success(
+                                    this.translocoService.translate(
+                                        'toastr.delete'
+                                    )
+                                );
+                                this.rerender();
+                            }
+                        },
+                    });
+                }
+                if (id.length === 1) {
+                    this.rerender();
                 }
             }
-        )
+        });
     }
     showPicture(imgObject: string): void {
-        console.log(imgObject)
+        console.log(imgObject);
         this.dialog
             .open(PictureComponent, {
                 autoFocus: false,
@@ -407,18 +598,18 @@ export class DepositPayProductsComponent implements OnInit, AfterViewInit {
             enterAnimationDuration: 300,
             exitAnimationDuration: 300,
             data: {
-                type: 'NEW'
-            }
+                type: 'NEW',
+            },
         });
         DialogRef.afterClosed().subscribe((result) => {
             if (result) {
-                console.log(result, 'result')
+                console.log(result, 'result');
                 this.rerender();
             }
         });
     }
 
-    multiSelect: any[] = []
+    multiSelect: any[] = [];
     isAllSelected: boolean = false; // ใช้เก็บสถานะเลือกทั้งหมด
 
     toggleSelectAll(isSelectAll: boolean): void {
@@ -470,4 +661,22 @@ export class DepositPayProductsComponent implements OnInit, AfterViewInit {
         this.rerender();
     }
 
+    imageLoadedMap: { [key: string]: boolean } = {};
+
+    onImageError(url: string) {
+        this.imageLoadedMap[url] = false;
+    }
+    
+    onImageLoad(url: string) {
+        this.imageLoadedMap[url] = true;
+    }
+    
+    // เพิ่มฟังก์ชันตรวจสอบสถานะ (optional)
+    isImageLoaded(url: string): boolean {
+        return this.imageLoadedMap[url] !== false;
+    }
+
+    exportData(type: 'csv' | 'excel' | 'print' | 'copy') {
+        this.exportService.exportTable(this.tableElement, type);
+    }
 }

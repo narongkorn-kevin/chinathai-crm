@@ -1,0 +1,161 @@
+<div class="flex flex-col flex-auto min-w-0">
+    <div class="flex-auto p-4 sm:p-10 bg-card m-4 rounded-md">
+        <div class="flex flex-row justify-between pb-2 my-5">
+            <div class="flex flex-col">
+                <div class="flex space-x-2">
+                    <button class="md:text-sm font-medium tracking-tight leading-7 sm:leading-10 truncate">
+                        {{ 'shipping_rate.member_list' | transloco }}
+                    </button>
+                </div>
+                <p class="md:text-2xl text-[#DF0B12] font-bold tracking-tight leading-7 sm:leading-10 truncate">
+                    {{ 'shipping_rate.shipping_rates' | transloco }}
+            </div>
+            <div class="flex flex-col md:flex-row ml-auto gap-2">
+                <button mat-flat-button [color]="'warn'" (click)="opendialogdelete()"
+                    [disabled]="!this.multiSelect.length">
+                    <mat-icon class="icon-size-5" [svgIcon]="'feather:trash'"></mat-icon>
+                    <span class="ml-2">{{ 'buttons.delete_entry' | transloco }}</span>
+                </button>
+                <button mat-flat-button [color]="'primary'" (click)="openForm()">
+                    <mat-icon class="icon-size-5 text-white" [svgIcon]="'heroicons_solid:plus'"></mat-icon>
+                    <span class="ml-2">{{ 'buttons.addItem' | transloco }}</span>
+                </button>
+
+                <button [cdkMenuTriggerFor]="menu" mat-flat-button class="!text-white" [color]="'primary'">
+                    <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:shopping-bag'"></mat-icon>
+                    <div class="flex items-center gap-2">
+                        <span class="ml-2"> {{ 'buttons.dataManagement' | transloco }} </span>
+                        <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:chevron-up'"></mat-icon>
+                    </div>
+                </button>
+
+                <ng-template #menu>
+                    <div class="manage-menu bg-primary" cdkMenu>
+                        <button class="manage-menu-item text-white" cdkMenuItem (click)="exportData('copy')">
+                            <mat-icon class="icon-size-5 text-white"
+                                [svgIcon]="'heroicons_solid:document-duplicate'"></mat-icon>
+                            <span class="ml-2">Copy to Clipboard</span>
+                        </button>
+                        <button class="manage-menu-item text-white" cdkMenuItem (click)="exportData('csv')">
+                            <mat-icon class="icon-size-5 text-white"
+                                [svgIcon]="'heroicons_solid:table-cells'"></mat-icon>
+                            <span class="ml-2">CSV</span>
+                        </button>
+                        <button class="manage-menu-item text-white" cdkMenuItem (click)="exportData('excel')">
+                            <mat-icon class="icon-size-5 text-white"
+                                [svgIcon]="'heroicons_solid:table-cells'"></mat-icon>
+                            <span class="ml-2">Excel</span>
+                        </button>
+                        <button class="manage-menu-item text-white" cdkMenuItem (click)="exportData('print')">
+                            <mat-icon class="icon-size-5 text-white" [svgIcon]="'heroicons_solid:printer'"></mat-icon>
+                            <span class="ml-2">Print</span>
+                        </button>
+                    </div>
+                </ng-template>
+            </div>
+        </div>
+        <form *ngIf="!showFilterForm" [formGroup]="filterForm">
+            <div class="flex flex-col md:flex-row w-full gap-2 items-end">
+                <div class="w-full">
+                    <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                        <mat-icon class="icon-size-5 mr-2" [svgIcon]="'heroicons_solid:magnifying-glass'"></mat-icon>
+                        <input matInput [placeholder]=" 'shipping_rate.search_by_rate_name' | transloco " formControlName="code">
+                    </mat-form-field>
+                </div>
+                <div>
+                    <button mat-flat-button [color]="'primary'" (click)="openfillter()" class="mb-5">
+                        <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:bars-3'"></mat-icon>
+                        <span class="ml-2">{{ 'buttons.advancedFilter' | transloco }}</span>
+                    </button>
+                </div>
+
+            </div>
+        </form>
+        <form [formGroup]="filterForm" class="p-4 rounded-md" [@slideToggleFilter]="showFilterForm ? 'open' : 'closed'">
+            <div>
+                <h2 class="text-xl font-extrabold leading-7 tracking-tight truncate md:text-xl sm:leading-10">
+                    {{ 'lables.advanced_filter' | transloco }}
+                </h2>
+                <mat-divider></mat-divider>
+            </div>
+            <div class="flex flex-col md:grid md:grid-cols-2 md:flex-row w-full gap-x-2 mt-2">
+                <div class="w-full">
+                    <mat-form-field class="w-full">
+                        <mat-label>{{ 'shipping_rate.code' | transloco }}</mat-label>
+                        <input matInput formControlName="code">
+                    </mat-form-field>
+                </div>
+                <div class="w-full">
+                    <mat-form-field class="w-full">
+                        <mat-label>{{ 'shipping_rate.rate_name' | transloco }}</mat-label>
+                        <input matInput formControlName="name">
+                    </mat-form-field>
+                </div>
+            </div>
+            <div class="w-full flex justify-end gap-2">
+                <button mat-flat-button [color]="'primary'" (click)="openfillter()">
+                    <span class="ml-2">{{ 'buttons.closeFilter' | transloco }}</span>
+                </button>
+                <button mat-flat-button [color]="'primary'" (click)="clearFilter()">
+                    <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:bars-3'"></mat-icon>
+                    <span class="ml-2">{{ 'buttons.clearFilter' | transloco }}</span>
+                </button>
+                <button mat-flat-button [color]="'primary'" (click)="rerender()">
+                    <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:magnifying-glass'"></mat-icon>
+                    <span class="ml-2">{{ 'buttons.search' | transloco }}</span>
+                </button>
+            </div>
+        </form>
+        <button class="my-2 " mat-flat-button [color]="'primary'" (click)="toggleSelectAll(!isAllSelected)">
+            {{ isAllSelected ? ('buttons.deselectAll' | transloco) : ('buttons.selectAll' | transloco) }}
+        </button>
+        <table #tableElement datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" id="tableData"
+                class="table w-full bg-white row-border hover whitespace-nowrap">
+            </table>
+    </div>
+</div>
+
+
+<ng-template #btNg let-data="adtData">
+    <button mat-icon-button color="primary" [matMenuTriggerFor]="menu">
+        <mat-icon class="icon-size-5" svgIcon="heroicons_solid:cog-8-tooth"></mat-icon>
+    </button>
+    <mat-menu #menu="matMenu">
+        <button mat-menu-item (click)="openDialogEdit(data)">
+            <mat-icon svgIcon="mat_outline:edit_note"></mat-icon>
+            <span>{{ 'buttons.edit' | transloco }}</span>
+        </button>
+        <mat-divider></mat-divider>
+        <button mat-menu-item (click)="clickDelete(data.id)">
+            <mat-icon svgIcon="feather:trash"></mat-icon>
+            <span>{{ 'buttons.delete' | transloco }}</span>
+        </button>
+    </mat-menu>
+</ng-template>
+
+<!-- <ng-template #checkbox_head let-data="adtData">
+    <mat-checkbox [checked]="isAllSelected()" [indeterminate]="isSomeSelected()"
+        (click)="$event.stopPropagation()"
+        (change)="toggleSelectAll($event.checked)">
+    </mat-checkbox>
+</ng-template> -->
+
+<ng-template #checkbox let-data="adtData">
+    <mat-checkbox class="text-white" [color]="'primary'" [checked]="data.selected"
+        (change)="onCheckboxChange($event, data.id)"></mat-checkbox>
+</ng-template>
+
+<ng-template #gotoRoute let-data="adtData">
+    <a class="text-[#DF0B12CC]" [routerLink]="['/shipping-rates/view', data.id]"
+        routerLinkActive="router-link-active">{{data?.code}}</a>
+</ng-template>
+
+<ng-template #full_name let-data="adtData">
+    <div> {{data.fname}} {{data.lname}}</div>
+</ng-template>
+
+<ng-template #use let-data="adtData">
+    <div>
+        <img class="w-3" src="assets/images/flags/flags_red.png" alt="flags">
+    </div>
+</ng-template>

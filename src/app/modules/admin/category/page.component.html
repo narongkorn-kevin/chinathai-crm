@@ -22,13 +22,13 @@
   </button>
   <mat-menu #menu="matMenu">
     <button mat-menu-item (click)="openDialogEdit(data)">
-      <mat-icon [svgIcon]="'heroicons_solid:pencil-square'"></mat-icon>
-      <span>แก้ไข</span>
+      <mat-icon [svgIcon]="'mat_outline:edit_note'"></mat-icon>
+      <span>{{ 'buttons.edit' | transloco }}</span>
     </button>
     <mat-divider></mat-divider>
     <button mat-menu-item (click)="clickDelete(data.id)">
-      <mat-icon [svgIcon]="'heroicons_solid:trash'"></mat-icon>
-      <span>ลบ</span>
+      <mat-icon [svgIcon]="'feather:trash'"></mat-icon>
+      <span>{{ 'buttons.delete' | transloco }}</span>
     </button>
   </mat-menu>
 </ng-template>

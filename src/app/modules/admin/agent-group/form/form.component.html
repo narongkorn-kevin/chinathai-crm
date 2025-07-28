@@ -1,0 +1,354 @@
+<div class="flex flex-col flex-auto justify-start items-center">
+    <div class="w-full flex-col justify-between items-center flex overflow-hidden">
+        <div class="w-full flex-col justify-start items-start flex">
+            <div class="w-full px-4 md:px-10 pt-5 pb-2.5 bg-white justify-between items-center flex">
+
+                <div class="flex flex-col">
+                    <div class="flex space-x-2">
+                        <button class="md:text-sm font-medium tracking-tight leading-7 sm:leading-10 truncate"
+                            [routerLink]="['/agent-group']" routerLinkActive="router-link-active">
+                            {{ 'agent_group.member_list' | transloco }}
+                        </button>
+                        <p class="md:text-sm font-medium tracking-tight leading-7 sm:leading-10 truncate">></p>
+                        <button
+                            class="md:text-sm font-medium tracking-tight leading-7 sm:leading-10 truncate text-[#DF0B12]"
+                            [routerLink]="['/agent-group']" routerLinkActive="router-link-active">
+                            {{ 'agent_group.agent_group' | transloco }}
+                        </button>
+                    </div>
+
+                    <p class="md:text-2xl text-[#DF0B12] font-bold tracking-tight leading-7 sm:leading-10 truncate"
+                        *ngIf="this.type !== 'EDIT'">
+                        {{ 'agent_group.form.add_item' | transloco }}
+                    </p>
+                    <p class="md:text-2xl text-[#DF0B12] font-bold tracking-tight leading-7 sm:leading-10 truncate"
+                        *ngIf="this.type === 'EDIT'">
+                        {{ 'agent_group.form.agent_group_number' | transloco }} : {{ this.data?.code }}
+                    </p>
+                </div>
+                <div class="justify-end items-center gap-2 flex flex-col md:flex-row">
+                    <div class="border border-black rounded-md">
+                        <button mat-flat-button (click)="Close()" class="hover-effect">
+                            <mat-icon svgIcon="feather:trash"></mat-icon>
+                            <span class="ml-2">{{ 'buttons.cancel' | transloco }}</span>
+                        </button>
+                    </div>
+                    <button mat-flat-button [color]="'primary'" class="!text-white" (click)="Submit()">
+                        <mat-icon svgIcon="mat_outline:save"></mat-icon>
+                        <span class="ml-2">{{ 'buttons.save' | transloco }}</span>
+                    </button>
+                </div>
+            </div>
+            <div class="w-full px-4 md:px-10 flex flex-col gap-2 bg-white " [formGroup]="form">
+                <div class="w-full flex-col gap-2 flex mt-5">
+                    <div class="w-full flex-col flex">
+                        <div class="text-lg font-bold">{{ 'agent_group.form.member_details' | transloco }}</div>
+                        <mat-divider></mat-divider>
+                    </div>
+                    <div class="w-full flex flex-col md:grid md:grid-cols-3 gap-x-2 ">
+                        <div class="w-full">
+                            <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                                <mat-label>{{ 'agent_group.form.agent_code' | transloco }}</mat-label>
+                                <input matInput [placeholder]="'agent_group.form.importer_code' | transloco"
+                                    formControlName="importer_code">
+                            </mat-form-field>
+                        </div>
+                        <div class="w-full" *ngIf="this.type === 'NEW'">
+                            <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                                <mat-label>{{ 'agent_group.form.password' | transloco }}</mat-label>
+                                <input matInput [type]="hidePassword ? 'password' : 'text'" formControlName="password">
+                                <button mat-icon-button matSuffix (click)="togglePasswordVisibility('password')">
+                                    <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+                                </button>
+                            </mat-form-field>
+                        </div>
+                        <div class="w-full" *ngIf="this.type === 'NEW'">
+                            <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                                <mat-label>{{ 'agent_group.form.confirm_password' | transloco }}</mat-label>
+                                <input matInput [type]="hideConfirmPassword ? 'password' : 'text'"
+                                    formControlName="confirmPassword">
+                                <button mat-icon-button matSuffix (click)="togglePasswordVisibility('confirmPassword')">
+                                    <mat-icon>{{ hideConfirmPassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+                                </button>
+                            </mat-form-field>
+                        </div>
+
+                        <div class="w-full">
+                            <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                                <mat-label>{{ 'agent_group.form.first_name' | transloco }}</mat-label>
+                                <input matInput [placeholder]="'agent_group.form.first_name' | transloco" formControlName="fname">
+                            </mat-form-field>
+                        </div>
+                        <div class="w-full">
+                            <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                                <mat-label>{{ 'agent_group.form.last_name' | transloco }}</mat-label>
+                                <input matInput [placeholder]="'agent_group.form.last_name' | transloco" formControlName="lname">
+                            </mat-form-field>
+                        </div>
+                        <div class="w-full">
+                            <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                                <mat-label>{{ 'agent_group.form.gender' | transloco }}</mat-label>
+                                <mat-select formControlName="gender">
+                                    <mat-option value="male">{{ 'agent_group.form.male' | transloco }}</mat-option>
+                                    <mat-option value="female">{{ 'agent_group.form.female' | transloco }}</mat-option>
+                                    <mat-option value="other">{{ 'agent_group.form.other' | transloco }}</mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </div>
+                    </div>
+                    <div class="w-full flex flex-col md:grid md:grid-cols-2 gap-x-2 ">
+                        <div class="w-full">
+                            <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                                <mat-label>{{ 'agent_group.form.phone_number' | transloco }}</mat-label>
+                                <input matInput [placeholder]="'agent_group.form.phone_number' | transloco" formControlName="phone">
+                            </mat-form-field>
+                        </div>
+                        <div class="w-full">
+                            <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                                <mat-label>{{ 'agent_group.form.backup_phone' | transloco }}</mat-label>
+                                <input matInput [placeholder]="'agent_group.form.backup_phone' | transloco">
+                            </mat-form-field>
+                        </div>
+                        <div class="w-full">
+                            <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                                <mat-label>{{ 'agent_group.form.language' | transloco }}</mat-label>
+                                <mat-select formControlName="language">
+                                    <mat-option value="TH">{{ 'agent_group.form.thai' | transloco }}</mat-option>
+                                    <mat-option value="CH">{{ 'agent_group.form.chinese' | transloco }}</mat-option>
+                                    <mat-option value="EN">{{ 'agent_group.form.english' | transloco }}</mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </div>
+                        <div class="w-full">
+                            <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                                <mat-label>{{ 'agent_group.form.birth_date' | transloco }}</mat-label>
+                                <input matInput [matDatepicker]="picker" formControlName="birth_date">
+                                <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                                <mat-datepicker #picker></mat-datepicker>
+                            </mat-form-field>
+                        </div>
+                    </div>
+                </div>
+                <div class="w-full flex-col flex mt-5">
+                    <div class="w-full flex-col flex mb-2">
+                        <div class="text-lg font-bold">{{ 'agent_group.form.company_information' | transloco }}</div>
+                        <mat-divider></mat-divider>
+                    </div>
+                    <div class="w-full flex flex-col md:grid md:grid-cols-2 gap-x-2 ">
+                        <div class="w-full">
+                            <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                                <mat-label>{{ 'agent_group.form.company_name' | transloco }}</mat-label>
+                                <input matInput [placeholder]="'agent_group.form.company_name' | transloco"
+                                    formControlName="comp_name">
+                            </mat-form-field>
+                        </div>
+                        <div class="w-full">
+                            <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                                <mat-label>{{ 'agent_group.form.tax_id' | transloco }}</mat-label>
+                                <input matInput [placeholder]="'agent_group.form.tax_id' | transloco" formControlName="comp_tax">
+                            </mat-form-field>
+                        </div>
+                        <div class="w-full col-span-2">
+                            <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                                <mat-label>{{ 'agent_group.form.address_details' | transloco }}</mat-label>
+                                <textarea matInput [placeholder]="'agent_group.form.address_details' | transloco"
+                                    formControlName="live_address"></textarea>
+                            </mat-form-field>
+                        </div>
+                        <div class="w-full">
+                            <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                                <mat-label>{{ 'agent_group.form.province' | transloco }}</mat-label>
+                                <mat-select formControlName="live_province" (selectionChange)="onLiveProvinceChange()">
+                                    <mat-option *ngFor="let province of live_provinces"
+                                        [value]="province.provinceNameTh">
+                                        {{ province.provinceNameTh }}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </div>
+                        <div class="w-full">
+                            <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                                <mat-label>{{ 'agent_group.form.district' | transloco }}</mat-label>
+                                <mat-select formControlName="live_district" (selectionChange)="onLiveDistrictChange()">
+                                    <mat-option *ngFor="let district of live_districts"
+                                        [value]="district.districtNameTh">
+                                        {{ district.districtNameTh }}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </div>
+                    </div>
+                    <div class="w-full flex flex-col md:grid md:grid-cols-3 gap-2">
+                        <div class="w-full">
+                            <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                                <mat-label>{{ 'agent_group.form.sub_district' | transloco }}</mat-label>
+                                <mat-select formControlName="live_sub_district"
+                                    (selectionChange)="onLiveSubDistrictChange()">
+                                    <mat-option *ngFor="let subdistrict of live_subdistricts"
+                                        [value]="subdistrict.subdistrictNameTh">
+                                        {{ subdistrict.subdistrictNameTh }}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </div>
+                        <div class="w-full">
+                            <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                                <mat-label>{{ 'agent_group.form.postal_code' | transloco }}</mat-label>
+                                <input matInput [placeholder]="'agent_group.form.postal_code' | transloco"
+                                    formControlName="live_postal_code">
+                            </mat-form-field>
+                        </div>
+                        <div class="w-full">
+                            <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                                <mat-label>{{ 'agent_group.form.phone_number' | transloco }}</mat-label>
+                                <input matInput [placeholder]="'agent_group.form.phone_number' | transloco"
+                                    formControlName="comp_phone">
+                            </mat-form-field>
+                        </div>
+                        <div class="w-full">
+                            <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                                <mat-label>{{ 'agent_group.form.cargo_name' | transloco }}</mat-label>
+                                <input matInput [placeholder]="'agent_group.form.cargo_name' | transloco"
+                                    formControlName="cargo_name">
+                            </mat-form-field>
+                        </div>
+                        <div class="w-full">
+                            <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                                <mat-label>{{ 'agent_group.form.cargo_website' | transloco }}</mat-label>
+                                <input matInput [placeholder]="'agent_group.form.cargo_website' | transloco"
+                                    formControlName="cargo_website">
+                            </mat-form-field>
+                        </div>
+                        <div class="w-full">
+                            <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                                <mat-label>{{ 'agent_group.form.thai_shipping_quantity' | transloco }}</mat-label>
+                                <input matInput [placeholder]="'agent_group.form.thai_shipping_quantity' | transloco"
+                                    formControlName="order_quantity_in_thai">
+                            </mat-form-field>
+                        </div>
+                    </div>
+                    <div class="w-full">
+                        <div class="mb-4">{{ 'agent_group.form.upload_cargo_image' | transloco }}</div>
+                        <asha-upload-file [existingImage]="form.get('image_url').value"
+                            (filesChanged)="onFilesChanged($event)"></asha-upload-file>
+                    </div>
+
+                    <div class="w-full flex-col flex my-4">
+                        <div class="text-lg font-bold">{{ 'agent_group.form.main_shipping_address' | transloco }}</div>
+                        <mat-divider></mat-divider>
+                    </div>
+                    <div class="w-full flex flex-row gap-2 ">
+                        <div class="w-full">
+                            <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                                <mat-label>{{ 'agent_group.form.address_details' | transloco }}</mat-label>
+                                <textarea matInput formControlName="address"
+                                    [placeholder]="'agent_group.form.address_details' | transloco"></textarea>
+                            </mat-form-field>
+                        </div>
+                    </div>
+                    <div class="w-full flex flex-row gap-2 ">
+                        <div class="w-full">
+                            <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                                <mat-label>{{ 'agent_group.form.province' | transloco }}</mat-label>
+                                <mat-select formControlName="province" (selectionChange)="onProvinceChange()">
+                                    <mat-option *ngFor="let province of provinces" [value]="province.provinceNameTh">
+                                        {{ province.provinceNameTh }}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </div>
+                        <div class="w-full">
+                            <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                                <mat-label>{{ 'agent_group.form.district' | transloco }}</mat-label>
+                                <mat-select formControlName="district" (selectionChange)="onDistrictChange()">
+                                    <mat-option *ngFor="let district of districts" [value]="district.districtNameTh">
+                                        {{ district.districtNameTh }}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </div>
+                    </div>
+                    <div class="w-full flex flex-col md:grid md:grid-cols-3 gap-2">
+                        <div class="w-full">
+                            <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                                <mat-label>{{ 'agent_group.form.sub_district' | transloco }}</mat-label>
+                                <mat-select formControlName="sub_district" (selectionChange)="onSubDistrictChange()">
+                                    <mat-option *ngFor="let subdistrict of subdistricts"
+                                        [value]="subdistrict.subdistrictNameTh">
+                                        {{ subdistrict.subdistrictNameTh }}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </div>
+                        <div class="w-full">
+                            <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                                <mat-label>{{ 'agent_group.form.postal_code' | transloco }}</mat-label>
+                                <input matInput [placeholder]="'agent_group.form.postal_code' | transloco"
+                                    formControlName="postal_code">
+                            </mat-form-field>
+                        </div>
+                        <div class="w-full">
+                            <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                                <mat-label>{{ 'agent_group.form.phone_number' | transloco }}</mat-label>
+                                <input matInput [placeholder]="'agent_group.form.phone_number' | transloco">
+                            </mat-form-field>
+                        </div>
+                        <div class="w-full">
+                            <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                                <mat-label>{{ 'agent_group.form.google_map_coordinates' | transloco }}</mat-label>
+                                <input matInput>
+                            </mat-form-field>
+                        </div>
+                        <div class="w-full">
+                            <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                                <mat-label>{{ 'agent_group.form.thai_shipping_method' | transloco }}</mat-label>
+                                <mat-select formControlName="transport_thai_master_id">
+                                    <mat-option *ngFor="let transport of transport" [value]="transport.id">{{
+                                        transport.name }}</mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="w-full flex flex-col md:grid md:grid-cols-4 gap-x-2 ">
+                    <div class="w-full">
+                        <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                            <mat-label>{{ 'agent_group.form.shipping_stats' | transloco }}</mat-label>
+                            <input matInput [placeholder]="'agent_group.form.shipping_stats' | transloco"
+                                formControlName="order_quantity">
+                        </mat-form-field>
+                    </div>
+                    <div class="w-full">
+                        <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                            <mat-label>{{ 'agent_group.form.existing_customers' | transloco }}</mat-label>
+                            <mat-select formControlName="have_any_customers">
+                                <mat-option value="มีลูกค้า">{{ 'agent_group.form.has_customers' | transloco }}</mat-option>
+                                <mat-option value="ไม่มีลูกค้า">{{ 'agent_group.form.no_customers' | transloco }}</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+                    <div class="w-full">
+                        <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                            <mat-label>{{ 'agent_group.form.china_import_experience' | transloco }}</mat-label>
+                            <mat-select>
+                                <mat-option value="true">{{ 'agent_group.form.has_china_import' | transloco }}</mat-option>
+                                <mat-option value="false">{{ 'agent_group.form.no_china_import' | transloco
+                                    }}</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+                    <div class="w-full">
+                        <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                            <mat-label>{{ 'agent_group.form.needs' | transloco }}</mat-label>
+                            <mat-select>
+                                <mat-option value="a"></mat-option>
+                                <mat-option value="b"></mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

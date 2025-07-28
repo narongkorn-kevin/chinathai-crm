@@ -75,8 +75,46 @@ export class AliplayService {
     }
     //=========================================================================================================
     datatable(dataTablesParameters: any) {
-        return this.http.post('/api/member_page', dataTablesParameters).pipe(
+        return this.http.post('/api/alipay_payment_page', dataTablesParameters).pipe(
             map((resp: any) => {
+                // ตรวจสอบว่ามีข้อมูลหรือไม่
+                if (Array.isArray(resp.data.data)) {
+                    resp.data.data = resp.data.data.map((item: any) => {
+                        const code = item.member?.code ?? '';
+                        const fname = item.member?.fname ?? '';
+                        const lname = item.member?.lname ?? '';
+                        const amount = parseFloat(item.amount) || 0;
+                        const fee = parseFloat(item.fee) || 0;
+                        const total = parseFloat((amount + fee).toFixed(4)); // ทำให้เป็นทศนิยม 2 ตำแหน่ง
+
+                        // ตรวจสอบ image_url
+                        // สร้าง fullImageUrl
+                        let fullImageSlip: string | null = null;
+                        if (item.image_slip) {
+                            const baseUrl = environment.apiUrl;
+                            fullImageSlip = `${baseUrl}/${item.image_slip}`;
+                        }
+
+                        let fullImage: string | null = null;
+                        if (item.image) {
+                            const baseUrl = environment.apiUrl;
+                            fullImage = `${baseUrl}/${item.image}`;
+                        }
+                        let fullImageQr: string | null = null;
+                        if (item.image_qr_code) {
+                            const baseUrl = environment.apiUrl;
+                            fullImageQr = `${baseUrl}/${item.image_qr_code}`;
+                        }
+                        return {
+                            ...item,
+                            fullname: `${code} ${fname} ${lname}`.trim(),
+                            total: total,
+                            fullImageSlip: fullImageSlip,
+                            fullImage: fullImage,
+                            fullImageQr: fullImageQr,
+                        };
+                    });
+                }
                 return resp;
             })
         );
@@ -89,14 +127,14 @@ export class AliplayService {
 
     create(data: any) {
         return this.http.post(
-            environment.apiUrl + '/api/member',
+            environment.apiUrl + '/api/alipay_payment',
             data
         );
     }
 
     delete(id: number) {
         return this.http.delete(
-            environment.apiUrl + '/api/member/' + id
+            environment.apiUrl + '/api/alipay_payment/' + id
         );
     }
 
@@ -121,7 +159,24 @@ export class AliplayService {
 
     deleteAddress(id: number) {
         return this.http.delete(
-            environment.apiUrl + '/api/member_address/' + id
+            environment.apiUrl + '/api/alipay_payment/' + id
         );
     }
+
+    updateStatus(data: any) {
+        return this.http.post('/api/update_status_alipay_payment', data)
+    }
+
+    updatePayment(data: any) {
+        return this.http.put('/api/alipay_payment/' + data.id, data)
+    }
+
+    updateSlip(data: any) {
+        return this.http.put('/api/slip_alipay_payment/' + data.id, data)
+    }
+
+    getMember() {
+        return this.http.get(environment.apiUrl + '/api/get_member')
+    }
+
 }

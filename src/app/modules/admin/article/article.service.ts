@@ -12,10 +12,6 @@ export class ArticleService {
 
     constructor(private http: HttpClient) { }
 
-    update(data: any) {
-        return this.http.put('/api/member', data)
-    }
-
     import(data: FormData) {
         return this.http.post('/api/member/import-excel', data);
     }
@@ -30,42 +26,75 @@ export class ArticleService {
     }
     //=========================================================================================================
     datatable(dataTablesParameters: any) {
-        const resp = {
-            data: {
-                data: [
-                    { No: 1, category: 'ทั่วไป', name: 'หัวข้อบทความ', status: true,  code: 'TAO', nameTh: 'Taobao', nameCn: 'Taobao', nameEn: 'Taobao', url: 'https://google.co.th', image: 'https://placehold.co/600x400' },
-                    { No: 2, category: 'ทั่วไป', name: 'หัวข้อบทความ', status: true,  code: 'TAO', nameTh: 'Taobao', nameCn: 'Taobao', nameEn: 'Taobao', url: 'https://google.co.th', image: 'https://placehold.co/600x400' },
-                    { No: 3, category: 'ทั่วไป', name: 'หัวข้อบทความ', status: false,  code: 'TAO', nameTh: 'Taobao', nameCn: 'Taobao', nameEn: 'Taobao', url: 'https://google.co.th', image: 'https://placehold.co/600x400' },
-                ],
-                total: 10,
-            }
-        }
+        // const resp = {
+        //     data: {
+        //         data: [
+        //             { No: 1, category: 'ทั่วไป', name: 'หัวข้อบทความ', status: true,  code: 'TAO', nameTh: 'Taobao', nameCn: 'Taobao', nameEn: 'Taobao', url: 'https://google.co.th', image: 'https://placehold.co/600x400' },
+        //             { No: 2, category: 'ทั่วไป', name: 'หัวข้อบทความ', status: true,  code: 'TAO', nameTh: 'Taobao', nameCn: 'Taobao', nameEn: 'Taobao', url: 'https://google.co.th', image: 'https://placehold.co/600x400' },
+        //             { No: 3, category: 'ทั่วไป', name: 'หัวข้อบทความ', status: false,  code: 'TAO', nameTh: 'Taobao', nameCn: 'Taobao', nameEn: 'Taobao', url: 'https://google.co.th', image: 'https://placehold.co/600x400' },
+        //         ],
+        //         total: 10,
+        //     }
+        // }
 
-        return of(resp);
+        // return of(resp);
 
 
-        // return this.http.post('/api/member_page', dataTablesParameters).pipe(
-        //     map((resp: any) => {
-        //         return resp;
-        //     })
-        // );
+        return this.http.post('/api/news_page', dataTablesParameters).pipe(
+            map((resp: any) => {
+                return resp;
+            })
+        );
+    }
+    datatabletype(dataTablesParameters: any) {
+        return this.http.post('/api/category_news_page', dataTablesParameters).pipe(
+            map((resp: any) => {
+                return resp;
+            })
+        );
     }
     get(id: number) {
         return this.http.get(
-            environment.apiUrl + '/api/member/' + id
+            environment.apiUrl + '/api/news/' + id
         );
+    }
+    update(data: any) {
+        return this.http.post('/api/update_news', data)
     }
 
     create(data: any) {
         return this.http.post(
-            environment.apiUrl + '/api/member',
+            environment.apiUrl + '/api/news',
             data
         );
     }
 
     delete(id: number) {
         return this.http.delete(
-            environment.apiUrl + '/api/member/' + id
+            environment.apiUrl + '/api/news/' + id
+        );
+    }
+
+    gettype(id: number) {
+        return this.http.get(
+            environment.apiUrl + '/api/category_news/' + id
+        );
+    }
+
+    updatetype(data: any) {
+        return this.http.post('/api/update_category_news', data)
+    }
+
+    createtype(data: any) {
+        return this.http.post(
+            environment.apiUrl + '/api/category_news',
+            data
+        );
+    }
+
+    deletetype(id: number) {
+        return this.http.delete(
+            environment.apiUrl + '/api/category_news/' + id
         );
     }
 
@@ -74,23 +103,14 @@ export class ArticleService {
             environment.apiUrl + '/api/get_agent'
         );
     }
+    getCategoryNews() {
+        return this.http.get(
+            environment.apiUrl + '/api/get_category_news'
+        );
+    }
     getThaiTransport() {
         return this.http.get(
             environment.apiUrl + '/api/get_transport'
-        );
-    }
-
-    createAddress(data: any) {
-        return this.http.post('/api/member_address', data)
-    }
-
-    updateAddress(data: any) {
-        return this.http.put('/api/update_member_address/' + data.id, data)
-    }
-
-    deleteAddress(id: number) {
-        return this.http.delete(
-            environment.apiUrl + '/api/member_address/' + id
         );
     }
 }
