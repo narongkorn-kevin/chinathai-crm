@@ -12,7 +12,12 @@ import {
     MatDialogRef,
     MAT_DIALOG_DATA,
 } from '@angular/material/dialog';
-import { FormBuilder, FormGroup, FormsModule, Validators } from '@angular/forms';
+import {
+    FormBuilder,
+    FormGroup,
+    FormsModule,
+    Validators,
+} from '@angular/forms';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -21,13 +26,22 @@ import { FuseConfirmationService } from '@fuse/services/confirmation';
 import { ToastrService } from 'ngx-toastr';
 import { MatRadioModule } from '@angular/material/radio';
 import { OrderProductsService } from '../../order-products/order-products.service';
+import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
+
 @Component({
     selector: 'app-dialog-form-update-status-order',
     standalone: true,
     templateUrl: './dialog.component.html',
     styleUrl: './dialog.component.scss',
-    imports: [CommonModule, DataTablesModule, MatIconModule, MatFormFieldModule, MatInputModule,
-        FormsModule, MatToolbarModule,
+    imports: [
+        TranslocoModule,
+        CommonModule,
+        DataTablesModule,
+        MatIconModule,
+        MatFormFieldModule,
+        MatInputModule,
+        FormsModule,
+        MatToolbarModule,
         MatButtonModule,
         MatDialogTitle,
         MatDialogContent,
@@ -36,8 +50,8 @@ import { OrderProductsService } from '../../order-products/order-products.servic
         ReactiveFormsModule,
         MatInputModule,
         MatFormFieldModule,
-        MatRadioModule
-    ]
+        MatRadioModule,
+    ],
 })
 export class DialogUpdateDeliveryComponent implements OnInit {
     form: FormGroup;
@@ -49,14 +63,14 @@ export class DialogUpdateDeliveryComponent implements OnInit {
         {
             value: 'wait_payment',
             name: 'รอชำระคำสั่งซื้อ',
-
         },
         {
             value: 'saled',
             name: 'สั่งซื้อเรียบร้อย',
         },
-    ]
+    ];
     constructor(
+        private translocoService: TranslocoService,
         private dialogRef: MatDialogRef<DialogUpdateDeliveryComponent>,
         @Inject(MAT_DIALOG_DATA) public data: any,
         public dialog: MatDialog,
@@ -65,70 +79,74 @@ export class DialogUpdateDeliveryComponent implements OnInit {
         private toastr: ToastrService,
         private service: OrderProductsService
     ) {
+        console.log(this.data);
 
     }
 
     ngOnInit(): void {
         this.form = this.FormBuilder.group({
             order_list_id: this.data.order_list_id,
-            track_ecommerce_no: ['', Validators.required],
+            track_ecommerce_no: [this.data.order_list.track_ecommerce_no],
+            po_no: [this.data.order_list.po_no],
         });
     }
 
     Submit() {
         if (this.form.invalid) {
-            return
+            this.toastr.error(
+                this.translocoService.translate('toastr.missing_fields')
+            );
+            this.form.markAllAsTouched();
+            return;
         }
 
         const formValue = {
-            ...this.form.value
-        }
+            ...this.form.value,
+        };
 
         console.log(formValue);
 
         const confirmation = this.fuseConfirmationService.open({
-            title: "ยืนยันการบันทึกข้อมูล",
+            title: this.translocoService.translate('confirmation.save_title'),
             icon: {
                 show: true,
-                name: "heroicons_outline:exclamation-triangle",
-                color: "primary"
+                name: 'heroicons_outline:exclamation-triangle',
+                color: 'primary',
             },
             actions: {
                 confirm: {
                     show: true,
-                    label: "ยืนยัน",
-                    color: "primary"
+                    label: this.translocoService.translate(
+                        'confirmation.confirm_button'
+                    ),
+                    color: 'primary',
                 },
                 cancel: {
                     show: true,
-                    label: "ยกเลิก"
-                }
+                    label: this.translocoService.translate(
+                        'confirmation.cancel_button'
+                    ),
+                },
             },
-            dismissible: false
-        })
+            dismissible: false,
+        });
 
-        confirmation.afterClosed().subscribe(
-            result => {
-                if (result == 'confirmed') {
-                    this.service.updateupdateTrackNo(formValue)
-                        .subscribe({
-                            next: (resp: any) => {
-                                this.toastr.success('แก้ไขรายการ สำเร็จ')
-                                this.dialogRef.close();
-                            },
-                            error: (err: any) => {
-                                this.toastr.error('แก้ไขรายการ ไม่สำเร็จ')
-                            }
-                        })
-                }
+        confirmation.afterClosed().subscribe((result) => {
+            if (result == 'confirmed') {
+                this.service.updateupdateTrackNo(formValue).subscribe({
+                    next: (resp: any) => {
+                        this.toastr.success(this.translocoService.translate('toastr.edit'));
+                        this.dialogRef.close();
+                    },
+                    error: (err: any) => {
+                        this.toastr.error(this.translocoService.translate('toastr.edit_error'));
+                    },
+                });
             }
-        )
+        });
     }
-
-
 
     onClose() {
-        this.dialogRef.close()
+        this.dialogRef.close();
     }
-
 }
