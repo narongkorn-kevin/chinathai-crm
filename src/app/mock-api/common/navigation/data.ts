@@ -416,6 +416,9 @@ export const defaultNavigation: FuseNavigationItem[] = [
         title: 'รายงาน',
         type: 'collapsable',
         icon: 'heroicons_outline:truck',
+        hidden(item) {
+            return true
+        },
         children: [
             {
                 id: 'report.container',
