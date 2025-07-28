@@ -364,10 +364,12 @@ export class OrderDetailComponent implements OnInit, AfterViewInit {
             },
         })
             .afterClosed()
-            .subscribe(() => {
-                this.ngOnInit();
-                this.selectAll = false;
-                this.orderLists.clear();
+            .subscribe((result) => {
+                if (result) {
+                    this.ngOnInit();
+                    this.selectAll = false;
+                    this.orderLists.clear();
+                }
             });
     }
 
@@ -538,8 +540,8 @@ export class OrderDetailComponent implements OnInit, AfterViewInit {
             (+this.summary.serviceFeeBaht) +
             (+this.summary.otherFeeYuan);
 
-            console.log(this.summary);
-            
+        console.log(this.summary);
+
     }
 
 }

@@ -12,21 +12,38 @@ import {
     MatDialogRef,
     MAT_DIALOG_DATA,
 } from '@angular/material/dialog';
-import { FormBuilder, FormGroup, FormsModule, Validators } from '@angular/forms';
+import {
+    FormBuilder,
+    FormGroup,
+    FormsModule,
+    ReactiveFormsModule,
+    Validators,
+} from '@angular/forms';
 import { MatToolbarModule } from '@angular/material/toolbar';
-import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
 import { FuseConfirmationService } from '@fuse/services/confirmation';
 import { ToastrService } from 'ngx-toastr';
 import { MatRadioModule } from '@angular/material/radio';
+import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
+import { OrderProductsService } from '../../order-products/order-products.service';
+import { uniq } from 'lodash';
+import { NgxMaskDirective, provideNgxMask } from 'ngx-mask';
+
 @Component({
     selector: 'app-dialog-form-order-fee',
     standalone: true,
     templateUrl: './dialog.component.html',
     styleUrl: './dialog.component.scss',
-    imports: [CommonModule, DataTablesModule, MatIconModule, MatFormFieldModule, MatInputModule,
-        FormsModule, MatToolbarModule,
+    imports: [
+        TranslocoModule,
+        CommonModule,
+        DataTablesModule,
+        MatIconModule,
+        MatFormFieldModule,
+        MatInputModule,
+        FormsModule,
+        MatToolbarModule,
         MatButtonModule,
         MatDialogTitle,
         MatDialogContent,
@@ -35,104 +52,132 @@ import { MatRadioModule } from '@angular/material/radio';
         ReactiveFormsModule,
         MatInputModule,
         MatFormFieldModule,
-        MatRadioModule
+        MatRadioModule,
+        NgxMaskDirective,
+    ],
+    providers: [
+        provideNgxMask()
     ]
 })
 export class DialogOrderFeeComponent implements OnInit {
-
     form: FormGroup;
     stores: any[] = [];
     formFieldHelpers: string[] = ['fuse-mat-dense'];
     dtOptions: DataTables.Settings = {};
     addForm: FormGroup;
+    fee : any;
     constructor(
+        private translocoService: TranslocoService,
         private dialogRef: MatDialogRef<DialogOrderFeeComponent>,
         @Inject(MAT_DIALOG_DATA) public data: any,
         public dialog: MatDialog,
         private FormBuilder: FormBuilder,
         private fuseConfirmationService: FuseConfirmationService,
         private toastr: ToastrService,
-    ) {
-
-    }
+        private orderProductService: OrderProductsService
+    ) { }
 
     ngOnInit(): void {
-        this.form = this.FormBuilder.group({
-            id: '',
-            order_fee: [''],
-            order_rate: [''],
-            delivery_price_china: [''],
+        console.log(this.data, 'data');
+        this.orderProductService.getfee().subscribe((res:any) => {
+            console.log(res, 'fee');
+            this.fee = res.rate;
+            this.form.patchValue({
+                exchange_rate: this.fee,
+            });
         });
+
+        this.form = this.FormBuilder.group({
+            china_shipping_fee: [this.data.orderLists.china_shipping_fee, Validators.required],
+            deposit_fee: [this.data.orderLists.deposit_fee, Validators.required],
+            exchange_rate: [this.data.orderLists.exchange_rate, Validators.required],
+            order_lists: this.FormBuilder.array(
+              this.data.orderLists.order_lists.map((item: any) => {
+                return this.FormBuilder.group({
+                  order_list_id: [item.order_list_id],
+                  product_real_price: [item.product_real_price],
+                  product_shop: [item.product_shop],
+                  product_real_link: [item?.product_real_link],
+                  qty: [item?.qty],
+                  product_negotiated_price: [item?.product_negotiated_price],
+                });
+              })
+            ),
+            total_price: [0],
+          })
 
         if (this.data.type === 'EDIT') {
             this.form.patchValue({
                 ...this.data.value,
-            })
-
+            });
         }
     }
 
     Submit() {
         if (this.form.invalid) {
-            return
+            this.toastr.error(
+                this.translocoService.translate('toastr.missing_fields')
+            );
+            this.form.markAllAsTouched();
+            return;
         }
+
+        const shopCount = uniq(this.form.value.order_lists.map(e => e.product_shop)).length;
+
+        const total = this.form.value.order_lists.reduce((acc, curr) => {
+            const price = +curr.product_real_price || 0;
+            const qty = +curr.qty || 0;
+            return acc + ((price * qty)* this.form.value.exchange_rate);
+          }, 0);
+
+        const shipping = this.form.value.china_shipping_fee * this.form.value.exchange_rate;
 
         const formValue = {
-            ...this.form.value
-        }
+            ...this.form.value,
+            total_price: (total + shipping) + (this.form.value.deposit_fee * shopCount),
+        };
 
         const confirmation = this.fuseConfirmationService.open({
-            title: "ยืนยันการบันทึกข้อมูล",
+            title: this.translocoService.translate('confirmation.save_title'),
             icon: {
                 show: true,
-                name: "heroicons_outline:exclamation-triangle",
-                color: "primary"
+                name: 'heroicons_outline:exclamation-triangle',
+                color: 'primary',
             },
             actions: {
                 confirm: {
                     show: true,
-                    label: "ยืนยัน",
-                    color: "primary"
+                    label: this.translocoService.translate(
+                        'confirmation.confirm_button'
+                    ),
+                    color: 'primary',
                 },
                 cancel: {
                     show: true,
-                    label: "ยกเลิก"
-                }
+                    label: this.translocoService.translate(
+                        'confirmation.cancel_button'
+                    ),
+                },
             },
-            dismissible: false
-        })
+            dismissible: false,
+        });
 
-        confirmation.afterClosed().subscribe(
-            result => {
-                // if (result == 'confirmed') {
-                //     if (this.data.type === 'NEW') {
-                //         this._service.create(formValue).subscribe({
-                //             error: (err) => {
-                //                 this.toastr.error('ไม่สามารถบันทึกข้อมูลได้')
-                //             },
-                //             complete: () => {
-                //                 this.toastr.success('ดำเนินการเพิ่มข้อมูลสำเร็จ')
-                //                 this.dialogRef.close(true)
-                //             },
-                //         });
-                //     } else {
-                //         this._service.update(this.data.value.id, formValue).subscribe({
-                //             error: (err) => {
-                //                 this.toastr.error('ไม่สามารถบันทึกข้อมูลได้')
-                //             },
-                //             complete: () => {
-                //                 this.toastr.success('ดำเนินการแก้ไขข้อมูลสำเร็จ')
-                //                 this.dialogRef.close(true)
-                //             },
-                //         });
-                //     }
-                // }
+        confirmation.afterClosed().subscribe((result) => {
+            if (result == 'confirmed') {
+                this.orderProductService.updateFee(formValue,this.data.orderId).subscribe({
+                    error: (err) => {
+                        this.toastr.error('ไม่สามารถบันทึกข้อมูลได้')
+                    },
+                    complete: () => {
+                        this.toastr.success('ดำเนินการเพิ่มข้อมูลสำเร็จ')
+                        this.dialogRef.close(true)
+                    },
+                });
             }
-        )
+        });
     }
 
     onClose() {
-        this.dialogRef.close()
+        this.dialogRef.close();
     }
-
 }
