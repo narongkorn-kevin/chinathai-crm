@@ -7,15 +7,24 @@ import { MatInputModule } from '@angular/material/input';
 import { map, ReplaySubject, Subject, takeUntil } from 'rxjs';
 import { SelectImporterService } from './select-importer.service';
 
+import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
+
 @Component({
     selector: 'asha-select-importer',
     standalone: true,
-    imports: [CommonModule, FormsModule, ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatAutocompleteModule],
+    imports: [
+        TranslocoModule,
+        CommonModule,
+        FormsModule,
+        ReactiveFormsModule,
+        MatFormFieldModule,
+        MatInputModule,
+        MatAutocompleteModule,
+    ],
     templateUrl: './select-importer.component.html',
-    styleUrl: './select-importer.component.scss'
+    styleUrl: './select-importer.component.scss',
 })
 export class SelectImporterComponent {
-
     @Output() change = new EventEmitter<any>();
 
     filterMember: ReplaySubject<any[]> = new ReplaySubject<any[]>(1);
@@ -25,19 +34,18 @@ export class SelectImporterComponent {
 
     protected _onDestroy = new Subject<void>();
 
-    constructor(
-        private _service: SelectImporterService
-    ) { }
+    constructor(private _service: SelectImporterService) {}
 
     ngOnInit(): void {
-        this._service.getImporter()
+        this._service
+            .getImporter()
             .pipe(
                 map((resp: { data: any[] }) => ({
                     ...resp,
-                    data: resp.data.map(e => ({
+                    data: resp.data.map((e) => ({
                         ...e,
-                        fullname: `${e.comp_name}`
-                    }))
+                        fullname: `${e.comp_name}`,
+                    })),
                 }))
             )
             .subscribe((member: { data: any[] }) => {
@@ -91,7 +99,7 @@ export class SelectImporterComponent {
 
         // กรองข้อมูลโดยค้นหาใน firstname และ lastname
         this.filterMember.next(
-            this.members.filter(item => item.fullname.includes(search))
+            this.members.filter((item) => item.fullname.includes(search))
         );
     }
 }

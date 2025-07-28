@@ -1,7 +1,7 @@
 <mat-form-field class="w-full md:w-4/4 fuse-mat-dense">
-    <mat-label>ลูกค้า</mat-label>
+    <mat-label>{{ 'common.select_importer.customer' | transloco }}</mat-label>
     <input matInput [formControl]="memberFilter" [matAutocomplete]="memberAutoComplete"
-        placeholder="ค้นหาลูกค้า" />
+        [placeholder]="'common.select_importer.search_customer_placeholder' | transloco" />
     <mat-autocomplete #memberAutoComplete="matAutocomplete"
         (optionSelected)="onSelectMember($event.option.value)">
         <mat-option *ngFor="let item of filterMember | async" [value]="item">

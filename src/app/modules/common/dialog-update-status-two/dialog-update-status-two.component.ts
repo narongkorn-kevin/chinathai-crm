@@ -1,14 +1,11 @@
-import { Component, OnInit, Inject, ViewChild } from '@angular/core';
+import { Component, OnInit, Inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { DataTableDirective, DataTablesModule } from 'angular-datatables';
+import { DataTablesModule } from 'angular-datatables';
 import { MatIconModule } from '@angular/material/icon';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import {
     MatDialog,
-    MatDialogTitle,
-    MatDialogContent,
-    MatDialogActions,
     MatDialogRef,
     MAT_DIALOG_DATA,
 } from '@angular/material/dialog';
@@ -17,7 +14,6 @@ import {
     FormGroup,
     FormsModule,
     Validators,
-    FormArray,
 } from '@angular/forms';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -27,13 +23,10 @@ import { FuseConfirmationService } from '@fuse/services/confirmation';
 import { ToastrService } from 'ngx-toastr';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatCheckboxModule } from '@angular/material/checkbox';
-import { map, Observable, Subject } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { MatDivider } from '@angular/material/divider';
-import { ADTSettings } from 'angular-datatables/src/models/settings';
 import {
     MatDatepickerModule,
-    MatDateRangePicker,
 } from '@angular/material/datepicker';
 import {
     trigger,
@@ -46,10 +39,10 @@ import { LotService } from 'app/modules/admin/stock/lot/lot.service';
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 
 @Component({
-    selector: 'app-dialog-update-status',
+    selector: 'app-dialog-update-status-two',
     standalone: true,
-    templateUrl: './dialog-update-status.component.html',
-    styleUrl: './dialog-update-status.component.scss',
+    templateUrl: './dialog-update-status-two.component.html',
+    styleUrl: './dialog-update-status-two.component.scss',
     imports: [
         TranslocoModule,
         CommonModule,
@@ -90,15 +83,23 @@ import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
         ]),
     ],
 })
-export class DialogUpdateStatusComponent implements OnInit {
+export class DialogUpdateStatusTwoComponent implements OnInit {
     form: FormGroup;
     formFieldHelpers: string[] = ['fuse-mat-dense'];
     tracks = [];
 
+    status: any[] = [];
+
+    enableRemark: boolean = true;
+
     constructor(
         private translocoService: TranslocoService,
-        private dialogRef: MatDialogRef<DialogUpdateStatusComponent>,
-        @Inject(MAT_DIALOG_DATA) public data: any,
+        private dialogRef: MatDialogRef<DialogUpdateStatusTwoComponent>,
+        @Inject(MAT_DIALOG_DATA) public data: {
+            status: any[];
+            enableRemark?: boolean;
+            statusValue?: string;
+        },
         public dialog: MatDialog,
         private FormBuilder: FormBuilder,
         private fuseConfirmationService: FuseConfirmationService,
@@ -106,20 +107,24 @@ export class DialogUpdateStatusComponent implements OnInit {
         private http: HttpClient,
         private _service: LotService
     ) {
-        const status: any = this.getLastItem(this.data.status.status_logs)
         this.form = this.FormBuilder.group({
-            status: status.status,
+            status: [this.data.statusValue ?? '', Validators.required],
             remark: [''],
         });
+
+        this.enableRemark = this.data.enableRemark ?? true;
     }
 
-    getLastItem<T>(arr: T[]): T | undefined {
-        return arr.length > 0 ? arr[arr.length - 1] : undefined;
+    get lang() {
+        return this.translocoService.getActiveLang();
     }
-    ngOnInit(): void { }
-    ngAfterViewInit() { }
 
-    ngOnDestroy(): void { }
+    ngOnInit(): void {
+        this.status = this.data.status;
+    }
+    ngAfterViewInit() {}
+
+    ngOnDestroy(): void {}
 
     Submit() {
         if (this.form.invalid) {
@@ -129,6 +134,7 @@ export class DialogUpdateStatusComponent implements OnInit {
             this.form.markAllAsTouched();
             return;
         }
+        const formValue = this.form.value;
 
         const confirmation = this.fuseConfirmationService.open({
             title: this.translocoService.translate('confirmation.save_title'),
@@ -157,7 +163,7 @@ export class DialogUpdateStatusComponent implements OnInit {
 
         confirmation.afterClosed().subscribe((result) => {
             if (result == 'confirmed') {
-                this.dialogRef.close(this.form.value);
+                this.dialogRef.close(formValue);
             }
         });
     }

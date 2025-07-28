@@ -3,7 +3,12 @@ import { HttpClient } from '@angular/common/http';
 import { Component, EventEmitter, Inject, Input, Output } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
-import { MAT_DIALOG_DATA, MatDialog, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
+import {
+    MAT_DIALOG_DATA,
+    MatDialog,
+    MatDialogModule,
+    MatDialogRef,
+} from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
@@ -18,20 +23,24 @@ export interface UploadedFile {
     imagePreview: string;
 }
 
+import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
+import { UploadImageTwoComponent } from '../upload-image-two/upload-image-two.component';
+
 @Component({
     selector: 'asha-dialog-view-image',
     standalone: true,
     imports: [
-        CommonModule, 
-        MatFormFieldModule, 
-        MatInputModule, 
-        MatButtonModule, 
-        MatIconModule, 
+        TranslocoModule,
+        CommonModule,
+        MatFormFieldModule,
+        MatInputModule,
+        MatButtonModule,
+        MatIconModule,
         MatDialogModule,
-        ReactiveFormsModule
+        ReactiveFormsModule,
     ],
     templateUrl: './dialog-view-image.component.html',
-    styleUrl: './dialog-view-image.component.scss'
+    styleUrl: './dialog-view-image.component.scss',
 })
 export class DialogViewImageComponent {
     @Input() multiple: boolean = false;
@@ -41,36 +50,30 @@ export class DialogViewImageComponent {
     previewOpen: boolean = false;
     previewImage: string = '';
     previewTitle: string = '';
-    
+
     form: FormGroup;
     formFieldHelpers: string[] = ['fuse-mat-dense'];
-    can_add:boolean = true;
-    title: string = 'รูป';
+    can_add: boolean = true;
+    title: string = '';
 
     constructor(
+        private translocoService: TranslocoService,
         private dialogRef: MatDialogRef<DialogViewImageComponent>,
-        @Inject(MAT_DIALOG_DATA) public data: any,
+        @Inject(MAT_DIALOG_DATA) public data: { images: any[]; can_add: boolean; title: string },
         public dialog: MatDialog,
         private _fuseConfirmationService: FuseConfirmationService,
         private _formBuilder: FormBuilder,
-        private _toastr: ToastrService
+        private toastr: ToastrService
     ) {
-        // ถ้ามีการส่ง images มา
-        if (this.data && this.data.images) {
-            this.images = this.data.images;
-        }
 
-        if(this.data.can_add){
-            this.can_add = this.data.can_add;
-        }
-        console.log('this.data', this.data);
-        
-        if(this.data.title){
-            this.title = this.data.title;
-        }
-        // สร้าง form
-        this.form = this._formBuilder.group({
-            images: [[]]
+    }
+
+    ngOnInit(): void {
+         this.images = this.data.images;
+         this.can_add = this.data.can_add;
+
+         this.form = this._formBuilder.group({
+            images: [],
         });
     }
 
@@ -79,23 +82,29 @@ export class DialogViewImageComponent {
     }
 
     Submit() {
+        if (this.form.invalid) {
+            this.toastr.error(
+                this.translocoService.translate('toastr.missing_fields')
+            );
+            this.form.markAllAsTouched();
+            return;
+        }
         // จะดำเนินการเมื่อกดปุ่ม Submit
         this.dialogRef.close(this.images);
     }
 
     openUploadDialog(): void {
-        const dialogRef = this.dialog.open(UploadImageComponent, {
+        const dialogRef = this.dialog.open(UploadImageTwoComponent, {
             width: '600px',
             maxHeight: '90vh',
             data: {
-                multiple: this.multiple
-            }
+                multiple: this.multiple,
+            },
         });
-        this.dialogRef.close(true);
 
-        dialogRef.afterClosed().subscribe(result => {
+        dialogRef.afterClosed().subscribe((result) => {
             if (result) {
-                console.log('result', result);
+                this.dialogRef.close(result);
             }
         });
     }
@@ -112,8 +121,8 @@ export class DialogViewImageComponent {
 
     handleDownload(image: UploadedFile): void {
         fetch(image.imagePreview)
-            .then(response => response.blob()) // ดึงข้อมูลรูปเป็น Blob
-            .then(blob => {
+            .then((response) => response.blob()) // ดึงข้อมูลรูปเป็น Blob
+            .then((blob) => {
                 const url = window.URL.createObjectURL(blob);
                 const a = document.createElement('a');
                 a.href = url;
@@ -123,7 +132,7 @@ export class DialogViewImageComponent {
                 document.body.removeChild(a);
                 window.URL.revokeObjectURL(url); // ล้าง URL ออกจากหน่วยความจำ
             })
-            .catch(error => console.error('Download error:', error));
+            .catch((error) => console.error('Download error:', error));
     }
 
     handleDelete(index: number): void {
@@ -133,12 +142,16 @@ export class DialogViewImageComponent {
             message: 'คุณต้องการลบรูปภาพนี้ใช่หรือไม่?',
             actions: {
                 confirm: {
-                    label: 'ยืนยัน'
+                    label: this.translocoService.translate(
+                        'confirmation.confirm_button'
+                    ),
                 },
                 cancel: {
-                    label: 'ยกเลิก'
-                }
-            }
+                    label: this.translocoService.translate(
+                        'confirmation.cancel_button'
+                    ),
+                },
+            },
         });
 
         // รับผลลัพธ์จาก dialog
@@ -146,7 +159,7 @@ export class DialogViewImageComponent {
             if (result === 'confirmed') {
                 this.images.splice(index, 1);
                 this.filesChanged.emit(this.images);
-                this._toastr.success('ลบรูปภาพเรียบร้อยแล้ว');
+                this.toastr.success(this.translocoService.translate('toastr.delete'));
             }
         });
     }

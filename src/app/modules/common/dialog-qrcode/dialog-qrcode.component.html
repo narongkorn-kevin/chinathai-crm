@@ -13,14 +13,14 @@
         ></qrcode>
     </div>
     <p class="text-lg font-semibold mt-4">{{ qrCodeValue }}</p>
-    <p class="text-gray-500 text-sm">สแกน QR หรือเลือกดาวน์โหลด</p>
+    <p class="text-gray-500 text-sm">{{ 'common.dialog_qrcode.scan_or_download' | transloco }}</p>
     <div class="flex w-full items-center justify-center">
         <button
         mat-button
         class="mt-4 bg-red-600 text-white px-4 py-2 rounded-lg flex items-center justify-center"
         (click)="downloadQRCode()"
       >
-        <mat-icon class="mr-2">download</mat-icon> ดาวน์โหลด QR Code
+        <mat-icon class="mr-2">download</mat-icon> {{ 'common.dialog_qrcode.download_qr_button' | transloco }}
       </button>
     </div>
 </mat-dialog-content>

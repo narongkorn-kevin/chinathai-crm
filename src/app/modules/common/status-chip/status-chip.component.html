@@ -1,39 +1,39 @@
 <div>
     <div *ngIf="status == 'payment'"
         class="px-4 py-1.5 rounded-full text-sm inline-flex items-center justify-center font-medium bg-green-50 text-green-600 border border-green-200">
-        ชำระเงินแล้ว</div>
+        {{ 'common.status_chip.payment' | transloco }}</div>
     <div *ngIf="status == 'awaiting_summary'"
         class="px-4 py-1.5 rounded-full text-sm inline-flex items-center justify-center font-medium bg-orange-50 text-orange-600 border border-orange-200">
-        รอสรุปยอด</div>
+        {{ 'common.status_chip.awaiting_summary' | transloco }}</div>
     <div *ngIf="status == 'awaiting_payment'"
         class="px-4 py-1.5 rounded-full text-sm inline-flex items-center justify-center font-medium bg-yellow-50 text-yellow-600 border border-yellow-200">
-        รอชำระค่าสั่งซื้อ</div>
+        {{ 'common.status_chip.awaiting_payment' | transloco }}</div>
     <!-- <div *ngIf="status == 'in_progress'"
         class="px-4 py-1.5 rounded-full text-sm inline-flex items-center justify-center font-medium bg-blue-50 text-blue-600 border border-blue-200">
         อยู่ระหว่างการสั่งซื้อ</div> -->
     <div *ngIf="status == 'preparing_shipment'"
         class="px-4 py-1.5 rounded-full text-sm inline-flex items-center justify-center font-medium bg-purple-50 text-purple-600 border border-purple-200">
-        สินค้าเตรียมจัดส่ง</div>
+        {{ 'common.status_chip.preparing_shipment' | transloco }}</div>
     <div *ngIf="status == 'shipped'"
         class="px-4 py-1.5 rounded-full text-sm inline-flex items-center justify-center font-medium bg-teal-50 text-teal-600 border border-teal-200">
-        ร้านค้าจัดส่งแล้ว</div>
+        {{ 'common.status_chip.shipped' | transloco }}</div>
     <div *ngIf="status == 'cancelled'"
         class="px-4 py-1.5 rounded-full text-sm inline-flex items-center justify-center font-medium bg-red-50 text-red-500 border border-red-200">
-        ยกเลิก/ล้มเหลว</div>
+        {{ 'common.status_chip.cancelled' | transloco }}</div>
 
     <div *ngIf="status == 'completed'"
         class="px-4 py-1.5 rounded-full text-sm inline-flex items-center justify-center font-medium bg-green-50 text-green-600 border border-green-200">
-        เสร็จสิ้น</div>
+        {{ 'common.status_chip.completed' | transloco }}</div>
     <div *ngIf="status == 'waiting_for_document_review'"
         class="px-4 py-1.5 rounded-full text-sm inline-flex items-center justify-center font-medium bg-orange-50 text-orange-600 border border-orange-200">
-        รอตรวจสอบเอกสาร</div>
+        {{ 'common.status_chip.waiting_for_document_review' | transloco }}</div>
     <div *ngIf="status == 'waiting_for_tax_payment'"
         class="px-4 py-1.5 rounded-full text-sm inline-flex items-center justify-center font-medium bg-yellow-50 text-yellow-600 border border-yellow-200">
-        รอชำระภาษี</div>
+        {{ 'common.status_chip.waiting_for_tax_payment' | transloco }}</div>
     <div *ngIf="status == 'in_progress'"
         class="px-4 py-1.5 rounded-full text-sm inline-flex items-center justify-center font-medium bg-blue-50 text-blue-600 border border-blue-200">
-        อยู่ระหว่างดำเนินการ</div>
+        {{ 'common.status_chip.in_progress' | transloco }}</div>
     <div *ngIf="status == 'importing_documents'"
         class="px-4 py-1.5 rounded-full text-sm inline-flex items-center justify-center font-medium bg-purple-50 text-purple-600 border border-purple-200">
-        นำเข้าเอกสาร</div>
+        {{ 'common.status_chip.importing_documents' | transloco }}</div>
 </div>

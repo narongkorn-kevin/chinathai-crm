@@ -1,5 +1,4 @@
-import { forkJoin, Subscription } from 'rxjs';
-import { Component, OnInit, OnChanges, Inject } from '@angular/core';
+import { Component, OnInit, Inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DataTablesModule } from 'angular-datatables';
 import { MatIconModule } from '@angular/material/icon';
@@ -15,7 +14,6 @@ import {
     MAT_DIALOG_DATA,
 } from '@angular/material/dialog';
 import {
-    FormArray,
     FormBuilder,
     FormGroup,
     FormsModule,
@@ -38,15 +36,13 @@ export interface UploadedFile {
     imagePreview: string;
 }
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
-import { UploadImageService } from './upload-image.service';
-import { serialize } from 'object-to-formdata';
-import { environment } from 'environments/environment';
+import { UploadImageTwoService } from './upload-image-two.service';
 
 @Component({
     selector: 'app-member-form-view-1',
     standalone: true,
-    templateUrl: './upload-image.component.html',
-    styleUrl: './upload-image.component.scss',
+    templateUrl: './upload-image-two.component.html',
+    styleUrl: './upload-image-two.component.scss',
     imports: [
         TranslocoModule,
         CommonModule,
@@ -69,7 +65,7 @@ import { environment } from 'environments/environment';
         MatDivider,
     ],
 })
-export class UploadImageComponent implements OnInit {
+export class UploadImageTwoComponent implements OnInit {
     form: FormGroup;
     form_file: FormGroup;
     stores: any[] = [];
@@ -82,14 +78,14 @@ export class UploadImageComponent implements OnInit {
 
     constructor(
         private translocoService: TranslocoService,
-        private dialogRef: MatDialogRef<UploadImageComponent>,
+        private dialogRef: MatDialogRef<UploadImageTwoComponent>,
         @Inject(MAT_DIALOG_DATA) public data: any,
         public dialog: MatDialog,
         private FormBuilder: FormBuilder,
         public _service: LotService,
         private fuseConfirmationService: FuseConfirmationService,
         private toastr: ToastrService,
-        private service: UploadImageService
+        private service: UploadImageTwoService
     ) {
         this.title = data?.title ?? 'รูปภาพ';
         this.form = this.FormBuilder.group({
@@ -143,55 +139,15 @@ export class UploadImageComponent implements OnInit {
         });
 
         confirmation.afterClosed().subscribe((result) => {
-            if (result === 'confirmed') {
-                const uploadObservables = this.uploadedFiles.map((fileData) => {
-                    const formData = new FormData();
-                    formData.append('image', fileData.file);
-                    formData.append('path', 'images/asset/'); // ✅ ส่ง path ไปด้วย
-                    return this._service.upload_image(formData);
+            if (result == 'confirmed') {
+                this.uploadImage().then((resp: any) => {
+                    this.dialogRef.close(resp);
+                }).catch((err: any) => {
+                    this.toastr.error(this.translocoService.translate(
+                        'toastr.error'
+                    ));
                 });
-                forkJoin(uploadObservables).subscribe({
-                    next: (responses: any[]) => {
-                        const imagesArray = this.form.get('images') as FormArray;
 
-                        // สมมุติว่าแต่ละ response มี res.data = [url1, url2, ...]
-                        responses.forEach((res) => {
-                            const imageUrl = res?.data;
-                            if (imageUrl) {
-                                imagesArray.push(this.FormBuilder.control(imageUrl));
-                            }
-                        });
-
-                        if(this.data.type == 'BILL_CONTROLL_ACTION'){
-                            const returnedImages = imagesArray.value.map(imagePath => {
-                                const imageUrl = `${environment.apiUrl}/${imagePath}`;
-                                return {
-                                    image: imagePath,
-                                    image_url: imageUrl
-                                };
-                            });
-                            console.log(returnedImages);
-                            this.dialogRef.close(returnedImages);
-                        }
-                        else{
-                         // หลังจากอัปโหลดทุกไฟล์เสร็จ → ส่ง form
-                        const payload = this.form.value;
-                        this._service.createImagePackingList(payload).subscribe({
-                            next: () => {
-                                this.toastr.success(this.translocoService.translate('toastr.data_addition_successful'));
-                                this.dialogRef.close(true);
-                            },
-                            error: () => {
-                                this.toastr.error(this.translocoService.translate('toastr.unable_to_save'));
-                            }
-                        }); 
-                        }
-                       
-                    },
-                    error: () => {
-                        this.toastr.error(this.translocoService.translate('toastr.unable_to_save'));
-                    }
-                });
             }
 
         });

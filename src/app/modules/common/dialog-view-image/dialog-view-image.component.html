@@ -2,14 +2,14 @@
     <div class="flex justify-between items-center mb-4">
         <div class="flex flex-row">
             <h2 class="text-2xl font-semibold"> {{ title }} </h2>
-            <div class="ml-4" *ngif="can_add === true">
+            <div class="ml-4" *ngIf="can_add">
                 <!-- ปุ่มเพิ่มรูปภาพ เรียก UploadImageComponent -->
-                <button 
+                <button
                     class="px-6 py-2 bg-red-600 text-white rounded flex items-center justify-center cursor-pointer"
                     mat-flat-button
                     (click)="openUploadDialog()">
                     <mat-icon class="icon-size-5 mr-2">add</mat-icon>
-                    <span>เพิ่มรูปสินค้า</span>
+                    <span>{{ 'common.dialog_view_image.add_product_image' | transloco }}</span>
                 </button>
             </div>
         </div>
@@ -27,33 +27,15 @@
             <div class="h-64 bg-gray-100 flex items-center justify-center overflow-hidden">
                 <img [src]="image.imagePreview" [alt]="image.name" class="w-full h-full object-contain" />
             </div>
-            
-            <!-- ชื่อไฟล์ -->
-            <div class="p-2 bg-gray-50 flex justify-between items-center">
-                <span class="text-sm truncate max-w-xs">{{ image.name }}</span>
-                
-                <!-- ปุ่มดาวน์โหลด ดูภาพขยาย และลบ -->
-                <div class="flex">
-                    <button mat-icon-button (click)="handleDownload(image)" matTooltip="ดาวน์โหลด">
-                        <mat-icon>download</mat-icon>
-                    </button>
-                    <button mat-icon-button (click)="handlePreview(image)" matTooltip="ดูภาพขยาย">
-                        <mat-icon>fullscreen</mat-icon>
-                    </button>
-                    <button mat-icon-button (click)="handleDelete(i)" matTooltip="ลบ">
-                        <mat-icon>delete</mat-icon>
-                    </button>
-                </div>
-            </div>
         </div>
     </div>
 
     <!-- ถ้าไม่มีรูปภาพ -->
     <div *ngIf="!images || images.length === 0" class="flex flex-col items-center justify-center py-16 border-2 border-dashed rounded mt-4">
         <mat-icon class="text-gray-400 text-6xl mb-4">image_not_supported</mat-icon>
-        <p class="text-gray-500 text-xl mb-2">ไม่มีรูปภาพ</p>
-        <p class="text-gray-400 mb-4">กรุณาเพิ่มรูปสินค้าโดยคลิกที่ปุ่ม "เพิ่มรูปสินค้า"</p>
-        <!-- <button 
+        <p class="text-gray-500 text-xl mb-2">{{ 'common.dialog_view_image.no_images' | transloco }}</p>
+        <p class="text-gray-400 mb-4">{{ 'common.dialog_view_image.no_images_message' | transloco }}</p>
+        <!-- <button
             class="px-6 py-2 bg-blue-500 text-white rounded flex items-center justify-center cursor-pointer"
             mat-flat-button
             (click)="openUploadDialog()">
