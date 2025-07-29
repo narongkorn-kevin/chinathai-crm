@@ -1,4 +1,4 @@
 export const environment = {
     production: true,
-    apiUrl: 'https://cargo.dev-asha9.com'
+    apiUrl: 'https://g-cargo.dev-asha9.com/public'
   };
