@@ -1,4 +1,4 @@
-<div class="flex flex-col min-w-0 px-4 sm:px-6 lg:px-8 py-6 mx-auto">
+<div class="flex flex-col min-w-0 px-4 sm:px-6 lg:px-8 py-6 w-full">
     <!-- Header Section -->
     <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
         <!-- Breadcrumb and Order Info -->
@@ -169,179 +169,167 @@
         </div>
 
         <!-- Products Table -->
-        <div class="overflow-x-auto">
-            <table class="min-w-full divide-y divide-gray-200 ">
-                <thead class="bg-gray-50 whitespace-nowrap">
-                    <tr>
-                        <th class="px-4 py-3 text-left text-md font-medium text-gray-500 uppercase tracking-wider">
-                            <mat-checkbox class="text-white" [color]="'primary'" [checked]="selectAll"
-                                [indeterminate]="someSelect()" (change)="SelectAll($event.checked)"
-                                [disabled]="disableButton"></mat-checkbox>
-                        </th>
-                        <th class="px-4 py-3 text-left text-md font-medium text-gray-500 uppercase tracking-wider">#
-                        </th>
-                        <th class="px-4 py-3 text-left text-md font-medium text-gray-500 uppercase tracking-wider">
-                            {{ 'order_products.order_detail.transportation' | transloco }}
-                        </th>
-                        <th class="px-4 py-3 text-left text-md font-medium text-gray-500 uppercase tracking-wider">
-                            {{ 'order_products.order_detail.product_image' | transloco }}
-                        </th>
-                        <th class="px-4 py-3 text-left text-md font-medium text-gray-500 uppercase tracking-wider w-50">
-                            {{ 'order_products.order_detail.product_name' | transloco }}
-                        </th>
-                        <th class="px-4 py-3 text-right text-md font-medium text-gray-500 uppercase tracking-wider">
-                            {{ 'order_products.order_detail.price' | transloco }}
-                        </th>
-                        <th class="px-4 py-3 text-center text-md font-medium text-gray-500 uppercase tracking-wider">
-                            {{ 'order_products.order_detail.quantity' | transloco }}
-                        </th>
-                        <th class="px-4 py-3 text-center text-md font-medium text-gray-500 uppercase tracking-wider">
-                            {{ 'order_products.order_detail.rate' | transloco }}
-                        </th>
-                        <th class="px-4 py-3 text-right text-md font-medium text-gray-500 uppercase tracking-wider">
-                            {{ 'order_products.order_detail.total_price' | transloco }}
-                        </th>
-                        <th class="px-4 py-3 text-center text-md font-medium text-gray-500 uppercase tracking-wider">
-                            {{ 'order_products.order_detail.product_real_price' | transloco }}
-                        </th>
-                        <th class="px-4 py-3 text-center text-md font-medium text-gray-500 uppercase tracking-wider">
-                            {{ 'ราคาต่อรอง' | transloco }}
-                        </th>
-                        <th class="px-4 py-3 text-left text-md font-medium text-gray-500 uppercase tracking-wider">
-                            {{ 'order_products.order_number' | transloco }}
-                        </th>
-                        <th class="px-4 py-3 text-left text-md font-medium text-gray-500 uppercase tracking-wider">
-                            {{ 'order_products.order_detail.tracking_number' | transloco }}
-                        </th>
-                        <th class="px-4 py-3 text-left text-md font-medium text-gray-500 uppercase tracking-wider">
-                            {{ 'order_products.order_detail.link' | transloco }}
-                        </th>
-                        <th class="px-4 py-3 text-left text-md font-medium text-gray-500 uppercase tracking-wider">
-                            {{ 'ลิงก์ต่อรอง' | transloco }}
-                        </th>
-                        <th class="px-4 py-3 text-left text-md font-medium text-gray-500 uppercase tracking-wider">
-                            {{ 'order_products.order_detail.status' | transloco }}
-                        </th>
-                    </tr>
-                </thead>
-                <tbody class="bg-white divide-y divide-gray-200">
-                    @for (shop of data?.order_lists_group; track shop.id) {
-                    <tr class="bg-gray-50">
-                        <td colspan="16" class="px-4 py-3 bg-slate-300">
-                            <span class="font-bold text-gray-700">ร้านค้า : {{shop.showName ?? '-'}}</span>
-                        </td>
-                    </tr>
-                    @for (orderList of shop.orderList; track orderList.id;let i = $index) {
-                    <tr class="hover:bg-gray-50">
-                        <td class="px-4 py-3 whitespace-nowrap">
-                            <mat-checkbox *ngIf="!disableButton" class="text-white" [color]="'primary'"
-                                [(ngModel)]="orderList.IsChecked" (ngModelChange)="updateAllselect(orderList)"
-                                [disabled]="disableButton"></mat-checkbox>
-                            <div *ngIf="disableButton" class="w-full"></div>
-                        </td>
-                        <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500">{{i + 1}}</td>
-                        <td class="px-4 py-3 whitespace-nowrap">
-                            <button mat-flat-button color="accent" class="!min-w-0"
-                                (click)="clickUpdateTack(orderList)">
-                                <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:plus'"></mat-icon>
-                                <span class="ml-1">{{ 'order_products.order_detail.transportation' | transloco }}</span>
-                            </button>
-                        </td>
-                        <td class="px-1 py-1 whitespace-nowrap">
-                            <img class="w-50 h-auto rounded-md cursor-pointer" [src]="orderList?.product_image"
-                                (click)="showPicture(orderList?.product_image)">
-                        </td>
-                        <td class="px-4 py-3 text-sm text-gray-900 whitespace-nowrap">
-                            <p class="font-medium text-gray-900 leading-snug break-words whitespace-pre-line w-100">
-                                {{ orderList?.product_name }}
-                            </p>
-                            @if (orderList?.options?.length > 0) {
-                            <div class="mt-2">
-                                <mat-chip-set aria-label="Fish selection" class="!flex-wrap">
-                                    @for (option of orderList?.options; track option) {
-                                    <mat-chip [disabled]="option.disabled" class="!m-0.5 !text-md">
-                                        {{ option.option_name }}
-                                    </mat-chip>
-                                    }
-                                </mat-chip-set>
+        <div class="grid grid-cols-1 gap-4 p-4 w-full">
+            @for (shop of data?.order_lists_group; track shop.id) {
+            <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                <!-- Shop Header -->
+                <div class="bg-slate-300 px-4 py-3">
+                    <h3 class="font-bold text-gray-700">ร้านค้า: {{shop.showName ?? '-'}}</h3>
+                </div>
+
+                <div class="p-4 space-y-4">
+                    @for (orderList of shop.orderList; track orderList.id; let i = $index) {
+                    <div class="border rounded-lg p-4 hover:shadow-md transition-shadow">
+                        <!-- Header Row -->
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center space-x-4">
+                                <mat-checkbox *ngIf="!disableButton" class="text-white" [color]="'primary'"
+                                    [(ngModel)]="orderList.IsChecked" (ngModelChange)="updateAllselect(orderList)"
+                                    [disabled]="disableButton"></mat-checkbox>
+                                <span class="text-gray-500 font-medium">#{{i + 1}}</span>
                             </div>
-                            }
-                        </td>
-                        <td class="px-4 py-3 whitespace-nowrap text-sm text-right text-gray-500">
-                            {{orderList?.product_price | number:'1.2-2'}}
-                        </td>
-                        <td class="px-4 py-3 whitespace-nowrap text-sm text-center text-gray-500">
-                            {{ orderList?.product_qty }}
-                        </td>
-                        <td class="px-4 py-3 whitespace-nowrap text-sm text-center text-gray-500">
-                            {{ orderList?.rate | number:'1.2-2' }}
-                        </td>
-                        <td class="px-4 py-3 whitespace-nowrap text-sm text-right font-medium text-gray-900">
-                            {{ orderList?.product_total | number:'1.2-2' }}
-                        </td>
-                        <td class="px-4 py-3 whitespace-nowrap">
-                            <mat-form-field class="fuse-mat-small w-24" [ngClass]="formFieldHelpers">
-                                <input matInput [(ngModel)]="orderList.product_real_price" mask="separator.2"
-                                    thousandSeparator="," decimalMarker="." [dropSpecialCharacters]="true">
-                            </mat-form-field>
-                        </td>
-                        <td class="px-4 py-3 whitespace-nowrap">
-                            <mat-form-field class="fuse-mat-small w-24" [ngClass]="formFieldHelpers">
-                                <input matInput [(ngModel)]="orderList.product_negotiated_price" mask="separator.2"
-                                    thousandSeparator="," decimalMarker="." [dropSpecialCharacters]="true">
-                            </mat-form-field>
-                        </td>
-                        <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500">
-                            {{ orderList?.po_no ?? '-' }}
-                        </td>
-                        <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500">
-                            {{ orderList?.track_ecommerce_no ?? '-' }}
-                        </td>
-                        <td class="px-4 py-3 whitespace-nowrap text-sm">
-                            @if (orderList?.product_url) {
-                            <a [href]="orderList?.product_url" target="_blank" rel="noopener noreferrer"
-                                class="text-blue-600 hover:text-blue-800 hover:underline">
-                                {{ 'order_products.order_detail.open_link' | transloco }}
-                            </a>
-                            } @else {
-                            <span class="text-gray-400">-</span>
-                            }
-                        </td>
-                        <td class="px-4 py-3 whitespace-nowrap">
-                            <mat-form-field class="fuse-mat-small w-40" [ngClass]="formFieldHelpers">
-                                <input matInput [(ngModel)]="orderList.product_real_link">
-                            </mat-form-field>
-                        </td>
-                        <td class="px-4 py-3 whitespace-nowrap text-sm">
-                            @switch (orderList?.status) {
-                            @case ('waiting_for_review') {
-                            <span
-                                class="inline-flex items-center px-2.5 py-0.5 rounded-full text-md font-medium bg-yellow-100 text-yellow-800">
-                                {{ 'order_products.order_detail.waiting_for_review' | transloco }}
-                            </span>
-                            }
-                            @case ('reviewed') {
-                            <span
-                                class="inline-flex items-center px-2.5 py-0.5 rounded-full text-md font-medium bg-blue-100 text-blue-800">
-                                {{ 'order_products.order_detail.reviewed' | transloco }}
-                            </span>
-                            }
-                            @case ('reject') {
-                            <span
-                                class="inline-flex items-center px-2.5 py-0.5 rounded-full text-md font-medium bg-red-100 text-red-800">
-                                {{ 'order_products.order_detail.reject_order' | transloco }}
-                            </span>
-                            }
-                            @default {
-                            <span>-</span>
-                            }
-                            }
-                        </td>
-                    </tr>
+
+                            <div>
+                                @switch (orderList?.status) {
+                                @case ('waiting_for_review') {
+                                <span
+                                    class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-yellow-100 text-yellow-800">
+                                    {{ 'order_products.order_detail.waiting_for_review' | transloco }}
+                                </span>
+                                }
+                                @case ('reviewed') {
+                                <span
+                                    class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
+                                    {{ 'order_products.order_detail.reviewed' | transloco }}
+                                </span>
+                                }
+                                @case ('reject') {
+                                <span
+                                    class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-red-100 text-red-800">
+                                    {{ 'order_products.order_detail.reject_order' | transloco }}
+                                </span>
+                                }
+                                }
+                            </div>
+                        </div>
+
+                        <!-- Main Content - Horizontal Layout -->
+                        <div class="flex flex-col md:flex-row gap-6">
+                            <!-- Left Column - Product Info -->
+                            <div class="flex-1">
+                                <div class="flex items-start gap-4 mb-4">
+                                    <img class="w-24 h-24 object-cover rounded-md cursor-pointer"
+                                        [src]="orderList?.product_image"
+                                        (click)="showPicture(orderList?.product_image)">
+
+                                    <div class="flex-1">
+                                        <h4 class="font-medium text-gray-900 text-lg mb-2">{{ orderList?.product_name }}
+                                        </h4>
+
+                                        @if (orderList?.options?.length > 0) {
+                                        <div class="mt-1">
+                                            <mat-chip-set aria-label="Fish selection" class="!flex-wrap">
+                                                @for (option of orderList?.options; track option) {
+                                                <mat-chip [disabled]="option.disabled" class="!m-0.5 !text-xs">
+                                                    {{ option.option_name }}
+                                                </mat-chip>
+                                                }
+                                            </mat-chip-set>
+                                        </div>
+                                        }
+                                    </div>
+                                </div>
+
+                                <!-- Pricing Grid -->
+                                <div class="grid grid-cols-2 gap-4 mb-4">
+                                    <div class="bg-gray-50 p-3 rounded-lg">
+                                        <div class="text-sm text-gray-500">{{ 'order_products.order_detail.price' |
+                                            transloco }}</div>
+                                        <div class="text-lg font-medium">{{orderList?.product_price | number:'1.2-2'}}
+                                        </div>
+                                    </div>
+                                    <div class="bg-gray-50 p-3 rounded-lg">
+                                        <div class="text-sm text-gray-500">{{ 'order_products.order_detail.quantity' |
+                                            transloco }}</div>
+                                        <div class="text-lg font-medium">{{ orderList?.product_qty }}</div>
+                                    </div>
+                                    <div class="bg-gray-50 p-3 rounded-lg">
+                                        <div class="text-sm text-gray-500">{{ 'order_products.order_detail.rate' |
+                                            transloco }}</div>
+                                        <div class="text-lg font-medium">{{ orderList?.rate | number:'1.2-2' }}</div>
+                                    </div>
+                                    <div class="bg-gray-50 p-3 rounded-lg">
+                                        <div class="text-sm text-gray-500">{{ 'order_products.order_detail.total_price'
+                                            | transloco }}</div>
+                                        <div class="text-lg font-medium">{{ orderList?.product_total | number:'1.2-2' }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Right Column - Forms and Actions -->
+                            <div class="flex-1 space-y-4">
+                                <!-- Price Inputs -->
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <mat-form-field class="fuse-mat-dense w-full" [ngClass]="formFieldHelpers">
+                                        <mat-label>{{ 'order_products.order_detail.product_real_price' | transloco
+                                            }}</mat-label>
+                                        <input matInput [(ngModel)]="orderList.product_real_price" mask="separator.2"
+                                            thousandSeparator="," decimalMarker="." [dropSpecialCharacters]="true">
+                                    </mat-form-field>
+
+                                    <mat-form-field class="fuse-mat-dense w-full" [ngClass]="formFieldHelpers">
+                                        <mat-label>ราคาต่อรอง</mat-label>
+                                        <input matInput [(ngModel)]="orderList.product_negotiated_price"
+                                            mask="separator.2" thousandSeparator="," decimalMarker="."
+                                            [dropSpecialCharacters]="true">
+                                    </mat-form-field>
+                                </div>
+
+                                <!-- Order Info -->
+                                <div class="bg-gray-50 p-4 rounded-lg space-y-2">
+                                    <div class="flex justify-between">
+                                        <span class="text-sm text-gray-500">{{ 'order_products.order_number' | transloco
+                                            }}</span>
+                                        <span class="font-medium">{{ orderList?.po_no ?? '-' }}</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-sm text-gray-500">{{
+                                            'order_products.order_detail.tracking_number' | transloco }}</span>
+                                        <span class="font-medium">{{ orderList?.track_ecommerce_no ?? '-' }}</span>
+                                    </div>
+                                </div>
+
+                                <!-- Links -->
+                                <div class="space-y-2">
+                                    @if (orderList?.product_url) {
+                                    <a [href]="orderList?.product_url" target="_blank" rel="noopener noreferrer"
+                                        class="inline-flex items-center text-blue-600 hover:text-blue-800 hover:underline text-sm px-2 py-1 bg-blue-50 rounded">
+                                        <mat-icon class="icon-size-5 mr-2">link</mat-icon>
+                                        {{ 'order_products.order_detail.open_link' | transloco }}
+                                    </a>
+                                    }
+
+                                    <mat-form-field class="fuse-mat-dense w-full" [ngClass]="formFieldHelpers">
+                                        <mat-label>ลิงก์ต่อรอง</mat-label>
+                                        <input matInput [(ngModel)]="orderList.product_real_link">
+                                    </mat-form-field>
+                                </div>
+
+                                <!-- Transportation Button -->
+                                <button mat-flat-button color="accent" class="w-full mt-2"
+                                    (click)="clickUpdateTack(orderList)">
+                                    <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:plus'"></mat-icon>
+                                    <span class="ml-1">{{ 'order_products.order_detail.transportation' | transloco
+                                        }}</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                     }
-                    }
-                </tbody>
-            </table>
+                </div>
+            </div>
+            }
         </div>
     </div>
 
