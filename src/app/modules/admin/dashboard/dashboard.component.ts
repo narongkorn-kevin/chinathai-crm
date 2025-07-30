@@ -57,11 +57,7 @@ export type ChartOptions = {
         MatTabsModule,
         MatButtonToggleModule,
         NgApexchartsModule,
-        NgFor,
-        NgIf,
         MatTableModule,
-        NgClass,
-        CurrencyPipe,
         MatFormFieldModule,
         MatSelectModule,
         MatInputModule,
@@ -69,7 +65,7 @@ export type ChartOptions = {
     ],
 })
 export class DashboardComponent {
-accessLogs: any[] = [];
+    accessLogs: any[] = [];
     value1: any;
     value2: string = '';
     value3: string = '';
@@ -94,9 +90,158 @@ accessLogs: any[] = [];
     public chartOptions3: Partial<ChartOptions>;
     selectedProject: string = 'ACME Corp. Backend App';
 
+    constructor(private service: DashboardService, private cd: ChangeDetectorRef) {
+        this.chartOptions = {
+            series: [{
+                name: "สาขา1",
+                data: [11, 31, 40, 28, 51, 42, 109, 100, 56, 43, 27, 67, 47, 27, 57, 83, 47, 26, 57, 97, 47, 58, 28]
+            }],
+            chart: {
+                height: 350,
+                type: "area"
+            },
+            dataLabels: {
+                enabled: false
+            },
+            stroke: {
+                curve: "smooth"
+            },
+            xaxis: {
+                type: "datetime",
+                categories: []
+            },
+            tooltip: {
+                x: {
+                    format: "dd/MM/yy HH:mm"
+                }
+            }
+        };
+
+        this.chartOptions2 = {
+            series: [{
+                name: "distibuted",
+                data: []
+            }],
+            chart: {
+                height: 350,
+                type: "bar",
+                events: {
+                    click: function (chart, w, e) {
+                        // console.log(chart, w, e)
+                    }
+                }
+            },
+            colors: [
+                "#008FFB",
+                "#00E396",
+                "#FEB019",
+                "#FF4560",
+                "#775DD0",
+                "#546E7A",
+                "#26a69a",
+                "#D10CE8"
+            ],
+            plotOptions: {
+                bar: {
+                    columnWidth: "45%",
+                    distributed: true
+                }
+            },
+            dataLabels: {
+                enabled: false
+            },
+            legend: {
+                show: false
+            },
+            grid: {
+                show: false
+            },
+            xaxis: {
+                categories: [],
+                labels: {
+                    style: {
+                        colors: [
+                            "#008FFB",
+                            "#00E396",
+                            "#FEB019",
+                            "#FF4560",
+                            "#775DD0",
+                            "#546E7A",
+                            "#26a69a",
+                            "#D10CE8"
+                        ],
+                        fontSize: "12px"
+                    }
+                }
+            }
+        };
+
+        this.chartOptions3 = {
+            series: [{
+                name: "distibuted",
+                data: []
+            }],
+            chart: {
+                height: 350,
+                type: "bar",
+                events: {
+                    click: function (chart, w, e) {
+                        // console.log(chart, w, e)
+                    }
+                }
+            },
+            colors: [
+                "#008FFB",
+                "#00E396",
+                "#FEB019",
+                "#FF4560",
+                "#775DD0",
+                "#546E7A",
+                "#26a69a",
+                "#D10CE8"
+            ],
+            plotOptions: {
+                bar: {
+                    columnWidth: "45%",
+                    distributed: true
+                }
+            },
+            dataLabels: {
+                enabled: false
+            },
+            legend: {
+                show: false
+            },
+            grid: {
+                show: false
+            },
+            xaxis: {
+                categories: [
+                    ["เงินสด"],
+                    ["พร้อมเพย์"],
+                ],
+                labels: {
+                    style: {
+                        colors: [
+                            "#008FFB",
+                            "#00E396",
+                            "#FEB019",
+                            "#FF4560",
+                            "#775DD0",
+                            "#546E7A",
+                            "#26a69a",
+                            "#D10CE8"
+                        ],
+                        fontSize: "12px"
+                    }
+                }
+            }
+        };
+    }
+
     ngOnInit(): void {
+        return;
         this.service.getDashboard().subscribe(resp => {
-            console.log('seedata', resp);
             this.paymentType = resp.paymentType.map(item => item.value);
             this.total = resp.total;
             this.bill = resp.bill;
@@ -175,7 +320,7 @@ accessLogs: any[] = [];
                     height: 350,
                     type: "bar",
                     events: {
-                        click: function(chart, w, e) {
+                        click: function (chart, w, e) {
                             // console.log(chart, w, e)
                         }
                     }
@@ -244,157 +389,6 @@ accessLogs: any[] = [];
             this.foods = this.branchNames;
         });
     }
-
-    constructor(private service: DashboardService, private cd: ChangeDetectorRef) {
-        this.chartOptions = {
-            series: [{
-                name: "สาขา1",
-                data: [11, 31, 40, 28, 51, 42, 109, 100, 56, 43, 27, 67, 47, 27, 57, 83, 47, 26, 57, 97, 47, 58, 28]
-            }],
-            chart: {
-                height: 350,
-                type: "area"
-            },
-            dataLabels: {
-                enabled: false
-            },
-            stroke: {
-                curve: "smooth"
-            },
-            xaxis: {
-                type: "datetime",
-                categories: []
-            },
-            tooltip: {
-                x: {
-                    format: "dd/MM/yy HH:mm"
-                }
-            }
-        };
-
-        this.chartOptions2 = {
-            series: [{
-                name: "distibuted",
-                data: []
-            }],
-            chart: {
-                height: 350,
-                type: "bar",
-                events: {
-                    click: function(chart, w, e) {
-                        // console.log(chart, w, e)
-                    }
-                }
-            },
-            colors: [
-                "#008FFB",
-                "#00E396",
-                "#FEB019",
-                "#FF4560",
-                "#775DD0",
-                "#546E7A",
-                "#26a69a",
-                "#D10CE8"
-            ],
-            plotOptions: {
-                bar: {
-                    columnWidth: "45%",
-                    distributed: true
-                }
-            },
-            dataLabels: {
-                enabled: false
-            },
-            legend: {
-                show: false
-            },
-            grid: {
-                show: false
-            },
-            xaxis: {
-                categories: [],
-                labels: {
-                    style: {
-                        colors: [
-                            "#008FFB",
-                            "#00E396",
-                            "#FEB019",
-                            "#FF4560",
-                            "#775DD0",
-                            "#546E7A",
-                            "#26a69a",
-                            "#D10CE8"
-                        ],
-                        fontSize: "12px"
-                    }
-                }
-            }
-        };
-
-        this.chartOptions3 = {
-            series: [{
-                name: "distibuted",
-                data: []
-            }],
-            chart: {
-                height: 350,
-                type: "bar",
-                events: {
-                    click: function(chart, w, e) {
-                        // console.log(chart, w, e)
-                    }
-                }
-            },
-            colors: [
-                "#008FFB",
-                "#00E396",
-                "#FEB019",
-                "#FF4560",
-                "#775DD0",
-                "#546E7A",
-                "#26a69a",
-                "#D10CE8"
-            ],
-            plotOptions: {
-                bar: {
-                    columnWidth: "45%",
-                    distributed: true
-                }
-            },
-            dataLabels: {
-                enabled: false
-            },
-            legend: {
-                show: false
-            },
-            grid: {
-                show: false
-            },
-            xaxis: {
-                categories: [
-                    ["เงินสด"],
-                    ["พร้อมเพย์"],
-                ],
-                labels: {
-                    style: {
-                        colors: [
-                            "#008FFB",
-                            "#00E396",
-                            "#FEB019",
-                            "#FF4560",
-                            "#775DD0",
-                            "#546E7A",
-                            "#26a69a",
-                            "#D10CE8"
-                        ],
-                        fontSize: "12px"
-                    }
-                }
-            }
-        };
-    }
-
-
 
     public generateData(baseval, count, yrange) {
         let i = 0;
