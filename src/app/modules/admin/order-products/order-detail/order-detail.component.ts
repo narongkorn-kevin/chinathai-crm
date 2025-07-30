@@ -225,6 +225,12 @@ export class OrderDetailComponent implements OnInit, AfterViewInit {
             });
     }
 
+    // ใน component.ts
+    getSelectedCount(): number {
+        return this.data?.order_lists_group?.reduce((count, shop) =>
+            count + shop.orderList.filter(item => item.IsChecked).length, 0) || 0;
+    }
+
     get totalPrice() {
         return this.data?.total_price;
     }
