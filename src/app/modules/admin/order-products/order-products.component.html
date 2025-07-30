@@ -61,7 +61,7 @@
                     </mat-form-field>
                 </div>
                 <div class="w-full">
-                    
+
                     <asha-select-importer (change)="selectMember($event)"></asha-select-importer>
                 </div>
                 <div>
@@ -83,7 +83,7 @@
             </div>
             <div class="flex flex-col md:grid md:grid-cols-2 md:flex-row w-full gap-x-2 mt-2">
                 <div class="w-full">
-                    <mat-form-field class="w-full fuse-mat-dense"[ngClass]="formFieldHelpers">
+                    <mat-form-field class="w-full fuse-mat-dense" [ngClass]="formFieldHelpers">
                         <mat-label>{{ 'order_products.date' | transloco }}</mat-label>
                         <mat-date-range-input [rangePicker]="campaignOnePicker"
                             [comparisonStart]="filterForm.value.date_start" [comparisonEnd]="filterForm.value.date_end">
@@ -96,20 +96,19 @@
                     </mat-form-field>
                 </div>
                 <div class="w-full">
-                    <mat-form-field class="w-full fuse-mat-dense"[ngClass]="formFieldHelpers">
+                    <mat-form-field class="w-full fuse-mat-dense" [ngClass]="formFieldHelpers">
                         <mat-label>{{ 'order_products.order_number' | transloco }}</mat-label>
                         <input matInput formControlName="code">
                     </mat-form-field>
                 </div>
                 <div class="w-full">
                     <mat-label>{{ 'dalivery_order.labels.customer' | transloco }}</mat-label>
-                    <asha-select-member
-                    (change)="selectMember($event)"
-                    class="w-full [&_input]:!mt-0 [&_input]:!pt-1 [&_input]:!pb-1 [&_.mdc-text-field]:!mt-0">
+                    <asha-select-member (change)="selectMember($event)"
+                        class="w-full [&_input]:!mt-0 [&_input]:!pt-1 [&_input]:!pb-1 [&_.mdc-text-field]:!mt-0">
                     </asha-select-member>
                 </div>
                 <div class="w-full">
-                    <mat-form-field class="w-full fuse-mat-dense"[ngClass]="formFieldHelpers">
+                    <mat-form-field class="w-full fuse-mat-dense" [ngClass]="formFieldHelpers">
                         <mat-label>{{ 'order_products.status' | transloco }}</mat-label>
                         <mat-select formControlName="status">
                             <mat-option value="in_progress">{{ 'order_products.status_options.in_progress' | transloco
@@ -195,7 +194,7 @@
 <ng-template #update let-data="adtData">
     <div class="flex gap-2">
         <button [disabled]="data?.status != 'awaiting_payment'" mat-icon-button (click)="openDialogPayment(data)"
-            [ngClass]="{ 'bg-gray-300': data?.status != 'awaiting_payment', 'bg-accent': data?.status == 'awaiting_payment' }"    
+            [ngClass]="{ 'bg-gray-300': data?.status != 'awaiting_payment', 'bg-accent': data?.status == 'awaiting_payment' }"
             class="rounded-md p-2 shadow-md">
             <mat-icon svgIcon="mat_outline:edit_note" class="text-white"></mat-icon>
         </button>
@@ -210,10 +209,8 @@
 <ng-template #pic let-data="adtData">
     <div class="flex flex-row justify-center cursor-pointer">
         <ng-container *ngIf="data?.order_payment; else noImage">
-
             <!-- ถ้าเป็นแบบ upload -->
             <ng-container *ngIf="data.order_payment.payment_type === 'upload'; else useIcon">
-
                 <ng-container *ngIf="data.order_payment.image; else noImage">
                     <div (click)="showPicture(data.order_payment.image)">
                         <img [src]="data.order_payment.image" alt="Image" class="rounded-md w-10 h-15 text-center"
@@ -225,24 +222,27 @@
                     </div>
                 </ng-container>
             </ng-container>
+
             <!-- ถ้าไม่ใช่แบบ upload ใช้ icon -->
             <ng-template #useIcon>
-                <ng-container *ngIf="data.order_payment.payment_icon; else noImage">
+                <ng-container *ngIf="'https://cdn-icons-png.flaticon.com/512/10149/10149443.png'; else noImage">
                     <div>
-                        <img [src]="data.order_payment.payment_icon" alt="Icon"
+                        <img [src]="'https://cdn-icons-png.flaticon.com/512/10149/10149443.png'" alt="Icon"
                             class="rounded-md w-10 h-auto text-center"
-                            (error)="onImageError(data.order_payment.payment_icon)"
-                            (load)="onImageLoad(data.order_payment.payment_icon)" />
+                            (error)="onImageError('https://cdn-icons-png.flaticon.com/512/10149/10149443.png')"
+                            (load)="onImageLoad('https://cdn-icons-png.flaticon.com/512/10149/10149443.png')" />
                     </div>
-                    <div *ngIf="imageLoadedMap[data.order_payment.payment_icon] === false">
+                    <div *ngIf="imageLoadedMap['https://cdn-icons-png.flaticon.com/512/10149/10149443.png'] === false">
                         <mat-icon class="text-gray-400 text-6xl mb-4">image_not_supported</mat-icon>
                     </div>
                 </ng-container>
             </ng-template>
         </ng-container>
+
         <!-- ถ้าไม่มี order_payment หรือไม่มีรูป -->
         <ng-template #noImage>
             <mat-icon class="text-gray-400 text-6xl mb-4">image_not_supported</mat-icon>
         </ng-template>
     </div>
+
 </ng-template>

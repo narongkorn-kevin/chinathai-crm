@@ -245,7 +245,7 @@ export class OrderProductsComponent implements OnInit, AfterViewInit {
                 if (this.form.value.date_start) {
                     dataTablesParameters.date = this.form.value.date_start;
                 }
-                
+
 
                 dataTablesParameters['date_end'] = !!this.filterForm.value
                     .date_end
@@ -742,4 +742,6 @@ export class OrderProductsComponent implements OnInit, AfterViewInit {
         if (!payments || !payments.length) return '-';
         return payments.reduce((sum, p) => sum + (p.total_price || 0), 0).toFixed(4);
     }
+
+
 }
