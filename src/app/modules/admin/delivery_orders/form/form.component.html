@@ -42,7 +42,7 @@
                                 formControlName="member" appUppercaseEnglish>
                         </mat-form-field> -->
                         <mat-label>{{ 'dalivery_order.labels.customer' | transloco }}</mat-label>
-                        <asha-select-member (change)="selectMember($event)"
+                        <asha-select-member (change)="selectMember($event)" [memberId]="memberIdToEdit"
                             class="w-full [&_input]:!mt-0 [&_input]:!pt-1 [&_input]:!pb-1 [&_.mdc-text-field]:!mt-0">
                         </asha-select-member>
                     </div>

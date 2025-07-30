@@ -77,7 +77,7 @@
                                     <div> {{ this.data?.date }} </div>
                                     <div><strong>{{ 'dalivery_order.view.labels.customer_code' | transloco }}:</strong>
                                     </div>
-                                    <div> {{ this.data?.member?.importer_code }} </div>
+                                    <div> {{ this.data?.member?.importer_code ?? 'NONAME' }} </div>
                                     <div><strong>{{ 'dalivery_order.view.labels.agent_code' | transloco }}:</strong>
                                     </div>
                                     <div> {{ this.data?.member_importer?.importer_code ?? "-" }} </div>

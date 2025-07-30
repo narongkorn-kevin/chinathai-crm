@@ -117,10 +117,10 @@ export class ViewComponent implements OnInit {
     memberFilter = new FormControl('');
     filterMember: ReplaySubject<any[]> = new ReplaySubject<any[]>(1);
     members: any[] = [];
-    standard_size: any[] = [];  
+    standard_size: any[] = [];
     product_type: any[] = [];
     dtTrigger: Subject<ADTSettings> = new Subject<ADTSettings>();
-    
+
     protected _onDestroy = new Subject<void>();
 
     dtElement: DataTableDirective;
@@ -189,12 +189,12 @@ export class ViewComponent implements OnInit {
                 cbm_total: +cbmTotal.toFixed(4), // CBM รวมของรายการนี้
             };
         });
-        
+
         this.filterForm.get('name')!.valueChanges
             .pipe(debounceTime(300))
             .subscribe(() => {
                 this.Filter();
-        });
+            });
 
         // รวม CBM ทั้งหมด
         const totalCbm = this.filteredDeliveryOrderLists.reduce((sum: number, item: any) => sum + (item.cbm_total || 0), 0);
@@ -245,8 +245,6 @@ export class ViewComponent implements OnInit {
         }
 
         const total = this.filteredDeliveryOrderLists.reduce((sum, item) => {
-            console.log(item.qty_box);
-            
             const cbmPerUnit = parseFloat(item.cbm) || 0;
             const qty = parseInt(item.qty_box) || 0;
             const totalCbm = cbmPerUnit * qty;
@@ -260,12 +258,27 @@ export class ViewComponent implements OnInit {
 
     selectedTrack: any;
     selectTrack(track: any): void {
-        console.log('track', track);
+
+
         this.selectedTrack = track;
         this._changeDetectorRef.detectChanges();
-        this.filteredDeliveryOrderLists =
-            this.selectedTrack.delivery_order_lists;
+      this.filteredDeliveryOrderLists = this.selectedTrack.delivery_order_lists.map((item: any) => {
+            const width = Number(item.width || 0);
+            const height = Number(item.height || 0);
+            const long = Number(item.long || 0);
+            const qty_box = Number(item.qty_box || 0);
+
+            const cbmPerPiece = (width * height * long) / 1_000_000;
+            const cbmTotal = cbmPerPiece * qty_box;
+
+            return {
+                ...item,
+                cbm: +cbmPerPiece.toFixed(4), // CBM ต่อกล่อง
+                cbm_total: +cbmTotal.toFixed(4), // CBM รวมของรายการนี้
+            };
+        });
     }
+
     showFilterForm: boolean = false;
 
     openfillter() {
@@ -313,11 +326,11 @@ export class ViewComponent implements OnInit {
             );
         });
 
-            if (!filterValues.name && !filterValues.type && !filterValues.product_type) {
-                this.filteredDeliveryOrderLists = [...this.selectedTrack.delivery_order_lists];
-                }
+        if (!filterValues.name && !filterValues.type && !filterValues.product_type) {
+            this.filteredDeliveryOrderLists = [...this.selectedTrack.delivery_order_lists];
+        }
 
-                this.rerender();  // สำหรับ DataTables (ถ้าใช้)
+        this.rerender();  // สำหรับ DataTables (ถ้าใช้)
     }
 
     selectMember(item: any) {

@@ -612,6 +612,8 @@ export class FormComponent implements OnInit, AfterViewInit {
 
             // push tracks ใหม่เข้า FormArray
             newTracks.forEach((track: any) => {
+                console.log(track, 'track');
+                
                 if (track.member) {
                     this.form.patchValue({
                         member_id: track.member.id,
