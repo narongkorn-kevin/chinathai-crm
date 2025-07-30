@@ -29,7 +29,8 @@
                             <mat-icon class="icon-size-5 text-white" [svgIcon]="'heroicons_solid:plus'"></mat-icon>
                             <span class="ml-2">{{ 'buttons.addItem' | transloco }}</span>
                         </button>
-                        <button class="manage-menu-item text-white" (click)="openDialogaddress(this.multiSelect)" cdkMenuItem>
+                        <button class="manage-menu-item text-white" (click)="openDialogaddress(this.multiSelect)"
+                            cdkMenuItem>
                             <mat-icon class="icon-size-5 text-white"
                                 [svgIcon]="'heroicons_solid:square-2-stack'"></mat-icon>
                             <span class="ml-2">{{ 'buttons.addressManagement' | transloco }}</span>
@@ -75,85 +76,77 @@
                 </ng-template>
             </div>
         </div>
-        <div class="flex flex-col md:flex-row w-full gap-4 mb-4">
-            <!-- กล่องซ้าย: รายการประเภทและกราฟ -->
-            <div class="rounded-lg border-gray-300 border p-4 w-full md:w-7/12 flex flex-col md:flex-row">
-                <div class="grid grid-cols-1 md:grid-cols-5 gap-6 w-full">
-                    <!-- ประเภทสินค้า -->
-                    <div class="flex flex-col gap-4">
-                        <div class="flex flex-col md:items-end">
-                            <div class="text-2xl font-normal">{{ 'dalivery_order.labels.totalItems' | transloco }}</div>
-                            <div class="text-xl font-bold">{{ sumdashbord.total_items }} <span
-                                    class="text-2xl font-normal">{{ 'dalivery_order.labels.items' | transloco }}</span>
-                            </div>
+        <div class="dashboard-container">
+            <!-- Main Stats Section -->
+            <div class="stats-section">
+                <!-- Primary Metric -->
+                <div class="primary-metric hidden">
+                    <div class="metric-content">
+                        <img src="assets/images/item/cart.png" alt="Items" class="metric-icon">
+                        <div class="metric-text">
+                            <h2>{{ 'dalivery_order.labels.number_of_items' | transloco }}</h2>
+                            <p class="big-number">{{ sumdashbord?.total_items | number }}</p>
                         </div>
-                        <div *ngFor="let category of sumdashbord?.categories.slice(0,3)"
-                            class="flex flex-col md:items-end">
-                            <div class="text-xl font-semibold">{{ category.name }}</div>
-                            <div class="text-lg">{{ category.boxes }} {{ 'dalivery_order.labels.boxes' | transloco }}
-                            </div>
-                            <div class="text-md text-red-500">{{ category.cbm }} CBM</div>
+                    </div>
+                </div>
+
+                <!-- Secondary Metrics Grid -->
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <img src="assets/images/item/cube.png" alt="CBM" class="metric-icon">
+                        <div class="metric-info">
+                            <h3>{{ 'dalivery_order.labels.total_cbm' | transloco }}</h3>
+                            <p>{{ sumdashbord?.summary.total_cbm | number : '1.4' }}</p>
                         </div>
                     </div>
 
-                    <!-- กราฟ -->
-                    <div class="flex justify-center items-center w-full col-span-3 ">
-                        <apx-chart [series]="chartOptions.series" [chart]="chartOptions.chart"
-                            [labels]="chartOptions.labels" [colors]="chartOptions.colors"
-                            [responsive]="chartOptions.responsive" [legend]="chartOptions.legend"
-                            [dataLabels]="chartOptions.dataLabels"></apx-chart>
+                    <div class="metric-card">
+                        <img src="assets/images/item/kg.png" alt="Weight" class="metric-icon">
+                        <div class="metric-info">
+                            <h3>{{ 'dalivery_order.labels.total_weight' | transloco }}</h3>
+                            <p>{{ sumdashbord?.summary.total_weight_kg | number }}</p>
+                        </div>
                     </div>
-                    <!-- ประเภทสินค้า (อีกครึ่ง) -->
-                    <div class="flex flex-col gap-4">
-                        <div *ngFor="let category of sumdashbord?.categories.slice(3,7)"
-                            class="flex flex-col md:items-end">
-                            <div class="text-xl font-semibold">{{ category.name }}</div>
-                            <div class="text-lg">{{ category.boxes }} {{ 'dalivery_order.labels.boxes' | transloco }}
-                            </div>
-                            <div class="text-md text-red-500">{{ category.cbm  }} CBM</div>
+
+                    <div class="metric-card">
+                        <img src="assets/images/item/race.png" alt="Truck" class="metric-icon">
+                        <div class="metric-info">
+                            <h3>{{ 'dalivery_order.labels.transport_truck' | transloco }}</h3>
+                            <p>{{ sumdashbord?.summary.transport_truck | number }}</p>
+                        </div>
+                    </div>
+
+                    <div class="metric-card">
+                        <img src="assets/images/item/ship.png" alt="Ship" class="metric-icon">
+                        <div class="metric-info">
+                            <h3>{{ 'dalivery_order.labels.transport_ship' | transloco }}</h3>
+                            <p>{{ sumdashbord?.summary.transport_ship | number }}</p>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- กล่องขวา: สรุปข้อมูล -->
-            <div class="flex flex-col md:grid md:grid-cols-2 gap-2 w-full md:w-5/12">
-                <div class="rounded-lg border-gray-300 border p-4 flex justify-between items-center md:col-span-2">
-                    <img class="flex w-14" src="assets/images/item/cart.png" alt="Logo image">
-                    <div class="text-right">
-                        <div class="text-lg font-normal">{{ 'dalivery_order.labels.number_of_items' | transloco }}</div>
-                        <div class="text-4xl font-bold text-blue-95">{{ sumdashbord?.total_items | number }}</div>
-                    </div>
+            <!-- Categories Section -->
+            <div class="categories-section">
+                <div class="section-header">
+                    <h2>{{ 'ประเภทสินค้า' | transloco }}</h2>
+                    <p class="total-summary">{{ sumdashbord.total_items }} {{ 'dalivery_order.labels.items' | transloco
+                        }}</p>
                 </div>
-                <div class="rounded-lg border-gray-300 border p-4 flex justify-between items-center">
-                    <img class="flex w-14" src="assets/images/item/cube.png" alt="Logo image">
-                    <div class="text-right">
-                        <div class="text-lg font-normal">{{ 'dalivery_order.labels.total_cbm' | transloco }}</div>
-                        <div class="text-4xl font-bold text-blue-950">{{ sumdashbord?.summary.total_cbm | number : '1.4' }}
+
+                <div class="category-grid">
+                    <div *ngFor="let category of sumdashbord?.categories" class="category-card">
+                        <div class="category-header">
+                            <h3>{{ category.name }}</h3>
+                            <span class="cbm-value">{{ category.cbm }} CBM</span>
                         </div>
-                    </div>
-                </div>
-                <div class="rounded-lg border-gray-300 border p-4 flex justify-between items-center">
-                    <img class="flex w-14" src="assets/images/item/kg.png" alt="Logo image">
-                    <div class="text-right">
-                        <div class="text-lg font-normal">{{ 'dalivery_order.labels.total_weight' | transloco }}</div>
-                        <div class="text-4xl font-bold text-blue-950">{{ sumdashbord?.summary.total_weight_kg | number
-                            }}</div>
-                    </div>
-                </div>
-                <div class="rounded-lg border-gray-300 border p-4 flex justify-between items-center">
-                    <img class="flex w-14" src="assets/images/item/race.png" alt="Logo image">
-                    <div class="text-right">
-                        <div class="text-lg font-normal">{{ 'dalivery_order.labels.transport_truck' | transloco }}</div>
-                        <div class="text-4xl font-bold text-blue-950">{{ sumdashbord?.summary.transport_truck | number
-                            }}</div>
-                    </div>
-                </div>
-                <div class="rounded-lg border-gray-300 border p-4 flex justify-between items-center">
-                    <img class="flex w-14" src="assets/images/item/ship.png" alt="Logo image">
-                    <div class="text-right">
-                        <div class="text-lg font-normal">{{ 'dalivery_order.labels.transport_ship' | transloco }}</div>
-                        <div class="text-4xl font-bold text-blue-950">{{ sumdashbord?.summary.transport_ship | number }}
+                        <div class="category-details">
+                            <p class="boxes-count">{{ category.boxes }} {{ 'dalivery_order.labels.boxes' | transloco }}
+                            </p>
+                            <div class="percentage-bar">
+                                <div class="bar-fill"
+                                    [style.width.%]="(category.boxes / sumdashbord.total_items) * 100"></div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -177,7 +170,7 @@
                         <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:magnifying-glass'"></mat-icon>
                         <input matInput class="ml-2"
                             [placeholder]=" 'dalivery_order.labels.search_placeholder' | transloco "
-                            formControlName="po_no" >
+                            formControlName="po_no">
                     </mat-form-field>
                 </div>
                 <div>
@@ -211,7 +204,7 @@
                         <input matInput formControlName="po_no">
                     </mat-form-field>
                 </div>
-                 <div class="w-full">
+                <div class="w-full">
                     <mat-form-field class="w-full" [ngClass]="formFieldHelpers">
                         <mat-label>{{ 'dalivery_order.labels.shipment' | transloco }}</mat-label>
                         <mat-select formControlName="shipment_by">
@@ -274,11 +267,10 @@
                         </mat-select>
                     </mat-form-field>
                 </div>
-                     <div class="w-full">
+                <div class="w-full">
                     <mat-label>{{ 'dalivery_order.labels.customer' | transloco }}</mat-label>
-                    <asha-select-member
-                    (change)="selectMember($event)"
-                    class="w-full [&_input]:!mt-0 [&_input]:!pt-1 [&_input]:!pb-1 [&_.mdc-text-field]:!mt-0">
+                    <asha-select-member (change)="selectMember($event)"
+                        class="w-full [&_input]:!mt-0 [&_input]:!pt-1 [&_input]:!pb-1 [&_.mdc-text-field]:!mt-0">
                     </asha-select-member>
                 </div>
             </div>
@@ -295,7 +287,7 @@
                     <span class="ml-2">{{ 'buttons.search' | transloco }}</span>
                 </button>
             </div>
-            
+
         </form>
         <button class="my-2 " mat-flat-button [color]="'primary'" (click)="toggleSelectAll(!isAllSelected)">
             {{ isAllSelected ? ('buttons.deselectAll' | transloco) : ('buttons.selectAll'
@@ -342,7 +334,8 @@
 </ng-template>
 
 <ng-template #importerCode let-data="adtData">
-    <div> <span>{{data?.member?.importer_code}}</span><span *ngIf="data?.member_importer"> - {{data?.member_importer?.importer_code}}</span></div>
+    <div> <span>{{data?.member?.importer_code}}</span><span *ngIf="data?.member_importer"> -
+            {{data?.member_importer?.importer_code}}</span></div>
 </ng-template>
 
 <ng-template #date let-data="adtData">

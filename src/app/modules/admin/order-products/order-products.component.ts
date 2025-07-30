@@ -71,6 +71,19 @@ import { getPermissionName } from 'app/helper';
     changeDetection: ChangeDetectionStrategy.Default,
 })
 export class OrderProductsComponent implements OnInit, AfterViewInit {
+
+    orders: any[] = [];
+
+    summary = {
+        totalOrders: 0,
+        totalMembers: 0,
+        totalProducts: 0,
+        totalPrice: 0,
+        totalYuanValue: 0,
+        statuses: {} as Record<string, number>,
+    };
+
+
     formFieldHelpers: string[] = ['fuse-mat-dense'];
     dtOptions: any = {};
     dtTrigger: Subject<ADTSettings> = new Subject<ADTSettings>();
@@ -129,6 +142,40 @@ export class OrderProductsComponent implements OnInit, AfterViewInit {
     languageUrl: any;
 
     ngOnInit(): void {
+        this._service.getOrders().subscribe((resp: any) => {
+            this.orders = resp.data
+            const memberIds = new Set();
+            let totalProducts = 0;
+            let totalPrice = 0;
+            let totalYuan = 0;
+            const statusCount: Record<string, number> = {};
+
+            for (const order of this.orders) {
+                this.summary.totalOrders++;
+                memberIds.add(order.member?.id);
+
+                totalPrice += +order.total_price;
+
+                if (order.status) {
+                    statusCount[order.status] = (statusCount[order.status] || 0) + 1;
+                }
+
+                for (const item of order.order_lists || []) {
+                    totalProducts += item.product_qty;
+                    if (item.product_real_price && order.exchange_rate) {
+                        totalYuan += +item.product_real_price * item.product_qty / +order.exchange_rate;
+                    }
+                }
+            }
+
+            this.summary.totalMembers = memberIds.size;
+            this.summary.totalProducts = totalProducts;
+            this.summary.totalPrice = totalPrice;
+            this.summary.totalYuanValue = totalYuan;
+            this.summary.statuses = statusCount;
+
+        })
+
 
         if (this.langues === 'en') {
             this.languageUrl =

@@ -98,6 +98,9 @@ export class OrderProductsService {
     getAddOnService() {
         return this.http.get(environment.apiUrl + '/api/get_add_on_services')
     }
+    getOrders() {
+        return this.http.get(environment.apiUrl + '/api/get_orders')
+    }
 
     updateStatus(data: { status: string, orders: number[] }) {
         return this.http.post(environment.apiUrl + '/api/update_status_order', data)
