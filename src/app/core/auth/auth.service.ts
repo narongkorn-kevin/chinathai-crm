@@ -20,12 +20,12 @@ export class AuthService
      */
     set accessToken(token: string)
     {
-        sessionStorage.setItem('accessToken', token);
+        localStorage.setItem('accessToken', token);
     }
 
     get accessToken(): string
     {
-        return sessionStorage.getItem('accessToken') ?? '';
+        return localStorage.getItem('accessToken') ?? '';
     }
 
     // -----------------------------------------------------------------------------------------------------
@@ -66,12 +66,14 @@ export class AuthService
         }
 
         return this._httpClient.post<{accessToken: string, refreshToken: string, token: string }>('/api/login', credentials).pipe(
-            switchMap((response) =>
+            switchMap((response:any) =>
             {
-
+                console.log(response,'response');
+                
                 // Store the access token in the local storage
                 this.accessToken = response.token;
-
+                localStorage.setItem('lang','en');
+                localStorage.setItem('user', JSON.stringify(response.data));
                 // Set the authenticated flag to true
                 this._authenticated = true;
 
@@ -115,6 +117,8 @@ export class AuthService
                     this.accessToken = response.accessToken;
                 }
 
+               
+
                 // Set the authenticated flag to true
                 this._authenticated = true;
 
@@ -133,7 +137,7 @@ export class AuthService
     signOut(): Observable<any>
     {
         // Remove the access token from the local storage
-        sessionStorage.removeItem('accessToken');
+        localStorage.removeItem('accessToken');
 
         // Set the authenticated flag to false
         this._authenticated = false;
