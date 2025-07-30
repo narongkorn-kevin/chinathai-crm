@@ -1,6 +1,6 @@
 import { messages } from './../../../mock-api/common/messages/data';
 import { NgIf } from '@angular/common';
-import { Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { FormsModule, NgForm, ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
@@ -40,6 +40,7 @@ export class AuthSignInComponent implements OnInit
         private _authService: AuthService,
         private _formBuilder: UntypedFormBuilder,
         private _router: Router,
+        private _cdr: ChangeDetectorRef
     )
     {
     }
@@ -121,10 +122,9 @@ export class AuthSignInComponent implements OnInit
                             //message: 'Wrong email or password',
                         };
                     }
-
-
                     // Show the alert
                     this.showAlert = true;
+                    this._cdr.markForCheck()
                 },
             );
     }

@@ -4,7 +4,7 @@ import { AuthService } from 'app/core/auth/auth.service';
 
 const badgeCount = 0;
 
-var langues = localStorage.getItem('lang'); //th en cn
+var langues = 'th'
 
 const menuTitles = {
     dashboard: { th: "Dashboard", en: "Dashboard", cn: "仪表板" },
