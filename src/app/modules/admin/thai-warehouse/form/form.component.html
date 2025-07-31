@@ -6,12 +6,12 @@
                     <div class="flex space-x-2">
                         <button class="font-medium leading-7 tracking-tight truncate md:text-sm sm:leading-10"
                             [routerLink]="['/delivery_order']" routerLinkActive="router-link-active">
-                            รายการรวมพัสดุ
+                            {{ 'thai_warehouse.thai_warehouse' | transloco }}
                         </button>
                         <p class="font-medium leading-7 tracking-tight truncate md:text-sm sm:leading-10">></p>
                         <p
                             class="md:text-sm font-medium tracking-tight leading-7 sm:leading-10 truncate text-[#DF0B12]">
-                            กระสอบ
+                            {{ 'thai_warehouse.entry_list' | transloco }}
                         </p>
                     </div>
 
@@ -21,13 +21,15 @@
                     </p>
                 </div>
                 <div class="flex items-center justify-end gap-2">
-                    <button mat-flat-button [color]="'accent'" (click)="Close()">
-                        <mat-icon [svgIcon]="'heroicons_solid:trash'"></mat-icon>
-                        <span class="ml-2">ยกเลิก</span>
-                    </button>
+                    <div class="border border-black rounded-md">
+                        <button mat-flat-button (click)="Close()" class="hover-effect">
+                            <mat-icon svgIcon="feather:trash"></mat-icon>
+                            <span class="ml-2">{{ 'buttons.cancel' | transloco }}</span>
+                        </button>
+                    </div>
                     <button mat-flat-button [color]="'primary'" (click)="Submit()">
-                        <mat-icon [svgIcon]="'heroicons_solid:pencil-square'"></mat-icon>
-                        <span class="ml-2">บันทึก</span>
+                        <mat-icon [svgIcon]="'mat_outline:save'"></mat-icon>
+                        <span class="ml-2">{{ 'buttons.save' | transloco }}</span>
                     </button>
                 </div>
             </div>
@@ -62,7 +64,8 @@
                         <mat-form-field class="w-full" [ngClass]="formFieldHelpers">
                             <mat-label>ประเภท</mat-label>
                             <mat-select formControlName="product_type_id">
-                                <mat-option *ngFor="let product of product_types" [value]="product.id">{{ product.name }}</mat-option>
+                                <mat-option *ngFor="let product of product_types" [value]="product.id">{{ product.name
+                                    }}</mat-option>
                             </mat-select>
                         </mat-form-field>
                     </div>
@@ -73,23 +76,22 @@
                         <textarea matInput [placeholder]="'หมายเหตุ'" formControlName="remark"></textarea>
                     </mat-form-field>
                 </div>
-                <div
-                    class="w-full p-4 my-4 border border-gray-300 rounded-lg min-h-[300px] overflow-y-auto flex flex-col"
+                <div class="w-full p-4 my-4 border border-gray-300 rounded-lg min-h-[300px] overflow-y-auto flex flex-col"
                     formArrayName="delivery_order_lists">
                     <div class="flex flex-row w-full gap-2 mb-6">
-                        <div class="w-full text-3xl font-bold">รายการสินค้าในรายการกระสอบ</div>
+                        <div class="w-full text-xl md:text-3xl font-bold">รายการสินค้าในรายการกระสอบ</div>
                         <div class="flex flex-row justify-end w-full gap-2">
                             <div class="flex items-center gap-2">
                                 <div class="flex items-center gap-2">
                                     <button mat-menu-item (click)="clickRemove()">
-                                        <mat-icon svgIcon="heroicons_solid:trash"></mat-icon>
-                                        <span>ลบ</span>
+                                        <mat-icon svgIcon="feather:trash"></mat-icon>
+                                        <span>{{ 'buttons.delete' | transloco }}</span>
                                     </button>
                                 </div>
                                 <div class="flex items-center gap-2">
                                     <button mat-flat-button [color]="'primary'" (click)="opendialoglist()">
                                         <mat-icon [svgIcon]="'heroicons_solid:plus'"></mat-icon>
-                                        <span class="ml-2">เพิ่มรายการ</span>
+                                        <span class="ml-2">{{ 'buttons.addItem' | transloco }}</span>
                                     </button>
                                 </div>
                                 <div class="flex items-center gap-2">
@@ -104,15 +106,16 @@
                     <form *ngIf="!showFilterForm" [formGroup]="filterForm">
                         <div class="flex flex-col md:flex-row w-full gap-2 items-end">
                             <div class="w-full">
-                                <mat-form-field [ngClass]="formFieldHelpers" class="w-full" >
-                                    <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:magnifying-glass'"></mat-icon>
+                                <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                                    <mat-icon class="icon-size-5"
+                                        [svgIcon]="'heroicons_solid:magnifying-glass'"></mat-icon>
                                     <input matInput [placeholder]="'ค้นหาด้วยรหัสใบรับเข้าคลัง'">
                                 </mat-form-field>
                             </div>
                             <div>
                                 <button mat-flat-button [color]="'primary'" (click)="openfillter()" class="mb-5">
                                     <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:bars-3'"></mat-icon>
-                                    <span class="ml-2">ค้นหาโดยใช้ตัวกรอง</span>
+                                    <span class="ml-2">{{ 'buttons.advancedFilter' | transloco }}</span>
                                 </button>
                             </div>
                             <div>
@@ -125,19 +128,24 @@
                     <form [formGroup]="filterForm" class="p-4 rounded-md"
                         [@slideToggleFilter]="showFilterForm ? 'open' : 'closed'">
                         <div>
-                            <h2 class="text-xl font-extrabold leading-7 tracking-tight truncate md:text-xl sm:leading-10">
-                                ตัวกรองขั้นสูง
+                            <h2
+                                class="text-xl font-extrabold leading-7 tracking-tight truncate md:text-xl sm:leading-10">
+                                {{ 'lables.advanced_filter' | transloco }}
                             </h2>
                             <mat-divider></mat-divider>
                         </div>
                         <div class="grid md:grid-cols-3 md:flex-row w-full gap-x-2 mt-2">
-                            <div class="w-full">
-                                <asha-select-member (change)="selectMember($event)" class="w-full"></asha-select-member>
-                            </div>
+                        <div class="w-full">
+                            <mat-label>{{ 'delivery_order.labels.customer' | transloco }}</mat-label>
+                            <asha-select-member
+                            (change)="selectMember($event)"
+                            class="w-full [&_input]:!mt-0 [&_input]:!pt-1 [&_input]:!pb-1 [&_.mdc-text-field]:!mt-0">
+                            </asha-select-member>
+                        </div>
                             <div class="w-full">
                                 <mat-form-field class="w-full" [ngClass]="formFieldHelpers">
                                     <mat-label>รหัสใบรับเข้าคลัง</mat-label>
-                                    <input matInput formControlName="in_store">
+                                        <input matInput formControlName="in_store">
                                 </mat-form-field>
                             </div>
                             <div class="w-full">
@@ -149,42 +157,44 @@
                         </div>
                         <div class="w-full flex justify-end gap-2">
                             <button mat-flat-button [color]="'primary'" (click)="openfillter()">
-                                <span class="ml-2">ปิดตัวกรอง</span>
+                                <span class="ml-2">{{ 'buttons.closeFilter' | transloco }}</span>
                             </button>
                             <button mat-flat-button [color]="'primary'" (click)="clearFilter()">
                                 <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:bars-3'"></mat-icon>
-                                <span class="ml-2">ล้างตั้งค่าตัวกรอง</span>
+                                <span class="ml-2">{{ 'buttons.clearFilter' | transloco }}</span>
                             </button>
                             <button mat-flat-button [color]="'primary'" (click)="applyFilter()">
                                 <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:magnifying-glass'"></mat-icon>
-                                <span class="ml-2">ค้นหา</span>
+                                <span class="ml-2">{{ 'buttons.search' | transloco }}</span>
                             </button>
                         </div>
                     </form>
                     <div class="overflow-x-auto">
                         <table class="whitespace-nowrap w-full">
                             <thead>
-                              <tr >
-                                <th class="px-6 py-3 border border-x-0">
-                                    <mat-checkbox [checked]="selectAll" [indeterminate]="someSelect()"
-                                    (change)="SelectAll($event.checked)"></mat-checkbox>
-                                </th>
-                                <th class="px-6 py-3 border border-x-0">#</th>
-                                <th class="px-6 py-3 border border-x-0">ลูกค้า</th>
-                                <th class="px-6 py-3 border border-x-0">เลขที่บาร์โค้ด</th>
-                                <th class="px-6 py-3 border border-x-0">รหัสใบรับเข้าคลัง</th>
-                                <th class="px-6 py-3 border border-x-0">ขนส่งโดย</th>
-                                <th class="px-6 py-3 border border-x-0">ตรวจสอบจำนวน</th>
-                                <th class="px-6 py-3 border border-x-0">ประเภทพัสดุ</th>
-                                <th class="px-6 py-3 border border-x-0">น้ำหนัก(Kg.)</th>
-                                <th class="px-6 py-3 border border-x-0">CBM</th>
-                              </tr>
+                                <tr>
+                                    <th class="px-6 py-3 border border-x-0">
+                                        <mat-checkbox class="text-white" [color]="'primary'" [checked]="selectAll"
+                                            [indeterminate]="someSelect()"
+                                            (change)="SelectAll($event.checked)"></mat-checkbox>
+                                    </th>
+                                    <th class="px-6 py-3 border border-x-0">#</th>
+                                    <th class="px-6 py-3 border border-x-0">ลูกค้า</th>
+                                    <th class="px-6 py-3 border border-x-0">เลขที่บาร์โค้ด</th>
+                                    <th class="px-6 py-3 border border-x-0">รหัสใบรับเข้าคลัง</th>
+                                    <th class="px-6 py-3 border border-x-0">ขนส่งโดย</th>
+                                    <th class="px-6 py-3 border border-x-0">ตรวจสอบจำนวน</th>
+                                    <th class="px-6 py-3 border border-x-0">ประเภทพัสดุ</th>
+                                    <th class="px-6 py-3 border border-x-0">น้ำหนัก(Kg.)</th>
+                                    <th class="px-6 py-3 border border-x-0">CBM</th>
+                                </tr>
                             </thead>
                             <tbody>
                                 <tr *ngFor="let list of lists; let i = index" class="text-center">
                                     <td>
-                                        <mat-checkbox [(ngModel)]="list.IsChecked" (ngModelChange)="updateAllselect()"
-                                        [ngModelOptions]="{standalone: true}"></mat-checkbox>
+                                        <mat-checkbox class="text-white" [color]="'primary'"
+                                            [(ngModel)]="list.IsChecked" (ngModelChange)="updateAllselect()"
+                                            [ngModelOptions]="{standalone: true}"></mat-checkbox>
                                     </td>
                                     <td>{{ i + 1 }}</td>
                                     <td>{{ list?.customer ?? '-' }}</td>
@@ -198,13 +208,14 @@
                                 </tr>
                             </tbody>
                             <tfoot class="bg-gray-100">
-                              <tr class="text-center">
-                                <td colspan="8" class="px-6 py-3 border border-x-0 text-left"> ผลรวม {{ totallist }} รายการ </td>
-                                <td class="px-6 py-3 border border-x-0">{{ totalWeight }}</td>
-                                <td class="px-6 py-3 border border-x-0">{{ totalCBM }}</td>
-                              </tr>
+                                <tr class="text-center">
+                                    <td colspan="8" class="px-6 py-3 border border-x-0 text-left"> ผลรวม {{ totallist }}
+                                        รายการ </td>
+                                    <td class="px-6 py-3 border border-x-0">{{ totalWeight }}</td>
+                                    <td class="px-6 py-3 border border-x-0">{{ totalCBM }}</td>
+                                </tr>
                             </tfoot>
-                          </table>
+                        </table>
                     </div>
 
                 </div>
@@ -214,5 +225,6 @@
 </div>
 
 <ng-template #checkbox let-data="adtData">
-    <mat-checkbox [checked]="data.selected" (change)="onCheckboxChange($event, data?.id)"></mat-checkbox>
+    <mat-checkbox class="text-white" [color]="'primary'" [checked]="data.selected"
+        (change)="onCheckboxChange($event, data?.id)"></mat-checkbox>
 </ng-template>

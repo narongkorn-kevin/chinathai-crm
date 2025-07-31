@@ -373,16 +373,16 @@ export const defaultNavigation: FuseNavigationItem[] = [
                 type: 'group',
                 icon: 'heroicons_outline:archive-box',
                 children: [
-                    {
-                        id: 'warehouse.th.container1',
-                        title: 'ตู้คอนเทนเนอร์',
-                        type: 'basic',
-                    },
-                    {
-                        id: 'warehouse.th.container2',
-                        title: 'ตู้คอนเทนเนอร์ 2',
-                        type: 'basic',
-                    },
+                    // {
+                    //     id: 'warehouse.th.container1',
+                    //     title: 'ตู้คอนเทนเนอร์',
+                    //     type: 'basic',
+                    // },
+                    // {
+                    //     id: 'warehouse.th.container2',
+                    //     title: 'ตู้คอนเทนเนอร์ 2',
+                    //     type: 'basic',
+                    // },
                     {
                         id: 'warehouse.th.th-warehouse',
                         title: 'โกดังไทย',
@@ -391,6 +391,7 @@ export const defaultNavigation: FuseNavigationItem[] = [
                             title: '405',
                             classes: 'px-2 bg-red-600 text-white rounded-full',
                         },
+                        link: '/thai-warehouse'
                     },
                     {
                         id: 'warehouse.th.prepare-shipment',

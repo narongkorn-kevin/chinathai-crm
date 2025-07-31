@@ -4,7 +4,6 @@ import { WarehouseService } from './warehouse.service';
 import { inject } from '@angular/core';
 import { FormComponent } from './form/form.component';
 import { ViewComponent } from './view/view.component';
-import { EditMultiPoComponent } from './edit-multi-po/edit.component';
 
 export default [
     {
@@ -12,6 +11,7 @@ export default [
         component: WarehouseComponent,
         resolve: {
             standard_size: () => inject(WarehouseService).getStandardSize(),
+            dashboard_delivery_orders_thai: () => inject(WarehouseService).getDashboardDeliveryOrdersThai(),
             // tracking: () => inject(DeliveryOrdersService).gettacking(),
         },
     },
@@ -43,14 +43,7 @@ export default [
         path: 'view/:id',
         component: ViewComponent,
         resolve: {
-            // data: (route) => inject(WarehouseService).get(route.params['id']),
-        }
-    },
-      {
-        path: 'form-new',
-        component: EditMultiPoComponent,
-        resolve: {
-            // data: (route) => inject(WarehouseService).get(route.params['id']),
+            data: (route) => inject(WarehouseService).getPackingListById(route.params['id']),
         }
     },
 ] as Routes;

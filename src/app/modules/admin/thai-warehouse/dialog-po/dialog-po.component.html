@@ -1,92 +1,79 @@
-<div class="p-6">
-    <h2 class="text-2xl font-semibold mb-4">รายการ Barcode</h2>
-
-    <form *ngIf="!showFilterForm" [formGroup]="filterForm">
-        <div class="flex flex-col md:flex-row w-full gap-2 items-end">
-            <div class="w-full">
-                <mat-form-field [ngClass]="formFieldHelpers" class="w-full" >
-                    <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:magnifying-glass'"></mat-icon>
-                    <input matInput [placeholder]="'ค้นหาด้วย Teacking'">
-                </mat-form-field>
-            </div>
-            <div>
-                <button mat-flat-button [color]="'primary'" (click)="openfillter()" class="mb-5">
-                    <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:bars-3'"></mat-icon>
-                    <span class="ml-2">ค้นหาโดยใช้ตัวกรอง</span>
-                </button>
-            </div>
-            <div>
-                <button mat-flat-button [color]="'primary'" class="mb-5">
-                    <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:cog-6-tooth'"></mat-icon>
-                </button>
-            </div>
-        </div>
-    </form>
-    <form [formGroup]="filterForm" class="p-4 rounded-md"
-        [@slideToggleFilter]="showFilterForm ? 'open' : 'closed'">
-        <div>
-            <h2 class="text-xl font-extrabold leading-7 tracking-tight truncate md:text-xl sm:leading-10">
-                ตัวกรองขั้นสูง
-            </h2>
-            <mat-divider></mat-divider>
-        </div>
-        <div class="grid md:grid-cols-2 w-full gap-x-2 mt-2">
-            <div class="w-full">
-                <mat-form-field class="w-full" [ngClass]="formFieldHelpers">
-                    <mat-label>หมายเลขกระสอบ</mat-label>
-                    <input matInput formControlName="sack_code">
-                </mat-form-field>
-            </div>
-            <div class="w-full">
-                <mat-form-field class="w-full" [ngClass]="formFieldHelpers">
-                    <mat-label>หมายเลขพาเลท</mat-label>
-                    <input matInput formControlName="pallet_code">
-                </mat-form-field>
-            </div>
-            <div class="w-full">
-                <mat-form-field class="w-full" [ngClass]="formFieldHelpers">
-                    <mat-label>ใบรับเข้าคลัง</mat-label>
-                    <input matInput formControlName="code">
-                </mat-form-field>
-            </div>
-            <div class="w-full">
-                <mat-form-field class="w-full" [ngClass]="formFieldHelpers">
-                    <mat-label>Tracking</mat-label>
-                    <input matInput formControlName="tracking_code">
-                </mat-form-field>
-            </div>
-        </div>
-        <div class="w-full flex justify-end gap-2">
-            <button mat-flat-button [color]="'primary'" (click)="openfillter()">
-                <span class="ml-2">ปิดตัวกรอง</span>
-            </button>
-            <button mat-flat-button [color]="'primary'" (click)="clearFilter()">
-                <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:bars-3'"></mat-icon>
-                <span class="ml-2">ล้างตั้งค่าตัวกรอง</span>
-            </button>
-            <button mat-flat-button [color]="'primary'" (click)="applyFilter()">
-                <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:magnifying-glass'"></mat-icon>
-                <span class="ml-2">ค้นหา</span>
-            </button>
-        </div>
-    </form>
-    <button class="mb-2" mat-flat-button [color]="'accent'" (click)="toggleSelectAll(!isAllSelected)">
-        {{ isAllSelected ? 'Unselect All' : 'Select All' }}
-    </button>
-    <div class="overflow-x-auto whitespace-nowrap mt-2 max-w-full">
-        <table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger"
-            class="table w-full bg-white row-border hover">
-        </table>
+<div class="dialog-container">
+    <!-- Locked Header -->
+    <div class="dialog-header mb-2">
+        <h2 class="text-2xl font-semibold">{{ 'thai_warehouse.dialog_po.barcode_list' | transloco }}</h2>
     </div>
-    <div mat-dialog-actions class="flex justify-end border-t-2 mt-2 p-2">
-        <button class="px-6 ml-3" mat-flat-button [color]="'primary'" (click)="Submit()">
-            ตกลง
-        </button>
-        <button class="px-6 ml-3" mat-flat-button [color]="'warn'" (click)="onClose()">
-            ยกเลิก
-        </button>
+
+    <!-- Search Form (part of locked header) -->
+    <div class="dialog-search">
+        <form *ngIf="!showFilterForm" [formGroup]="filterForm">
+            <div class="flex flex-col md:flex-row w-full gap-2 items-end">
+                <div class="w-full">
+                    <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                        <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:magnifying-glass'"></mat-icon>
+                        <input matInput class="ml-2" formControlName="barcode"
+                            [placeholder]="'ค้นหาด้วย Barcode' | transloco">
+                    </mat-form-field>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- Scrollable Content -->
+    <div class="dialog-content">
+        <div class="overflow-x-auto whitespace-nowrap mt-2 max-w-full">
+            <table class="min-w-full table-auto border-collapse text-md">
+                <thead>
+                    <tr class="border-b">
+                        <th class="px-3 py-2 text-left w-5">
+                            <mat-checkbox color="warn" [checked]="isAllSelected()" (change)="toggleAllRows($event)">
+                            </mat-checkbox>
+                        </th>
+                        <th class="px-3 py-2 text-center w-5">#</th>
+                        <th class="px-3 py-2 text-left">Barcode</th>
+                        <th class="px-3 py-2 text-left">Scan ขาเข้า</th>
+                        <th class="px-3 py-2 text-left">สถานะ</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="border-b" *ngFor="let item of filteredItems; let i = index">
+                        <td class="px-3 py-2">
+                            <mat-checkbox color="warn" [(ngModel)]="item.selected" (change)="toggleSingleRow(i)">
+                            </mat-checkbox>
+                        </td>
+                        <td class="px-3 py-2 text-center">{{i + 1}}</td>
+                        <td class="px-3 py-2">{{item.barcode}}</td>
+                        <td class="px-3 py-2">
+                            <span
+                                class="px-3 py-1 text-sm font-semibold text-red-600 border border-red-500 rounded-full bg-white">ยังไม่ได้สแกน</span>
+                        </td>
+                        <td *ngIf="item.status === 'in'" class="px-3 py-2 flex items-center gap-1 mt-4">
+                            <div>
+                                <span class="w-2 h-2 rounded-full bg-orange-500 inline-block"></span>
+                                &nbsp;
+                                <span>รับเข้าคลัง</span>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr *ngIf="filteredItems.length === 0">
+                       
+                        <td class="px-3 py-2 text-center" colspan="5">ไม่มีข้อมูล</td>
+                        
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Locked Footer -->
+    <div class="dialog-footer">
+        <div class="flex justify-end p-2">
+            <button class="px-6 ml-3" mat-flat-button [color]="'primary'" (click)="Submit()">
+                {{ 'buttons.submit' | transloco }}
+            </button>
+            <button class="px-6 ml-3" mat-flat-button [color]="'warn'" (click)="onClose()">
+                {{ 'buttons.cancel' | transloco }}
+            </button>
+        </div>
     </div>
 </div>
-<ng-template #checkbox let-data="adtData">
-    <mat-checkbox [checked]="data.selected" (change)="onCheckboxChange($event, data)"></mat-checkbox>
-</ng-template>

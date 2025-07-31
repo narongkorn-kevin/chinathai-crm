@@ -32,7 +32,10 @@ import { HttpClient } from '@angular/common/http';
 import { WarehouseService } from '../warehouse.service';
 import { MatDivider } from '@angular/material/divider';
 import { ADTSettings } from 'angular-datatables/src/models/settings';
-import { MatDatepickerModule, MatDateRangePicker } from '@angular/material/datepicker';
+import {
+    MatDatepickerModule,
+    MatDateRangePicker,
+} from '@angular/material/datepicker';
 import {
     trigger,
     state,
@@ -40,12 +43,15 @@ import {
     transition,
     animate,
 } from '@angular/animations';
+import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
+
 @Component({
     selector: 'app-dialog-po-update-payment-new-product-form-addressed-2',
     standalone: true,
     templateUrl: './dialog-po.component.html',
     styleUrl: './dialog-po.component.scss',
     imports: [
+        TranslocoModule,
         CommonModule,
         DataTablesModule,
         MatIconModule,
@@ -63,6 +69,7 @@ import {
         MatDivider,
         MatDatepickerModule,
     ],
+
     animations: [
         trigger('slideToggleFilter', [
             state(
@@ -87,7 +94,8 @@ import {
 })
 export class DialogPoComponent implements OnInit {
     @ViewChild('checkbox') checkbox: any;
-    @ViewChild(DataTableDirective, { static: false })dtElement: DataTableDirective;
+    @ViewChild(DataTableDirective, { static: false })
+    dtElement: DataTableDirective;
     dtTrigger: Subject<ADTSettings> = new Subject<ADTSettings>();
     form: FormGroup;
     stores: any[] = [];
@@ -96,8 +104,10 @@ export class DialogPoComponent implements OnInit {
     addForm: FormGroup;
     tracks = [];
     dataRow: any[] = [];
-
+    items: any[] = [];
+    filteredItems: any[] = []; // สำหรับแสดงในตาราง
     constructor(
+        private translocoService: TranslocoService,
         private dialogRef: MatDialogRef<DialogPoComponent>,
         @Inject(MAT_DIALOG_DATA) public data: any,
         public dialog: MatDialog,
@@ -105,17 +115,49 @@ export class DialogPoComponent implements OnInit {
         private fuseConfirmationService: FuseConfirmationService,
         private toastr: ToastrService,
         private http: HttpClient,
-        private _service: WarehouseService,
+        private _service: WarehouseService
     ) {
+
+
         this.filterForm = this.FormBuilder.group({
             sack_code: [''],
             pallet_code: [''],
             code: [''],
             tracking_code: [''],
+            barcode: ['']
         });
+        this.langues = localStorage.getItem('lang');
     }
+    langues: any;
+    languageUrl: any;
 
     ngOnInit(): void {
+
+
+        // subscribe เมื่อมีการพิมพ์ในช่องค้นหา
+        this.filterForm.get('barcode')?.valueChanges.subscribe((value: any) => {
+            this.applyFilter(value);
+        });
+        if (this.langues === 'en') {
+            this.languageUrl =
+                'https://cdn.datatables.net/plug-ins/1.11.3/i18n/en-gb.json';
+        } else if (this.langues === 'th') {
+            this.languageUrl =
+                'https://cdn.datatables.net/plug-ins/1.11.3/i18n/th.json';
+        } else if (this.langues === 'cn') {
+            this.languageUrl =
+                'https://cdn.datatables.net/plug-ins/1.11.3/i18n/zh.json';
+        } else {
+            this.languageUrl =
+                'https://cdn.datatables.net/plug-ins/1.11.3/i18n/th.json';
+        }
+        this.items = this.data.items
+            .filter(item => item.status === 'in')
+            .map(item => ({
+                ...item,
+                selected: false
+            }));
+        this.filteredItems = this.items;
         this.form = this.FormBuilder.group({
             track_no: this.FormBuilder.array([]),
         });
@@ -126,7 +168,7 @@ export class DialogPoComponent implements OnInit {
             });
         }
 
-        setTimeout(() => this.loadTable());
+        // setTimeout(() => this.loadTable());
     }
     ngAfterViewInit() {
         setTimeout(() => {
@@ -143,12 +185,17 @@ export class DialogPoComponent implements OnInit {
         return this.form.get('track_no') as FormArray;
     }
 
-
     Submit() {
-        const formValue = this.multiSelect
-
+        if (this.form.invalid) {
+            this.toastr.error(
+                this.translocoService.translate('toastr.missing_fields')
+            );
+            this.form.markAllAsTouched();
+            return;
+        }
+        const formValue = this.filteredItems.filter(item => item.selected === true)
         const confirmation = this.fuseConfirmationService.open({
-            title: 'ยืนยันการบันทึกข้อมูล',
+            title: this.translocoService.translate('confirmation.save_title'),
             icon: {
                 show: true,
                 name: 'heroicons_outline:exclamation-triangle',
@@ -157,12 +204,16 @@ export class DialogPoComponent implements OnInit {
             actions: {
                 confirm: {
                     show: true,
-                    label: 'ยืนยัน',
+                    label: this.translocoService.translate(
+                        'confirmation.confirm_button'
+                    ),
                     color: 'primary',
                 },
                 cancel: {
                     show: true,
-                    label: 'ยกเลิก',
+                    label: this.translocoService.translate(
+                        'confirmation.cancel_button'
+                    ),
                 },
             },
             dismissible: false,
@@ -180,13 +231,37 @@ export class DialogPoComponent implements OnInit {
     }
 
     loadTable(): void {
+        const menuTitles = {
+            tracking: {
+                th: 'Tracking',
+                en: 'Tracking',
+                cn: '物流追踪',
+            },
+            outbound_scan: {
+                th: 'Scan ขาออก',
+                en: 'Outbound Scan',
+                cn: '出库扫描',
+            },
+            inbound_scan: {
+                th: 'Scan ขาเข้า',
+                en: 'Inbound Scan',
+                cn: '入库扫描',
+            },
+            status: {
+                th: 'สถานะ',
+                en: 'Status',
+                cn: '状态',
+            },
+        };
+
         this.dtOptions = {
             pagingType: 'full_numbers',
             serverSide: true,
             scrollX: true,
             ajax: (dataTablesParameters: any, callback) => {
+                dataTablesParameters.packing_list_id = this.data.id
                 this._service
-                    .datatableorderlist(dataTablesParameters)
+                    .datatableorderlistNotThai(dataTablesParameters)
                     .pipe(map((resp: { data: any }) => resp.data))
                     .subscribe({
                         next: (resp: any) => {
@@ -206,9 +281,7 @@ export class DialogPoComponent implements OnInit {
                     title: '',
                     data: null,
                     defaultContent: '',
-                    ngTemplateRef: {
-                        ref: this.checkbox,
-                    },
+                    ngTemplateRef: { ref: this.checkbox },
                     className: 'w-5 text-center',
                 },
                 {
@@ -217,46 +290,26 @@ export class DialogPoComponent implements OnInit {
                     className: 'w-5 text-center',
                 },
                 {
-                    title: 'Tracking',
-                    data: function (row: any) {
-                        if(!row.delivery_order?.date){
-                            return '-';
-                        }
-                        return row.delivery_order?.date;
-                    },
+                    title: menuTitles.tracking[this.langues],
+                    data: (row: any) => row.delivery_order?.po_no || '-',
                     className: 'text-center',
                     // ngTemplateRef: {
                     //     ref: this.date,
                     // },
                 },
                 {
-                    title: 'Scan ขาออก',
-                    data: function (row: any) {
-                        if(!row.sack?.name){
-                            return '-';
-                        }
-                        return row.sack?.name;
-                    },
+                    title: menuTitles.outbound_scan[this.langues],
+                    data: (row: any) => row.packing_list?.closing_date || '-',
                     className: 'text-center',
                 },
                 {
-                    title: 'Scan ขาเข้า',
-                    data: function (row: any) {
-                        if(!row.delivery_order?.code){
-                            return '-';
-                        }
-                        return row.delivery_order?.code;
-                    },
+                    title: menuTitles.inbound_scan[this.langues],
+                    data: (row: any) => row.packing_list?.estimated_arrival_date || '-',
                     className: 'text-center',
                 },
                 {
-                    title: 'สถานะ',
-                    data: function (row: any) {
-                        if(!row.barcode?.name){
-                            return '-';
-                        }
-                        return row.barcode?.name;
-                    },
+                    title: menuTitles.status[this.langues],
+                    data: (row: any) => row.packing_list.status || '-',
                     className: 'text-center',
                 },
             ],
@@ -272,30 +325,7 @@ export class DialogPoComponent implements OnInit {
     }
 
     multiSelect: any[] = [];
-    isAllSelected: boolean = false; // ใช้เก็บสถานะเลือกทั้งหมด
 
-    toggleSelectAll(isSelectAll: boolean): void {
-        this.isAllSelected = isSelectAll; // อัปเดตสถานะเลือกทั้งหมด
-
-        if (isSelectAll) {
-            // เลือกทั้งหมด: เพิ่ม object ของทุกแถวใน multiSelect
-            this.dataRow.forEach((row: any) => {
-                if (!this.multiSelect.some(item => item.id === row.id)) {
-                    this.multiSelect.push(row); // เพิ่ม object ถ้ายังไม่มีใน multiSelect
-                }
-                row.selected = true; // ตั้งค่า selected เป็น true
-            });
-        } else {
-            // ยกเลิกการเลือกทั้งหมด: ลบ object ของทุกแถวออกจาก multiSelect
-            this.dataRow.forEach((row: any) => {
-                const index = this.multiSelect.findIndex(item => item.id === row.id);
-                if (index !== -1) {
-                    this.multiSelect.splice(index, 1); // ลบ object ออกจาก multiSelect
-                }
-                row.selected = false; // ตั้งค่า selected เป็น false
-            });
-        }
-    }
 
     onCheckboxChange(event: any, row: any): void {
         if (event.checked) {
@@ -303,7 +333,9 @@ export class DialogPoComponent implements OnInit {
             this.multiSelect.push(row);
         } else {
             // ลบ object ออกจาก multiSelect
-            const index = this.multiSelect.findIndex(item => item.id === row.id);
+            const index = this.multiSelect.findIndex(
+                (item) => item.id === row.id
+            );
             if (index !== -1) {
                 this.multiSelect.splice(index, 1); // ใช้ splice เพื่อลบค่าออก
             }
@@ -316,13 +348,39 @@ export class DialogPoComponent implements OnInit {
         this.showFilterForm = !this.showFilterForm;
     }
 
-    applyFilter() {
-        const filterValues = this.filterForm.value;
-        console.log(filterValues);
-        this.rerender();
-    }
+    // applyFilter() {
+    //     const filterValues = this.filterForm.value;
+    //     console.log(filterValues);
+    //     this.rerender();
+    // }
     clearFilter() {
         this.filterForm.reset();
         this.rerender();
+    }
+
+    isAllSelected(): boolean {
+        return this.data.items.every(item => item.selected);
+    }
+
+    toggleAllRows(event: any): void {
+        console.log(event, 'event');
+
+        const checked = event.checked;
+        this.items.forEach(item => (item.selected = checked));
+    }
+
+    toggleSingleRow(index: number): void {
+        // Optional: put logic if needed when single row checkbox changes
+    }
+
+    applyFilter(value: string): void {
+        const filterValue = value?.trim().toLowerCase() || '';
+        if (filterValue) {
+            this.filteredItems = this.items.filter(item =>
+                item.barcode?.toLowerCase().includes(filterValue)
+            );
+        } else {
+            this.filteredItems = this.items;
+        }
     }
 }
