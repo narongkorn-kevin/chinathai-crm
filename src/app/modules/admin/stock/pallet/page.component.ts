@@ -199,7 +199,7 @@ export class PalletComponent implements OnInit, AfterViewInit {
                 cn: '入库日期',
             },
             pallet_code: {
-                th: 'รหัสพาเลท',
+                th: 'รหัสกระสอบ',
                 en: 'Pallet Code',
                 cn: '托盘编号',
             },

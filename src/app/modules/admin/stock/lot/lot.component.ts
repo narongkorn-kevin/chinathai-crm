@@ -208,7 +208,7 @@ throw new Error('Method not implemented.');
                 cn: '创建日期',
             },
             packing_list: {
-                th: 'Packing List',
+                th: 'หมายเลข',
                 en: 'Packing List',
                 cn: '装箱单',
             },
