@@ -21,14 +21,10 @@ export class MemberService {
 
     constructor(private http: HttpClient) { }
 
-    update(data: any) {
-        return this.http.put('/api/member', data)
+    update(data: any, id: any) {
+        return this.http.put('/api/member/'+ id, data)
     }
-    getMember() {
-        return this.http.get(
-            environment.apiUrl + '/api/get_member'
-        );
-    }
+
     getRole() {
         return this.http.get('/api/role').pipe(
             tap((resp: any) => {
@@ -37,7 +33,7 @@ export class MemberService {
         );
     }
     getTransport() {
-        return this.http.get('/api/get_transport').pipe(
+        return this.http.get('/api/get_transport_rate').pipe(
             tap((resp: any) => {
                 this._roles.next(resp);
             })
@@ -109,6 +105,11 @@ export class MemberService {
             environment.apiUrl + '/api/get_agent'
         );
     }
+    getMember() {
+        return this.http.get(
+            environment.apiUrl + '/api/get_member'
+        );
+    }
     getThaiTransport() {
         return this.http.get(
             environment.apiUrl + '/api/get_transport'
@@ -126,6 +127,14 @@ export class MemberService {
     deleteAddress(id: number) {
         return this.http.delete(
             environment.apiUrl + '/api/member_address/' + id
+        );
+    }
+
+    getTransportType() {
+        return this.http.get('/api/get_transport').pipe(
+            tap((resp: any) => {
+                this._categories.next(resp);
+            })
         );
     }
 }

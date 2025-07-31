@@ -1,5 +1,5 @@
 <div class="md:max-w-lg">
-    <h1 mat-dialog-title class="mb-4 text-xl font-semibold">ที่อยู่สมาชิก</h1>
+    <h1 mat-dialog-title class="mb-4 text-xl font-semibold">{{ 'member.dialog_address.member_address' | transloco }}</h1>
     <div mat-dialog-content class="overflow-y-auto md:max-h-180">
         <ng-container *ngFor="let address of shipAddress; let i = index">
             <div class="py-3 border-b last:border-0 flex items-center gap-2">
@@ -11,7 +11,7 @@
                     </p>
                 </div>
                 <button class="px-4 py-1 text-white rounded" (click)="selectAddress(address)" mat-flat-button
-                    [color]="'primary'">เลือก</button>
+                    [color]="'primary'">{{ 'member.dialog_address.choose' | transloco }}</button>
             </div>
         </ng-container>
     </div>

@@ -40,30 +40,33 @@ import {
 } from '@angular/material/datepicker';
 import { MatCheckbox } from '@angular/material/checkbox';
 import { MatDivider, MatDividerModule } from '@angular/material/divider';
+import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
+
 @Component({
     selector: 'app-member-view-1',
     standalone: true,
     templateUrl: './view.component.html',
     styleUrl: './view.component.scss',
     imports: [
-    CommonModule,
-    DataTablesModule,
-    MatIconModule,
-    MatFormFieldModule,
-    MatInputModule,
-    FormsModule,
-    MatToolbarModule,
-    MatButtonModule,
-    MatSelectModule,
-    ReactiveFormsModule,
-    MatInputModule,
-    MatFormFieldModule,
-    MatRadioModule,
-    MatFormFieldModule,
-    MatDatepickerModule,
-    MatDivider,
-    RouterLink
-],
+        TranslocoModule,
+        CommonModule,
+        DataTablesModule,
+        MatIconModule,
+        MatFormFieldModule,
+        MatInputModule,
+        FormsModule,
+        MatToolbarModule,
+        MatButtonModule,
+        MatSelectModule,
+        ReactiveFormsModule,
+        MatInputModule,
+        MatFormFieldModule,
+        MatRadioModule,
+        MatFormFieldModule,
+        MatDatepickerModule,
+        MatDivider,
+        RouterLink,
+    ],
 })
 export class ViewComponent implements OnInit {
     formFieldHelpers: string[] = ['fuse-mat-dense'];
@@ -88,7 +91,6 @@ export class ViewComponent implements OnInit {
     }
 
     ngOnInit(): void {
-
         this.form = this.FormBuilder.group({
             id: [''],
             code: [''],
@@ -124,11 +126,12 @@ export class ViewComponent implements OnInit {
             cargo_name: [''],
             cargo_website: [''],
             cargo_image: [null],
-            order_quantity_in_thai: '150',//เอาจากแบบสอบถามหน้าสมัคร
+            order_quantity_in_thai: '150', //เอาจากแบบสอบถามหน้าสมัคร
 
             province_code: [''],
             district_code: [''],
             sub_district_code: [''],
+            line_id: [''],
         });
 
         this.form.patchValue({
@@ -148,8 +151,10 @@ export class ViewComponent implements OnInit {
             sub_district: this.data?.sub_district,
             postal_code: this.data?.postal_code,
             image: this.data?.image,
-            transport_thai_master_id: this.data?.detail?.transport_thai_master_id,
-            ever_imported_from_china: this.data?.detail?.ever_imported_from_china,
+            transport_thai_master_id:
+                this.data?.detail?.transport_thai_master_id,
+            ever_imported_from_china:
+                this.data?.detail?.ever_imported_from_china,
             order_quantity: this.data?.detail?.order_quantity,
             frequent_importer: this.data?.detail?.frequent_importer,
             need_transport_type: this.data?.detail?.need_transport_type,
@@ -161,13 +166,11 @@ export class ViewComponent implements OnInit {
             cargo_website: this.data?.detail?.cargo_website,
             cargo_image: this.data?.detail?.cargo_image,
             order_quantity_in_thai: this.data?.detail?.order_quantity_in_thai,
+            line_id: this.data?.line_id,
         });
     }
 
     Close() {
         this._router.navigate(['member']);
-    }
-    goToEdit() {
-        this._router.navigate(['member/edit/1']);
     }
 }

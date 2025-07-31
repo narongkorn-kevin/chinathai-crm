@@ -1,138 +1,73 @@
-<div class="flex flex-col flex-auto justify-start items-center p-5 w-full">
-    <div class="w-full flex-col justify-between items-start flex overflow-hidden ">
-        <div class="flex space-x-2">
-            <button class="md:text-sm font-medium tracking-tight leading-7 truncate"
-                [routerLink]="['/member']" routerLinkActive="router-link-active">
-                รายการรวมพัสดุ
-            </button>
-            <p class="md:text-sm font-medium tracking-tight leading-7  truncate">></p>
-            <p
-                class="md:text-sm font-medium tracking-tight leading-7  truncate text-[#DF0B12]">
-                สมาชิก
-            </p>
-        </div>
-        <div class="w-full pb-2.5 justify-between items-center flex flex-col sm:flex-row border-b-2 mb-5">
-            <div class="flex flex-col justify-start w-full mb-3 sm:mb-0">
-                <p class="text-2xl place-self-start self-start text-[#DF0B12] font-bold tracking-tight leading-7 sm:leading-10 truncate" *ngIf="this.type !== 'EDIT'">
-                    สร้างรายชื่อสมาชิก
-                </p>
-                <p class="text-2xl text-[#DF0B12] font-bold tracking-tight leading-7 sm:leading-10 truncate" *ngIf="this.type === 'EDIT'">
-                    รหัสสมาชิก: {{data.code}}
-                </p>
-            </div>
-            <div class="justify-end items-center gap-2 flex w-full">
-                <button mat-flat-button [color]="'warn'" (click)="Close()">
-                    <mat-icon>delete</mat-icon>
-                    <span class="ml-2">ยกเลิก</span>
-                </button>
-                <button mat-flat-button [color]="'primary'" (click)="Submit()">
-                    <mat-icon>save</mat-icon>
-                    <span class="ml-2">บันทึก</span>
-                </button>
-            </div>
-        </div>
+<div class="flex flex-col flex-auto justify-start items-center w-full">
+    <div class="w-full flex-col justify-between items-center flex overflow-hidden">
+        <div class="w-full flex-col justify-start items-start flex">
+            <div class="w-full px-4 md:px-10 pt-5 pb-2.5 bg-white justify-between items-center flex">
+                <div class="flex flex-col">
+                    <div class="flex space-x-2">
+                        <button class="md:text-sm font-medium tracking-tight leading-7 sm:leading-10 truncate"
+                            [routerLink]="['/member']" routerLinkActive="router-link-active">
+                            {{ 'member.member_list' | transloco }}
+                        </button>
+                        <p class="md:text-sm font-medium tracking-tight leading-7 sm:leading-10 truncate">></p>
+                        <button
+                            class="md:text-sm font-medium tracking-tight leading-7 sm:leading-10 truncate text-[#DF0B12]"
+                            [routerLink]="['/member']" routerLinkActive="router-link-active">
+                            {{ 'member.members' | transloco }}
+                        </button>
+                    </div>
 
-        <div class="w-full flex-col justify-start items-start flex bg-card">
-            <div class="w-full px-10 flex flex-col gap-2 bg-white " [formGroup]="form">
+                    <p class="md:text-2xl text-[#DF0B12] font-bold tracking-tight leading-7 sm:leading-10 truncate"
+                        *ngIf="this.type !== 'EDIT'">
+                        {{ 'member.form.create_member_list' | transloco }}
+                    </p>
+                    <p class="md:text-2xl text-[#DF0B12] font-bold tracking-tight leading-7 sm:leading-10 truncate"
+                        *ngIf="this.type === 'EDIT'">
+                        {{ 'member.form.edit_member_list' | transloco }}
+                    </p>
+                </div>
+                <div class="justify-end items-center gap-2 flex flex-col md:flex-row">
+                    <div class="border border-black rounded-md">
+                        <button mat-flat-button (click)="Close()" class="hover-effect">
+                            <mat-icon svgIcon="feather:trash"></mat-icon>
+                            <span class="ml-2">{{ 'buttons.cancel' | transloco }}</span>
+                        </button>
+                    </div>
+                    <button mat-flat-button [color]="'primary'" class="!text-white" (click)="Submit()">
+                        <mat-icon svgIcon="mat_outline:save"></mat-icon>
+                        <span class="ml-2">{{ 'buttons.save' | transloco }}</span>
+                    </button>
+                </div>
+            </div>
+            <div class="w-full px-4 md:px-10 flex flex-col gap-2 bg-white " [formGroup]="form">
                 <div class="w-full flex-col gap-2 flex mt-5">
                     <div class="w-full flex-col flex">
-                        <div class="text-lg font-bold">รายละเอียดสมาชิก</div>
+                        <div class="text-lg font-bold">{{ 'member.form.member_details' | transloco }}</div>
                         <mat-divider></mat-divider>
                     </div>
-                    <div class="w-full grid grid-flow-row grid-cols-1 sm:grid-cols-3 gap-x-2 ">
-                        <!-- <div class="w-full">
-                            <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
-                                <mat-label>รหัสผู้นำเข้า (ใช้สำหรับ Login เข้าระบ)</mat-label>
-                                <input matInput [placeholder]="'รหัสผู้นำเข้า'" formControlName="importer_code">
-                            </mat-form-field>
-                        </div> -->
+                    <div class="w-full flex flex-col md:grid md:grid-cols-2 gap-x-2 ">
                         <div class="w-full">
                             <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
-                                <mat-label>รหัสลูกค้าจากระบบ 2</mat-label>
-                                <input matInput [placeholder]="'รหัสลูกค้า'" formControlName="customer_code">
+                                <mat-label>{{ 'member.form.importer_code_login' | transloco }}</mat-label>
+                                <input matInput [placeholder]="'member.form.importer_code' | transloco" formControlName="importer_code"
+                                ashaUpperCase>
                             </mat-form-field>
                         </div>
-                        <div class="w-full" >
+                        <div class="w-full">
                             <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
-                                <mat-label>ชื่อบัญชีผู้ใช้ (Username)</mat-label>
-                                <input matInput formControlName="username" placeholder="ชื่อบัญชีผู้ใช้">
-                            </mat-form-field>
-                        </div>
-                        <div class="w-full" >
-                            <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
-                                <mat-label>รหัสผ่าน (Password)</mat-label>
-                                <input matInput [type]="hidePassword ? 'password' : 'text'" formControlName="password" placeholder="รหัสผ่าน">
-                                <button mat-icon-button matSuffix (click)="togglePasswordVisibility('password')">
-                                    <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
-                                </button>
-                            </mat-form-field>
-                        </div>
-                        <!-- <div class="w-full" *ngIf="this.type === 'NEW'">
-                            <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
-                                <mat-label>ยืนยันรหัสผ่าน</mat-label>
-                                <input matInput [type]="hideConfirmPassword ? 'password' : 'text'"
-                                    formControlName="confirmPassword">
-                                <button mat-icon-button matSuffix (click)="togglePasswordVisibility('confirmPassword')">
-                                    <mat-icon>{{ hideConfirmPassword ? 'visibility_off' : 'visibility' }}</mat-icon>
-                                </button>
-                            </mat-form-field>
-                        </div> -->
-                        <!-- <div class="w-full">
-                            <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
-                                <mat-label>ประเภทลูกค้า</mat-label>
+                                <mat-label>{{ 'member.form.customer_type' | transloco }}</mat-label>
                                 <mat-select formControlName="member_type">
-                                    <mat-option value="บุคคลทั่วไป">บุคคลทั่วไป</mat-option>
-                                    <mat-option value="นิติบุคคล">นิติบุคคล</mat-option>
-                                    <mat-option value="ตัวแทน">ตัวแทน</mat-option>
-                                </mat-select>
-                            </mat-form-field>
-                        </div> -->
-                        <div class="w-full">
-                            <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
-                                <mat-label>ชื่อ</mat-label>
-                                <input matInput [placeholder]="'ชื่อ'" formControlName="fname">
-                            </mat-form-field>
-                        </div>
-                        <div class="w-full">
-                            <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
-                                <mat-label>นามสกุล</mat-label>
-                                <input matInput [placeholder]="'นามสกุล'" formControlName="lname">
-                            </mat-form-field>
-                        </div>
-                        <div class="w-full">
-                            <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
-                                <mat-label>เพศ</mat-label>
-                                <mat-select formControlName="gender">
-                                    <mat-option value="male">ชาย</mat-option>
-                                    <mat-option value="female">หญิง</mat-option>
-                                    <mat-option value="other">อื่นๆ</mat-option>
+                                    <mat-option value="บุคคลทั่วไป">{{ 'member.form.general_person' | transloco
+                                        }}</mat-option>
+                                    <mat-option value="นิติบุคคล">{{ 'member.form.legal_entity' | transloco
+                                        }}</mat-option>
+                                    <mat-option value="ตัวแทน">{{ 'member.form.agent' | transloco }}</mat-option>
                                 </mat-select>
                             </mat-form-field>
                         </div>
-                        <!-- <div class="w-full">
+                        <div class="w-full">
                             <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
-                                <mat-label>Member ภายใต้ Agent</mat-label>
+                                <mat-label>{{ 'member.form.member_under_agent' | transloco }}</mat-label>
                                 <input matInput [placeholder]="''" formControlName="referrer">
-                            </mat-form-field>
-                        </div> -->
-                        <div class="w-full">
-                            <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
-                                <mat-label>Agent Group </mat-label>
-                                <input matInput formControlName="referrer" placeholder="agent group">
-                            </mat-form-field>
-                        </div>
-                        <div class="w-full">
-                            <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
-                                <mat-label>ภาษา</mat-label>
-                                <input matInput [placeholder]="'ภาษา'" placeholder="ภาษา">
-                            </mat-form-field>
-                        </div>
-                        <div class="w-full">
-                            <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
-                                <mat-label>วันเดือนปีเกิด</mat-label>
-                                <input matInput [matDatepicker]="picker" formControlName="birth_date">
-                                <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-                                <mat-datepicker #picker></mat-datepicker>
                             </mat-form-field>
                         </div>
                         <!-- <div class="w-full">
@@ -155,121 +90,124 @@
                         </div> -->
                         <div class="w-full">
                             <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
-                                <mat-label>บัญชีธนาคาร</mat-label>
-                                <input matInput formControlName="bank" placeholder="บัญชีธนาคาร">
-                            </mat-form-field>
-                        </div>
-                        <div class="w-full">
-                            <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
-                                <mat-label>ชื่อบัญชีธนาคาร</mat-label>
-                                <input matInput formControlName="bank_name" placeholder="ชื่อบัญชีธนาคาร">
-                            </mat-form-field>
-                        </div>
-                        <div class="w-full">
-                            <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
-                                <mat-label>เลขบัญชีธนาคาร</mat-label>
-                                <input matInput formControlName="bank_no" placeholder="เลขบัญชีธนาคาร">
-                            </mat-form-field>
-                        </div>
-                        <div class="w-full">
-                            <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
-                                <mat-label>ขนส่งไทย</mat-label>
-                                <mat-select formControlName="transport_thai_master_id">
-                                    <mat-option *ngFor="let transport of transport" [value]="transport.id">
-                                        {{transport.name }}</mat-option>
+                                <mat-label>{{ 'member.form.transport_type' | transloco }}</mat-label>
+                                <mat-select formControlName="transport_rate_id">
+                                    <mat-option [value]="item.id" *ngFor="let item of transportType; let i = index">{{item.name}}</mat-option>
                                 </mat-select>
                             </mat-form-field>
                         </div>
-                        <!-- <div class="w-full">
+                        <div class="w-full" *ngIf="this.type === 'NEW'">
                             <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
-                                <mat-label>สายรถ</mat-label>
-                                <input matInput [placeholder]="'สายรถ'" formControlName="bus_route">
-                            </mat-form-field>
-                        </div> -->
-                    </div>
-                <div class="w-full flex-col flex mt-5">
-                    <div class="w-full flex-col flex mb-2">
-                        <div class="text-lg font-bold">ข้อมูลการติดต่อ</div>
-                        <mat-divider></mat-divider>
-                    </div>
-                    <div class="w-full grid grid-flow-row grid-cols-2 gap-x-2 ">
-                        <div class="w-full">
-                            <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
-                                <mat-label>เบอร์โทร</mat-label>
-                                <input matInput [placeholder]="'เบอร์โทร'" formControlName="phone">
+                                <mat-label>{{ 'member.form.password' | transloco }}</mat-label>
+                                <input matInput [type]="hidePassword ? 'password' : 'text'" formControlName="password">
+                                <button mat-icon-button matSuffix (click)="togglePasswordVisibility('password')">
+                                    <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+                                </button>
                             </mat-form-field>
                         </div>
-                        <div class="w-full">
+                        <div class="w-full" *ngIf="this.type === 'NEW'">
                             <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
-                                <mat-label>เบอร์โทร(สำรอง)</mat-label>
-                                <input matInput [placeholder]="'เบอร์โทร(สำรอง)'">
-                            </mat-form-field>
-                        </div>
-                        <div class="w-full">
-                            <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
-                                <mat-label>Email</mat-label>
-                                <input matInput [placeholder]="'Email'" formControlName="email">
-                            </mat-form-field>
-                        </div>
-                        <div class="w-full">
-                            <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
-                                <mat-label>Line ID</mat-label>
-                                <input matInput [placeholder]="'Line ID'" formControlName="line_id">
-                            </mat-form-field>
-                        </div>
-                        <!-- <div class="w-full">
-                            <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
-                                <mat-label>Facebook</mat-label>
-                                <input matInput [placeholder]="'Facebook'" formControlName="facebook">
+                                <mat-label>{{ 'member.form.confirm_password' | transloco }}</mat-label>
+                                <input matInput [type]="hideConfirmPassword ? 'password' : 'text'"
+                                    formControlName="confirmPassword">
+                                <button mat-icon-button matSuffix (click)="togglePasswordVisibility('confirmPassword')">
+                                    <mat-icon>{{ hideConfirmPassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+                                </button>
                             </mat-form-field>
                         </div>
 
+                    </div>
+                </div>
+                <div class="w-full flex-col flex mt-5">
+                    <div class="w-full flex-col flex mb-2">
+                        <div class="text-lg font-bold">{{ 'member.form.personal_information' | transloco }}</div>
+                        <mat-divider></mat-divider>
+                    </div>
+                    <div class="w-full flex flex-col-reverse md:flex-row gap-2 ">
                         <div class="w-full">
                             <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
-                                <mat-label>WeChat</mat-label>
-                                <input matInput [placeholder]="'WeChat'" formControlName="wechat">
+                                <mat-label>{{ 'member.form.first_name' | transloco }}</mat-label>
+                                <input matInput [placeholder]="'member.form.first_name' | transloco"
+                                    formControlName="fname">
                             </mat-form-field>
-                        </div> -->
+                        </div>
                         <div class="w-full">
-                            <mat-label>การแจ้งเตือน</mat-label>
-                            <div class="flex flex-row gap-2">
-                                <!-- <div class="border rounded-lg flex items-center">
-                                    <mat-checkbox formControlName="notify_sms">SMS</mat-checkbox>
-                                </div> -->
-                                <div class="border rounded-lg flex items-center">
-                                    <mat-checkbox formControlName="notify_line">Line</mat-checkbox>
-                                </div>
-                                <div class="border rounded-lg flex items-center">
-                                    <mat-checkbox formControlName="notify_email">Email</mat-checkbox>
-                                </div>
-                            </div>
+                            <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                                <mat-label>{{ 'member.form.last_name' | transloco }}</mat-label>
+                                <input matInput [placeholder]="'member.form.last_name' | transloco"
+                                    formControlName="lname">
+                            </mat-form-field>
+                        </div>
+                        <div class="w-full">
+                            <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                                <mat-label>{{ 'member.form.gender' | transloco }}</mat-label>
+                                <mat-select formControlName="gender">
+                                    <mat-option value="male">{{ 'member.form.male' | transloco }}</mat-option>
+                                    <mat-option value="female">{{ 'member.form.female' | transloco }}</mat-option>
+                                    <mat-option value="other">{{ 'member.form.other' | transloco }}</mat-option>
+                                </mat-select>
+                            </mat-form-field>
                         </div>
                     </div>
-                    <div class="w-full mt-4" >
-                        <div class="flex flex-row justify-between mb-2 items-end">
-                            <mat-label class="font-semibold text-lg">ที่อยู่ <span class="text-red-500 text-md">เพิ่มที่อยู่ได้มากสุด 3 รายการ</span></mat-label>
+                    <div class="w-full flex flex-col md:grid md:grid-cols-2 gap-x-2 ">
+                        <div class="w-full">
+                            <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                                <mat-label>{{ 'member.form.phone_number' | transloco }}</mat-label>
+                                <input matInput [placeholder]="'member.form.phone_number'" formControlName="phone">
+                            </mat-form-field>
+                        </div>
+                        <div class="w-full">
+                            <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                                <mat-label>{{ 'member.form.backup_phone' | transloco }}</mat-label>
+                                <input matInput [placeholder]="'member.form.backup_phone'">
+                            </mat-form-field>
+                        </div>
+                        <div class="w-full">
+                            <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                                <mat-label>{{ 'member.form.language' | transloco }}</mat-label>
+                                <input matInput [placeholder]="'member.form.language' | transloco">
+                            </mat-form-field>
+                        </div>
+                        <div class="w-full">
+                            <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                                <mat-label>{{ 'member.form.birth_date' | transloco }}</mat-label>
+                                <input matInput [matDatepicker]="picker" formControlName="birth_date">
+                                <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                                <mat-datepicker #picker></mat-datepicker>
+                            </mat-form-field>
+                        </div>
+                    </div>
+                    <div class="w-full mb-4" *ngIf="this.type === 'EDIT'">
+                        <div class="flex flex-row justify-between mb-2">
+                            <mat-label class="font-semibold">{{ 'member.form.address' | transloco }}</mat-label>
                             <button mat-flat-button [color]="'primary'" (click)="openDialogNew()">
-                                <span class="">เพิ่มที่อยู่</span>
+                                <span class="">{{ 'member.form.add_address' | transloco }}</span>
                             </button>
                         </div>
-                        <mat-divider></mat-divider>
-                        <div class="w-full overflow-x-scroll h-fit pb-1 mt-3">
-                            <table class=" whitespace-nowrap w-full ">
+                        <div class="overflow-x-auto w-full">
+                            <table class=" whitespace-nowrap w-full">
                                 <thead class="">
                                     <tr>
-                                        <th class="px-6 py-3 tracking-wider border border-l w-10">#</th>
-                                        <th class="px-6 py-3 text-left tracking-wider border border-r-0">รายละเอียดที่อยู่
+                                        <th class="px-6 py-3 tracking-wider border border-l-0 w-10">#</th>
+                                        <th class="px-6 py-3 text-left tracking-wider border border-r-0">
+                                            {{ 'member.form.address_details' | transloco }}
                                         </th>
-                                        <th class="px-6 py-3 text-left tracking-wider border border-r-0">ตำบล</th>
-                                        <th class="px-6 py-3 text-left tracking-wider border border-r-0">อำเภอ</th>
-                                        <th class="px-6 py-3 text-left tracking-wider border border-r-0">จังหวัด</th>
-                                        <th class="px-6 py-3 text-left tracking-wider border border-r-0">รหัสไปรษณีย์</th>
-                                        <th class="px-6 py-3 text-left tracking-wider border border-r-0">จัดการ</th>
+                                        <th class="px-6 py-3 text-left tracking-wider border border-r-0">{{
+                                            'member.form.sub_district' | transloco }}</th>
+                                        <th class="px-6 py-3 text-left tracking-wider border border-r-0">{{
+                                            'member.form.district' | transloco }}</th>
+                                        <th class="px-6 py-3 text-left tracking-wider border border-r-0">{{
+                                            'member.form.province' | transloco }}</th>
+                                        <th class="px-6 py-3 text-left tracking-wider border border-r-0">{{
+                                            'member.form.postal_code' | transloco }}
+                                        </th>
+                                        <th class="px-6 py-3 text-left tracking-wider border border-r-0">{{
+                                            'member.form.manage' | transloco }}</th>
                                     </tr>
                                 </thead>
                                 <tbody class="">
                                     <tr *ngFor="let item of this.data?.ship_address; let i = index">
-                                        <td class="px-6  text-center border border-l w-1/12">{{ i+ 1}}</td>
+                                        <td class="px-6  text-center border border-l-0 w-1/12">{{ i+ 1}}</td>
                                         <td class="px-6  border border-r-0 w-2/12">{{item?.address}}</td>
                                         <td class="px-6  border border-r-0 w-2/12">{{item?.sub_district}}</td>
                                         <td class="px-6  border border-r-0 w-2/12">{{item?.district}}</td>
@@ -282,20 +220,15 @@
                                             </button>
                                             <mat-menu #menu="matMenu">
                                                 <button mat-menu-item (click)="openDialogEdit(item)">
-                                                    <mat-icon [svgIcon]="'heroicons_solid:pencil-square'"></mat-icon>
-                                                    <span>แก้ไข</span>
+                                                    <mat-icon [svgIcon]="'mat_outline:edit_note'"></mat-icon>
+                                                    <span>{{ 'buttons.edit' | transloco }}</span>
                                                 </button>
                                                 <mat-divider></mat-divider>
                                                 <button mat-menu-item (click)="clickDeleteAddress(item.id)">
-                                                    <mat-icon [svgIcon]="'heroicons_solid:trash'"></mat-icon>
-                                                    <span>ลบ</span>
+                                                    <mat-icon [svgIcon]="'feather:trash'"></mat-icon>
+                                                    <span>{{ 'buttons.delete' | transloco }}</span>
                                                 </button>
                                             </mat-menu>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td colspan="7" class="border border-t-0 text-center py-3 align-middle text-gray-500">
-                                            ไม่มีที่อยู่
                                         </td>
                                     </tr>
                                 </tbody>
@@ -303,16 +236,17 @@
                         </div>
                     </div>
 
-                    <!-- <div class="w-full" *ngIf="this.type === 'NEW'">
+                    <div class="w-full" *ngIf="this.type !== 'EDIT'">
                         <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
-                            <mat-label>รายละเอียดที่อยู่</mat-label>
-                            <textarea matInput [placeholder]="'กรุณาระบุที่อยู่'" formControlName="address"></textarea>
+                            <mat-label>{{ 'member.form.address_details' | transloco }}</mat-label>
+                            <textarea matInput [placeholder]="'member.form.address_details' | transloco"
+                                formControlName="address"></textarea>
                         </mat-form-field>
                     </div>
                     <div class="w-full grid grid-flow-row grid-cols-2 gap-2 " *ngIf="this.type !== 'EDIT'">
                         <div class="w-full">
                             <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
-                                <mat-label>จังหวัด</mat-label>
+                                <mat-label>{{ 'member.form.province' | transloco }}</mat-label>
                                 <mat-select formControlName="province_code" (selectionChange)="onProvinceChange()">
                                     <mat-option *ngFor="let province of provinces" [value]="province.provinceCode">
                                         {{ province.provinceNameTh }}
@@ -322,7 +256,7 @@
                         </div>
                         <div class="w-full">
                             <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
-                                <mat-label>อำเภอ</mat-label>
+                                <mat-label>{{ 'member.form.district' | transloco }}</mat-label>
                                 <mat-select formControlName="district_code" (selectionChange)="onDistrictChange()">
                                     <mat-option *ngFor="let district of districts" [value]="district.districtCode">
                                         {{ district.districtNameTh }}
@@ -332,7 +266,7 @@
                         </div>
                         <div class="w-full">
                             <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
-                                <mat-label>ตำบล</mat-label>
+                                <mat-label>{{ 'member.form.sub_district' | transloco }}</mat-label>
                                 <mat-select formControlName="sub_district" (selectionChange)="onSubDistrictChange()">
                                     <mat-option *ngFor="let subdistrict of subdistricts"
                                         [value]="subdistrict.subdistrictNameTh">
@@ -343,85 +277,270 @@
                         </div>
                         <div class="w-full">
                             <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
-                                <mat-label>รหัสไปรษณีย์</mat-label>
-                                <input matInput [placeholder]="'รหัสไปรษณีย์'" formControlName="postal_code">
+                                <mat-label>{{ 'member.form.postal_code' | transloco }}</mat-label>
+                                <input matInput [placeholder]="'member.form.postal_code' | transloco"
+                                    formControlName="postal_code">
                             </mat-form-field>
                         </div>
-                    </div> -->
-                </div>
+                    </div>
+                    <div class="w-full flex flex-col md:flex-row gap-2 ">
+                        <div class="w-full">
+                            <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                                <mat-label>{{ 'member.form.convenient_time' | transloco }}</mat-label>
+                                <mat-select formControlName="avaliable_time">
+                                    <mat-option value="morning">{{ 'member.form.morning' | transloco }}</mat-option>
+                                    <mat-option value="afternoon">{{ 'member.form.afternoon' | transloco }}</mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </div>
+                        <div class="w-full">
+                            <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                                <mat-label>{{ 'member.form.credit' | transloco }}</mat-label>
+                                <input matInput [placeholder]="''" formControlName="credit_limit">
+                            </mat-form-field>
+                        </div>
+                        <div class="w-full">
+                            <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                                <mat-label>{{ 'member.form.loan_amount' | transloco }}</mat-label>
+                                <input matInput [placeholder]="''" formControlName="loan_amount">
+                            </mat-form-field>
+                        </div>
+                    </div>
+                    <div class="w-full flex flex-row gap-2 ">
+                        <div class="w-full">
+                            <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                                <mat-label>{{ 'member.form.thai_transport' | transloco }}</mat-label>
+                                <mat-select formControlName="transport_thai_master_id">
+                                    <mat-option *ngFor="let transport of transport" [value]="transport.id">{{
+                                        transport.name }}</mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </div>
+                        <div class="w-full">
+                            <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                                <mat-label>{{ 'member.form.bus_route' | transloco }}</mat-label>
+                                <input matInput [placeholder]="'สายรถ'" formControlName="bus_route">
+                            </mat-form-field>
+                        </div>
+                    </div>
+                    <div class="w-full mt-4">
+                        <mat-label>{{ 'member.form.location_sign' | transloco }}</mat-label>
+                        <div class="flex flex-row gap-4">
+                            <div class="mb-4 p-4 border rounded-lg shadow-sm relative w-80">
+                                <mat-radio-button name="location" value="work"
+                                    class="absolute top-0 right-0 m-2"></mat-radio-button>
+                                <span>{{ 'member.form.workplace' | transloco }}</span>
+                                <p class="sub-text">{{ 'member.form.workplace_sign' | transloco }}</p>
+                            </div>
+                            <div class="mb-4 p-4 border rounded-lg shadow-sm relative w-80">
+                                <mat-radio-button name="location" value="home"
+                                    class="absolute top-0 right-0 m-2"></mat-radio-button>
+                                <span>{{ 'member.form.home' | transloco }}</span>
+                                <p class="sub-text">{{ 'member.form.home_sign' | transloco }}</p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 <div class="w-full flex-col gap-2 flex mt-5">
                     <div class="w-full flex-col flex">
-                        <div class="text-lg font-bold">เงื่อนไขการบริการลูกค้า</div>
+                        <div class="text-lg font-bold">{{ 'member.form.additional_contact' | transloco }}</div>
                         <mat-divider></mat-divider>
                     </div>
-                    <div class="w-full flex flex-col justify-start items-start sm:grid sm:grid-cols-[auto_1fr] gap-x-5 sm:items-center">
-                        <mat-label class="sm:mb-5">บัญชีรับเงินค่าขนส่ง (พนักงาน)</mat-label>
-                        <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
-                            <mat-select formControlName="bookbank">
-                                <mat-option value="morning">เช้า</mat-option>
-                                <mat-option value="afternoon">เย็น</mat-option>
-                            </mat-select>
-                        </mat-form-field>
-                        <mat-label class="sm:mb-5">บัญชีรับเงินสำรองจ่ายค่าสินค้า (พนักงาน)</mat-label>
-                        <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
-                            <mat-select formControlName="second_bookbank">
-                                <mat-option value="morning">เช้า</mat-option>
-                                <mat-option value="afternoon">เย็น</mat-option>
-                            </mat-select>
-                        </mat-form-field>
-                        <mat-label>หัก ณ ที่จ่าย</mat-label>
-                        <mat-checkbox formControlName="">ต้องการหัก ณ ที่จ่าย</mat-checkbox>
-                        <mat-label>ใบเสร็จ</mat-label>
-                        <mat-checkbox formControlName="">รับใบเสร็จ</mat-checkbox>
-                        <mat-label>รอรวมสินค้า</mat-label>
-                        <mat-checkbox formControlName="">รอรวมสินค้า (ส่งสินค้าพร้อมกัน)</mat-checkbox>
-                        <mat-label class="self-start sm:py-2.5">การอนุญาตให้ติดเงิน</mat-label>
-                        <div class="flex flex-col sm:flex-row justify-center items-start w-full gap-2">
-                            <mat-checkbox formControlName="">อนุญาต</mat-checkbox>
-                            <div class="flex flex-col w-full">
-                                <mat-label class="sm:pt-2.5">จำนวนวันที่อนุญาตให้ติดเงิน (วัน)</mat-label>
-                                <mat-form-field [ngClass]="formFieldHelpers" class="w-full max-w-60">
-                                    <input matInput type="number" formControlName="">
+                    <div class="w-full flex flex-col md:grid md:grid-cols-2 gap-x-2 ">
+                        <div class="w-full">
+                            <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                                <mat-label>Email</mat-label>
+                                <input matInput [placeholder]="'Email'" formControlName="email">
+                            </mat-form-field>
+                        </div>
+                        <div class="w-full">
+                            <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                                <mat-label>Facebook</mat-label>
+                                <input matInput [placeholder]="'Facebook'" formControlName="facebook">
+                            </mat-form-field>
+                        </div>
+
+                        <div class="w-full">
+                            <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                                <mat-label>Line ID</mat-label>
+                                <input matInput [placeholder]="'Line ID'" formControlName="line_id">
+                            </mat-form-field>
+                        </div>
+                        <div class="w-full">
+                            <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                                <mat-label>{{ 'member.form.wechat' | transloco }}</mat-label>
+                                <input matInput [placeholder]="'WeChat'" formControlName="wechat">
+                            </mat-form-field>
+                        </div>
+                        <div class="w-full">
+                            <mat-label>{{ 'member.form.notifications' | transloco }}</mat-label>
+                            <div class="flex flex-row gap-2">
+                                <div class="border rounded-lg p-2">
+                                    <mat-checkbox class="text-white" [color]="'primary'" formControlName="notify_sms">
+                                        {{ 'member.form.sms' | transloco }}
+                                    </mat-checkbox>
+                                </div>
+                                <div class="border rounded-lg p-2">
+                                    <mat-checkbox class="text-white" [color]="'primary'" formControlName="notify_line">
+                                        Line
+                                    </mat-checkbox>
+                                </div>
+                                <div class="border rounded-lg p-2">
+                                    <mat-checkbox class="text-white" [color]="'primary'" formControlName="notify_email">
+                                        Email
+                                    </mat-checkbox>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="w-full flex-col gap-2 flex mt-5">
+                    <div class="w-full flex-row flex justify-between items-end">
+                        <div class="text-lg font-bold">{{ 'member.form.legal_person' | transloco }}</div>
+                        <button mat-icon-button (click)="toggleMemberType()">
+                            <mat-icon>{{ (this.form.get('member_type').value === 'นิติบุคคล' ||
+                                this.form.get('member_type').value === 'ตัวแทน') ? 'arrow_drop_down' : 'arrow_drop_up'
+                                }}</mat-icon>
+                        </button>
+                    </div>
+                    <mat-divider></mat-divider>
+
+                    <div
+                        [@slideToggle]="(this.form.get('member_type').value === 'นิติบุคคล' || this.form.get('member_type').value === 'ตัวแทน') ? 'open' : 'closed'">
+                        <div class="w-full flex flex-col md:grid md:grid-cols-2 gap-x-2 ">
+                            <div class="w-full">
+                                <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                                    <mat-label>{{ 'member.form.legal_entity_name' | transloco }}</mat-label>
+                                    <input matInput [placeholder]="'ชื่อนิติบุคคล'" formControlName="comp_name">
                                 </mat-form-field>
-                                <mat-label >เงินห้ามเกิน (฿)</mat-label>
-                                <mat-form-field [ngClass]="formFieldHelpers" class="w-full max-w-60">
-                                    <input matInput type="number" formControlName="">
+                            </div>
+                            <div class="w-full">
+                                <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                                    <mat-label>{{ 'member.form.tax_id' | transloco }}</mat-label>
+                                    <input matInput [placeholder]="'เลขผู้เสียภาษี'" formControlName="comp_tax">
+                                </mat-form-field>
+                            </div>
+                            <div class="w-full">
+                                <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                                    <mat-label>{{ 'member.form.phone_number' | transloco }}</mat-label>
+                                    <input matInput [placeholder]="'เบอร์โทร'" formControlName="comp_phone">
                                 </mat-form-field>
                             </div>
                         </div>
-                        <mat-label>การเก็บเงินมัดจำ</mat-label>
-                        <mat-checkbox formControlName="">เก็บเงินมัดจำค่าเปิดใบสั่งซื้อ</mat-checkbox>
-                        <mat-label class="self-start sm:py-2.5">จำกัด PO ผู้รับผิดชอบ</mat-label>
-                        <div class="flex flex-col sm:flex-row justify-center items-start w-full gap-2">
-                            <mat-checkbox formControlName="">อนุญาต</mat-checkbox>
-                            <div class="flex flex-col w-full">
-                                <mat-label class="sm:pt-2.5">PO ผู้รับผิดชอบ</mat-label>
-                                <mat-form-field [ngClass]="formFieldHelpers" class="w-full max-w-60">
-                                    <mat-select formControlName="undertaker" multiple>
-                                        <mat-option value="morning">เช้า</mat-option>
-                                        <mat-option value="afternoon">เย็น</mat-option>
-                                    </mat-select>
+                    </div>
+                </div>
+                <!-- <div class="w-full flex-col gap-2 flex mt-5">
+                    <div class="w-full flex-row flex justify-between items-end">
+                        <div class="text-lg font-bold">ตัวแทน</div>
+                        <button mat-icon-button (click)="toggleMemberType()">
+                            <mat-icon>{{ (this.member.form.get('member_type').value === 'ตัวแทน') ? 'arrow_drop_down' :
+                                'arrow_drop_up' }}</mat-icon>
+                        </button>
+                    </div>
+                    <mat-divider></mat-divider>
+
+                    <div [@slideToggle]="(this.member.form.get('member_type').value === 'ตัวแทน') ? 'open' : 'closed'">
+                        <div class="w-full grid grid-flow-row grid-cols-2 gap-x-2 ">
+                            <div class="w-full">
+                                <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                                    <mat-label>ชื่อตัวแทน</mat-label>
+                                    <input matInput [placeholder]="'ชื่อนิติบุคคล'" formControlName="cargo_name">
                                 </mat-form-field>
                             </div>
+                            <div class="w-full">
+                                <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                                    <mat-label>website</mat-label>
+                                    <input matInput [placeholder]="'เลขผู้เสียภาษี'" formControlName="cargo_website">
+                                </mat-form-field>
+                            </div>
+
                         </div>
-                        <div class="sm:col-span-2 w-full">
-                            <mat-label class="sm:pt-2.5">จำนวนวันที่อนุญาตให้ติดเงิน (วัน)</mat-label>
+                        <div class="flex w-full flex-col justify-center gap-2">
+                            <div class="flex w-full justify-center">
+                                <asha-image-upload [initial]="null" (uploadSuccess)="uploadSuccess($event)"
+                                    accept="image/*"></asha-image-upload>
+                            </div>
+
+                            <div class="flex justify-center w-full">
+                                <img [src]="imageUrl" alt="" class="w-auto">
+                            </div>
+                        </div>
+                    </div>
+                </div> -->
+                <div class="w-full flex-col gap-2 flex mt-5">
+                    <div class="w-full flex-col flex">
+                        <div class="text-lg font-bold">{{ 'member.form.responsible_information' | transloco }}</div>
+                        <mat-divider></mat-divider>
+                    </div>
+                    <div class="w-full grid grid-flow-row grid-cols-2 gap-x-2 ">
+                        <div class="w-full">
                             <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
-                                <textarea matInput formControlName="" rows="1" class="w-full"></textarea>
+                                <mat-label>{{ 'member.form.supervisor' | transloco }}</mat-label>
+                                <input matInput formControlName="responsible_person" [placeholder]="''">
                             </mat-form-field>
                         </div>
-                        <div class="sm:col-span-2 w-full">
-                            <mat-label class="sm:pt-2.5">ข้อควรระวังเกี่ยวกับออเดอร์</mat-label>
+                        <div class="w-full">
                             <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
-                                <textarea matInput formControlName="" rows="1" class="w-full"></textarea>
+                                <mat-label>{{ 'member.form.sale' | transloco }}</mat-label>
+                                <input matInput formControlName="responsible_sale" [placeholder]="''">
                             </mat-form-field>
                         </div>
-                        <div class="sm:col-span-2 w-full">
-                            <mat-label class="sm:pt-2.5">โน๊ตเกี่ยวกับลูกค้า</mat-label>
-                            <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
-                                <textarea matInput formControlName="" rows="1" class="w-full"></textarea>
-                            </mat-form-field>
+                    </div>
+                    <div class="w-full">
+                        <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                            <mat-label>{{ 'member.form.notes' | transloco }}</mat-label>
+                            <textarea matInput [placeholder]="'หมายเหตุ'"
+                                formControlName="responsible_remark"></textarea>
+                        </mat-form-field>
+                    </div>
+                </div>
+
+                <div class="w-full flex-col gap-2 flex mt-5">
+                    <div class="w-full flex-col flex">
+                        <div class="text-lg font-bold">{{ 'member.form.discovery_channels' | transloco }}</div>
+                        <mat-divider></mat-divider>
+                    </div>
+                    <div class="flex flex-col md:flex-row gap-2">
+                        <div class="p-2">
+                            <mat-checkbox class="text-white" [color]="'primary'" formControlName="found_via_facebook">
+                                Facebook
+                            </mat-checkbox>
+                        </div>
+                        <div class="p-2">
+                            <mat-checkbox class="text-white" [color]="'primary'" formControlName="found_via_line">
+                                Line
+                            </mat-checkbox>
+                        </div>
+                        <div class="p-2">
+                            <mat-checkbox class="text-white" [color]="'primary'" formControlName="found_via_google">
+                                Google
+                            </mat-checkbox>
+                        </div>
+                    </div>
+                </div>
+                <div class="w-full flex-col gap-2 flex mt-5">
+                    <div class="w-full flex-col flex">
+                        <div class="text-lg font-bold">{{ 'member.form.priority_services' | transloco }}</div>
+                        <mat-divider></mat-divider>
+                    </div>
+                    <div class="flex flex-col md:flex-row gap-2 mb mb-4">
+                        <div class="border rounded-lg p-2">
+                            <mat-checkbox class="text-white" [color]="'primary'"
+                                formControlName="priority_update_tracking">
+                                {{ 'member.form.status_update_tracking' | transloco }}
+                            </mat-checkbox>
+                        </div>
+                        <div class="border rounded-lg p-2">
+                            <mat-checkbox class="text-white" [color]="'primary'"
+                                formControlName="priority_package_protection">
+                                {{ 'member.form.package_protection' | transloco }}
+                            </mat-checkbox>
+                        </div>
+                        <div class="border rounded-lg p-2">
+                            <mat-checkbox class="text-white" [color]="'primary'"
+                                formControlName="priority_order_system">
+                                {{ 'member.form.order_system' | transloco }}
+                            </mat-checkbox>
                         </div>
                     </div>
                 </div>

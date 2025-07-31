@@ -1,283 +1,191 @@
-<div class="flex flex-col flex-auto justify-start items-center">
-    <div class="w-full flex-col justify-between items-center flex overflow-hidden">
-        <div class="w-full flex-col justify-start items-start flex">
-            <div class="w-full px-10 pt-5 pb-2.5  justify-between items-center flex">
-                <div class="flex flex-col">
-                    <div class="flex space-x-2">
-                        <button class="md:text-xl font-medium tracking-tight leading-7 sm:leading-10 truncate"
-                            [routerLink]="['/member']" routerLinkActive="router-link-active">
-                            รายการรวมพัสดุ
-                        </button>
-                        <p class="md:text-sm font-medium tracking-tight leading-7 sm:leading-10 truncate">></p>
-                        <p class="md:text-sm font-medium tracking-tight leading-7 sm:leading-10 truncate text-primary">
-                            สมาชิก
-                        </p>
-                    </div>
+<div class="flex flex-col px-6 py-8 bg-gray-50 min-h-screen w-full">
+    <!-- Breadcrumb & Action -->
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
+        <div>
+            <nav class="text-sm text-gray-500 mb-2">
+                <a [routerLink]="['/member']" class="hover:underline">สมาชิก</a>
+                <span class="mx-2">/</span>
+                <span class="text-red-600 font-semibold">ข้อมูลสมาชิก</span>
+            </nav>
+            <h1 class="text-2xl font-bold text-red-700">
+                {{ 'member.view.member_code' | transloco }}: {{ data?.code }}
+            </h1>
+        </div>
+        <button mat-flat-button color="accent" [routerLink]="['/member/edit', data.id]">
+            <mat-icon svgIcon="mat_outline:edit_note" class="mr-1"></mat-icon>
+            {{ 'buttons.edit' | transloco }}
+        </button>
+    </div>
 
-                    <p class="md:text-3xl text-black font-bold tracking-tight leading-7 sm:leading-10 truncate">
-                        รหัสสมาชิก: {{ data.code }}
-                    </p>
-                </div>
-                <div class="justify-end items-center gap-2 flex">
-                    <div class="justify-start items-center gap-2 flex">
-                        <button mat-stroked-button class="bg-orange-600 text-white" (click)="goToEdit()">
-                            <mat-icon svgIcon="heroicons_outline:pencil-square" class="text-white"></mat-icon>
-                            &nbsp;แก้ไข
-                        </button>
+    <!-- Grid Section -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <!-- Member Details -->
+        <div class="bg-white rounded-xl shadow-md p-6">
+            <h2 class="text-lg font-semibold mb-4">{{ 'member.view.member_details' | transloco }}</h2>
+            <div class="space-y-3">
+                <ng-container *ngFor="let field of [
+          {label: 'user_code', value: form.get('code')?.value},
+          {label: 'member_under_agent', value: form.get('referrer')?.value},
+          {label: 'customer_group', value: form.get('member_type')?.value}
+        ]">
+                    <div class="flex justify-between text-sm">
+                        <span class="font-medium text-gray-600">{{ 'member.view.' + field.label | transloco }}:</span>
+                        <span>{{ field.value ?? '-' }}</span>
                     </div>
-                    <div class="justify-start items-center gap-2 flex">
-                        <button mat-stroked-button class="bg-red-500 text-white">
-                            <mat-icon svgIcon="mat_solid:block" class="text-white"></mat-icon>
-                            &nbsp; บล็อค
-                        </button>
+                </ng-container>
+            </div>
+
+            <h3 class="mt-6 font-semibold text-md text-gray-700">{{ 'member.view.additional_contact' | transloco }}</h3>
+            <mat-divider class="my-3"></mat-divider>
+
+            <div class="space-y-3">
+                <ng-container *ngFor="let field of [
+          {label: 'email', value: form.get('email')?.value},
+          {label: 'facebook', value: form.get('facebook')?.value},
+          {label: 'line_id', value: form.get('line_id')?.value},
+          {label: 'wechat', value: form.get('wechat')?.value}
+        ]">
+                    <div class="flex justify-between text-sm">
+                        <span class="font-medium text-gray-600">{{ 'member.view.' + field.label | transloco }}:</span>
+                        <span>{{ field.value ?? '-' }}</span>
                     </div>
-                    <div class="justify-start items-center gap-2 flex">
-                        <button mat-stroked-button class="border-[1px] border-slate-500">
-                            <mat-icon svgIcon="feather:trash"></mat-icon>
-                            &nbsp; ลบ
-                        </button>
+                </ng-container>
+
+                <!-- Notification Tags -->
+                <div class="flex items-start gap-2">
+                    <span class="font-medium text-gray-600">{{ 'member.view.notifications' | transloco }}:</span>
+                    <div class="flex flex-wrap gap-1">
+                        <ng-container *ngIf="form.get('notify_facebook')?.value">
+                            <span class="bg-blue-100 text-blue-800 text-xs px-2 py-0.5 rounded">Facebook</span>
+                        </ng-container>
+                        <ng-container *ngIf="form.get('notify_line')?.value">
+                            <span class="bg-green-100 text-green-800 text-xs px-2 py-0.5 rounded">Line</span>
+                        </ng-container>
+                        <ng-container *ngIf="form.get('notify_email')?.value">
+                            <span class="bg-gray-100 text-gray-800 text-xs px-2 py-0.5 rounded">Email</span>
+                        </ng-container>
+                        <ng-container
+                            *ngIf="!form.get('notify_facebook')?.value && !form.get('notify_line')?.value && !form.get('notify_email')?.value">
+                            <span>-</span>
+                        </ng-container>
                     </div>
                 </div>
             </div>
-            <mat-divider class="w-full p-1 mx-5 flex border-t-[1px] border-slate-300"></mat-divider>
-            <div class="w-full p-10 flex flex-col gap-2 bg-white m-5 " [formGroup]="form">
-                <!-- Profile Picture Column (Left) -->
-                <div class="grid md:grid-cols-2 gap-6">
-                    <div class="flex flex-col gap-2">
-                        <h2 class="font-semibold text-3xl">รายละเอียดสมาชิก</h2>
-                        <mat-divider class="mb-3"></mat-divider>
-                        <div class="flex justify-between gap-2 mb-2">
-                            <div class="w-full h-auto">
-                                <!-- Placeholder for profile picture - replace with actual image if available -->
-                                <img [src]="'https://www.thaimediafund.or.th/wp-content/uploads/2024/04/blank-profile-picture-973460_1280.png'"
-                                    alt="Profile Picture" class="w-2/3 h-auto object-cover">
-                            </div>
-                            <!-- Member Status or Additional Info -->
-                            <div class="w-full p-3">
-                                <div class="flex flex-col justify-start items-start mb-2">
-                                    <span class="font-normal">รูปภาพ</span>
-                                    <span class="font-normal">คำแนะนำ : ไฟล์ .jpg or .png สัดส่วน</span>
-                                    <span class="font-normal">1:1 / ขนาดเล็กสุด 128 X 128 px </span>
-                                    <span class="font-normal">ขนาดมากสุดถึง 512 X 512 px </span>
-                                </div>
-                                <div class="justify-start items-center gap-2 flex">
-                                    <button mat-flat-button [color]="'primary'">
-                                        <mat-icon svgIcon="heroicons_outline:pencil-square"></mat-icon>
-                                        แก้ไขรูปภาพ
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="flex justify-between">
-                            <div class="w-full font-bold">รหัสลูกค้าจากระบบ 2</div>
-                            <div class="w-full text-left">{{ form.get('code')?.value ?? '-' }}</div>
-                        </div>
-                        <div class="flex justify-between">
-                            <div class="w-full font-bold">รหัสลูกค้า</div>
-                            <div class="w-full text-left">{{ form.get('code')?.value ?? '-' }}</div>
-                        </div>
-                        <div class="flex justify-between">
-                            <div class="w-full font-bold">ชื่อบัญชีผู้ใช้ (Username)</div>
-                            <div class="w-full text-left">{{ form.get('referrer')?.value ?? '-' }}</div>
-                        </div>
-                        <div class="flex justify-between">
-                            <div class="w-full font-bold">ชื่อ-นามสกุล</div>
-                            <div class="w-full text-left">{{ form.get('fname')?.value }} {{ form.get('lname')?.value
-                                }}</div>
-                        </div>
-                        <div class="flex justify-between">
-                            <div class="w-full font-bold">เพศ</div>
-                            <div class="w-full text-left">{{ form.get('gender')?.value ?? '-' }}</div>
-                        </div>
-                        <div class="flex justify-between">
-                            <div class="w-full font-bold">AGENT GROUP</div>
-                            <div class="w-full text-left">Agent Group</div>
-                        </div>
-                        <div class="flex justify-between">
-                            <div class="w-full font-bold">ภาษา</div>
-                            <div class="w-full text-left">Thaiand</div>
-                        </div>
-                        <div class="flex justify-between">
-                            <div class="w-full font-bold">วันเดือนปีเกิด</div>
-                            <div class="w-full text-left">{{ form.get('birth_date')?.value ?? '-' }}</div>
-                        </div>
-                        <div class="flex justify-between">
-                            <div class="w-full font-bold">บัญชีธนาคาร</div>
-                            <div class="w-full text-left">SCB / 1234567890</div>
-                        </div>
-                        <div class="flex justify-between">
-                            <div class="w-full font-bold">ชื่อบัญชี</div>
-                            <div class="w-full text-left">{{ form.get('fname')?.value }} {{ form.get('lname')?.value
-                                }}</div>
-                        </div>
-                        <div class="flex justify-between">
-                            <div class="w-full font-bold">ขนส่งไทย</div>
-                            <div class="w-full text-left">--</div>
-                        </div>
-                    </div>
-                    <div class="grid md:grid-cols-1 gap-6">
-                        <div class="flex flex-col gap-2">
-                            <h2 class="font-semibold text-3xl">ข้อมูลติดต่อ</h2>
-                            <mat-divider class="mb-3"></mat-divider>
-                            <div class="flex justify-between">
-                                <div class="w-full font-bold">Email</div>
-                                <div class="w-full text-left">{{ form.get('fname')?.value }} {{ form.get('lname')?.value
-                                    }}
-                                </div>
-                            </div>
-                            <div class="flex justify-between">
-                                <div class="w-full font-bold">LINE ID</div>
-                                <div class="w-full text-left">{{ form.get('gender')?.value ?? '-'}}</div>
-                            </div>
-                            <div class="flex justify-between">
-                                <div class="w-full font-bold">เบอร์โทร</div>
-                                <div class="w-full text-left">{{ form.get('phone')?.value ?? '-'}}</div>
-                            </div>
-                            <div class="flex justify-between">
-                                <div class="w-full font-bold">เบอร์โทร (สำรอง)</div>
-                                <div class="w-full text-left">{{ form.get('comp_phone')?.value ?? '-'}}</div>
-                            </div>
-                            <div class="flex justify-between">
-                                <div class="w-full font-bold">การแจ้งเตือน</div>
-                                <div class="w-full text-left">Line , Facebook</div>
-                            </div>
+        </div>
 
-                        </div>
-                        <div class="flex flex-col gap-2">
-                            <h2 class="font-semibold text-3xl">อัตราแลกเปลี่ยน</h2>
-                            <mat-divider class="mb-3"></mat-divider>
-                            <div class="flex justify-between">
-                                <div class="w-full font-bold">อัตราแลกเปลี่ยน (¥/฿) (</div>
-                                <div class="w-full text-left">
-                                </div>
-                            </div>
-                            <div class="flex justify-between">
-                                <div class="w-full font-bold">อัตราค่าส่ง</div>
-                                <div class="w-full text-left">{{ form.get('gender')?.value ?? '-'}}</div>
-                                <div class="w-full flex justify-end">
-                                    <mat-icon svgIcon="heroicons_outline:eye" [color]="'primary'"></mat-icon>
-                                </div>
-                            </div>
-                            <div class="flex justify-between">
-                                <div class="w-full font-bold">เบอร์โทร</div>
-                                <div class="w-full text-left">{{ form.get('phone')?.value ?? '-'}}</div>
-                                <div class="w-full flex justify-end">
-                                    <mat-icon svgIcon="heroicons_outline:eye" [color]="'primary'"></mat-icon>
-                                </div>
-                            </div>
-                            <div class="flex justify-between">
-                                <div class="w-full font-bold">อัตราค่าบริการ</div>
-                                <div class="w-full text-left">อัตราค่าบริการ 1</div>
-                                <div class="w-full flex justify-end items-center">
-                                    <mat-icon svgIcon="heroicons_outline:eye" [color]="'primary'"></mat-icon>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+        <!-- Personal Info -->
+        <div class="bg-white rounded-xl shadow-md p-6">
+            <h2 class="text-lg font-semibold mb-4">{{ 'member.view.personal_information' | transloco }}</h2>
+            <div class="space-y-3 text-sm">
+                <div class="flex justify-between">
+                    <span class="font-medium text-gray-600">{{ 'member.view.full_name' | transloco }}:</span>
+                    <span>{{ form.get('fname')?.value }} {{ form.get('lname')?.value }}</span>
                 </div>
-                <div class="py-6 space-y-8 text-lg text-gray-800">
-                    <!-- เงื่อนไขการบริการ -->
-                    <div>
-                        <h2 class="text-xl font-semibold">เงื่อนไขการบริการ</h2>
-                        <mat-divider></mat-divider>
-                        <div class="grid grid-cols-3 gap-4 text-lg mt-4">
-                            <div>
-                                <p class="font-semibold">บัญชีรับเงินค่าสินค้า (พนักงาน)</p>
-                                <p>ธนาคารกรุงไทย / 1453528495</p>
-                            </div>
-                            <div>
-                                <p class="font-semibold">บัญชีรับเงินค่าขนส่งสินค้า (พนักงาน)</p>
-                                <p>ธนาคารกรุงไทย / 1453528495</p>
-                            </div>
-                            <div>
-                                <p class="font-semibold">ชื่อเจ้าของบัญชี</p>
-                                <p>นางสาว กาน กานธิดา</p>
-                            </div>
-
-                            <div>
-                                <p class="font-semibold">ใบเสร็จ</p>
-                                <p>วันเดียวกัน</p>
-                            </div>
-                            <div>
-                                <p class="font-semibold">รวบรวมสินค้า</p>
-                                <p>รวบรวมสินค้า เสร็จแล้วพร้อมแจ้ง</p>
-                            </div>
-                            <div>
-                                <p class="font-semibold">การอนุญาตให้ยืนยัน</p>
-                                <p>การอนุญาตให้ยืนยัน จำกัด PO ผู้รับผิดชอบ</p>
-                            </div>
-
-                            <div>
-                                <p class="font-semibold">การเก็บเงินปลายทาง</p>
-                                <p>เก็บเงินปลายทางถ้ามีเงื่อนไข</p>
-                            </div>
-                            <div>
-                                <p class="font-semibold">ยอดขั้นต่ำ</p>
-                                <p>7 วัน ไม่เกิน 10,000 บาท</p>
-                            </div>
-                            <div>
-                                <p class="font-semibold">ประเทศ</p>
-                                <p>china thai</p>
-                            </div>
-                        </div>
-
-                        <!-- เนื้อหาย่อย -->
-                        <div class="text-lg text-black mt-4 leading-5">
-                            <p class="font-semibold mb-1">หมายเหตุลูกค้า</p>
-                            ทางบริษัทขอขอบคุณลูกค้าที่ใช้บริการของเราอย่างต่อเนื่อง หากมีปัญหาเกี่ยวกับการสั่งซื้อ
-                            สินค้าเสียหาย หรือได้รับไม่ครบ
-                            กรุณาแจ้งภายใน 3 วันหลังจากได้รับสินค้า มิฉะนั้นจะไม่สามารถเคลมสินค้าได้<br /><br />
-
-                            อัตราแลกเปลี่ยนคิดตามเรทของวันโอนจริง โดยลูกค้าสามารถตรวจสอบได้ผ่านหน้าเว็บไซต์ของบริษัท
-                            ทั้งนี้อัตรานี้รวมค่าธรรมเนียมโอนและภาษีต่างประเทศแล้ว<br /><br />
-
-                            การสั่งซื้อสินค้าและค่าขนส่งจำเป็นต้องชำระเต็มจำนวนก่อนจัดส่งเท่านั้น
-                            บริษัทไม่มีนโยบายเก็บเงินปลายทาง ยกเว้นลูกค้าในบัญชีเครดิตพิเศษ<br /><br />
-
-                            หากมีปัญหาใดๆ เกี่ยวกับสินค้า กรุณาแจ้งผ่าน LINE: yourcompany เพื่อให้เจ้าหน้าที่สามารถดูแลและตอบกลับโดยเร็วที่สุด
-                        </div>
+                <ng-container *ngFor="let field of [
+          {label: 'gender_information', value: form.get('gender')?.value},
+          {label: 'phone_number', value: form.get('phone')?.value},
+          {label: 'backup_phone', value: form.get('comp_phone')?.value},
+          {label: 'language', value: form.get('language')?.value},
+          {label: 'birth_date', value: form.get('birth_date')?.value},
+          {label: 'credit_7_days', value: form.get('credit_limit')?.value},
+          {label: 'bus_route', value: form.get('bus_route')?.value}
+        ]">
+                    <div class="flex justify-between">
+                        <span class="font-medium text-gray-600">{{ 'member.view.' + field.label | transloco }}:</span>
+                        <span>{{ field.value ?? '-' }}</span>
                     </div>
+                </ng-container>
 
-                    <!-- ที่อยู่ -->
-                    <div>
-                        <h2 class="text-base font-semibold mb-2">ที่อยู่</h2>
-                        <table class="min-w-full table-auto border border-gray-300 text-sm">
-                            <thead class="bg-gray-100 text-left">
-                                <tr>
-                                    <th class="border px-3 py-2">ชื่อติดต่อ (เช่น ชื่อร้าน, เจ้าหน้าที่)</th>
-                                    <th class="border px-3 py-2">รายละเอียดที่อยู่</th>
-                                    <th class="border px-3 py-2">ลิ้งค์ Google Map</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr class="border-t">
-                                    <td class="border px-3 py-2">
-                                        <button class="text-blue-600 underline">กดปุ่มรับสินค้า</button>
-                                    </td>
-                                    <td class="border px-3 py-2">189/3 หมู่ 2 ต.ในเมือง อ.เมือง ลำปาง </td>
-                                    <td class="border px-3 py-2"><a href="https://maps.app.goo.gl/7FnyMLqFfGDyLNVWA"
-                                            class="text-blue-600 underline">https://maps.app.goo.gl/7FnyMLqFfGDyLNVWA</a>
-                                    </td>
-                                </tr>
-                                <tr class="border-t">
-                                    <td class="border px-3 py-2">บ้าน</td>
-                                    <td class="border px-3 py-2">689 บางซื่่อ บางซื่่อ กทม. 10800 </td>
-                                    <td class="border px-3 py-2"><a href="https://maps.app.goo.gl/o6LXCBz4NkiBc3kG6"
-                                            class="text-blue-600 underline">https://maps.app.goo.gl/o6LXCBz4NkiBc3kG6</a>
-                                    </td>
-                                </tr>
-                                <tr class="border-t">
-                                    <td class="border px-3 py-2">หอพัก</td>
-                                    <td class="border px-3 py-2">70/6 บางซื่่อ บางซื่่อ กทม. 10800</td>
-                                    <td class="border px-3 py-2"><a href="https://maps.app.goo.gl/5x9YHFXLkQwcMn8Y8"
-                                            class="text-blue-600 underline">https://maps.app.goo.gl/5x9YHFXLkQwcMn8Y8</a>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
+                <!-- Address -->
+                <div class="flex justify-between">
+                    <span class="font-medium text-gray-600">{{ 'member.view.address_details' | transloco }}:</span>
+                    <span>{{ data?.ship_address?.[0]?.address ?? '-' }}</span>
+                </div>
+                <ng-container *ngFor="let loc of ['province','district','sub_district','postal_code']">
+                    <div class="flex justify-between">
+                        <span class="font-medium text-gray-600">{{ 'member.view.' + loc | transloco }}:</span>
+                        <span>{{ data?.ship_address?.[0]?.[loc] ?? '-' }}</span>
                     </div>
+                </ng-container>
+                <div class="flex justify-between">
+                    <span class="font-medium text-gray-600">{{ 'member.view.convenient_time' | transloco }}:</span>
+                    <span>{{ data?.avaliable_time ?? '-' }}</span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="font-medium text-gray-600">{{ 'member.view.thai_transport' | transloco }}:</span>
+                    <span>{{ data?.detail?.transport_thai_master?.name ?? '-' }}</span>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <!-- Responsible Section -->
+    <div class="bg-white rounded-xl shadow-md p-6 mt-8">
+        <h2 class="text-lg font-semibold mb-4">{{ 'member.view.responsible_information' | transloco }}</h2>
+        <div class="grid md:grid-cols-2 gap-6 text-sm">
+            <ng-container *ngFor="let field of [
+        {label: 'supervisor', value: form.get('responsible_person')?.value},
+        {label: 'sale', value: form.get('responsible_sale')?.value},
+        {label: 'notes', value: form.get('responsible_remark')?.value}
+      ]">
+                <div class="flex justify-between">
+                    <span class="font-medium text-gray-600">{{ 'member.view.' + field.label | transloco }}:</span>
+                    <span>{{ field.value ?? '-' }}</span>
+                </div>
+            </ng-container>
+        </div>
+    </div>
+
+    <!-- Documents Section -->
+    <div *ngIf="data?.member_type !== 'บุคคลทั่วไป'" class="bg-white rounded-xl shadow-md p-6 mt-8">
+        <h2 class="text-lg font-semibold mb-4">{{ 'member.view.documents' | transloco }}</h2>
+        <div class="grid md:grid-cols-3 gap-6 text-sm">
+            <ng-container *ngFor="let doc of documentList">
+                <div>
+                    <p class="font-semibold mb-2">{{ doc.label }}</p>
+                    <table class="w-full border text-sm">
+                        <thead class="bg-gray-100">
+                            <tr>
+                                <th class="border px-2 py-1 w-8">#</th>
+                                <th class="border px-2 py-1">{{ 'member.view.created_date' | transloco }}</th>
+                                <th class="border px-2 py-1">{{ 'member.view.download' | transloco }}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let item of doc.items; let i = index">
+                                <td class="border text-center px-2 py-1">{{ i + 1 }}</td>
+                                <td class="border px-2 py-1">{{ item.created_at }}</td>
+                                <td class="border px-2 py-1">
+                                    <a [href]="item.url" target="_blank" class="text-red-500 hover:underline">{{
+                                        item.name }}</a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </ng-container>
+        </div>
+    </div>
+
+    <!-- Tags Section -->
+    <div class="bg-white rounded-xl shadow-md p-6 mt-8">
+        <h2 class="text-lg font-semibold mb-4">{{ 'member.view.discovery_channels' | transloco }}</h2>
+        <div class="flex flex-wrap gap-2 mb-4">
+            <span *ngFor="let ch of ['Facebook', 'line', 'google']" class="bg-red-200 text-red-600 px-3 py-1 rounded">
+                {{ ch }}
+            </span>
+        </div>
+        <p class="text-sm">{{ 'member.view.other' | transloco }}</p>
+    </div>
+
+    <div class="bg-white rounded-xl shadow-md p-6 mt-8 mb-10">
+        <h2 class="text-lg font-semibold mb-4">{{ 'member.view.priority_services' | transloco }}</h2>
+        <div class="flex flex-wrap gap-2 text-sm">
+            <span class="bg-red-200 text-red-600 px-3 py-1 rounded">{{ 'member.view.status_update' | transloco }}</span>
+            <span class="bg-red-200 text-red-600 px-3 py-1 rounded">{{ 'member.view.package_protection' | transloco
+                }}</span>
+            <span class="bg-red-200 text-red-600 px-3 py-1 rounded">{{ 'member.view.ordering_system' | transloco
+                }}</span>
         </div>
     </div>
 </div>

@@ -1,9 +1,16 @@
 import { MatDatepickerModule } from '@angular/material/datepicker';
-import { CommonModule, CurrencyPipe } from '@angular/common';
-import { AfterViewInit, ChangeDetectionStrategy, Component, OnInit, ViewChild } from '@angular/core';
+import { CommonModule, CurrencyPipe, DatePipe } from '@angular/common';
+import {
+    AfterViewInit,
+    ChangeDetectionStrategy,
+    Component,
+    ElementRef,
+    OnInit,
+    ViewChild,
+} from '@angular/core';
 import { DataTableDirective, DataTablesModule } from 'angular-datatables';
 import { ADTSettings } from 'angular-datatables/src/models/settings';
-import { map, Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged, map, Subject } from 'rxjs';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIcon, MatIconModule } from '@angular/material/icon';
@@ -11,20 +18,22 @@ import { FilePickerModule } from 'ngx-awesome-uploader';
 import { MatMenuModule } from '@angular/material/menu';
 import { ToastrService } from 'ngx-toastr';
 import { FuseConfirmationService } from '@fuse/services/confirmation';
-import { DialogRef } from '@angular/cdk/dialog';
 import { MatDialog } from '@angular/material/dialog';
 import { Router, RouterLink } from '@angular/router';
 import { PictureComponent } from '../picture/picture.component';
 import { ProductComposeComponent } from '../product/dialog/product-compose/product-compose.component';
 import { MemberService } from './member.service';
-import { MemberComposeComponent } from './dialogcustomer/member-compose.component';
-import { DialogForm } from './form-dialog/dialog.component';
-import { DialogCreditComponent } from './dialog-credit/dialog-credit.component';
-import { FormArray, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
+// import { MemberComposeComponent } from './dialogcustomer/member-compose.component';
+// import { DialogCreditComponent } from './dialog-credit/dialog-credit.component';
+import {
+    FormBuilder,
+    FormGroup,
+    FormsModule,
+    ReactiveFormsModule,
+} from '@angular/forms';
 import { MatSelectModule } from '@angular/material/select';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { FormComponent } from './form/form.component';
 import { ImportexcelComponent } from './import-excel/importexcel.component';
 import { MatCheckbox } from '@angular/material/checkbox';
 import {
@@ -34,10 +43,16 @@ import {
     transition,
     animate,
 } from '@angular/animations';
+import { CdkMenuModule } from '@angular/cdk/menu';
+import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
+import { ExportService } from 'app/modules/shared/export.service';
+import { FormExcelComponent } from './form-excel/form-excel.component';
+
 @Component({
-    selector: 'app-vendor',
+    selector: 'app-member',
     standalone: true,
     imports: [
+        TranslocoModule,
         CommonModule,
         DataTablesModule,
         MatButtonModule,
@@ -54,10 +69,9 @@ import {
         MatCheckbox,
         RouterLink,
         MatIcon,
+        CdkMenuModule,
     ],
-    providers: [
-        CurrencyPipe
-    ],
+    providers: [CurrencyPipe, DatePipe],
     animations: [
         trigger('slideToggleFilter', [
             state(
@@ -84,6 +98,7 @@ import {
     changeDetection: ChangeDetectionStrategy.Default,
 })
 export class MemberComponent implements OnInit, AfterViewInit {
+    
     dtOptions: any = {};
     dtTrigger: Subject<ADTSettings> = new Subject<ADTSettings>();
     formFieldHelpers: string[] = ['fuse-mat-dense'];
@@ -91,6 +106,7 @@ export class MemberComponent implements OnInit, AfterViewInit {
 
     filterForm: FormGroup;
     showFilterForm: boolean = false;
+    searchQuery: string = ''
 
     @ViewChild('btNg') btNg: any;
     @ViewChild('gotoRoute') gotoRoute: any;
@@ -99,34 +115,68 @@ export class MemberComponent implements OnInit, AfterViewInit {
     @ViewChild('date') date: any;
     @ViewChild(DataTableDirective, { static: false })
     dtElement: DataTableDirective;
-    category: any[] = [
-        'A',
-        'B',
-        'C',
-        'D',
-    ];
+    category: any[] = ['A', 'B', 'C', 'D'];
+    @ViewChild('tableElement') tableElement!: ElementRef;
     constructor(
+        private translocoService: TranslocoService,
         private _service: MemberService,
         private fuseConfirmationService: FuseConfirmationService,
         private toastr: ToastrService,
         public dialog: MatDialog,
         private currencyPipe: CurrencyPipe,
         private _router: Router,
-        private _fb: FormBuilder
-
+        private _fb: FormBuilder,
+        private exportService: ExportService,
+        private datePipe: DatePipe
     ) {
-
         this.filterForm = this._fb.group({
-            name: [''],
-            start_date: [''],
-            end_date: [''],
+            fname: [''],
+            lname: [''],
+            fullname: [''],
             code: [''],
             phone: [''],
+            searchQuery: [''],
         });
+        this.langues = localStorage.getItem('lang');
     }
+    langues: any;
+    languageUrl: any;
+
     ngOnInit(): void {
-        setTimeout(() =>
-            this.loadTable());
+        if (this.langues === 'en') {
+            this.languageUrl =
+                'https://cdn.datatables.net/plug-ins/1.11.3/i18n/en-gb.json';
+        } else if (this.langues === 'th') {
+            this.languageUrl =
+                'https://cdn.datatables.net/plug-ins/1.11.3/i18n/th.json';
+        } else if (this.langues === 'cn') {
+            this.languageUrl =
+                'https://cdn.datatables.net/plug-ins/1.11.3/i18n/zh.json';
+        } else {
+            this.languageUrl =
+                'https://cdn.datatables.net/plug-ins/1.11.3/i18n/th.json';
+        }
+        setTimeout(() => this.loadTable());
+
+        this.filterForm
+            .get('searchQuery')
+            ?.valueChanges.pipe(debounceTime(500), distinctUntilChanged())
+            .subscribe(() => {
+                this.rerender();
+            });
+
+        this.filterForm
+            .get('fname')
+            ?.valueChanges.pipe(debounceTime(500), distinctUntilChanged())
+            .subscribe(() => {
+                this.rerender();
+            });
+        this.filterForm
+            .get('fullname')
+            ?.valueChanges.pipe(debounceTime(500), distinctUntilChanged())
+            .subscribe(() => {
+                this.rerender();
+            });
     }
 
     ngAfterViewInit() {
@@ -141,93 +191,132 @@ export class MemberComponent implements OnInit, AfterViewInit {
     }
 
     onChangeType() {
-        this.rerender()
+        this.rerender();
     }
 
     rows: any[] = [];
 
     loadTable(): void {
+        // Define multilingual menu titles
+        const menuTitles = {
+          customerCode: {
+            th: 'รหัสลูกค้า',
+            en: 'Customer Code',
+            cn: '客户代码',
+          },
+          firstName: {
+            th: 'ชื่อ',
+            en: 'First Name',
+            cn: '名字',
+          },
+          lastName: {
+            th: 'นามสกุล',
+            en: 'Last Name',
+            cn: '姓氏',
+          },
+          phone: {
+            th: 'เบอร์โทร',
+            en: 'Phone Number',
+            cn: '电话号码',
+          },
+        };
+
         this.dtOptions = {
-            pagingType: 'full_numbers',
-            serverSide: true,
-            ajax: (dataTablesParameters: any, callback) => {
-                this._service.datatable(dataTablesParameters)
-                    .pipe(
-                        map((resp: { data: any }) => resp.data)
-                    )
-                    .subscribe({
-                        next: (resp: any) => {
-                            console.log('resp',resp);
-                            this.dataRow = resp.data;
-                            callback({
-                                recordsTotal: resp.total,
-                                recordsFiltered: resp.total,
-                                data: resp.data,
-                            });
-                        }
-                    })
+          pagingType: 'full_numbers',
+          serverSide: true,
+          scrollX: true,
+          language: {
+            url: this.languageUrl,
+          },
+          ajax: (dataTablesParameters: any, callback) => {
+            dataTablesParameters.search = { value: this.filterForm.value.searchQuery };
+
+            const fullName = this.filterForm.value.fullName?.trim() || '';
+            if (fullName) {
+                const [fname, ...rest] = fullName.split(' ');
+                const lname = rest.join(' ') || '';
+                dataTablesParameters.fname = fname;
+                dataTablesParameters.lname = lname;
+  }
+
+            if (this.filterForm.value.code) {
+              dataTablesParameters.importer_code = this.filterForm.value.code;
+            }
+            if (this.filterForm.value.fname) {
+              dataTablesParameters.fname = this.filterForm.value.fname;
+            }
+            if (this.filterForm.value.lname) {
+              dataTablesParameters.fname = this.filterForm.value.lname;
+            }
+            if (this.filterForm.value.phone) {
+              dataTablesParameters.phone = this.filterForm.value.phone;
+            }
+
+            console.log('📦 Payload:', dataTablesParameters);
+
+            this._service
+              .datatable(dataTablesParameters)
+              .pipe(map((resp: { data: any }) => resp.data))
+              .subscribe({
+                next: (resp: any) => {
+                  this.dataRow = resp.data;
+                  callback({
+                    recordsTotal: resp.total,
+                    recordsFiltered: resp.total,
+                    data: resp.data,
+                  });
+                },
+              });
+          },
+          columns: [
+            {
+              title: '',
+              data: null,
+              defaultContent: '',
+              ngTemplateRef: {
+                ref: this.checkbox,
+              },
+              className: 'w-10 text-center',
             },
-            columns: [
-                {
-                    title: '',
-                    data: null,
-                    defaultContent: '',
-                    ngTemplateRef: {
-                        ref: this.checkbox,
-                    },
-                    className: 'w-10 text-center',
-                },
-                {
-                    title: '#',
-                    data: 'No',
-                    className: 'w-10 text-center'
-                },
-                {
-                    title: 'วันที่สร้าง',
-                    data: 'birth_date',
-                    className: 'w-10 text-center',
-                    // ngTemplateRef: {
-                    //     ref: this.date,
-                    // },
-                },
-                {
-                    title: 'รหัสพนักงาน',
-                    data: 'code',
-                    className: 'w-30 text-left',
-                    ngTemplateRef: {
-                        ref: this.gotoRoute,
-                    },
-                },
-                {
-                    title: 'ชื่อ',
-                    data: 'fname',
-                    className: 'text-left'
-                },
-                {
-                    title: 'นามสกุล',
-                    data: 'lname',
-                    className: 'text-left'
-                },
-                {
-                    title: 'เบอร์โทร',
-                    defaultContent: '-',
-                    data: 'phone',
-                    className: 'text-left'
-                },
-                // {
-                //     title: 'จัดการ',
-                //     data: null,
-                //     defaultContent: '',
-                //     ngTemplateRef: {
-                //         ref: this.btNg,
-                //     },
-                //     className: 'w-15 text-center',
-                // }
-            ]
-        }
-    }
-
-
+            {
+              title: '#',
+              data: 'No',
+              className: 'w-10 text-center',
+            },
+            {
+              title: menuTitles.customerCode[this.langues],
+              data: 'importer_code',
+              className: 'w-30 text-left',
+              ngTemplateRef: {
+                ref: this.gotoRoute,
+              },
+            },
+            {
+              title: menuTitles.firstName[this.langues],
+              data: 'fname',
+              className: 'text-left',
+            },
+            {
+              title: menuTitles.lastName[this.langues],
+              data: 'lname',
+              className: 'text-left',
+            },
+            {
+              title: menuTitles.phone[this.langues],
+              defaultContent: '-',
+              data: 'phone',
+              className: 'text-left',
+            },
+          ],
+          dom: 'lfrtip',
+          buttons: [
+            { extend: 'copy', className: 'btn-csv-hidden' },
+            { extend: 'csv', className: 'btn-csv-hidden' },
+            { extend: 'excel', className: 'btn-csv-hidden' },
+            { extend: 'print', className: 'btn-csv-hidden' },
+          ],
+        };
+      }
 
     rerender(): void {
         this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
@@ -238,100 +327,22 @@ export class MemberComponent implements OnInit, AfterViewInit {
         });
     }
 
-    opendialogapro2() {
-        const DialogRef = this.dialog.open(DialogForm, {
-            disableClose: true,
-            width: '500px',
-            height: 'auto',
-            enterAnimationDuration: 300,
-            exitAnimationDuration: 300,
-            data: {
-                type: 'NEW'
-            }
-        });
-        DialogRef.afterClosed().subscribe((result) => {
-            if (result) {
-                console.log(result, 'result')
-                this.rerender();
-            }
-        });
-    }
-
-    opendialogapro() {
-        const DialogRef = this.dialog.open(MemberComposeComponent, {
-            disableClose: true,
-            width: '500px',
-            height: 'auto',
-            enterAnimationDuration: 300,
-            exitAnimationDuration: 300,
-            data: {
-                type: 'NEW'
-            }
-        });
-        DialogRef.afterClosed().subscribe((result) => {
-            if (result) {
-                console.log(result, 'result')
-                this.rerender();
-            }
-        });
-    }
-
-    openDialogEdit(item: any) {
-        const DialogRef = this.dialog.open(MemberComposeComponent, {
-            disableClose: true,
-            width: '500px',
-            enterAnimationDuration: 300,
-            exitAnimationDuration: 300,
-            data: {
-                type: 'EDIT',
-                value: item
-            }
-        });
-        DialogRef.afterClosed().subscribe((result) => {
-            if (result) {
-                console.log(result, 'result')
-                this.rerender();
-            }
-        });
-    }
-
-    openDialoCredit(item: any) {
-        const DialogRef = this.dialog.open(DialogCreditComponent, {
-            disableClose: true,
-            width: '500px',
-            enterAnimationDuration: 300,
-            exitAnimationDuration: 300,
-            data: {
-                type: 'NEW',
-                value: item
-            }
-        });
-        DialogRef.afterClosed().subscribe((result) => {
-            if (result) {
-                console.log(result, 'result')
-                this.rerender();
-            }
-        });
-    }
-
     openForm() {
         this._router.navigate(['member/form']);
     }
 
     openImportExcelDialog() {
-        const DialogRef = this.dialog.open(ImportexcelComponent, {
+        const DialogRef = this.dialog.open(FormExcelComponent, {
             disableClose: true,
             width: '500px',
             height: 'auto',
             enterAnimationDuration: 300,
             exitAnimationDuration: 300,
-            data: {
-
-            }
+            data: {},
         });
         DialogRef.afterClosed().subscribe((result) => {
             if (result) {
-                console.log(result, 'result')
+                console.log(result, 'result');
                 this.rerender();
             }
         });
@@ -339,57 +350,71 @@ export class MemberComponent implements OnInit, AfterViewInit {
 
     opendialogdelete() {
         const confirmation = this.fuseConfirmationService.open({
-            title: "คุณแน่ใจหรือไม่ว่าต้องการลบรายการ สมาชิก?",
-            message: "คุณกำลังจะลบรายการ สมาชิก หากกดยืนยันแล้วจะไม่สามารถเอากลับมาอีกได้",
+            title: this.translocoService.translate(
+                'confirmation.delete_member'
+            ),
+            message: this.translocoService.translate(
+                'confirmation.delete_membermessage'
+            ),
             icon: {
                 show: true,
-                name: "heroicons_outline:exclamation-triangle",
-                color: "warn"
+                name: 'heroicons_outline:exclamation-triangle',
+                color: 'warn',
             },
             actions: {
                 confirm: {
                     show: true,
-                    label: "ยืนยัน",
-                    color: "primary"
+                    label: this.translocoService.translate(
+                        'confirmation.confirm_button'
+                    ),
+                    color: 'primary',
                 },
                 cancel: {
                     show: true,
-                    label: "ยกเลิก"
-                }
+                    label: this.translocoService.translate(
+                        'confirmation.cancel_button'
+                    ),
+                },
             },
-            dismissible: false
-        })
+            dismissible: false,
+        });
 
-        confirmation.afterClosed().subscribe(
-            result => {
-                if (result == 'confirmed') {
-                    const id = this.multiSelect;
-                    console.log(id, 'id');
+        confirmation.afterClosed().subscribe((result) => {
+            if (result == 'confirmed') {
+                const id = this.multiSelect;
+                console.log(id, 'id');
 
-                    for (let i = 0; i < id.length; i++) {
-                        this._service.delete(id[i]).subscribe({
-                            error: (err) => {
-                                this.toastr.error('ลบรายการสมาชิก ล้มเหลว โปรดลองใหม่อีกครั้งภายหลัง');
-                                console.log(err, 'err');
-                            },
-                            complete: () => {
-                                if (i == id.length - 1) {
-                                    this.multiSelect = [];
-                                    this.toastr.success('ลบรายการสมาชิก สำเร็จ');
-                                    this.rerender();
-                                }
-                            },
-                        });
-                    }
-                    if (id.length === 1) {
-                        this.rerender();
-                    }
+                for (let i = 0; i < id.length; i++) {
+                    this._service.delete(id[i]).subscribe({
+                        error: (err) => {
+                            this.toastr.error(
+                                this.translocoService.translate(
+                                    'toastr.delete_error'
+                                )
+                            );
+                            console.log(err, 'err');
+                        },
+                        complete: () => {
+                            if (i == id.length - 1) {
+                                this.multiSelect = [];
+                                this.toastr.success(
+                                    this.translocoService.translate(
+                                        'toastr.delete'
+                                    )
+                                );
+                                this.rerender();
+                            }
+                        },
+                    });
+                }
+                if (id.length === 1) {
+                    this.rerender();
                 }
             }
-        )
+        });
     }
     showPicture(imgObject: string): void {
-        console.log(imgObject)
+        console.log(imgObject);
         this.dialog
             .open(PictureComponent, {
                 autoFocus: false,
@@ -411,18 +436,18 @@ export class MemberComponent implements OnInit, AfterViewInit {
             enterAnimationDuration: 300,
             exitAnimationDuration: 300,
             data: {
-                type: 'NEW'
-            }
+                type: 'NEW',
+            },
         });
         DialogRef.afterClosed().subscribe((result) => {
             if (result) {
-                console.log(result, 'result')
+                console.log(result, 'result');
                 this.rerender();
             }
         });
     }
 
-    multiSelect: any[] = []
+    multiSelect: any[] = [];
     isAllSelected: boolean = false; // ใช้เก็บสถานะเลือกทั้งหมด
 
     toggleSelectAll(isSelectAll: boolean): void {
@@ -461,6 +486,7 @@ export class MemberComponent implements OnInit, AfterViewInit {
     }
 
     openfillter() {
+        // this.filterForm.reset();
         this.showFilterForm = !this.showFilterForm;
     }
 
@@ -469,9 +495,17 @@ export class MemberComponent implements OnInit, AfterViewInit {
         console.log(filterValues);
         this.rerender();
     }
+
     clearFilter() {
         this.filterForm.reset();
         this.rerender();
     }
 
+    exportData(type: 'csv' | 'excel' | 'print' | 'copy') {
+        this.exportService.exportTable(this.tableElement, type);
+    }
+    formatDate(date: Date): string {
+        // กำหนด timezone เป็น 'Asia/Bangkok' หรือ timezone ที่ต้องการ
+        return this.datePipe.transform(date, 'yyyy-MM-dd', 'Asia/Bangkok');
+    }
 }

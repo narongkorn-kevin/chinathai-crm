@@ -19,28 +19,29 @@ import { ToastrService } from 'ngx-toastr';
 import { MemberService } from '../member.service';
 import { DialogAddress } from './dialog-address';
 
+import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
+
 @Component({
     selector: 'app-dialog-compose-vendor',
     standalone: true,
     templateUrl: './dialog-address.component.html',
     styleUrl: './dialog-address.component.scss',
     imports: [
-        CommonModule,
-        MatIconModule,
-        MatFormFieldModule,
-        MatInputModule,
-        FormsModule,
-        MatToolbarModule,
-        MatButtonModule,
-        MatDialogContent,
-        MatDialogClose,
-        ReactiveFormsModule,
-        MatInputModule,
-        MatFormFieldModule,
-    ]
+    TranslocoModule,
+    CommonModule,
+    MatIconModule,
+    MatFormFieldModule,
+    MatInputModule,
+    FormsModule,
+    MatToolbarModule,
+    MatButtonModule,
+    MatDialogContent,
+    ReactiveFormsModule,
+    MatInputModule,
+    MatFormFieldModule
+],
 })
 export class DialogAddressComponent implements OnInit {
-
     form: FormGroup;
 
     formFieldHelpers: string[] = ['fuse-mat-dense'];
@@ -54,15 +55,12 @@ export class DialogAddressComponent implements OnInit {
         private FormBuilder: FormBuilder,
         public _service: MemberService,
         private fuseConfirmationService: FuseConfirmationService,
-        private toastr: ToastrService,
+        private toastr: ToastrService
     ) {
-
         this.shipAddress = this.data.shipAddress;
     }
 
-    ngOnInit(): void {
-
-    }
+    ngOnInit(): void {}
 
     selectAddress(address: DialogAddress) {
         this.dialogRef.close(address);

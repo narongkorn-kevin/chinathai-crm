@@ -53,12 +53,16 @@ import { serialize } from 'object-to-formdata';
 import { MatMenuItem, MatMenuModule } from '@angular/material/menu';
 import { DialogAddressFormComponent } from '../dialog-form-address/dialog-address.component';
 
+import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
+import { UpperCaseDirective } from 'app/upper-case.directive';
+
 @Component({
     selector: 'app-member-form',
     standalone: true,
     templateUrl: './form.component.html',
     styleUrl: './form.component.scss',
     imports: [
+        TranslocoModule,
         CommonModule,
         DataTablesModule,
         MatIconModule,
@@ -81,7 +85,8 @@ import { DialogAddressFormComponent } from '../dialog-form-address/dialog-addres
         ImageUploadComponent,
         RouterLink,
         MatMenuModule,
-        MatDividerModule
+        MatDividerModule,
+        UpperCaseDirective,
     ],
     animations: [
         trigger('slideToggle', [
@@ -124,7 +129,9 @@ export class FormComponent implements OnInit {
     imageUrl: string;
     data: any;
 
+    transportType: any[] = [];
     constructor(
+        private translocoService: TranslocoService,
         private FormBuilder: FormBuilder,
         public _service: MemberService,
         private fuseConfirmationService: FuseConfirmationService,
@@ -140,8 +147,9 @@ export class FormComponent implements OnInit {
         if (this.type === 'EDIT') {
             this.data = this.activated.snapshot.data.data.data;
         }
-        console.log(this.data)
-
+        this._service.getTransport().subscribe((resp: any) => {
+            this.transportType = resp.data;
+        })
         this.form = this.FormBuilder.group(
             {
                 referrer: null,
@@ -151,14 +159,6 @@ export class FormComponent implements OnInit {
                 fname: ['', Validators.required],
                 lname: ['', Validators.required],
                 phone: ['', Validators.required],
-                // ============= new field ==============
-                customer_code: [''],
-                username: [''],
-                bank: [''],
-                bank_name: [''],
-                bank_no: [''],
-                bookbank: [''],
-                // ============= new field ==============
                 password: [''],
                 confirmPassword: [''],
                 birth_date: ['', Validators.required],
@@ -186,11 +186,10 @@ export class FormComponent implements OnInit {
                 cargo_name: [''],
                 cargo_website: [''],
                 cargo_image: [null],
-                order_quantity_in_thai: '150',//เอาจากแบบสอบถามหน้าสมัคร
-undertaker: '',
+                order_quantity_in_thai: '150', //เอาจากแบบสอบถามหน้าสมัคร
+
                 province_code: [''],
                 district_code: [''],
-                second_bookbank: [''],
 
                 avaliable_time: '',
                 credit_limit: '',
@@ -211,24 +210,34 @@ undertaker: '',
                 responsible_sale: '',
                 responsible_remark: '',
                 language: '',
+                transport_rate_id: ''
             },
-            { validator: this.passwordMatchValidator }
+            {
+                validator:
+                    this.type === 'NEW' ? this.passwordMatchValidator : null,
+            }
         );
     }
 
     ngOnInit(): void {
-
-
         this.form.get('member_type').valueChanges.subscribe((value) => {
             if (value === 'นิติบุคคล' || value === 'ตัวแทน') {
                 this.form.get('comp_name').setValidators([Validators.required]);
                 this.form.get('comp_tax').setValidators([Validators.required]);
-                this.form.get('comp_phone').setValidators([Validators.required]);
+                this.form
+                    .get('comp_phone')
+                    .setValidators([Validators.required]);
 
                 if (value === 'ตัวแทน') {
-                    this.form.get('cargo_name').setValidators([Validators.required]);
-                    this.form.get('cargo_website').setValidators([Validators.required]);
-                    this.form.get('cargo_image').setValidators([Validators.required]);
+                    this.form
+                        .get('cargo_name')
+                        .setValidators([Validators.required]);
+                    this.form
+                        .get('cargo_website')
+                        .setValidators([Validators.required]);
+                    this.form
+                        .get('cargo_image')
+                        .setValidators([Validators.required]);
                 } else {
                     this.form.get('cargo_name').clearValidators();
                     this.form.get('cargo_website').clearValidators();
@@ -250,70 +259,74 @@ undertaker: '',
             this.form.get('cargo_image').updateValueAndValidity();
         });
 
-        // this.locationService.getProvinces().subscribe((data) => {
-        //     this.provinces = data;
-        //     this.locationService.getDistricts().subscribe((data) => {
-        //         this.districts = data;
-        //         this.locationService.getSubdistricts().subscribe((data) => {
-        //             this.subdistricts = data;
-        //             if (this.type === 'EDIT') {
-        //                 this.form.patchValue({
-        //                     id: this.data?.id,
-        //                     code: this.data?.code,
-        //                     member_type: this.data?.member_type,
-        //                     importer_code: this.data?.importer_code,
-        //                     fname: this.data?.fname,
-        //                     lname: this.data?.lname,
-        //                     phone: this.data?.phone,
-        //                     password: this.data?.password,
-        //                     birth_date: this.data?.birth_date,
-        //                     gender: this.data?.gender,
-        //                     address: this.data?.address,
-        //                     province: this.data?.province,
-        //                     district: this.data?.district,
-        //                     sub_district: this.data?.sub_district,
-        //                     postal_code: this.data?.postal_code,
-        //                     image: this.data?.image,
-        //                     transport_thai_master_id: this.data?.detail?.transport_thai_master_id,
-        //                     ever_imported_from_china: this.data?.detail?.ever_imported_from_china,
-        //                     order_quantity: this.data?.detail?.order_quantity,
-        //                     frequent_importer: this.data?.detail?.frequent_importer,
-        //                     need_transport_type: this.data?.detail?.need_transport_type,
-        //                     additional_requests: this.data?.detail?.additional_requests,
-        //                     comp_name: this.data?.detail?.comp_name,
-        //                     comp_tax: this.data?.detail?.comp_tax,
-        //                     comp_phone: this.data?.detail?.comp_phone,
-        //                     cargo_name: this.data?.detail?.cargo_name,
-        //                     cargo_website: this.data?.detail?.cargo_website,
-        //                     cargo_image: this.data?.detail?.cargo_image,
-        //                     order_quantity_in_thai: this.data?.detail?.order_quantity_in_thai,
-        //                 });
-        //                 console.log('edit', this.form.value);
-
-        //             } else {
-        //                 console.log('New');
-        //             }
-        //         });
-        //     });
-        // });
-
-
-
+        this.locationService.getProvinces().subscribe((data) => {
+            this.provinces = data;
+            this.locationService.getDistricts().subscribe((data) => {
+                this.districts = data;
+                this.locationService.getSubdistricts().subscribe((data) => {
+                    this.subdistricts = data;
+                    if (this.type === 'EDIT') {
+                        this.form.patchValue({
+                            id: this.data?.id,
+                            code: this.data?.code,
+                            member_type: this.data?.member_type,
+                            importer_code: this.data?.importer_code,
+                            fname: this.data?.fname,
+                            lname: this.data?.lname,
+                            phone: this.data?.phone,
+                            password: this.data?.password,
+                            birth_date: this.data?.birth_date,
+                            gender: this.data?.gender,
+                            address: this.data?.address,
+                            province: this.data?.province,
+                            district: this.data?.district,
+                            sub_district: this.data?.sub_district,
+                            postal_code: this.data?.postal_code,
+                            image: this.data?.image,
+                            transport_thai_master_id:
+                                this.data?.detail?.transport_thai_master_id,
+                            ever_imported_from_china:
+                                this.data?.detail?.ever_imported_from_china,
+                            order_quantity: this.data?.detail?.order_quantity,
+                            frequent_importer:
+                                this.data?.detail?.frequent_importer,
+                            need_transport_type:
+                                this.data?.detail?.need_transport_type,
+                            additional_requests:
+                                this.data?.detail?.additional_requests,
+                            comp_name: this.data?.detail?.comp_name,
+                            comp_tax: this.data?.detail?.comp_tax,
+                            comp_phone: this.data?.detail?.comp_phone,
+                            cargo_name: this.data?.detail?.cargo_name,
+                            cargo_website: this.data?.detail?.cargo_website,
+                            cargo_image: this.data?.detail?.cargo_image,
+                            order_quantity_in_thai:
+                                this.data?.detail?.order_quantity_in_thai,
+                            transport_rate_id: this.data?.transport_rate_id,
+                        });
+                        console.log('edit', this.form.value);
+                    } else {
+                        console.log('New');
+                    }
+                });
+            });
+        });
     }
 
     Submit() {
-        this.form.value.birth_date = new Date(this.form.value.birth_date)
-            .toISOString()
-            .split('T')[0];
         if (this.form.invalid) {
-            console.log('form', this.form.value);
-
+            this.toastr.error(
+                this.translocoService.translate('toastr.missing_fields')
+            );
             this.form.markAllAsTouched();
             return;
         }
+        this.form.value.birth_date = new Date(this.form.value.birth_date)
+            .toISOString()
+            .split('T')[0];
 
         const confirmation = this.fuseConfirmationService.open({
-            title: 'ยืนยันการบันทึกข้อมูล',
+            title: this.translocoService.translate('confirmation.save_title'),
             icon: {
                 show: true,
                 name: 'heroicons_outline:exclamation-triangle',
@@ -322,12 +335,16 @@ undertaker: '',
             actions: {
                 confirm: {
                     show: true,
-                    label: 'ยืนยัน',
+                    label: this.translocoService.translate(
+                        'confirmation.confirm_button'
+                    ),
                     color: 'primary',
                 },
                 cancel: {
                     show: true,
-                    label: 'ยกเลิก',
+                    label: this.translocoService.translate(
+                        'confirmation.cancel_button'
+                    ),
                 },
             },
             dismissible: false,
@@ -337,28 +354,45 @@ undertaker: '',
             if (result == 'confirmed') {
                 const formData = serialize({
                     ...this.form.value,
-                    id: this?.data?.value?.id,
                 });
                 if (this.type === 'NEW') {
                     this.memberService.create(formData).subscribe({
                         next: (resp: any) => {
-                            this.toastr.success('บันทึกข้อมูลสำเร็จ');
+                            this.toastr.success(
+                                this.translocoService.translate(
+                                    'toastr.success'
+                                )
+                            );
                             this._router.navigate(['member']);
                         },
                         error: (err) => {
-                            this.toastr.error('บันทึกข้อมูลไม่สำเร็จ');
+                            this.toastr.error(
+                                this.translocoService.translate('toastr.error')
+                            );
                         },
                     });
                 } else {
-                    this.memberService.update(this.form.value).subscribe({
-                        next: (resp: any) => {
-                            this.toastr.success('แก้ไขข้อมูลสำเร็จ');
-                            this._router.navigate(['member']);
-                        },
-                        error: (err) => {
-                            this.toastr.error('แก้ไขข้อมูลไม่สำเร็จ');
-                        },
-                    });
+                    this.memberService
+                        .update(this.form.value, this.data?.id)
+                        .subscribe({
+                            next: (resp: any) => {
+                                this.toastr.success(
+                                    this.translocoService.translate(
+                                        'toastr.edit'
+                                    )
+                                );
+                                this._router.navigate([
+                                    'member/view/' + this.data?.id,
+                                ]);
+                            },
+                            error: (err) => {
+                                this.toastr.error(
+                                    this.translocoService.translate(
+                                        'toastr.edit_error'
+                                    )
+                                );
+                            },
+                        });
                 }
             }
         });
@@ -441,8 +475,8 @@ undertaker: '',
             data: {
                 type: 'EDIT',
                 member_id: this.data,
-                shipAddress: item
-            }
+                shipAddress: item,
+            },
         });
         DialogRef.afterClosed().subscribe((result) => {
             if (result) {
@@ -450,7 +484,7 @@ undertaker: '',
         });
     }
 
-    openDialogNew() {
+    openDialogNew(item: any) {
         const DialogRef = this.dialog.open(DialogAddressFormComponent, {
             disableClose: true,
             width: '500px',
@@ -458,13 +492,13 @@ undertaker: '',
             data: {
                 type: 'NEW',
                 member_id: this.data,
-                shipAddress: ''
-            }
+                shipAddress: '',
+            },
         });
         DialogRef.afterClosed().subscribe((result) => {
             if (result) {
                 this.memberService.get(this.data.id).subscribe((resp: any) => {
-                    this.data = resp.data
+                    this.data = resp.data;
                     this.form.patchValue({
                         id: this.data?.id,
                         code: this.data?.code,
@@ -482,64 +516,72 @@ undertaker: '',
                         sub_district: this.data?.sub_district,
                         postal_code: this.data?.postal_code,
                         image: this.data?.image,
-                        transport_thai_master_id: this.data?.detail?.transport_thai_master_id,
-                        ever_imported_from_china: this.data?.detail?.ever_imported_from_china,
+                        transport_thai_master_id:
+                            this.data?.detail?.transport_thai_master_id,
+                        ever_imported_from_china:
+                            this.data?.detail?.ever_imported_from_china,
                         order_quantity: this.data?.detail?.order_quantity,
                         frequent_importer: this.data?.detail?.frequent_importer,
-                        need_transport_type: this.data?.detail?.need_transport_type,
-                        additional_requests: this.data?.detail?.additional_requests,
+                        need_transport_type:
+                            this.data?.detail?.need_transport_type,
+                        additional_requests:
+                            this.data?.detail?.additional_requests,
                         comp_name: this.data?.detail?.comp_name,
                         comp_tax: this.data?.detail?.comp_tax,
                         comp_phone: this.data?.detail?.comp_phone,
                         cargo_name: this.data?.detail?.cargo_name,
                         cargo_website: this.data?.detail?.cargo_website,
                         cargo_image: this.data?.detail?.cargo_image,
-                        order_quantity_in_thai: this.data?.detail?.order_quantity_in_thai,
+                        order_quantity_in_thai:
+                            this.data?.detail?.order_quantity_in_thai,
                     });
-
-                })
+                });
             }
         });
     }
 
-
     clickDeleteAddress(id: any) {
         const confirmation = this.fuseConfirmationService.open({
-            title: "ยืนยันลบข้อมูล",
-            message: "กรุณาตรวจสอบข้อมูล หากลบข้อมูลแล้วจะไม่สามารถนำกลับมาได้",
+            title: this.translocoService.translate('confirmation.delete_title'),
+            message: this.translocoService.translate(
+                'confirmation.delete_message'
+            ),
             icon: {
                 show: true,
-                name: "heroicons_outline:exclamation-triangle",
-                color: "warn"
+                name: 'heroicons_outline:exclamation-triangle',
+                color: 'warn',
             },
             actions: {
                 confirm: {
                     show: true,
-                    label: "ยืนยัน",
-                    color: "primary"
+                    label: this.translocoService.translate(
+                        'confirmation.confirm_button'
+                    ),
+                    color: 'primary',
                 },
                 cancel: {
                     show: true,
-                    label: "ยกเลิก"
-                }
+                    label: this.translocoService.translate(
+                        'confirmation.cancel_button'
+                    ),
+                },
             },
-            dismissible: false
-        })
+            dismissible: false,
+        });
 
-        confirmation.afterClosed().subscribe(
-            result => {
-                if (result == 'confirmed') {
-                    this.memberService.deleteAddress(id).subscribe({
-                        error: (err) => {
-
-                        },
-                        complete: () => {
-                            this.toastr.success('ดำเนินการลบสำเร็จ');
-
-                        },
-                    });
-                }
+        confirmation.afterClosed().subscribe((result) => {
+            if (result == 'confirmed') {
+                this.memberService.deleteAddress(id).subscribe({
+                    error: (err) => { },
+                    complete: () => {
+                        this.toastr.success(
+                            this.translocoService.translate(
+                                'toastr.del_successfully'
+                            )
+                        );
+                    },
+                });
             }
-        )
+        });
     }
 }
