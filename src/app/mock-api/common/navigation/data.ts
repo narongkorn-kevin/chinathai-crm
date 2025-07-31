@@ -128,7 +128,7 @@ export const defaultNavigation: FuseNavigationItem[] = [
     },
     {
         id: 'sale-order',
-        title: 'SO',
+        title: 'คำสั่งซื้อ',
         type: 'collapsable',
         icon: 'heroicons_outline:clipboard-document-list',
         children: [
@@ -142,16 +142,6 @@ export const defaultNavigation: FuseNavigationItem[] = [
                     classes: 'px-2 bg-red-600 text-white rounded-full',
                 },
 
-            },
-            {
-                id: 'sale-order.crm',
-                title: 'CRM',
-                type: 'basic',
-                // link: '/follow-up',
-                // badge: {
-                //     title: '3',
-                //     classes: 'px-2 bg-red-600 text-white rounded-full',
-                // },
             },
             {
                 id: 'sale-order.claim',
@@ -168,60 +158,9 @@ export const defaultNavigation: FuseNavigationItem[] = [
                 title: 'เปิดบิลฝากส่ง',
                 type: 'basic',
                 link: '/order-request',
-                // badge: {
-                //     title: '3',
-                //     classes: 'px-2 bg-red-600 text-white rounded-full',
-                // },
             },
         ]
     },
-    {
-        id: 'purchase-order',
-        title: 'PO',
-        type: 'collapsable',
-        icon: 'heroicons_outline:clipboard-document-list',
-        children: [
-            {
-                id: 'purchase-order.po',
-                title: 'PO',
-                type: 'basic',
-                link: '/purchase-order',
-                badge: {
-                    title: '3',
-                    classes: 'px-2 bg-red-600 text-white rounded-full',
-                },
-
-            },
-            {
-                id: 'purchase-order.refund',
-                title: 'ร้านค้าคืนเงิน ',
-                type: 'basic',
-                // link: '/follow-up',
-                // badge: {
-                //     title: '3',
-                //     classes: 'px-2 bg-red-600 text-white rounded-full',
-                // },
-            },
-            {
-                id: 'purchase-order.report-refund',
-                title: 'รายงานคืนเงิน',
-                type: 'basic',
-                // link: '/follow-up',
-
-            },
-            {
-                id: 'sale-order.purchase-report',
-                title: 'Purchase Report',
-                type: 'basic',
-                // link: '/follow-up',
-                // badge: {
-                //     title: '3',
-                //     classes: 'px-2 bg-red-600 text-white rounded-full',
-                // },
-            },
-        ]
-    },
-
     {
         id: 'payment',
         title: 'ชำระเงิน',
@@ -239,23 +178,23 @@ export const defaultNavigation: FuseNavigationItem[] = [
                 },
 
             },
-            {
-                id: 'payment.withdraw',
-                title: 'ถอนเงิน ',
-                type: 'basic',
-                // link: '/follow-up',
-                badge: {
-                    title: '4',
-                    classes: 'px-2 bg-red-600 text-white rounded-full',
-                },
-            },
-            {
-                id: 'payment.statement',
-                title: 'รายการเดินบัญชี',
-                type: 'basic',
-                // link: '/follow-up',
+            // {
+            //     id: 'payment.withdraw',
+            //     title: 'ถอนเงิน ',
+            //     type: 'basic',
+            //     // link: '/follow-up',
+            //     badge: {
+            //         title: '4',
+            //         classes: 'px-2 bg-red-600 text-white rounded-full',
+            //     },
+            // },
+            // {
+            //     id: 'payment.statement',
+            //     title: 'รายการเดินบัญชี',
+            //     type: 'basic',
+            //     // link: '/follow-up',
 
-            },
+            // },
             {
                 id: 'payment.statement-transport',
                 title: 'รายการเดินบัญชีค่าขนส่ง',
@@ -266,16 +205,16 @@ export const defaultNavigation: FuseNavigationItem[] = [
                 //     classes: 'px-2 bg-red-600 text-white rounded-full',
                 // },
             },
-            {
-                id: 'payment.cr-dr',
-                title: 'Cr/Dr',
-                type: 'basic',
-                // link: '/follow-up',
-                // badge: {
-                //     title: '3',
-                //     classes: 'px-2 bg-red-600 text-white rounded-full',
-                // },
-            },
+            // {
+            //     id: 'payment.cr-dr',
+            //     title: 'Cr/Dr',
+            //     type: 'basic',
+            //     // link: '/follow-up',
+            //     // badge: {
+            //     //     title: '3',
+            //     //     classes: 'px-2 bg-red-600 text-white rounded-full',
+            //     // },
+            // },
         ]
     },
     {
