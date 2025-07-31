@@ -31,7 +31,10 @@ import { map, Observable, Subject } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { MatDivider } from '@angular/material/divider';
 import { ADTSettings } from 'angular-datatables/src/models/settings';
-import { MatDatepickerModule, MatDateRangePicker } from '@angular/material/datepicker';
+import {
+    MatDatepickerModule,
+    MatDateRangePicker,
+} from '@angular/material/datepicker';
 import {
     trigger,
     state,
@@ -40,12 +43,15 @@ import {
     animate,
 } from '@angular/animations';
 import { InvoiceService } from '../invoice.service';
+import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
+
 @Component({
     selector: 'app-invoice-dialog-edit-price',
     standalone: true,
     templateUrl: './dialog-edit-price.component.html',
     styleUrl: './dialog-edit-price.component.scss',
     imports: [
+        TranslocoModule,
         CommonModule,
         DataTablesModule,
         MatIconModule,
@@ -92,6 +98,7 @@ export class DialogEditPriceComponent implements OnInit {
     code: string;
 
     constructor(
+        private translocoService: TranslocoService,
         private dialogRef: MatDialogRef<DialogEditPriceComponent>,
         @Inject(MAT_DIALOG_DATA) public data: any,
         public dialog: MatDialog,
@@ -99,33 +106,36 @@ export class DialogEditPriceComponent implements OnInit {
         private fuseConfirmationService: FuseConfirmationService,
         private toastr: ToastrService,
         private http: HttpClient,
-        private _service: InvoiceService,
+        private _service: InvoiceService
     ) {
         this.code = data?.code;
         this.form = this.FormBuilder.group({
             payment_status: [''],
             price: [''],
             min_price: [''],
+            id: [this.data?.id],
         });
     }
 
     ngOnInit(): void {
-
-
     }
-    ngAfterViewInit() {
+    ngAfterViewInit() {}
 
-    }
-
-    ngOnDestroy(): void {
-
-    }
+    ngOnDestroy(): void {}
 
     Submit() {
+        if (this.form.invalid) {
+            this.toastr.error(
+                this.translocoService.translate('toastr.missing_fields')
+            );
+            this.form.markAllAsTouched();
+            return;
+        }
         const formValue = this.form.value;
+        console.log(formValue, 'formValue');
 
         const confirmation = this.fuseConfirmationService.open({
-            title: 'ยืนยันการบันทึกข้อมูล',
+            title: this.translocoService.translate('confirmation.save_title'),
             icon: {
                 show: true,
                 name: 'heroicons_outline:exclamation-triangle',
@@ -134,12 +144,16 @@ export class DialogEditPriceComponent implements OnInit {
             actions: {
                 confirm: {
                     show: true,
-                    label: 'ยืนยัน',
+                    label: this.translocoService.translate(
+                        'confirmation.confirm_button'
+                    ),
                     color: 'primary',
                 },
                 cancel: {
                     show: true,
-                    label: 'ยกเลิก',
+                    label: this.translocoService.translate(
+                        'confirmation.cancel_button'
+                    ),
                 },
             },
             dismissible: false,
@@ -147,7 +161,16 @@ export class DialogEditPriceComponent implements OnInit {
 
         confirmation.afterClosed().subscribe((result) => {
             if (result == 'confirmed') {
-                this.dialogRef.close(formValue);
+                      this._service.updatePrice(this.data.id,formValue).subscribe({
+                        next: (resp: any) => {
+                            this.toastr.success(this.translocoService.translate('toastr.success'));
+                                this.dialogRef.close(formValue);
+                        },
+                        error: (err) => {
+                            this.toastr.error(this.translocoService.translate(err.error.message || 'toastr.error'));
+                        },
+                    });
+            
             }
         });
     }

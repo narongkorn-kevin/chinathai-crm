@@ -1,20 +1,20 @@
 <div class="p-6">
-    <h2 class="text-2xl font-semibold mb-4">อัปเดตสถานะ</h2>
+    <h2 class="text-2xl font-semibold mb-4">{{ 'invoice.dialog_status.update_status' | transloco }}</h2>
     <mat-divider></mat-divider>
     <div class="flex flex-row items-center mt-4 mb-6">
-        <span class="w-full">รหัสใบแจ้งหนี้:</span>
+        <span class="w-full">{{ 'invoice.dialog_status.invoice_code' | transloco }}:</span>
         <div class="w-full text-right"> {{ code ?? '-' }} </div>
     </div>
     <form [formGroup]="form">
         <div class="flex flex-col md:flex-row w-full gap-2 items-end">
             <div class="w-full">
-                <mat-form-field [ngClass]="formFieldHelpers" class="w-full" >
-                    <mat-label>สถานะการชำระเงิน</mat-label>
-                    <mat-select formControlName="payment_status" >
-                        <mat-option [value]="'unpaid'">ยังไม่ชำระเงิน</mat-option>
-                        <mat-option [value]="'pending'">รอตรวจสอบ</mat-option>
-                        <mat-option [value]="'credit'">เครดิต</mat-option>
-                        <mat-option [value]="'paid'">ชำระเงินแล้ว</mat-option>
+                <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                    <mat-label>{{ 'invoice.dialog_status.payment_status' | transloco }}</mat-label>
+                    <mat-select formControlName="payment_status">
+                        <mat-option [value]="'pending'">{{ 'invoice.dialog_status.payment_status_options.pending' | transloco }}</mat-option>
+                        <mat-option [value]="'review'">{{ 'invoice.dialog_status.payment_status_options.review' | transloco }}</mat-option>
+                        <mat-option [value]="'credit'">{{ 'invoice.dialog_status.payment_status_options.credit' | transloco }}</mat-option>
+                        <mat-option [value]="'paid'">{{ 'invoice.dialog_status.payment_status_options.paid' | transloco }}</mat-option>
                     </mat-select>
                 </mat-form-field>
             </div>
@@ -22,10 +22,10 @@
     </form>
     <div mat-dialog-actions class="flex justify-end border-t-2 mt-2 p-2">
         <button class="px-6 ml-3" mat-flat-button (click)="onClose()">
-            ยกเลิก
+            {{ 'buttons.cancel' | transloco }}
         </button>
         <button class="px-6 ml-3" mat-flat-button [color]="'primary'" (click)="Submit()">
-            ตกลง
+            {{ 'buttons.submit' | transloco }}
         </button>
     </div>
 </div>

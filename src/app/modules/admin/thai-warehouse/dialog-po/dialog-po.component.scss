@@ -1,4 +1,28 @@
-mat-label {
-    font-weight: bold;
+.dialog-container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    max-height: 80vh;
+    /* Adjust based on your needs */
 }
 
+.dialog-header {
+    padding: 1.5rem;
+    padding-bottom: 0;
+}
+
+.dialog-search {
+    padding: 0 1.5rem 1rem;
+}
+
+.dialog-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 0 1.5rem;
+}
+
+.dialog-footer {
+    padding: 0.5rem 1.5rem;
+    background: white;
+    border-top: 1px solid #e5e7eb;
+}

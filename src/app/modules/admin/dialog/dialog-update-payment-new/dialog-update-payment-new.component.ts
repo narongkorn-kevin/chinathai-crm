@@ -10,7 +10,7 @@ import {
     MatDialogRef,
     MAT_DIALOG_DATA,
 } from '@angular/material/dialog';
-import { FormBuilder, FormGroup, FormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, FormsModule, Validators } from '@angular/forms';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -20,23 +20,32 @@ import { ToastrService } from 'ngx-toastr';
 import { MatRadioModule } from '@angular/material/radio';
 import { UploadedFile } from '../dialog-stock-in/dialog.component';
 import { OrderProductsService } from '../../order-products/order-products.service';
+import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
+
 @Component({
     selector: 'app-dialog-update-payment-new-product-form-addressed-4',
     standalone: true,
     templateUrl: './dialog-update-payment-new.component.html',
     styleUrl: './dialog-update-payment-new.component.scss',
-    imports: [CommonModule, DataTablesModule, MatIconModule, MatFormFieldModule, MatInputModule,
-        FormsModule, MatToolbarModule,
+    imports: [
+        TranslocoModule,
+        CommonModule,
+        DataTablesModule,
+        MatIconModule,
+        MatFormFieldModule,
+        MatInputModule,
+        FormsModule,
+        MatToolbarModule,
         MatButtonModule,
         MatDialogActions,
         MatSelectModule,
         ReactiveFormsModule,
         MatInputModule,
         MatFormFieldModule,
-        MatRadioModule]
+        MatRadioModule,
+    ],
 })
 export class DialogUpdatePaymentNewComponent implements OnInit {
-
     form: FormGroup;
     stores: any[] = [];
     formFieldHelpers: string[] = ['fuse-mat-dense'];
@@ -47,35 +56,41 @@ export class DialogUpdatePaymentNewComponent implements OnInit {
     uploadedFiles: UploadedFile[] = [];
 
     constructor(
+        private translocoService: TranslocoService,
         private dialogRef: MatDialogRef<DialogUpdatePaymentNewComponent>,
-        @Inject(MAT_DIALOG_DATA) public data: { order: any, dataList: any[] },
+        @Inject(MAT_DIALOG_DATA) public data: { order: any; dataList: any[] },
         public dialog: MatDialog,
         private FormBuilder: FormBuilder,
         private fuseConfirmationService: FuseConfirmationService,
         private toastr: ToastrService,
         private service: OrderProductsService
     ) {
-        this.order = data.order
-
-        this.form = this.FormBuilder.group({
-            payment_type: ['upload'],
-            member_id: this.order.member_id,
-            ref_no: this.order.code,
-            date: new Date(),
-            total_price: +this.order.total_price,
-            note: null,
-            image: null,
-            order_type: ['order']
-        });
+        this.order = data.order;
     }
 
     get sumPrices() {
         return this.data.dataList.reduce((totalSum, section) => {
-            return totalSum + section.list.reduce((sectionSum, item) => sectionSum + item.price, 0);
+            return (
+                totalSum +
+                section.list.reduce(
+                    (sectionSum, item) => sectionSum + item.price,
+                    0
+                )
+            );
         }, 0);
     }
 
     ngOnInit(): void {
+        this.form = this.FormBuilder.group({
+            payment_type: ['wallet'],
+            member_id: this.order.member_id,
+            ref_no: this.order.code,
+            date: [null, Validators.required],
+            total_price: this.sumPrices,
+            note: null,
+            image: [null],
+            order_type: ['import'],
+        });
     }
 
     uploadImage() {
@@ -83,7 +98,7 @@ export class DialogUpdatePaymentNewComponent implements OnInit {
             const file = this.uploadedFiles[0]?.file;
 
             if (!file) {
-                reject(new Error("No file selected"));
+                reject(new Error('No file selected'));
                 return;
             }
 
@@ -93,67 +108,81 @@ export class DialogUpdatePaymentNewComponent implements OnInit {
 
             this.service.upload(formData).subscribe({
                 next: (resp: any) => resolve(resp),
-                error: (err: any) => reject(err)
+                error: (err: any) => reject(err),
             });
         });
     }
 
-
     Submit() {
         if (this.form.invalid) {
-            return
+            this.toastr.error(
+                this.translocoService.translate('toastr.missing_fields')
+            );
+            this.form.markAllAsTouched();
+            return;
+        }
+
+        if (this.uploadedFiles.length === 0) {
+            this.toastr.error(
+                this.translocoService.translate('toastr.select_image')
+            );
+            return;
         }
 
         const confirmation = this.fuseConfirmationService.open({
-            title: "ยืนยันการบันทึกข้อมูล",
+            title: this.translocoService.translate('confirmation.save_title'),
             icon: {
                 show: true,
-                name: "heroicons_outline:exclamation-triangle",
-                color: "primary"
+                name: 'heroicons_outline:check-circle',
+                color: 'primary',
             },
             actions: {
                 confirm: {
                     show: true,
-                    label: "ยืนยัน",
-                    color: "primary"
+                    label: this.translocoService.translate(
+                        'confirmation.confirm_button'
+                    ),
+                    color: 'primary',
                 },
                 cancel: {
                     show: true,
-                    label: "ยกเลิก"
-                }
+                    label: this.translocoService.translate(
+                        'confirmation.cancel_button'
+                    ),
+                },
             },
-            dismissible: false
-        })
+            dismissible: false,
+        });
 
-        confirmation.afterClosed().subscribe(
-            async result => {
-                if (result == 'confirmed') {
-                    this.toastr.success('ดำเนินการเพิ่มข้อมูลสำเร็จ')
-                    this.dialogRef.close(true)
+        confirmation.afterClosed().subscribe(async (result) => {
+            if (result == 'confirmed') {
 
-                    // const slip: any = await this.uploadImage();
+                try {
+                    const slip: any = await this.uploadImage();
 
-                    // const formValue = {
-                    //     ...this.form.value,
-                    //     image: slip?.data
-                    // }
+                    const formValue = {
+                        ...this.form.value,
+                        image: slip?.data
+                    }
 
-                    // this.service.paymentOrder(formValue).subscribe({
-                    //     error: (err) => {
-                    //         this.toastr.error(err?.error?.message ?? 'ไม่สามารถบันทึกข้อมูลได้')
-                    //     },
-                    //     complete: () => {
-                    //         this.toastr.success('ดำเนินการเพิ่มข้อมูลสำเร็จ')
-                    //         this.dialogRef.close(true)
-                    //     },
-                    // });
+                    this.service.paymentOrder(formValue).subscribe({
+                        error: (err) => {
+                            this.toastr.error(err?.error?.message);
+                        },
+                        complete: () => {
+                            this.toastr.success(this.translocoService.translate('toastr.data_addition_successful'));
+                            this.dialogRef.close(true)
+                        },
+                    });
+                } catch (error) {
+                    this.toastr.error(this.translocoService.translate('toastr.unable_to_upload_image'));
                 }
             }
-        )
+        });
     }
 
     onClose() {
-        this.dialogRef.close()
+        this.dialogRef.close();
     }
 
     onFilesSelected(event: Event): void {
@@ -167,6 +196,7 @@ export class DialogUpdatePaymentNewComponent implements OnInit {
                         name: file.name,
                         size: Math.round(file.size / 1024),
                         imagePreview: reader.result as string,
+                        fromAPI: false,
                     });
                 };
                 reader.readAsDataURL(file);

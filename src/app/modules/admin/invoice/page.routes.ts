@@ -21,30 +21,18 @@ export default [
             type: 'NEW',
         },
         resolve: {
-            // transport: () => inject(InvoiceService).getTransport(),
+            packing_list: () => inject(InvoiceService).getPackingListInthai(),
         }
     },
     {
         path: 'view/:id',
         component: ViewComponent,
         resolve: {
-            // data: (route) => inject(DeliveryNoteService).get(route.params['id']),
+            packing_list: () => inject(InvoiceService).getPackingList(),
+            data: (route) => inject(InvoiceService).get(route.params['id']),
+
         }
     },
-    // {
-    //     path: 'view-order/:id',
-    //     component: ViewOrderComponent,
-    //     resolve: {
-    //         // data: (route) => inject(DeliveryNoteService).get(route.params['id']),
-    //     }
-    // },
-    // {
-    //     path: 'view-order-after/:id',
-    //     component: ViewOrderAfterComponent,
-    //     resolve: {
-    //         // data: (route) => inject(DeliveryNoteService).get(route.params['id']),
-    //     }
-    // },
     {
         path: 'edit/:id',
         component: EditComponent,
@@ -52,8 +40,8 @@ export default [
             type: 'EDIT',
         },
         resolve: {
-            // transports: (route) => inject(InvoiceService).getTransport(),
-            // data: (route) => inject(DeliveryNoteService).get(route.params['id']),
+            packing_list: () => inject(InvoiceService).getPackingList(),
+            data: (route) => inject(InvoiceService).get(route.params['id']),
         }
     },
 

@@ -13,13 +13,13 @@
                         <button
                             class="font-medium leading-7 tracking-tight truncate md:text-sm sm:leading-10 text-[#DF0B12]"
                             [routerLink]="['/lot']" routerLinkActive="router-link-active">
-                            {{ 'packing_list.packing_list' | transloco }}
+                            {{ 'ขึ้นตู้' | transloco }}
                         </button>
                     </div>
 
                     <p class="md:text-2xl text-[#DF0B12] font-bold tracking-tight leading-7 sm:leading-10 truncate">
-                        <span *ngIf="type === 'NEW'">{{ 'buttons.addItem' | transloco }} Packing List</span>
-                        <span *ngIf="type === 'EDIT'">{{ 'packing_list.form.packing_list_no' | transloco }}: {{
+                        <span *ngIf="type === 'NEW'">{{ 'เพิ่มรายการ' | transloco }}ขึ้นตู้</span>
+                        <span *ngIf="type === 'EDIT'">{{ 'แก้ไขรายการ' | transloco }}: {{
                             data.packinglist_no }}</span>
                     </p>
                 </div>
@@ -40,8 +40,8 @@
                 <div class="flex flex-col md:flex-row gap-2">
                     <div class="w-full">
                         <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
-                            <mat-label>{{ 'packing_list.form.form_labels.packinglist_no' | transloco }}</mat-label>
-                            <input matInput [placeholder]="'packing_list.form.placeholders.packinglist_no' | transloco"
+                            <mat-label>{{ 'หมายเลขทำรายการ' | transloco }}</mat-label>
+                            <input matInput [placeholder]="'' | transloco"
                                 formControlName="packinglist_no">
                         </mat-form-field>
                     </div>

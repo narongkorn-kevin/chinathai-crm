@@ -12,13 +12,13 @@
                         <button
                             class="md:text-sm font-medium tracking-tight leading-7 sm:leading-10 truncate text-[#DF0B12]"
                             [routerLink]="['/pallet']" routerLinkActive="router-link-active">
-                            {{ 'pallet.title.pallet_list' | transloco }}
+                            {{ 'จัดกระสอบเตรียมขึ้นตู้' | transloco }}
                         </button>
                     </div>
 
                     <p class="md:text-2xl text-[#DF0B12] font-bold tracking-tight leading-7 sm:leading-10 truncate">
-                        <span *ngIf="type === 'NEW'">{{ 'pallet.form.create_pallet' | transloco }}</span>
-                        <span *ngIf="type === 'EDIT'">{{ 'pallet.form.pallet_number' | transloco }}: {{ data.code
+                        <span *ngIf="type === 'NEW'">{{ 'สร้างกระสอบเตรียมขึ้นตู้' | transloco }}</span>
+                        <span *ngIf="type === 'EDIT'">{{ 'แก้ไขกระสอบเตรียมขึ้นตู้' | transloco }}: {{ data.code
                             }}</span>
                     </p>
                 </div>
@@ -39,7 +39,7 @@
                 <div class="grid w-full grid-flow-row md:grid-cols-2 gap-x-2 ">
                     <div class="w-full">
                         <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
-                            <mat-label>{{ 'pallet.form.pallet_number' | transloco }}</mat-label>
+                            <mat-label>{{ 'หมายเลขกระสอบ' | transloco }}</mat-label>
                             <input matInput [placeholder]="'pallet.form.pallet_number' | transloco"
                                 formControlName="code" readonly>
                         </mat-form-field>
@@ -83,7 +83,7 @@
                 <div
                     class="w-full p-4 my-4 border border-gray-300 rounded-lg min-h-[300px] overflow-y-auto flex flex-col">
                     <div class="flex flex-row w-full gap-2 mb-6">
-                        <div class="w-full text-xl md:text-3xl font-bold">{{ 'pallet.form.products_in_pallet' |
+                        <div class="w-full text-xl md:text-3xl font-bold">{{ 'รายการสินค้าในกระสอบรอขึ้นตู้' |
                             transloco }}</div>
                         <div class="flex flex-col md:flex-row justify-end w-full gap-2">
                             <div class="flex flex-col md:flex-row gap-2 items-start">
@@ -148,7 +148,7 @@
                         </div>
                         <div class="grid md:grid-cols-3 md:flex-row w-full gap-x-2 mt-2">
                             <div class="w-full">
-                                <mat-label>{{ 'dalivery_order.labels.customer' | transloco }}</mat-label>
+                                <mat-label>{{ 'delivery_order.labels.customer' | transloco }}</mat-label>
                                 <asha-select-member
                                 (change)="selectMember($event)"
                                 class="w-full [&_input]:!mt-0 [&_input]:!pt-1 [&_input]:!pb-1 [&_.mdc-text-field]:!mt-0">
@@ -193,8 +193,8 @@
                                     <th class="px-6 py-3 border border-x-0">#</th>
                                     <th class="px-6 py-3 border border-x-0">{{ 'pallet.form.customer' | transloco }}
                                     </th>
-                                    <th class="px-6 py-3 border border-x-0">{{ 'pallet.form.sack_code' | transloco }}
-                                    </th>
+                                    <!-- <th class="px-6 py-3 border border-x-0">{{ 'pallet.form.sack_code' | transloco }}
+                                    </th> -->
                                     <th class="px-6 py-3 border border-x-0">{{ 'pallet.form.barcode_number' | transloco
                                         }}</th>
                                     <th class="px-6 py-3 border border-x-0">{{ 'pallet.form.warehouse_receipt_code' |
@@ -218,8 +218,8 @@
                                             [ngModelOptions]="{standalone: true}"></mat-checkbox>
                                     </td>
                                     <td class="px-6 py-3 border border-x-0">{{ i + 1 }}</td>
-                                    <td class="px-6 py-3 border border-x-0">{{ list?.importer_code ?? '-' }}</td>
-                                    <td class="px-6 py-3 border border-x-0">{{ list?.sack_code ?? '-' }}</td>
+                                    <td class="px-6 py-3 border border-x-0">{{ list?.member_code ?? '-' }}</td>
+                                    <!-- <td class="px-6 py-3 border border-x-0">{{ list?.sack_code ?? '-' }}</td> -->
                                     <td class="px-6 py-3 border border-x-0">{{ list?.barcode ?? '-' }}</td>
                                     <td class="px-6 py-3 border border-x-0">{{ list?.in_store_code ?? '-' }}</td>
                                     <td class="px-6 py-3 border border-x-0">{{ list?.shipment ?? '-' }}</td>
@@ -231,7 +231,7 @@
                             </tbody>
                             <tfoot class="bg-gray-100">
                                 <tr class="text-center">
-                                    <td colspan="9" class="px-6 py-3 border border-x-0 text-left">{{
+                                    <td colspan="8" class="px-6 py-3 border border-x-0 text-left">{{
                                         'pallet.form.total_items' | transloco }}</td>
                                     <td class="px-6 py-3 border border-x-0">{{ totalWeight | number : '1.2' }}</td>
                                     <td class="px-6 py-3 border border-x-0">{{ totalCBM | number }}</td>

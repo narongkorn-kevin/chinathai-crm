@@ -31,6 +31,7 @@ import {
     FormsModule,
     Validators,
     FormArray,
+    EmailValidator,
 } from '@angular/forms';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -77,12 +78,15 @@ import { UploadFileComponent } from 'app/modules/common/upload-file/upload-file.
 import { DialogScanComponent } from 'app/modules/common/dialog-scan/dialog-scan.component';
 import { InvoiceService } from '../invoice.service';
 
+import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
+
 @Component({
     selector: 'app-delivery-order-edit',
     standalone: true,
     templateUrl: './edit.component.html',
     styleUrl: './edit.component.scss',
     imports: [
+        TranslocoModule,
         CommonModule,
         DataTablesModule,
         MatIconModule,
@@ -149,7 +153,7 @@ export class EditComponent implements OnInit, AfterViewInit {
 
     data: any;
     lists = [];
-    transports= [];
+    transports = [];
     provinces: any[] = [];
     districts: any[] = [];
     subdistricts: any[] = [];
@@ -157,6 +161,7 @@ export class EditComponent implements OnInit, AfterViewInit {
     transportBy: string;
 
     constructor(
+        private translocoService: TranslocoService,
         private formBuilder: FormBuilder,
         public _service: InvoiceService,
         private fuseConfirmationService: FuseConfirmationService,
@@ -171,10 +176,11 @@ export class EditComponent implements OnInit, AfterViewInit {
         this.Id = this.activated.snapshot.params?.id;
         this.data = this.activated.snapshot.data?.data?.data;
         this.transports = this.activated.snapshot.data?.transports?.data;
-
+        console.log(this.data, 'data');
+        
         this.form = this.formBuilder.group({
-            code: [{ value: '', disabled: true }],
-            send_no: [''],
+            member_code: [{ value: '' }],
+            bill_no: [''],
             address: [''],
             province_code: [''],
             district_code: [''],
@@ -184,13 +190,26 @@ export class EditComponent implements OnInit, AfterViewInit {
             email: [''],
             location: [''],
             convenient_time: [''],
-            credit: [''],
+            credit_limit: [''],
+            loan_amount: [''],
             estimated_arrival_date: [''],
-            remark: ['']
+            remark: [''],
         });
-        if(this.type === 'EDIT') {
+        if (this.type === 'EDIT') {
             this.form.patchValue({
-                ...this.data
+                member_code: this.data?.member?.importer_code,
+                bill_no: this.data?.code,
+                address : this.data?.member_address?.address,
+                province_code: this.data?.member_address?.province,
+                district_code: this.data?.member_address?.district,
+                sub_district: this.data?.member_address?.sub_district,  
+                postal_code: this.data?.member_address?.postal_code,  
+                phone: this.data?.member_address?.contact_phone,  
+                email: this.data?.member?.email,  
+                convenient_time: this.data?.member?.avaliable_time,  
+                credit_limit: this.data?.member?.credit_limit,  
+                loan_amount: this.data?.member?.loan_amount,  
+                remark: this.data?.member?.remark,  
             });
         }
     }
@@ -202,43 +221,6 @@ export class EditComponent implements OnInit, AfterViewInit {
                 this.districts = data;
                 this.locationService.getSubdistricts().subscribe((data) => {
                     this.subdistricts = data;
-                    // if (this.type === 'EDIT') {
-                    //     this.form.patchValue({
-                    //         id: this.data?.id,
-                    //         code: this.data?.code,
-                    //         member_type: this.data?.member_type,
-                    //         importer_code: this.data?.importer_code,
-                    //         fname: this.data?.fname,
-                    //         lname: this.data?.lname,
-                    //         phone: this.data?.phone,
-                    //         password: this.data?.password,
-                    //         birth_date: this.data?.birth_date,
-                    //         gender: this.data?.gender,
-                    //         address: this.data?.address,
-                    //         province: this.data?.province,
-                    //         district: this.data?.district,
-                    //         sub_district: this.data?.sub_district,
-                    //         postal_code: this.data?.postal_code,
-                    //         image: this.data?.image,
-                    //         transport_thai_master_id: this.data?.detail?.transport_thai_master_id,
-                    //         ever_imported_from_china: this.data?.detail?.ever_imported_from_china,
-                    //         order_quantity: this.data?.detail?.order_quantity,
-                    //         frequent_importer: this.data?.detail?.frequent_importer,
-                    //         need_transport_type: this.data?.detail?.need_transport_type,
-                    //         additional_requests: this.data?.detail?.additional_requests,
-                    //         comp_name: this.data?.detail?.comp_name,
-                    //         comp_tax: this.data?.detail?.comp_tax,
-                    //         comp_phone: this.data?.detail?.comp_phone,
-                    //         cargo_name: this.data?.detail?.cargo_name,
-                    //         cargo_website: this.data?.detail?.cargo_website,
-                    //         cargo_image: this.data?.detail?.cargo_image,
-                    //         order_quantity_in_thai: this.data?.detail?.order_quantity_in_thai,
-                    //     });
-                    //     console.log('edit', this.form.value);
-
-                    // } else {
-                    //     console.log('New');
-                    // }
                 });
             });
         });
@@ -246,22 +228,13 @@ export class EditComponent implements OnInit, AfterViewInit {
     ngAfterViewInit() {}
     ngOnDestroy(): void {}
 
-
     Submit() {
-        console.log('form', this.form.value);
-
-        if (this.form.invalid) {
-            console.log('form', this.form.value);
-            this.form.markAllAsTouched();
-            return;
-        }
-
         // Format the date before submitting
         const formValue = { ...this.form.value };
         // formValue.date = new Date(formValue.date).toISOString().split('T')[0];
 
         const confirmation = this.fuseConfirmationService.open({
-            title: 'ยืนยันการบันทึกข้อมูล',
+            title: this.translocoService.translate('confirmation.save_title'),
             icon: {
                 show: true,
                 name: 'heroicons_outline:exclamation-triangle',
@@ -270,12 +243,16 @@ export class EditComponent implements OnInit, AfterViewInit {
             actions: {
                 confirm: {
                     show: true,
-                    label: 'ยืนยัน',
+                    label: this.translocoService.translate(
+                        'confirmation.confirm_button'
+                    ),
                     color: 'primary',
                 },
                 cancel: {
                     show: true,
-                    label: 'ยกเลิก',
+                    label: this.translocoService.translate(
+                        'confirmation.cancel_button'
+                    ),
                 },
             },
             dismissible: false,
@@ -284,29 +261,31 @@ export class EditComponent implements OnInit, AfterViewInit {
         confirmation.afterClosed().subscribe((result) => {
             if (result == 'confirmed') {
                 const payload = { ...formValue };
-                // if (this.type === 'NEW') {
-                //     console.log('form', payload);
-                //     this._service.create(payload).subscribe({
-                //         next: (resp: any) => {
-                //             this.toastr.success('บันทึกข้อมูลสำเร็จ');
-                //             this._router.navigate(['lot']);
-                //         },
-                //         error: (err) => {
-                //             this.toastr.error('บันทึกข้อมูลไม่สำเร็จ');
-                //         },
-                //     });
-                // } else {
-                //     this._service.update(payload, this.Id).subscribe({
-                //         next: (resp: any) => {
-                //             this.toastr.success('แก้ไขข้อมูลสำเร็จ');
-                //             this._router.navigate(['lot']);
-                //         },
-                //         error: (err) => {
-                //             this.toastr.error('แก้ไขข้อมูลไม่สำเร็จ');
-                //         },
-                //     });
-                // }
-                this.toastr.success('แก้ไขข้อมูลสำเร็จ');
+                if (this.type === 'NEW') {
+                    console.log('form', payload);
+                    this._service.create(payload).subscribe({
+                        next: (resp: any) => {
+                            this.toastr.success(this.translocoService.translate('toastr.success'));
+                            this._router.navigate(['lot']);
+                        },
+                        error: (err) => {
+                            this.toastr.error(this.translocoService.translate('toastr.error'));
+                        },
+                    });
+                } else {
+                    this._service.update(payload, this.Id).subscribe({
+                        next: (resp: any) => {
+                            this.toastr.success(this.translocoService.translate('toastr.edit'));
+                            this._router.navigate(['lot']);
+                        },
+                        error: (err) => {
+                            this.toastr.error(this.translocoService.translate('toastr.edit_error'));
+                        },
+                    });
+                }
+                this.toastr.success(
+                    this.translocoService.translate('toastr.edit')
+                );
                 this._router.navigate(['invoice/view/' + this.Id]);
             }
         });

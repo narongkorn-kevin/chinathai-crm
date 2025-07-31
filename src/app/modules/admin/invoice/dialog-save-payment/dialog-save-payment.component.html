@@ -1,58 +1,62 @@
 <div class="p-4">
-    <h2 class="text-2xl font-semibold mb-4">บันทึกรับชำระเงิน</h2>
+    <h2 class="text-2xl font-semibold mb-4">{{ 'invoice.dialog_save_payment.payment_receipt' | transloco }}</h2>
     <form [formGroup]="form" class="overflow-y-auto">
-        <div>ประเภทลูกค้า</div>
-        <div class="grid grid-cols-2 gap-4">
+        <div>{{ 'invoice.dialog_save_payment.customer_type_title' | transloco }}</div>
+        <div class="flex flex-col md:grid md:grid-cols-2 gap-4">
             <!-- ตัวเลือก "มารับเอง" -->
-            <label class="flex flex-col border rounded-lg p-2 cursor-pointer" [class.border-red-500]="form.value.type === 'self'">
+            <label class="flex flex-col border rounded-lg p-2 cursor-pointer"
+                [class.border-red-500]="form.value.type === 'self'">
                 <div class="flex justify-between items-center">
-                    <span class="text-lg">นิติบุคคล</span>
-                    <mat-checkbox color="warn" [checked]="form.value.type === 'self'" (change)="form.patchValue({ type: 'self' })"></mat-checkbox>
+                    <span class="text-lg">{{ 'invoice.dialog_save_payment.customer_type_legal_entity' | transloco }}</span>
+                    <mat-checkbox class="text-white" [color]="'primary'" [checked]="form.value.type === 'self'"
+                        (change)="form.patchValue({ type: 'self' })"></mat-checkbox>
                 </div>
-                <span class="text-sm text-gray-500">ประเภทลูกค้า</span>
+                <span class="text-sm text-gray-500">{{ 'invoice.dialog_save_payment.customer_type_title' | transloco }}</span>
             </label>
 
             <!-- ตัวเลือก "บริษัทนำส่งหรือรถร่วม" -->
-            <label class="flex flex-col border rounded-lg p-2 cursor-pointer" [class.border-red-500]="form.value.type === 'company'">
+            <label class="flex flex-col border rounded-lg p-2 cursor-pointer"
+                [class.border-red-500]="form.value.type === 'company'">
                 <div class="flex justify-between items-center">
-                    <span class="text-lg">บุคคลธรรมดา</span>
-                    <mat-checkbox color="warn" [checked]="form.value.type === 'company'" (change)="form.patchValue({ type: 'company' })"></mat-checkbox>
+                    <span class="text-lg">{{ 'invoice.dialog_save_payment.customer_type_individual' | transloco }}</span>
+                    <mat-checkbox class="text-white" [color]="'primary'" [checked]="form.value.type === 'company'"
+                        (change)="form.patchValue({ type: 'company' })"></mat-checkbox>
                 </div>
                 <span class="text-sm text-gray-500">ประเภทลูกค้า</span>
             </label>
         </div>
         <!-- ส่วนคำนวณ -->
         <div class="grid grid-cols-2 gap-4 mt-4 justify-between">
-            <div>จำนวนเงิน</div>
+            <div>{{ 'invoice.dialog_save_payment.calculation_amount' | transloco }}</div>
+            <div class="text-right">{{(data.total_amount|number : '1.2') ?? '0.00'}}</div>
+
+            <div>{{ 'invoice.dialog_save_payment.calculation_vat_7' | transloco }}</div>
+            <div class="text-right">{{(data.total_amount|number : '1.2') ?? '0.00'}}</div>
+
+            <div>{{ 'invoice.dialog_save_payment.calculation_total_after_vat' | transloco }}</div>
             <div class="text-right">0</div>
 
-            <div>VAT 7%</div>
+            <div>{{ 'invoice.dialog_save_payment.calculation_withholding_tax' | transloco }}</div>
             <div class="text-right">0</div>
 
-            <div>ยอกรวมหลังคำนวณ VAT 7%</div>
-            <div class="text-right">0</div>
-
-            <div>หัก ณ ที่จ่าย(TAX 1%)</div>
-            <div class="text-right">0</div>
-
-            <div>ยอดสุทธิหลัง หัก ณ ที่จ่าย</div>
+            <div>{{ 'invoice.dialog_save_payment.calculation_net_after_tax' | transloco }}</div>
             <div class="text-right">0</div>
         </div>
 
         <div class="w-full my-2 mt-4">
-            <span class="my-2">ตัวเลือกขนส่ง</span> 
+            <span class="my-2">{{ 'invoice.dialog_save_payment.transport_options_title' | transloco }}</span>
             <div class="w-full">
                 <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
                     <mat-select formControlName="transport_type" placeholder="">
-                        <mat-option [value]="">เข้ารับที่โกดัง</mat-option>
-                        <mat-option [value]="">ขนส่งบริษัท</mat-option>
-                        <mat-option [value]="">ขนส่งเอกชน</mat-option>
+                        <mat-option [value]="">{{ 'invoice.dialog_save_payment.transport_options_pickup' | transloco }}</mat-option>
+                        <mat-option [value]="">{{ 'invoice.dialog_save_payment.transport_options_company' | transloco }}</mat-option>
+                        <mat-option [value]="">{{ 'invoice.dialog_save_payment.transport_options_private' | transloco }}</mat-option>
                     </mat-select>
                 </mat-form-field>
             </div>
             <div class="w-full">
                 <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
-                    <mat-select formControlName="transport" required>
+                    <mat-select formControlName="transport">
                         <mat-option *ngFor="let transport of transports" [value]="transport.id">
                             {{ transport.name }}
                         </mat-option>
@@ -61,15 +65,15 @@
             </div>
         </div>
         <div class="grid grid-cols-2 gap-4 justify-between mb-2">
-            <div>ค่าขนส่งในไทย</div>
+            <div>{{ 'invoice.dialog_save_payment.transport_fees_domestic' | transloco }}</div>
             <div class="text-right">0</div>
 
-            <div>ค่าบริการจีน + ค่าตีลัง</div>
+            <div>{{ 'invoice.dialog_save_payment.transport_fees_china_repacking' | transloco }}</div>
             <div class="text-right">0</div>
         </div>
 
         <div class="w-full my-4">
-            <span class="mb-1">วันและเวลาที่ทำการโอนเงิน</span>
+            <span class="mb-1">{{ 'invoice.dialog_save_payment.payment_details_transfer_datetime' | transloco }}</span>
             <div class="w-full">
                 <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
                     <input matInput [matDatepicker]="picker" [placeholder]="''" formControlName="date">
@@ -79,20 +83,21 @@
             </div>
         </div>
         <div>
-            <span>แนบรูปหลักฐานการโอน</span>
-            <asha-upload-file></asha-upload-file>
+            <span>{{ 'invoice.dialog_save_payment.payment_details_proof_of_transfer' | transloco }}</span>
+            <asha-upload-file [existingImage]="form.get('image').value"
+                (filesChanged)="onFilesChanged($event)"></asha-upload-file>
         </div>
     </form>
     <div mat-dialog-actions class="flex justify-between border-t-2 py-2">
         <div class="w-full">
-            ยอดชำระสุทธิ
+            {{ 'invoice.dialog_save_payment.net_payment' | transloco }}
         </div>
         <div class="w-full flex justify-end">
             <button class="px-6 ml-3" mat-flat-button (click)="onClose()">
-                ยกเลิก
+                {{ 'buttons.cancel' | transloco }}
             </button>
             <button class="px-6 ml-3" mat-flat-button [color]="'primary'" (click)="Submit()">
-                บันทึก
+                {{ 'buttons.save' | transloco }}
             </button>
         </div>
     </div>

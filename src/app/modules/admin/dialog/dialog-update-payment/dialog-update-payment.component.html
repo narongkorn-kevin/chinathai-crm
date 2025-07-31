@@ -1,73 +1,77 @@
 <div class="mx-auto bg-white rounded-lg w-full">
-    <h2 class="text-lg font-semibold mb-4">บันทึกรับชำระเงิน</h2>
+    <h2 class="text-lg font-semibold mb-4">{{ 'dialog.dialog_update_payment.payment_record' | transloco }}</h2>
     <!-- {{ order | json }} -->
     <form [formGroup]="form">
         <div class="space-y-3">
             <!-- Product Price -->
             <div class="flex justify-between">
-                <span>ค่าสินค้าทั้งหมด (บาท):</span>
-                <span>{{ order?.total_price | number:'1.2-2' }}</span>
+                <span>{{ 'dialog.dialog_update_payment.product_price' | transloco }}:</span>
+                <span>{{ total | number:'1.2-2' }}</span>
             </div>
 
             <!-- Shipping Fee -->
             <div class="flex justify-between">
-                <span>ค่าส่งในจีนทั้งหมด (บาท):</span>
-                <span>{{ order?.delivery_price_china ?? 0 }}</span>
+                <span>{{ 'dialog.dialog_update_payment.china_shipping_fee' | transloco }}: <span class="font-bold"> {{order?.china_shipping_fee | number:'1.2-2' }} x {{order?.exchange_rate | number:'1.2-2' }} </span> </span>
+                <span>{{ (order?.china_shipping_fee * order?.exchange_rate) | number:'1.2-2' }}</span>
             </div>
 
             <!-- Translation Fee -->
             <div class="flex justify-between">
-                <span>ค่าบริการล่ามแปลเกี่ยวกับข้อมูลสินค้า (บาท):</span>
-                <span>{{ order?.delivery_price_china ?? 0 }}</span>
+                <span>{{ 'dialog.dialog_update_payment.translation_fee' | transloco }}:</span>
+                <span>{{ order?.exchange_rate | number:'1.2-2' }}</span>
             </div>
 
             <!-- Service Fee -->
             <div class="flex justify-between">
-                <span>ค่าบริการ (บาท):</span>
-                <span>{{ order?.order_fee ?? 0 }}</span>
+                <span>{{ 'dialog.dialog_update_payment.service_fee' | transloco }}:</span>
+                <span>{{ order?.deposit_fee | number:'1.2-2' }}</span>
             </div>
 
             <!-- Total Amount -->
             <div class="flex justify-between font-bold">
-                <span>ยอดรวมที่ต้องชำระ:</span>
-                <span>{{ order?.order_fee ?? 0 }}</span>
+                <span>{{ 'dialog.dialog_update_payment.total_payment' | transloco }}:</span>
+                <span>{{ order?.total_price | number:'1.2-2' }}</span>
             </div>
 
             <!-- Date & Time -->
             <div>
-                <label class="block text-sm font-medium">วันและเวลาที่ทำการโอนเงิน</label>
+                <label class="block text-sm font-medium">{{ 'dialog.dialog_update_payment.transfer_datetime' | transloco
+                    }}</label>
                 <input [formControlName]="'date'" type="datetime-local" class="w-full px-3 py-2 border rounded-lg">
             </div>
 
             <!-- Payment Proof -->
             <div class="flex flex-col justify-center">
-                <label class="w-full block font-bold">แนบรูปหลักฐานการโอน:</label>
+                <label class="w-full block font-bold">{{ 'dialog.dialog_update_payment.attach_proof' | transloco
+                    }}:</label>
                 <!-- <asha-image-upload class="flex w-full justify-center"></asha-image-upload> -->
                 <!-- <div class="flex items-center gap-2">
                     <input type="text" placeholder="วางลิงก์ของคุณที่นี่"
                         class="w-full px-3 py-2 border rounded-lg">
-                    <span>หรือ</span>
+                    <span>{{ 'lables.or' | transloco }}</span>
                     <input type="file" (change)="onFileSelect($event)" class="border px-3 py-2 rounded-lg">
                 </div> -->
-                <div class="flex flex-row w-full gap-4">
-                    <div class="flex flex-col w-1/2 md:flex">
+                <div class="flex flex-row w-full items-center gap-4">
+                    <div class="flex flex-col w-1/2 md:flex pt-5">
                         <div class="md:w-full">
-                            <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                            <mat-form-field class="w-full mt-1">
                                 <!-- <mat-label>วางลิ้งของคุณที่นี่</mat-label> -->
-                                <input matInput [placeholder]="'วางลิ้งของคุณที่นี่'" formControlName="image_url">
+                                <input matInput [placeholder]="'lables.paste_your_link' | transloco "
+                                    formControlName="image_url">
                             </mat-form-field>
                         </div>
                     </div>
                     <div class="flex items-center">
-                        <p>หรือ</p>
+                        <p>{{ 'lables.or' | transloco }}</p>
                     </div>
                     <div class="flex flex-col w-1/2 md:flex">
                         <div class="md:w-full">
                             <!-- การลากไฟล์หรือเลือกไฟล์ -->
                             <label for="fileInput"
                                 class="block p-4 text-sm text-center text-gray-600 bg-gray-100 border-2 border-red-500 border-dashed rounded-lg cursor-pointer">
-                                ลากไฟล์ของคุณมาหรือ
-                                <span class="font-medium text-red-500">เลือกจากไฟล์ที่มี</span>
+                                {{ 'lables.drag_or_select_file' | transloco }}
+                                <span class="font-medium text-red-500">{{ 'lables.select_from_existing' | transloco
+                                    }}</span>
                                 <input type="file" id="fileInput" class="hidden" (change)="onFilesSelected($event)" />
                             </label>
                         </div>
@@ -103,20 +107,25 @@
                 </div>
 
                 <!-- Confirmed Amount -->
-                <div class="flex justify-between text-red-500 font-bold">
-                    <span>ยอดชำระสุทธิ:</span>
-                    <span>{{ order?.total_price | number:'1.2-2' }}</span>
-                </div>
+
             </div>
 
             <!-- Buttons -->
-            <div mat-dialog-actions class="flex justify-end border-t-2 pt-4">
-                <button class="px-6 ml-3" mat-flat-button [color]="'primary'" (click)="Submit()">
-                    ตกลง
-                </button>
-                <button class="px-6 ml-3" mat-flat-button [color]="'warn'" (click)="onClose()">
-                    ยกเลิก
-                </button>
+            <div mat-dialog-actions class="flex justify-between border-t-2 border-gray-300 pt-4">
+                <div class="space-x-2">
+                    <span class="text-red-500 font-bold">{{ order?.total_price | number:'1.2-2' }}</span>
+                    <span class="text-black font-semibold">{{ 'dialog.dialog_update_payment.net_payment' | transloco }}</span>
+                </div>
+                <div>
+                    <button class="px-6 ml-3" mat-flat-button [color]="'warn'" (click)="onClose()">
+                        {{ 'buttons.cancel' | transloco }}
+                    </button>
+                    <button class="px-6 ml-3" mat-flat-button [color]="'primary'" (click)="Submit()">
+                        {{ 'buttons.submit' | transloco }}
+                    </button>
+                 
+                </div>
+
             </div>
         </div>
     </form>

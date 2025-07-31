@@ -46,12 +46,22 @@ import {
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { InvoiceService } from '../invoice.service';
 import { UploadFileComponent } from 'app/modules/common/upload-file/upload-file.component';
+import { serialize } from 'object-to-formdata';
+export interface UploadedFile {
+    file: File;
+    name: string;
+    size: number;
+    imagePreview: string;
+}
+import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
+
 @Component({
     selector: 'app-lot-dialog-save-payment',
     standalone: true,
     templateUrl: './dialog-save-payment.component.html',
     styleUrl: './dialog-save-payment.component.scss',
     imports: [
+        TranslocoModule,
         CommonModule,
         DataTablesModule,
         MatIconModule,
@@ -94,11 +104,13 @@ import { UploadFileComponent } from 'app/modules/common/upload-file/upload-file.
 })
 export class DialogSavePaymentComponent implements OnInit {
     form: FormGroup;
+    form_file: FormGroup;
     formFieldHelpers: string[] = ['fuse-mat-dense'];
     tracks = [];
     transports = [];
 
     constructor(
+        private translocoService: TranslocoService,
         private dialogRef: MatDialogRef<DialogSavePaymentComponent>,
         @Inject(MAT_DIALOG_DATA) public data: any,
         public dialog: MatDialog,
@@ -113,8 +125,30 @@ export class DialogSavePaymentComponent implements OnInit {
     protected _onDestroy = new Subject<void>();
 
     ngOnInit(): void {
+        console.log('data', this.data);
+        const today = new Date().toISOString().split('T')[0];
         this.form = this.FormBuilder.group({
-            type: ['', Validators.required],
+            payment_type: ['upload'],
+            ref_no: [''],
+            member_id: [''],
+            total_price: [''],
+            note: [''],
+            image: [''],
+            order_type: ['bill'],
+            // ======================================
+            type: [''],
+            transport_type: [''],
+            transport: [''],
+            date: [today, Validators.required],
+        });
+        this.form.patchValue({
+            ref_no: this.data?.code,
+            member_id: this.data?.member_id,
+            total_price: this.data?.total_amount ?? 0,
+        });
+        this.form_file = this.FormBuilder.group({
+            file: [null],
+            path: ['files/asset/', Validators.required],
         });
     }
     ngAfterViewInit() {}
@@ -122,9 +156,17 @@ export class DialogSavePaymentComponent implements OnInit {
     ngOnDestroy(): void {}
 
     Submit() {
+        if (this.form.invalid) {
+            this.toastr.error(this.translocoService.translate('toastr.missing_fields'));
+            this.form.markAllAsTouched();
+            return;
+        }
         const formvalue = this.form.value;
+        formvalue.date = new Date(formvalue?.date).toISOString().split('T')[0];
+
+        console.log('formvalue', formvalue);
         const confirmation = this.fuseConfirmationService.open({
-            title: 'ยืนยันการบันทึกข้อมูล',
+            title: this.translocoService.translate('confirmation.save_title'),
             icon: {
                 show: true,
                 name: 'heroicons_outline:exclamation-triangle',
@@ -133,12 +175,16 @@ export class DialogSavePaymentComponent implements OnInit {
             actions: {
                 confirm: {
                     show: true,
-                    label: 'ยืนยัน',
+                    label: this.translocoService.translate(
+                        'confirmation.confirm_button'
+                    ),
                     color: 'primary',
                 },
                 cancel: {
                     show: true,
-                    label: 'ยกเลิก',
+                    label: this.translocoService.translate(
+                        'confirmation.cancel_button'
+                    ),
                 },
             },
             dismissible: false,
@@ -146,14 +192,54 @@ export class DialogSavePaymentComponent implements OnInit {
 
         confirmation.afterClosed().subscribe((result) => {
             if (result == 'confirmed') {
-                console.log('submit');
-                this.dialogRef.close(formvalue);
-                this.toastr.success('บันทึกข้อมูลสำเร็จ');
+                this._service.paymentOrder(formvalue).subscribe({
+                    next: (resp: any) => {
+                        this.toastr.success(
+                            this.translocoService.translate('toastr.success')
+                        );
+                        this.dialogRef.close(true);
+                    },
+                    error: (err) => {
+                        this.toastr.error(
+                            this.translocoService.translate(err.error.message)
+                        );
+                    },
+                });
             }
         });
     }
 
     onClose() {
         this.dialogRef.close();
+    }
+
+    onFilesChanged(files: UploadedFile[]): void {
+        if (files && files.length > 0) {
+            this.form_file.patchValue({
+                file: files[0].file,
+            });
+
+            const formData = serialize({
+                ...this.form_file.value,
+            });
+
+            this._service.upload_file(formData).subscribe({
+                error: (err) => {
+                    this.toastr.error(
+                        this.translocoService.translate('toastr.unable_to_save')
+                    );
+                },
+                next: (res: any) => {
+                    this.form.patchValue({
+                        image: res.path,
+                    });
+                },
+            });
+        } else {
+            // Clear the image if no files
+            this.form.patchValue({
+                image: '',
+            });
+        }
     }
 }

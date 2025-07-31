@@ -399,7 +399,7 @@ export class DialogPoComponent implements OnInit {
                     error: (err) => {
                         this.toastr.error(
                             this.translocoService.translate(
-                                'toastr.error_occurred'
+                                err.error.message
                             )
                         );
                         console.log(err);

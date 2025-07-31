@@ -15,7 +15,7 @@
         [placeholder]="'common.select_member.search_customer_placeholder' | transloco" />
     <mat-autocomplete #memberAutoComplete="matAutocomplete" (optionSelected)="onSelectMember($event.option.value)">
         <mat-option *ngFor="let item of filterMember | async" [value]="item">
-            {{item.importer_code}}
+            {{item.fullname}}
         </mat-option>
     </mat-autocomplete>
 </mat-form-field>

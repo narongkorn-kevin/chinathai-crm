@@ -44,6 +44,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { SelectMemberComponent } from 'app/modules/common/select-member/select-member.component';
 import { DialogChooseComponent } from './dialog-choose/dialog-choose.component';
 import { DialogViewImageComponent } from 'app/modules/common/dialog-view-image/dialog-view-image.component';
+import { PictureComponent } from 'app/modules/shared/picture/picture.component';
 
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { ExportService } from 'app/modules/shared/export.service';
@@ -112,6 +113,7 @@ export class DeliveryNoteComponent implements OnInit, AfterViewInit {
     @ViewChild('status') status: any;
     @ViewChild(DataTableDirective, { static: false })
     dtElement: DataTableDirective;
+    imageLoadedMap: { [key: string]: boolean } = {};
     showAdvancedFilters: boolean = false;
     showFilters: boolean = true;
     dataRow: any[] = [];
@@ -233,7 +235,7 @@ export class DeliveryNoteComponent implements OnInit, AfterViewInit {
                 url: this.languageUrl,
             },
             ajax: (dataTablesParameters: any, callback) => {
-                dataTablesParameters.status = 'paid';
+                dataTablesParameters.status = '';
                 this._service
                     .datatable(dataTablesParameters)
                     .pipe(map((resp: { data: any }) => resp.data))
@@ -280,14 +282,14 @@ export class DeliveryNoteComponent implements OnInit, AfterViewInit {
                         ref: this.view,
                     },
                 },
-                {
-                    title: menuTitles.delivery_number[this.langues],
-                    data: 'code',
-                    className: 'text-center',
-                    ngTemplateRef: {
-                        ref: this.view_order,
-                    },
-                },
+                // {
+                //     title: menuTitles.delivery_number[this.langues],
+                //     data: 'code',
+                //     className: 'text-center',
+                //     ngTemplateRef: {
+                //         ref: this.view_order,
+                //     },
+                // },
                 {
                     title: menuTitles.delivery_type[this.langues],
                     data: 'code',
@@ -564,7 +566,8 @@ export class DeliveryNoteComponent implements OnInit, AfterViewInit {
                 }
             });
         } else {
-            this._router.navigate(['/delivery-note/view-order/' + data?.id]);
+            console.log(data)
+            this.createDeliveryNote(data?.id);
         }
     }
 
@@ -594,5 +597,56 @@ export class DeliveryNoteComponent implements OnInit, AfterViewInit {
         this.exportService.exportTable(this.tableElement, type);
     }
 
+    createDeliveryNote(id?: string) {
+        if (id) {
+            this._router.navigate(['/delivery-note/view-order', id]);
+        } else {
+            this._router.navigate(['/delivery-note/view-order']);
+        }
+    }
 
+    onImageError(url: string) {
+        this.imageLoadedMap[url] = false;
+    }
+    
+    onImageLoad(url: string) {
+        this.imageLoadedMap[url] = true;
+    }
+    
+    isImageLoaded(url: string): boolean {
+        return this.imageLoadedMap[url] !== false;
+    }
+
+    showPicture(imgObject: string): void {
+        console.log(imgObject);
+        this.dialog
+            .open(PictureComponent, {
+                autoFocus: false,
+                data: {
+                    imgSelected: imgObject,
+                },
+            })
+            .afterClosed()
+            .subscribe(() => {
+            });
+    }
+
+    getTruckImage(data: any): string | null {
+        if (data && data.delivery_in_thai_images) {
+            const truckImage = data.delivery_in_thai_images.find(img => img.type === 'truck');
+            return truckImage ? truckImage.image_url : null;
+        }
+        return null;
+    }
+
+    getProductImages(data: any): any[] {
+        if (data && data.delivery_in_thai_images) {
+            return data.delivery_in_thai_images.filter(img => img.type === 'product');
+        }
+        return [];
+    }
+
+    getBillImage(data: any): string | null {
+        return data ? data.image_url : null;
+    }
 }

@@ -208,7 +208,7 @@ throw new Error('Method not implemented.');
                 cn: '创建日期',
             },
             packing_list: {
-                th: 'Packing List',
+                th: 'หมายเลข',
                 en: 'Packing List',
                 cn: '装箱单',
             },
@@ -243,7 +243,7 @@ throw new Error('Method not implemented.');
                 cn: '目的地',
             },
             thai_arrival: {
-                th: 'กำหนกการถึงไทย',
+                th: 'กำหนดการถึงไทย',
                 en: 'Estimated Arrival in Thailand',
                 cn: '预计到达泰国日期',
             },

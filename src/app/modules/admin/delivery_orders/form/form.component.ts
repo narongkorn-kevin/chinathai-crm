@@ -613,7 +613,7 @@ export class FormComponent implements OnInit, AfterViewInit {
             // push tracks ใหม่เข้า FormArray
             newTracks.forEach((track: any) => {
                 console.log(track, 'track');
-                
+
                 if (track.member) {
                     this.form.patchValue({
                         member_id: track.member.id,
@@ -622,6 +622,14 @@ export class FormComponent implements OnInit, AfterViewInit {
                     this.ordersFilter.setValue(track.order.code);
                     this.memberIdToEdit = track.member.id;
                 }
+
+                if (!track.order) {
+                    this.toastr.warning('ไม่พบข้อมูลคำสั่งซื้อในระบบ')
+                }
+
+                this.form.patchValue({
+                    po_no: track.track_no
+                })
 
                 const trackForm = this.createTrack({
                     track_id: track.id,
@@ -1083,7 +1091,7 @@ export class FormComponent implements OnInit, AfterViewInit {
                     total + Number(product.get('qty_box')?.value || 0),
                 0
             )
-            .toFixed(4);
+            .toFixed(0);
     }
 
     get totalUnits(): string {
@@ -1093,7 +1101,7 @@ export class FormComponent implements OnInit, AfterViewInit {
                 const qtyBox = Number(product.get('qty_box')?.value || 0);
                 return total + qty * qtyBox;
             }, 0)
-            .toFixed(4);
+            .toFixed(0);
     }
 
     get totalWeight(): string {

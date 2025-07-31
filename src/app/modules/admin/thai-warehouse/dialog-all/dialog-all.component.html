@@ -1,12 +1,12 @@
 <div class="p-6">
-    <h2 class="text-2xl font-semibold mb-4">รับเข้าโกดังไทย ทั้งตู้</h2>
+    <h2 class="text-2xl font-semibold mb-4">{{ 'thai_warehouse.receive_whole_container_into_thai_warehouse' | transloco }}</h2>
     <form [formGroup]="form">
         <div class="flex flex-col md:flex-row w-full gap-2 items-end">
             <div class="w-full">
-                <mat-form-field [ngClass]="formFieldHelpers" class="w-full" >
+                <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
                     <mat-label>Packing List</mat-label>
-                    <mat-select formControlName="packing_list_id" >
-                        <mat-option [value]="'test01'">test01</mat-option>
+                    <mat-select formControlName="packing_list_id">
+                        <mat-option *ngFor="let item of packing_list" [value]="item.id">{{ item.packinglist_no }}</mat-option>
                     </mat-select>
                 </mat-form-field>
             </div>
@@ -14,10 +14,10 @@
     </form>
     <div mat-dialog-actions class="flex justify-end border-t-2 mt-2 p-2">
         <button class="px-6 ml-3" mat-flat-button [color]="'primary'" (click)="Submit()">
-            ตกลง
+            {{ 'buttons.submit' | transloco }}
         </button>
         <button class="px-6 ml-3" mat-flat-button [color]="'warn'" (click)="onClose()">
-            ยกเลิก
+            {{ 'buttons.cancel' | transloco }}
         </button>
     </div>
 </div>

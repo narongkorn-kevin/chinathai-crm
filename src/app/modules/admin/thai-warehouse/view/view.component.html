@@ -1,77 +1,105 @@
 <div class="flex flex-col flex-auto justify-start items-center w-full">
     <div class="w-full flex-col justify-between items-center flex overflow-hidden">
         <div class="w-full flex-col justify-start items-start flex">
-            <div class="w-full px-10 pt-5 pb-2.5 bg-white justify-between items-center flex">
+            <div class="w-full px-4 md:px-10 pt-5 pb-2.5 bg-white justify-between items-center flex">
                 <div class="flex flex-col">
                     <div class="flex space-x-2">
-                        <button class="md:text-xl font-medium tracking-tight leading-7 sm:leading-10 truncate"
+                        <button class="md:text-sm font-medium tracking-tight leading-7 sm:leading-10 truncate"
                             [routerLink]="['/thai-warehouse']" routerLinkActive="router-link-active">
-                            โกดังไทย
+                            {{ 'thai_warehouse.thai_warehouse' | transloco }}
                         </button>
                         <p class="md:text-sm font-medium tracking-tight leading-7 sm:leading-10 truncate">></p>
                         <button
                             class="md:text-sm font-medium tracking-tight leading-7 sm:leading-10 truncate text-[#DF0B12]"
                             [routerLink]="['/thai-warehouse']" routerLinkActive="router-link-active">
-                            รายการรับเข้า
+                            {{ 'thai_warehouse.entry_list' | transloco }}
                         </button>
                     </div>
 
                     <p class="md:text-2xl text-[#DF0B12] font-bold tracking-tight leading-7 sm:leading-10 truncate">
-                        Packing List: {{ data?.code }}
+                        หมายเลขขึ้นตู้: {{ data?.packinglist_no }}
                     </p>
                 </div>
             </div>
-            <div class="w-full px-5 flex flex-col gap-2 bg-white">
+            <div class="w-full px-2 md:px-5 flex flex-col gap-2 bg-white">
                 <mat-tab-group class="w-full">
-                    <mat-tab label="รายละเอียดสินค้าในตู้">
+                    <mat-tab [label]="'thai_warehouse.view.product_details_in_container' | transloco">
                         <div class="flex flex-col gap-2 w-full mb-4">
-                            <h2 class="font-semibold text-lg">รายละเอียด Packing List</h2>
+                            <h2 class="font-semibold text-lg">{{ 'รายละเอียด' | transloco
+                                }}</h2>
                             <mat-divider class="mb-3"></mat-divider>
 
-                            <div class="grid flex-row lg:grid-cols-2 gap-2 w-full">
+                            <div class="md:grid flex flex-col md:grid-cols-2 gap-2 w-full">
                                 <div class="flex justify-between w-full">
-                                    <div class="w-full font-bold">ลำดับตู้:</div>
-                                    <div class="w-full text-left">{{ data?.code ?? '-' }}</div>
+                                    <div class="w-full font-bold">{{ 'thai_warehouse.view.container_sequence' |
+                                        transloco }}</div>
+                                    <div class="w-full text-left">{{ data?.packinglist_no ?? '-' }}</div>
                                 </div>
                                 <div class="flex justify-between w-full">
-                                    <div class="w-full font-bold">หมายเลตู้คอนเทนเนอร์:</div>
-                                    <div class="w-full text-left">{{ data?.received_date ?? '-' }}</div>
+                                    <div class="w-full font-bold">{{ 'thai_warehouse.view.container_number' | transloco
+                                        }}</div>
+                                    <div class="w-full text-left">{{ data?.container_no ?? '-' }}</div>
                                 </div>
                                 <div class="flex justify-between w-full">
-                                    <div class="w-full font-bold">วันที่ออกจากจีน:</div>
-                                    <div class="w-full text-left">{{ data?.received_date ?? '-' }}</div>
+                                    <div class="w-full font-bold">{{ 'thai_warehouse.view.departure_date_from_china' |
+                                        transloco }}
+                                    </div>
+                                    <!-- <div class="w-full text-left">{{ findLatestDepartedChina(data?.status_logs) ?? '-'
+                                        }}</div> -->
+                                    <div class="w-full text-left">{{( data?.closing_date | date : 'yyyy-MM-dd') ?? '-'
+                                        }}</div>
                                 </div>
                                 <div class="flex justify-between w-full">
-                                    <div class="w-full font-bold">ขนส่งโดย:</div>
-                                    <div class="w-full text-left">{{ data?.received_date ?? '-' }}</div>
+                                    <div class="w-full font-bold">{{ 'thai_warehouse.view.transport_by' | transloco }}
+                                    </div>
+
+                                    <div class="w-full text-left">{{ getShipmentMethod(data.transport_by) ?? '-' }}
+                                    </div>
                                 </div>
                                 <div class="flex justify-between w-full">
                                     <div class="w-full font-bold flex flex-row">
-                                        วันที่เข้าโกดังไทย:
-                                        <mat-icon class="icon-size-4 " [matTooltip]="'วันที่สินค้าเข้าสู่ประเทศไทยเป็นการประมาณการเบื้องต้นทั้งนี้อาจมีการเปลี่ยนแปลงหรือคลาดเคลื่อนได้'" [svgIcon]="'heroicons_outline:information-circle'"></mat-icon>
+                                        {{ 'thai_warehouse.view.thai_warehouse_entry_date' | transloco }}
+                                        <mat-icon class="icon-size-4"
+                                            [matTooltip]="'thai_warehouse.view.estimated_arrival_note' | transloco"
+                                            [svgIcon]="'heroicons_outline:exclamation-circle'"></mat-icon>
                                     </div>
-                                    <div class="w-full text-left">{{ data?.received_date ?? '-' }}</div>
+                                    <!-- <div class="w-full text-left">{{ findLatestArrivedThailand(data?.status_logs) ?? '-'
+                                        }}</div> -->
+                                    <div class="w-full text-left">{{ (data?.estimated_arrival_date | date : 'yyyy-MM-dd') ?? '-'
+                                        }}</div>
                                 </div>
                                 <div class="flex justify-between w-full">
-                                    <div class="w-full font-bold">ปลายทาง:</div>
-                                    <div class="w-full text-left">{{ data?.received_date ?? '-' }}</div>
+                                    <div class="w-full font-bold">{{ 'thai_warehouse.view.destination' | transloco }}
+                                    </div>
+                                    <div class="w-full text-left">{{ data?.destination ?? '-' }}</div>
                                 </div>
                                 <div class="col-span-2 bg-[#fdeaeb] rounded-md p-4">
-                                    <p class="font-bold text-red-600">หมายเหตุ</p>
-                                    <p class="text-red-600"> {{ data?.remark ?? '-' }} </p>
+                                    <p class="font-bold text-red-600">{{ 'thai_warehouse.view.note' | transloco }}</p>
+                                    <p class="text-red-600">{{ data?.remark ?? '-' }}</p>
                                 </div>
                             </div>
-
                         </div>
                         <div
                             class="w-full p-4 my-4 border border-gray-300 rounded-lg min-h-[300px] overflow-y-auto flex flex-col">
                             <div class="flex flex-row w-full gap-2 mb-6">
-                                <div class="w-full text-3xl font-bold">รายการสินค้าในตู้</div>
-                                <div class="flex flex-row justify-end w-full gap-2">
+                                <div class="w-full text-xl md:text-3xl font-bold">{{
+                                    'thai_warehouse.view.products_in_container' |
+                                    transloco }}</div>
+                                <div class="flex flex-col md:flex-row justify-end w-full gap-2">
                                     <div class="flex items-center gap-2">
-                                        <button mat-flat-button [color]="'accent'" (click)="opendialoglist()" class="!text-white">
+                                        <button mat-flat-button [color]="'accent'" (click)="opendialoglist()"
+                                            class="!text-white">
                                             <mat-icon [svgIcon]="'heroicons_solid:plus-circle'"></mat-icon>
-                                            <span class="ml-2">เพิ่มจาก Barcode</span>
+                                            <span class="ml-2">{{ 'thai_warehouse.view.add_from_barcode' | transloco
+                                                }}</span>
+                                        </button>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <button mat-flat-button [color]="'accent'" (click)="openScanDialog()"
+                                            class="!text-white">
+                                            <mat-icon svgIcon="heroicons_outline:qr-code"></mat-icon>
+                                            <span class="ml-2">{{ 'thai_warehouse.view.qr' | transloco
+                                                }}</span>
                                         </button>
                                     </div>
                                     <button [cdkMenuTriggerFor]="menu" mat-flat-button class="!text-white"
@@ -79,7 +107,7 @@
                                         <mat-icon class="icon-size-5"
                                             [svgIcon]="'heroicons_solid:shopping-bag'"></mat-icon>
                                         <div class="flex items-center gap-2">
-                                            <span class="ml-2"> การจัดการข้อมูล </span>
+                                            <span class="ml-2"> {{ 'buttons.dataManagement' | transloco }} </span>
                                             <mat-icon class="icon-size-5"
                                                 [svgIcon]="'heroicons_solid:chevron-up'"></mat-icon>
                                         </div>
@@ -111,118 +139,187 @@
                                 </div>
                             </div>
                             <mat-divider></mat-divider>
-                            <div class="rounded-lg border-gray-300 border p-6 flex justify-around items-center col-span-2 flex-col mb-2">
+                            <div
+                                class="rounded-lg border-gray-300 border p-6 flex justify-around items-center col-span-2 flex-col mb-2">
                                 <div class="flex flex-row w-full items-center mt-4">
                                     <img class="flex w-14 mr-2" src="assets/images/item/scanning.png" alt="Logo image">
-                                    <div class="text-lg font-normal w-full">Scan Tracking รับเข้าโกดังไทย</div>
+                                    <div class="text-lg font-normal w-full">{{
+                                        'packing_list.view.scan_tracking_thai_warehouse_entry' |
+                                        transloco }}</div>
                                 </div>
-
                                 <div class="w-full">
-                                    <asha-progress-bar [total]="100" [value]="50" color="bg-red-600"></asha-progress-bar>
+                                    <asha-progress-bar [total]="countProduct" [value]="countInthai"
+                                        color="bg-red-600"></asha-progress-bar>
                                 </div>
-
                                 <div class="flex flex-row justify-between items-center w-full">
-                                    <div>ยอดรวมจากรายการสินค้าใน Packing List</div>
-                                    <div class="text-4xl font-bold text-blue-900">10/100</div>
+                                    <div>{{ 'ยอดรวมจากรายการสินค้า' | transloco }}</div>
+                                    <div class="text-4xl font-bold text-blue-900">{{countInthai}}/{{countProduct}}</div>
                                 </div>
                             </div>
                             <div class="overflow-x-auto">
                                 <table class="whitespace-nowrap w-full">
                                     <thead>
                                         <tr>
-                                            <th rowspan="2" class="px-6 py-3 border border-l-0">#</th>
-                                            <th rowspan="2" class="px-6 py-3 border border-x-0">Scan ขาออก</th>
-                                            <th rowspan="2" class="px-6 py-3 border border-x-0">Scan ขาเข้า</th>
-                                            <th rowspan="2" class="px-6 py-3 border border-x-0">เลขที่ใบรับของคลังสินค้า</th>
-                                            <th rowspan="2" class="px-6 py-3 border border-x-0">ลูกค้า</th>
-                                            <th rowspan="2" class="px-6 py-3 border border-x-0">การขนส่ง</th>
-                                            <th rowspan="2" class="px-6 py-3 border border-x-0">บรรจุภัณฑ์</th>
-                                            <th rowspan="2" class="px-6 py-3 border border-x-0">ปริมาณสินค้า</th>
-                                            <th colspan="3" class="px-6 py-1 border border-x-0">ขนาน(ลบ.ม)</th>
-                                            <th rowspan="2" class="px-6 py-3 border border-x-0">CBM</th>
-                                            <th rowspan="2" class="px-6 py-3 border border-x-0">CBM รวม</th>
-                                            <th rowspan="2" class="px-6 py-3 border border-x-0">น้ำหนัก</th>
-                                            <th rowspan="2" class="px-6 py-3 border border-x-0">น้ำหนัก รวม</th>
-                                            <th rowspan="2" class="px-6 py-3 border border-x-0">หมายเหตุ</th>
+                                            <th rowspan="2" class="px-6 py-3 border border-x-0 min-w-50">{{
+                                                'thai_warehouse.view.scan_out' |
+                                                transloco }}</th>
+                                            <th rowspan="2" class="px-6 py-3 border border-x-0 min-w-50">{{
+                                                'thai_warehouse.view.scan_in' |
+                                                transloco }}</th>
+                                            <th rowspan="2" class="px-6 py-3 border border-x-0">{{
+                                                'Tracking No.' | transloco }}</th>
+                                            <th rowspan="2" class="px-6 py-3 border border-x-0">{{
+                                                'thai_warehouse.view.customer' |
+                                                transloco }}</th>
+                                            <th rowspan="2" class="px-6 py-3 border border-x-0">{{
+                                                'thai_warehouse.view.transport_method' | transloco }}</th>
+                                            <th rowspan="2" class="px-6 py-3 border border-x-0">{{
+                                                'thai_warehouse.view.packaging' |
+                                                transloco }}</th>
+                                            <th rowspan="2" class="px-6 py-3 border border-x-0">{{
+                                                'thai_warehouse.view.product_quantity' | transloco }}</th>
+                                            <th colspan="3" class="px-6 py-1 border border-x-0">{{
+                                                'thai_warehouse.view.dimensions' |
+                                                transloco }}</th>
+                                            <th rowspan="2" class="px-6 py-3 border border-x-0">{{
+                                                'thai_warehouse.view.cbm' |
+                                                transloco }}</th>
+                                            <th rowspan="2" class="px-6 py-3 border border-x-0">{{
+                                                'thai_warehouse.view.total_cbm' |
+                                                transloco }}</th>
+                                            <th rowspan="2" class="px-6 py-3 border border-x-0">{{
+                                                'thai_warehouse.view.weight' |
+                                                transloco }}</th>
+                                            <th rowspan="2" class="px-6 py-3 border border-x-0">{{
+                                                'thai_warehouse.view.total_weight' |
+                                                transloco }}</th>
+                                            <th rowspan="2" class="px-6 py-3 border border-x-0">{{
+                                                'thai_warehouse.view.note' |
+                                                transloco }}</th>
                                         </tr>
                                         <tr>
-                                            <th class="px-6 py-1 border border-x-0">ยาว</th>
-                                            <th class="px-6 py-1 border border-x-0">กว้าง</th>
-                                            <th class="px-6 py-1 border border-x-0">สูง</th>
+                                            <th class="px-6 py-1 border border-x-0">{{ 'thai_warehouse.view.length' |
+                                                transloco }}</th>
+                                            <th class="px-6 py-1 border border-x-0">{{ 'thai_warehouse.view.width' |
+                                                transloco }}</th>
+                                            <th class="px-6 py-1 border border-x-0">{{ 'thai_warehouse.view.height' |
+                                                transloco }}</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <tr *ngFor="let list of filteredDeliveryOrders; let i = index"
                                             class="text-center">
-                                            <td class="px-6 py-3 border border-l-0">{{ i + 1 }}</td>
-                                            <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order?.member_id
+                                            <td class="px-4 py-3 border border-x-0 min-w-[220px]">
+                                                <div class="flex items-center gap-2 w-full cursor-pointer">
+                                                    <!-- จำนวนในจีน -->
+                                                    <span class="flex-1 text-sm text-center" [ngClass]="{
+      'text-green-600': coutnProgress(list) === list?.delivery_order_list.total_all,
+      'text-red-600': coutnProgress(list) !== list?.delivery_order_list.total_all
+    }">
+                                                        {{ coutnProgress(list) }}/{{ list?.delivery_order_list?.total_all
+                                                        }}
+                                                    </span>
+
+                                                    <!-- Progress bar -->
+                                                    <div class="flex-[2]">
+                                                        <asha-progress-bar [total]="list?.delivery_order_list.total_all"
+                                                            [value]="coutnProgress(list)" color="bg-red-600">
+                                                        </asha-progress-bar>
+                                                    </div>
+
+                                                    <!-- ไอคอน -->
+                                                    <mat-icon
+                                                        class="flex-none w-5 h-5 text-gray-600 hover:text-blue-500"
+                                                        svgIcon="heroicons_outline:exclamation-circle"
+                                                        (click)="openPoBox(list)">
+                                                    </mat-icon>
+                                                </div>
+                                            </td>
+
+                                            <td class="px-4 py-3 border border-x-0 min-w-[220px]">
+                                                <div class="flex items-center gap-2 w-full cursor-pointer">
+                                                    <!-- จำนวนในไทย -->
+                                                    <span class="flex-1 text-sm text-center" [ngClass]="{
+      'text-green-600': CountInThailand(list) === list?.delivery_order_list.total_all,
+      'text-red-600': CountInThailand(list) !== list?.delivery_order_list.total_all
+    }">
+                                                        {{ CountInThailand(list) }}/{{
+                                                        list?.delivery_order_list?.total_all }}
+                                                    </span>
+
+                                                    <!-- Progress bar -->
+                                                    <div class="flex-[2]">
+                                                        <asha-progress-bar [total]="list?.delivery_order_list.total_all"
+                                                            [value]="CountInThailand(list)" color="bg-red-600">
+                                                        </asha-progress-bar>
+                                                    </div>
+
+                                                    <!-- ไอคอน -->
+                                                    <mat-icon
+                                                        class="flex-none w-5 h-5 text-gray-600 hover:text-blue-500"
+                                                        svgIcon="heroicons_outline:exclamation-circle"
+                                                        (click)="openPoBox(list)">
+                                                    </mat-icon>
+                                                </div>
+                                            </td>
+
+                                            <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order?.po_no ??
+                                                '-'
+                                                }}</td>
+                                            <td class="px-6 py-3 border border-x-0">{{
+                                                convertMember(list?.delivery_order.member_id) ?? '-' }}</td>
+
+                                            <td class="px-6 py-3 border border-x-0">{{
+                                                getShipmentMethod(list?.delivery_order?.shipment_by)
                                                 ?? '-' }}</td>
-                                            <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order?.order_id ?? '-' }}</td>
-                                            <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order?.code ?? '-' }}</td>
+
                                             <td class="px-6 py-3 border border-x-0">{{
-                                                getShipmentMethod(list?.delivery_order?.shipped_by) }}</td>
-                                            <td class="px-6 py-3 border border-x-0">{{
-                                                list?.delivery_order?.quantity_check ?? '-' }}</td>
-                                            <td class="px-6 py-3 border border-x-0">{{
-                                                list?.delivery_order?.product_type?.name ?? '-' }}</td>
-                                            <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order?.weight ??
+                                                list?.delivery_order_list?.qty_box ??
                                                 '-' }}</td>
-                                            <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order?.cbm ?? '-'
+                                            <td class="px-6 py-3 border border-x-0">{{
+                                                list?.delivery_order_list?.qty ??
+                                                '-' }}</td>
+                                            <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order_list?.long
+                                                ?? '-' }}</td>
+                                            <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order_list?.width
+                                                ?? '-' }}</td>
+                                            <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order_list?.height
+                                                ?? '-' }}</td>
+                                            <td class="px-6 py-3 border border-x-0">{{ list?.cbmPerUnit ??
+                                                '-' }}</td>
+                                            <td class="px-6 py-3 border border-x-0">{{
+                                                list?.totalCBM ?? '-' }}</td>
+                                            <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order_list?.weight
+                                                ?? '-' }}</td>
+                                            <td class="px-6 py-3 border border-x-0">{{
+                                                list?.totalWeight ?? '-' }}</td>
+                                            <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order?.note ?? '-'
                                                 }}</td>
                                         </tr>
                                     </tbody>
                                     <tfoot class="bg-gray-100">
                                         <tr class="text-center">
-                                            <td colspan="7" class="px-6 py-3 border border-x-0 text-left"> ผลรวม {{
-                                                totallist }} รายการ </td>
-                                            <td class="px-6 py-3 border border-x-0"> {{ totalWeight }} </td>
-                                            <td class="px-6 py-3 border border-x-0"> {{ totalCBM }} </td>
+                                            <td colspan="11" class="px-6 py-3 border border-x-0 text-left">
+                                                {{ 'thai_warehouse.view.summary_of_items' | transloco }} {{ totallist }}
+                                                {{
+                                                'thai_warehouse.view.items' | transloco }}
+                                            </td>
+                                            <td class="px-6 py-3 border border-x-0">{{ totalCBM }}</td>
+                                            <td></td>
+                                            <td class="px-6 py-3 border border-x-0">{{ totalWeight }}</td>
+                                            <td></td>
+
                                         </tr>
                                     </tfoot>
                                 </table>
                             </div>
                         </div>
                     </mat-tab>
-                    <mat-tab label="สถานะ">
-                        <div class="p-6 mb-8">
-                            <div *ngFor="let item of timelineData" class="flex justify-start">
-                                <div class="flex flex-row items-top w-full">
-                                    <!-- วันที่และเวลา -->
-                                    <div class="min-w-26">
-                                        <div class="p-3 mb-2 text-right" *ngIf="item.date">
-                                            <p class="font-bold text-red-800">{{ item.date }}</p>
-                                            <p class="text-gray-600">{{ item.time }}</p>
-                                        </div>
-                                    </div>
-
-                                    <!-- เส้น Timeline -->
-                                    <div class="h-full mx-4 flex flex-col items-center pt-2">
-                                        <div
-                                            class="w-8 h-8 rounded-full flex items-center justify-center"
-                                            [ngClass]="item.status ? 'bg-red-800' : 'border-2 border-red-400'"
-                                        >
-                                            <mat-icon *ngIf="item.status" [svgIcon]="'heroicons_solid:check'" class="!text-white"></mat-icon>
-                                            <span *ngIf="!item.status">{{ item.id }}</span>
-                                        </div>
-                                        <div *ngIf="item.id !== '13'" class="h-20 border-x-2 my-2" [ngClass]="item.status ? 'border-red-800' : 'border-red-400'"></div>
-                                    </div>
-
-                                    <!-- ข้อความ -->
-                                    <div class="flex flex-row">
-                                        <div class="p-3 mb-2">
-                                            <p class="font-bold" [ngClass]="item.status ? 'text-red-800' : ''">{{ item.text }}</p>
-                                            <p *ngIf="item.user">{{ item.user }}</p>
-                                        </div>
-                                        <div *ngIf="item.hasButton">
-                                            <button mat-flat-button [color]="'primary'" (click)="opendialoglist()" class="!text-white">
-                                                <mat-icon [svgIcon]="'heroicons_outline:photo'"></mat-icon>
-                                                <span class="ml-2">แนบรูปถ่าย</span>
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                    <mat-tab [label]="'thai_warehouse.view.status' | transloco">
+                        @if (data?.status_logs) {
+                        <asha-time-line module="thai_warehouse" [defaultTimeline]="timelineData"
+                            [timelineData]="data?.status_logs"></asha-time-line>
+                        }
                     </mat-tab>
                 </mat-tab-group>
             </div>

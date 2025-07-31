@@ -17,10 +17,15 @@
                     </div>
 
                     <p class="md:text-2xl text-[#DF0B12] font-bold tracking-tight leading-7 sm:leading-10 truncate">
-                        {{ 'delivery_note.view_order.create' | transloco }}
+                        <span *ngIf="type !== 'edit'">{{ 'delivery_note.view_order.create' | transloco }}</span>
+                        <span *ngIf="type === 'edit'">{{ 'delivery_note.view_order.update' | transloco }}</span>
                     </p>
                 </div>
                 <div class="justify-end items-center gap-2 flex flex-col md:flex-row">
+                    <button mat-flat-button [color]="'primary'" (click)="print()">
+                        <mat-icon [svgIcon]="'heroicons_solid:printer'"></mat-icon>
+                        <span class="ml-2">ปริ้น</span>
+                    </button>
                     <div class="border border-black rounded-md">
                         <button mat-flat-button (click)="close()" class="hover-effect">
                             <mat-icon svgIcon="feather:trash"></mat-icon>
@@ -29,7 +34,8 @@
                     </div>
                     <button mat-flat-button [color]="'primary'" (click)="Submit()">
                         <mat-icon [svgIcon]="'mat_outline:save'" class=""></mat-icon>
-                        <span class="ml-2">{{ 'buttons.save' | transloco }}</span>
+                        <span class="ml-2" *ngIf="type !== 'edit'">{{ 'buttons.save' | transloco }}</span>
+                        <span class="ml-2" *ngIf="type === 'edit'">{{ 'buttons.update' | transloco }}</span>
                     </button>
                 </div>
             </div>
@@ -104,7 +110,11 @@
                             <div class="w-full">
                                 <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
                                     <mat-label>{{ 'delivery_note.view_order.member_info_customer_code' | transloco }}</mat-label>
-                                    <input matInput [placeholder]="''" formControlName="customerCode">
+                                    <mat-select formControlName="customerCode">
+                                        <mat-option *ngFor="let customer of customers" [value]="customer.id">
+                                            {{customer.importer_code}} - {{customer.fname}} {{customer.lname}}
+                                        </mat-option>
+                                    </mat-select>
                                 </mat-form-field>
                             </div>
                             <div class="w-full">
@@ -198,7 +208,7 @@
                             <div class="w-full">
                                 <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
                                     <mat-label>{{ 'delivery_note.view_order.delivery_info_pick_shipped_by' | transloco }}</mat-label>
-                                    <input matInput [placeholder]="''" formControlName="licenseNumber">
+                                    <input matInput [placeholder]="''" formControlName="shippedBy">
                                 </mat-form-field>
                             </div>
                         </div>
@@ -210,6 +220,12 @@
                         </div>
                         <asha-upload-file></asha-upload-file>
                     </div>
+                    <div>
+                        <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                            <mat-label>{{ 'delivery_note.view_order.member_info_note' | transloco }}</mat-label>
+                            <textarea matInput [placeholder]="'delivery_note.view_order.member_info_note' | transloco" formControlName="note"></textarea>
+                        </mat-form-field>
+                    </div>
                 </form>
 
                 <div
@@ -220,7 +236,7 @@
                         </div>
                         <mat-divider></mat-divider>
                     </div>
-                    <form *ngIf="!showFilterForm" [formGroup]="filterForm">
+                    <form [formGroup]="filterForm">
                         <div class="flex flex-col md:flex-row w-full gap-2 items-end">
                             <div class="w-full">
                                 <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
@@ -268,18 +284,36 @@
                             <tbody>
                                 <tr *ngFor="let list of filteredDeliveryOrders; let i = index" class="text-center">
                                     <td class="px-6 py-3 border border-l-0">{{ i + 1 }}</td>
-                                    <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order?.order?.name ?? '-'
-                                        }}</td>
-                                    <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order?.po_no ?? '-' }}</td>
-                                    <td class="px-6 py-3 border border-x-0">{{
-                                        getShipmentMethod(list?.delivery_order?.shipped_by) }}</td>
-                                    <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order?.quantity_check ??
-                                        '-' }}</td>
-                                    <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order?.product_type?.name
-                                        ?? '-' }}</td>
-                                    <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order?.weight ?? '-' }}
+                                    <td class="px-6 py-3 border border-x-0">{{ list?.date_in | date: 'dd/MM/yyyy' }}</td>
+                                    <td class="px-6 py-3 border border-x-0">
+                                        <div *ngIf="list.status == 'pending'"
+                                            class="px-4 py-1.5 rounded-full text-sm inline-flex items-center justify-center font-medium bg-yellow-50 text-yellow-600 border border-yellow-200">
+                                            รอดำเนินการ
+                                        </div>
+                                        <div *ngIf="list.status == 'scan_out'"
+                                            class="px-4 py-1.5 rounded-full text-sm inline-flex items-center justify-center font-medium bg-blue-50 text-blue-600 border border-blue-200">
+                                            สแกนออก
+                                        </div>
+                                        <div *ngIf="list.status == 'evidence'"
+                                            class="px-4 py-1.5 rounded-full text-sm inline-flex items-center justify-center font-medium bg-purple-50 text-purple-600 border border-purple-200">
+                                            หลักฐาน
+                                        </div>
+                                        <div *ngIf="list.status == 'review'"
+                                            class="px-4 py-1.5 rounded-full text-sm inline-flex items-center justify-center font-medium bg-orange-50 text-orange-600 border border-orange-200">
+                                            กำลังตรวจสอบ
+                                        </div>
+                                        <div *ngIf="list.status == 'complete'"
+                                            class="px-4 py-1.5 rounded-full text-sm inline-flex items-center justify-center font-medium bg-green-50 text-green-600 border border-green-200">
+                                            เสร็จสมบูรณ์
+                                        </div>
                                     </td>
-                                    <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order?.cbm ?? '-' }}</td>
+                                    <td class="px-6 py-3 border border-x-0">{{ list?.code }}</td>
+                                    <td class="px-6 py-3 border border-x-0">{{ list?.member_address?.contact_name }}</td>
+                                    <td class="px-6 py-3 border border-x-0">
+                                        {{ list.member_address?.address }} {{ list.member_address?.sub_district }} {{ list.member_address?.district }} {{ list.member_address?.province }} {{ list.member_address?.postal_code }}
+                                    </td>
+                                    <td class="px-6 py-3 border border-x-0">{{ list?.transport_type }}</td>
+                                    <td class="px-6 py-3 border border-x-0">-</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -340,18 +374,18 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr *ngFor="let list of filteredOut; let i = index" class="text-center">
+                                <tr *ngFor="let list of filteredDeliveryOrders; let i = index" class="text-center">
                                     <td class="px-6 py-3 border border-l-0">{{ i + 1 }}</td>
-                                    <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order?.order?.name ?? '-'
+                                    <td class="px-6 py-3 border border-x-0">{{ list?.code ?? '-'
                                         }}</td>
-                                    <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order?.po_no ?? '-' }}</td>
+                                    <td class="px-6 py-3 border border-x-0">{{ list?.member?.code ?? '-' }}</td>
                                     <td class="px-6 py-3 border border-x-0">{{
-                                        getShipmentMethod(list?.delivery_order?.shipped_by) }}</td>
-                                    <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order?.quantity_check ??
+                                        list?.code }}</td>
+                                    <td class="px-6 py-3 border border-x-0">{{ list?.tracking_code ??
                                         '-' }}</td>
-                                    <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order?.product_type?.name
+                                    <td class="px-6 py-3 border border-x-0">{{ list?.scan_out_time
                                         ?? '-' }}</td>
-                                    <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order?.weight ?? '-' }}
+                                    <td class="px-6 py-3 border border-x-0">{{ list?.scan_out_by ?? '-' }}
                                     </td>
                                 </tr>
                             </tbody>
@@ -433,10 +467,27 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr *ngFor="let list of filteredtracking; let i = index" class="text-center">
+                                    <tr *ngFor="let image of truckImages; let i = index" class="text-center">
                                         <td class="px-6 py-3 border border-l-0">{{ i + 1 }}</td>
-                                        <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order?.order?.name ??
-                                            '-' }}</td>
+                                        <td class="px-6 py-3 border border-x-0">
+                                            <div class="flex flex-row justify-center cursor-pointer">
+                                                <ng-container *ngIf="image.image_url; else noImage">
+                                                    <div class="relative">
+                                                        <img [src]="image.image_url" alt="Image" class="rounded-md w-10 h-15"
+                                                            (click)="showPicture(image.image_url)" (error)="onImageError(image.image_url)"
+                                                            (load)="onImageLoad(image.image_url)" />
+                                                        <ng-container *ngIf="imageLoadedMap[image.image_url] === false">
+                                                            <mat-icon class="absolute inset-0 m-auto text-gray-400 text-6xl">
+                                                                image_not_supported
+                                                            </mat-icon>
+                                                        </ng-container>
+                                                    </div>
+                                                </ng-container>
+                                                <ng-template #noImage>
+                                                    <mat-icon class="text-gray-400 text-6xl">image_not_supported</mat-icon>
+                                                </ng-template>
+                                            </div>
+                                        </td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -464,10 +515,27 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr *ngFor="let list of filteredtracking; let i = index" class="text-center">
+                                    <tr *ngFor="let image of productImages; let i = index" class="text-center">
                                         <td class="px-6 py-3 border border-l-0">{{ i + 1 }}</td>
-                                        <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order?.order?.name ??
-                                            '-' }}</td>
+                                        <td class="px-6 py-3 border border-x-0">
+                                            <div class="flex flex-row justify-center cursor-pointer">
+                                                <ng-container *ngIf="image.image_url; else noImage">
+                                                    <div class="relative">
+                                                        <img [src]="image.image_url" alt="Image" class="rounded-md w-10 h-15"
+                                                            (click)="showPicture(image.image_url)" (error)="onImageError(image.image_url)"
+                                                            (load)="onImageLoad(image.image_url)" />
+                                                        <ng-container *ngIf="imageLoadedMap[image.image_url] === false">
+                                                            <mat-icon class="absolute inset-0 m-auto text-gray-400 text-6xl">
+                                                                image_not_supported
+                                                            </mat-icon>
+                                                        </ng-container>
+                                                    </div>
+                                                </ng-container>
+                                                <ng-template #noImage>
+                                                    <mat-icon class="text-gray-400 text-6xl">image_not_supported</mat-icon>
+                                                </ng-template>
+                                            </div>
+                                        </td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -495,25 +563,33 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr *ngFor="let list of filteredtracking; let i = index" class="text-center">
-                                        <td class="px-6 py-3 border border-l-0">{{ i + 1 }}</td>
-                                        <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order?.order?.name ??
-                                            '-' }}</td>
+                                    <tr *ngIf="deliveryNoteImage" class="text-center">
+                                        <td class="px-6 py-3 border border-l-0">1</td>
+                                        <td class="px-6 py-3 border border-x-0">
+                                            <div class="flex flex-row justify-center cursor-pointer">
+                                                <ng-container *ngIf="deliveryNoteImage.image_url; else noImage">
+                                                    <div class="relative">
+                                                        <img [src]="deliveryNoteImage.image_url" alt="Image" class="rounded-md w-10 h-15"
+                                                            (click)="showPicture(deliveryNoteImage.image_url)" (error)="onImageError(deliveryNoteImage.image_url)"
+                                                            (load)="onImageLoad(deliveryNoteImage.image_url)" />
+                                                        <ng-container *ngIf="imageLoadedMap[deliveryNoteImage.image_url] === false">
+                                                            <mat-icon class="absolute inset-0 m-auto text-gray-400 text-6xl">
+                                                                image_not_supported
+                                                            </mat-icon>
+                                                        </ng-container>
+                                                    </div>
+                                                </ng-container>
+                                                <ng-template #noImage>
+                                                    <mat-icon class="text-gray-400 text-6xl">image_not_supported</mat-icon>
+                                                </ng-template>
+                                            </div>
+                                        </td>
                                     </tr>
                                 </tbody>
                             </table>
                         </div>
                     </div>
                 </div>
-                <form [formGroup]="Form">
-                    <div>
-                        <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
-                            <mat-label>{{ 'delivery_note.view_order.member_info_note' | transloco }}</mat-label>
-                            <textarea matInput [placeholder]="'delivery_note.view_order.member_info_note' | transloco" formControlName="note"></textarea>
-                        </mat-form-field>
-                    </div>
-                </form>
             </div>
         </div>
     </div>
-</div>

@@ -9,7 +9,7 @@
                     </button>
                 </div>
                 <p class="md:text-2xl text-[#DF0B12] font-bold tracking-tight leading-7 sm:leading-10 truncate">
-                    {{ 'pallet.title.pallet_list' | transloco }}
+                    {{ 'จัดกระสอบเตรียมขึ้นตู้' | transloco }}
                 </p>
             </div>
             <div class="flex flex-col md:flex-row ml-auto gap-2">
@@ -74,84 +74,104 @@
                 </ng-template>
             </div>
         </div>
-        <div class="grid sm:grid-cols-1 md:grid-cols-4 gap-2 w-full rounded-lg border-gray-500 border-2 p-4 mb-4">
-            <div class="col-span-1 md:col-span-4 text-xl md:text-3xl font-bold">
-                <diV>{{ 'pallet.road_pallet_overview' | transloco }}</diV>
+        <!-- Card Container -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+
+            <!-- Road Pallet Overview -->
+            <div class="bg-white shadow-md rounded-xl p-6 border border-gray-200">
+                <div class="flex items-center text-blue-800 text-2xl font-bold mb-4">
+                    <mat-icon class="mr-2">local_shipping</mat-icon>
+                    {{ 'ภาพรวมทางรถ' | transloco }}
+                </div>
                 <mat-divider class="mb-4"></mat-divider>
-            </div>
-            <div class="p-4 flex w-full items-center">
-                <img class="flex w-14" src="assets/images/item/cart.png" alt="Logo image">
-                <div class="text-lg font-normal mx-4 w-full">{{ 'pallet.number_of_pallets' | transloco }}</div>
-                <div class="text-right w-full">
-                    <div class="text-4xl font-bold text-blue-95">{{ dashboard_pallet?.road?.total_pallets |
-                        number }}</div>
-                </div>
-            </div>
-            <div class="p-4 flex w-full items-center">
-                <img class="flex w-14" src="assets/images/item/boxcheck.png" alt="Logo image">
-                <div class="text-lg font-normal mx-4  w-full">{{ 'pallet.total_packages' | transloco }}</div>
-                <div class="text-right w-full">
-                    <div class="text-4xl font-bold text-blue-950">{{ dashboard_pallet?.road?.total_packages |
-                        number }}
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div class="flex items-center">
+                        <img class="w-12 h-12" src="assets/images/item/cart.png" alt="Pallet">
+                        <div class="ml-4 w-full">
+                            <div class="text-gray-500 text-sm">{{ 'จำนวนรวม' | transloco }}</div>
+                            <div class="text-2xl font-semibold text-blue-700">{{ dashboard_pallet?.road?.total_pallets |
+                                number }}</div>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center">
+                        <img class="w-12 h-12" src="assets/images/item/boxcheck.png" alt="Packages">
+                        <div class="ml-4 w-full">
+                            <div class="text-gray-500 text-sm">{{ 'pallet.total_packages' | transloco }}</div>
+                            <div class="text-2xl font-semibold text-blue-700">{{ dashboard_pallet?.road?.total_packages
+                                | number }}</div>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center">
+                        <img class="w-12 h-12" src="assets/images/item/kg.png" alt="Weight">
+                        <div class="ml-4 w-full">
+                            <div class="text-gray-500 text-sm">{{ 'pallet.total_weight' | transloco }}</div>
+                            <div class="text-2xl font-semibold text-blue-700">{{ dashboard_pallet?.road?.total_weight_kg
+                                | number }}</div>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center">
+                        <img class="w-12 h-12" src="assets/images/item/cube.png" alt="CBM">
+                        <div class="ml-4 w-full">
+                            <div class="text-gray-500 text-sm">{{ 'pallet.total_cbm' | transloco }}</div>
+                            <div class="text-2xl font-semibold text-blue-700">{{ dashboard_pallet?.road?.total_cbm |
+                                number : '1.4' }}</div>
+                        </div>
                     </div>
                 </div>
             </div>
-            <div class="p-4 flex w-full items-center">
-                <img class="flex w-14" src="assets/images/item/kg.png" alt="Logo image">
-                <div class="text-lg font-normal mx-4  w-full">{{ 'pallet.total_weight' | transloco }}</div>
-                <div class="text-right w-full">
-                    <div class="text-4xl font-bold text-blue-950">{{ dashboard_pallet?.road?.total_weight_kg
-                        | number }}
-                    </div>
+
+            <!-- Sea Pallet Overview -->
+            <div class="bg-white shadow-md rounded-xl p-6 border border-gray-200">
+                <div class="flex items-center text-blue-800 text-2xl font-bold mb-4">
+                    <mat-icon class="mr-2">directions_boat</mat-icon>
+                    {{ 'ภาพรวมทางเรือ' | transloco }}
                 </div>
-            </div>
-            <div class="p-4 flex w-full items-center">
-                <img class="flex w-14" src="assets/images/item/cube.png" alt="Logo image">
-                <div class="text-lg font-normal mx-4  w-full">{{ 'pallet.total_cbm' | transloco }}</div>
-                <div class="text-right w-full">
-                    <div class="text-4xl font-bold text-blue-950">{{ dashboard_pallet?.road?.total_cbm | number : '1.4' }}</div>
-                </div>
-            </div>
-        </div>
-        <div class="grid sm:grid-cols-1 md:grid-cols-4 gap-2 w-full rounded-lg border-gray-500 border-2 p-4 mb-4">
-            <div class="col-span-1 md:col-span-4 text-xl md:text-3xl font-bold">
-                <diV>{{ 'pallet.sea_pallet_overview' | transloco }}</diV>
                 <mat-divider class="mb-4"></mat-divider>
-            </div>
-            <div class="p-4 flex w-full items-center">
-                <img class="flex w-14" src="assets/images/item/cart.png" alt="Logo image">
-                <div class="text-lg font-normal mx-4  w-full">{{ 'pallet.number_of_pallets' | transloco }}</div>
-                <div class="text-right w-full">
-                    <div class="text-4xl font-bold text-blue-95">{{ dashboard_pallet?.sea?.total_pallets |
-                        number }}</div>
-                </div>
-            </div>
-            <div class="p-4 flex w-full items-center">
-                <img class="flex w-14" src="assets/images/item/boxcheck.png" alt="Logo image">
-                <div class="text-lg font-normal mx-4  w-full">{{ 'pallet.total_packages' | transloco }}</div>
-                <div class="text-right w-full">
-                    <div class="text-4xl font-bold text-blue-950">{{ dashboard_pallet?.sea?.total_packages |
-                        number }}
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div class="flex items-center">
+                        <img class="w-12 h-12" src="assets/images/item/cart.png" alt="Pallet">
+                        <div class="ml-4 w-full">
+                            <div class="text-gray-500 text-sm">{{ 'จำนวนรวม' | transloco }}</div>
+                            <div class="text-2xl font-semibold text-blue-700">{{ dashboard_pallet?.sea?.total_pallets |
+                                number }}</div>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center">
+                        <img class="w-12 h-12" src="assets/images/item/boxcheck.png" alt="Packages">
+                        <div class="ml-4 w-full">
+                            <div class="text-gray-500 text-sm">{{ 'pallet.total_packages' | transloco }}</div>
+                            <div class="text-2xl font-semibold text-blue-700">{{ dashboard_pallet?.sea?.total_packages |
+                                number }}</div>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center">
+                        <img class="w-12 h-12" src="assets/images/item/kg.png" alt="Weight">
+                        <div class="ml-4 w-full">
+                            <div class="text-gray-500 text-sm">{{ 'pallet.total_weight' | transloco }}</div>
+                            <div class="text-2xl font-semibold text-blue-700">{{ dashboard_pallet?.sea?.total_weight_kg
+                                | number }}</div>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center">
+                        <img class="w-12 h-12" src="assets/images/item/cube.png" alt="CBM">
+                        <div class="ml-4 w-full">
+                            <div class="text-gray-500 text-sm">{{ 'pallet.total_cbm' | transloco }}</div>
+                            <div class="text-2xl font-semibold text-blue-700">{{ dashboard_pallet?.sea?.total_cbm |
+                                number : '1.4' }}</div>
+                        </div>
                     </div>
                 </div>
             </div>
-            <div class="p-4 flex w-full items-center">
-                <img class="flex w-14" src="assets/images/item/kg.png" alt="Logo image">
-                <div class="text-lg font-normal mx-4  w-full">{{ 'pallet.total_weight' | transloco }}</div>
-                <div class="text-right w-full">
-                    <div class="text-4xl font-bold text-blue-950">{{ dashboard_pallet?.sea?.total_weight_kg |
-                        number }}
-                    </div>
-                </div>
-            </div>
-            <div class="p-4 flex w-full items-center">
-                <img class="flex w-14" src="assets/images/item/cube.png" alt="Logo image">
-                <div class="text-lg font-normal mx-4  w-full">{{ 'pallet.total_cbm' | transloco }}</div>
-                <div class="text-right w-full">
-                    <div class="text-4xl font-bold text-blue-950">{{ dashboard_pallet?.sea?.total_cbm | number : '1.4'}}</div>
-                </div>
-            </div>
+
         </div>
+
         <div>
             <form *ngIf="!showFilterForm" [formGroup]="filterForm">
                 <div class="flex flex-col md:flex-row w-full gap-2 items-end">
@@ -168,7 +188,7 @@
                         <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
                             <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:magnifying-glass'"></mat-icon>
                             <input matInput formControlName="code" class="ml-2"
-                                [placeholder]="'pallet.search_by_pallet_number' | transloco">
+                                [placeholder]="'ค้นหารายการ' | transloco">
                         </mat-form-field>
                     </div>
                     <div>

@@ -18,6 +18,10 @@
                     <span class="ml-2">{{ 'buttons.delete_entry' | transloco }}</span>
                 </button>
 
+                <button mat-flat-button class="!text-white" [color]="'primary'" (click)="createDeliveryNote()">
+                    <span class="ml-2">สร้างใบส่งของ</span>
+                </button>
+
                 <button [cdkMenuTriggerFor]="menu" mat-flat-button class="!text-white" [color]="'primary'">
                     <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:shopping-bag'"></mat-icon>
                     <div class="flex items-center gap-2">
@@ -182,34 +186,56 @@
     <a class="text-[#DF0B12CC]" [routerLink]="['/delivery-note/view', data.id]"
         routerLinkActive="router-link-active">{{data?.code}}</a>
 </ng-template>
-<ng-template #view_order let-data="adtData">
+<!-- <ng-template #view_order let-data="adtData">
     <button class="text-[#DF0B12CC]" (click)="checkdata(data)">{{data?.code}}</button>
-</ng-template>
+</ng-template> -->
 <ng-template #dialogType let-data="adtData">
-    <button class="text-[#DF0B12CC]" (click)="checkdata(null)">เลือกประเภทขนส่ง</button>
+    <a class="text-[#DF0B12CC]" [routerLink]="['/delivery-note/view-order/edit', data.id]">{{data.transport_type}}</a>
 </ng-template>
 
 <ng-template #pic_car let-data="adtData">
-    <img *ngIf="data?.delivery_order_list?.image;else noImage" [src]="data?.delivery_order_list?.image"
-        class="w-16 h-auto rounded">
-    <ng-template #noImage>
-        <div class="w-16 h-16 bg-[#797979] flex flex-col items-center justify-center text-sm rounded-md !text-white cursor-pointer"
-            (click)="dialogviewimage('รูปรถ')">
-            <div>
-                <mat-icon class="text-white" [svgIcon]="'heroicons_solid:photo'"></mat-icon>
+    <div class="flex flex-row justify-center cursor-pointer">
+        <ng-container *ngIf="getTruckImage(data); else noImage">
+            <div class="relative">
+                <img [src]="getTruckImage(data)" alt="Image" class="rounded-md w-10 h-15"
+                    (click)="showPicture(getTruckImage(data))" (error)="onImageError(getTruckImage(data))"
+                    (load)="onImageLoad(getTruckImage(data))" />
+                <ng-container *ngIf="imageLoadedMap[getTruckImage(data)] === false">
+                    <mat-icon class="absolute inset-0 m-auto text-gray-400 text-6xl">
+                        image_not_supported
+                    </mat-icon>
+                </ng-container>
             </div>
-            <div>
-                No Image
-            </div>
-        </div>
-    </ng-template>
+        </ng-container>
+        <ng-template #noImage>
+            <mat-icon class="text-gray-400 text-6xl">image_not_supported</mat-icon>
+        </ng-template>
+    </div>
 </ng-template>
 
 <ng-template #pic_pro let-data="adtData">
-    <img *ngIf="data?.delivery_order_list?.image;else noImage" [src]="data?.delivery_order_list?.image"
-        class="w-16 h-auto rounded">
-    <ng-template #noImage>
-        <div class="w-16 h-16 bg-[#797979] flex flex-col items-center justify-center text-sm rounded-md !text-white">
+    <div class="flex flex-row gap-2">
+        <div *ngFor="let img of getProductImages(data)">
+            <div class="flex flex-row justify-center cursor-pointer">
+                <ng-container *ngIf="img.image_url; else noImage">
+                    <div class="relative">
+                        <img [src]="img.image_url" alt="Image" class="rounded-md w-10 h-15"
+                            (click)="showPicture(img.image_url)" (error)="onImageError(img.image_url)"
+                            (load)="onImageLoad(img.image_url)" />
+                        <ng-container *ngIf="imageLoadedMap[img.image_url] === false">
+                            <mat-icon class="absolute inset-0 m-auto text-gray-400 text-6xl">
+                                image_not_supported
+                            </mat-icon>
+                        </ng-container>
+                    </div>
+                </ng-container>
+                <ng-template #noImage>
+                    <mat-icon class="text-gray-400 text-6xl">image_not_supported</mat-icon>
+                </ng-template>
+            </div>
+        </div>
+        <div *ngIf="getProductImages(data).length === 0"
+            class="w-16 h-16 bg-[#797979] flex flex-col items-center justify-center text-sm rounded-md !text-white">
             <div>
                 <mat-icon class="text-white" [svgIcon]="'heroicons_solid:photo'"></mat-icon>
             </div>
@@ -217,22 +243,27 @@
                 No Image
             </div>
         </div>
-    </ng-template>
+    </div>
 </ng-template>
 
 <ng-template #pic_bill let-data="adtData">
-    <img *ngIf="data?.delivery_order_list?.image;else noImage" [src]="data?.delivery_order_list?.image"
-        class="w-16 h-auto rounded">
-    <ng-template #noImage>
-        <div class="w-16 h-16 bg-[#797979] flex flex-col items-center justify-center text-sm rounded-md !text-white">
-            <div>
-                <mat-icon class="text-white" [svgIcon]="'heroicons_solid:photo'"></mat-icon>
+    <div class="flex flex-row justify-center cursor-pointer">
+        <ng-container *ngIf="getBillImage(data); else noImage">
+            <div class="relative">
+                <img [src]="getBillImage(data)" alt="Image" class="rounded-md w-10 h-15"
+                    (click)="showPicture(getBillImage(data))" (error)="onImageError(getBillImage(data))"
+                    (load)="onImageLoad(getBillImage(data))" />
+                <ng-container *ngIf="imageLoadedMap[getBillImage(data)] === false">
+                    <mat-icon class="absolute inset-0 m-auto text-gray-400 text-6xl">
+                        image_not_supported
+                    </mat-icon>
+                </ng-container>
             </div>
-            <div>
-                No Image
-            </div>
-        </div>
-    </ng-template>
+        </ng-container>
+        <ng-template #noImage>
+            <mat-icon class="text-gray-400 text-6xl">image_not_supported</mat-icon>
+        </ng-template>
+    </div>
 </ng-template>
 
 <ng-template #status let-data="adtData">

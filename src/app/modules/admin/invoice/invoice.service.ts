@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { toUpper } from 'lodash';
 import { BehaviorSubject, map, tap } from 'rxjs';
+import { environment } from 'environments/environment';
 
 @Injectable({
     providedIn: 'root',
@@ -11,7 +12,7 @@ export class InvoiceService {
 
     datatable(dataTablesParameters: any) {
         return this.http
-            .post('/api/shipment_page', dataTablesParameters)
+            .post('/api/bills_page', dataTablesParameters)
             .pipe(
                 map((resp: any) => {
                     return resp;
@@ -20,7 +21,7 @@ export class InvoiceService {
     }
     datatablepo(dataTablesParameters: any) {
         return this.http
-            .post('/api/delivery_orders_page', dataTablesParameters)
+            .post('/api/delivery_orders_thai_page', dataTablesParameters)
             .pipe(
                 map((resp: any) => {
                     return resp;
@@ -38,22 +39,34 @@ export class InvoiceService {
     }
 
     create(data: any) {
-        return this.http.post('/api/shipment_master', data);
+        return this.http.post('/api/bills', data);
+    }
+
+    updatePrice(id: any,data: any) {
+        return this.http.put('/api/bills/' + id, data);
+    }
+
+
+    updateStatusBill(data: any) {
+        return this.http.post('/api/update_status_bill', data);
+    }
+    paymentOrder(data: any) {
+        return this.http.post('/api/payment_order', data);
     }
 
     update(data: any,id: any) {
-        return this.http.put('/api/shipment_master/' + id, data);
+        return this.http.put('/api/bills/' + id, data);
     }
 
     get(id: any) {
-        return this.http.get('/api/shipment_master/' + id);
+        return this.http.get('/api/bills/' + id);
     }
     getshipment(id: any) {
         return this.http.get('/api/shipment/' + id);
     }
 
     delete(id: number) {
-        return this.http.delete('/api/shipment_master/' + id);
+        return this.http.delete('/api/bills/' + id);
     }
 
     getShipment() {
@@ -64,5 +77,17 @@ export class InvoiceService {
     }
     getTransport() {
         return this.http.get('/api/get_transport');
+    }
+    getPackingList() {
+        return this.http.get('/api/get_packing_list');
+    }
+    getPackingListInthai() {
+        return this.http.get('/api/get_packing_list_thai');
+    }
+    upload_image(data: any) {
+        return this.http.post(environment.apiUrl + '/api/upload_images', data)
+    }
+    upload_file(data: any) {
+        return this.http.post(environment.apiUrl + '/api/upload_file', data)
     }
 }

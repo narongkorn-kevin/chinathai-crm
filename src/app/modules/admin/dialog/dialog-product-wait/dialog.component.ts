@@ -31,12 +31,15 @@ import { debounceTime, map, Observable, Subject } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { ADTSettings } from 'angular-datatables/src/models/settings';
 import { DeliveryOrdersService } from '../../delivery_orders/delivery-orders.service';
+import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
+
 @Component({
     selector: 'app-dialog-update-payment-new-product-form-addressed-2',
     standalone: true,
     templateUrl: './dialog.component.html',
     styleUrl: './dialog.component.scss',
     imports: [
+        TranslocoModule,
         CommonModule,
         DataTablesModule,
         MatIconModule,
@@ -61,15 +64,16 @@ export class DialogProductWaitComponent implements OnInit {
     tracks = [];
     @ViewChild('checkbox') checkbox: any;
 
-    @ViewChild(DataTableDirective, { static: false }) dtElement: DataTableDirective;
+    @ViewChild(DataTableDirective, { static: false })
+    dtElement: DataTableDirective;
     @ViewChild('dt') dt: DataTableDirective;
     dtTrigger: Subject<ADTSettings> = new Subject<ADTSettings>();
     dtOptions: any = {};
     datarow = [];
     searchSubject: Subject<string> = new Subject<string>();
 
-
     constructor(
+        private translocoService: TranslocoService,
         private dialogRef: MatDialogRef<DialogProductWaitComponent>,
         @Inject(MAT_DIALOG_DATA) public data: any,
         public dialog: MatDialog,
@@ -77,18 +81,33 @@ export class DialogProductWaitComponent implements OnInit {
         private fuseConfirmationService: FuseConfirmationService,
         private toastr: ToastrService,
         private http: HttpClient,
-        public _service: DeliveryOrdersService,
-
+        public _service: DeliveryOrdersService
     ) {
         console.log(data, 'data');
+        this.langues = localStorage.getItem('lang');
     }
+    langues: any;
+    languageUrl: any;
 
     ngOnInit(): void {
+        if (this.langues === 'en') {
+            this.languageUrl =
+                'https://cdn.datatables.net/plug-ins/1.11.3/i18n/en-gb.json';
+        } else if (this.langues === 'th') {
+            this.languageUrl =
+                'https://cdn.datatables.net/plug-ins/1.11.3/i18n/th.json';
+        } else if (this.langues === 'cn') {
+            this.languageUrl =
+                'https://cdn.datatables.net/plug-ins/1.11.3/i18n/zh.json';
+        } else {
+            this.languageUrl =
+                'https://cdn.datatables.net/plug-ins/1.11.3/i18n/th.json';
+        }
+
         setTimeout(() => this.loadTable());
         this.searchSubject.pipe(debounceTime(500)).subscribe(() => {
             this.rerender();
         });
-
     }
 
     ngAfterViewInit() {
@@ -110,12 +129,35 @@ export class DialogProductWaitComponent implements OnInit {
         });
     }
     loadTable(): void {
+        const menuTitles = {
+            product_name: {
+                th: 'ชื่อสินค้า',
+                en: 'Product Name',
+                cn: '产品名称',
+            },
+            product_type: {
+                th: 'ประเภทสินค้า',
+                en: 'Product Type',
+                cn: '产品类型',
+            },
+            standard_size: {
+                th: 'ขนาดมาตราฐาน',
+                en: 'Standard Size',
+                cn: '标准尺寸',
+            },
+        };
+
         this.dtOptions = {
             pagingType: 'full_numbers',
             serverSide: true,
             searching: false,
+            language: {
+                url: this.languageUrl,
+            },
             ajax: (dataTablesParameters: any, callback) => {
-                const trackingInput = (document.getElementById('trackingInput') as HTMLInputElement).value;
+                const trackingInput = (
+                    document.getElementById('trackingInput') as HTMLInputElement
+                ).value;
                 dataTablesParameters.search.value = trackingInput; // Add search value
                 this._service
                     .datataproductdraft(dataTablesParameters)
@@ -148,7 +190,7 @@ export class DialogProductWaitComponent implements OnInit {
                     className: 'w-10 text-center',
                 },
                 {
-                    title: 'ชื่อสินค้า',
+                    title: menuTitles.product_name[this.langues],
                     data: 'product_name',
                     className: 'text-center',
                     // ngTemplateRef: {
@@ -156,17 +198,21 @@ export class DialogProductWaitComponent implements OnInit {
                     // },
                 },
                 {
-                    title: 'ประเภทสินค้า',
+                    title: menuTitles.product_type[this.langues],
                     data: function (row: any) {
+                        if(!row.product_type?.name) {
+                            return '-';
+                        }
                         return row.product_type.name;
                     },
                     className: 'text-center',
                 },
                 {
-                    title: 'ขนาดมาตราฐาน',
+                    title: menuTitles.standard_size[this.langues],
                     data: function (row: any) {
-                        return row.standard_size.name;
+                        return row?.standard_size?.name;
                     },
+                    defaultContent: '-',
                     className: 'text-center',
                 },
             ],
@@ -174,16 +220,28 @@ export class DialogProductWaitComponent implements OnInit {
     }
 
     onSearchInput(): void {
-        this.searchSubject.next((document.getElementById('trackingInput') as HTMLInputElement).value);
+        this.searchSubject.next(
+            (document.getElementById('trackingInput') as HTMLInputElement).value
+        );
     }
 
     Submit() {
-        const trackingInput = (document.getElementById('trackingInput') as HTMLInputElement).value;
+        // if (this.form.invalid) {
+        //     this.toastr.error(
+        //         this.translocoService.translate('toastr.missing_fields')
+        //     );
+        //     this.form.markAllAsTouched();
+        //     return;
+        // }
+        const trackingInput = (
+            document.getElementById('trackingInput') as HTMLInputElement
+        ).value;
 
         if (this.multiSelect.length === 0 && trackingInput) {
             const confirmation = this.fuseConfirmationService.open({
-                title: 'ยืนยันการสร้าง track ใหม่หรือไม่',
-                message: "เนื่องจากคุณไม่ได้เลือกข้อมูลใด ๆ ที่จะนำเข้า คุณต้องการสร้าง track ใหม่หรือไม่",
+                title: this.translocoService.translate('confirmation.confirm_add_tracking'),
+                message:
+                    this.translocoService.translate('confirmation.confirm_add_trackingmessage'),
                 icon: {
                     show: true,
                     name: 'heroicons_outline:exclamation-triangle',
@@ -192,12 +250,16 @@ export class DialogProductWaitComponent implements OnInit {
                 actions: {
                     confirm: {
                         show: true,
-                        label: 'ยืนยัน',
+                        label: this.translocoService.translate(
+                            'confirmation.confirm_button'
+                        ),
                         color: 'primary',
                     },
                     cancel: {
                         show: true,
-                        label: 'ยกเลิก',
+                        label: this.translocoService.translate(
+                            'confirmation.cancel_button'
+                        ),
                     },
                 },
                 dismissible: false,
@@ -207,24 +269,25 @@ export class DialogProductWaitComponent implements OnInit {
                 if (result == 'confirmed') {
                     const formdata = {
                         track_no: trackingInput,
-                        date: new Date().toISOString().split('T')[0]
-                    }
+                        date: new Date().toISOString().split('T')[0],
+                    };
                     this._service.createTracking(formdata).subscribe({
-                        next: (response:any) => {
-                            this.toastr.success('สร้าง Tracking สำเร็จ');
+                        next: (response: any) => {
+                            this.toastr.success(this.translocoService.translate('toastr.add'));
                             this.dialogRef.close(response.data);
                         },
                         error: (error) => {
-                            this.toastr.error('Failed to create tracking number');
+                            this.toastr.error(
+                                this.translocoService.translate('toastr.add_error')
+                            );
                             console.log(error);
-                        }
+                        },
                     });
                 }
             });
-
         } else {
             const confirmation = this.fuseConfirmationService.open({
-                title: 'ยืนยันการนำเข้าข้อมูล',
+                title: this.translocoService.translate('confirmation.confirm_add'),
                 icon: {
                     show: true,
                     name: 'heroicons_outline:exclamation-triangle',
@@ -233,12 +296,16 @@ export class DialogProductWaitComponent implements OnInit {
                 actions: {
                     confirm: {
                         show: true,
-                        label: 'ยืนยัน',
+                        label: this.translocoService.translate(
+                            'confirmation.confirm_button'
+                        ),
                         color: 'primary',
                     },
                     cancel: {
                         show: true,
-                        label: 'ยกเลิก',
+                        label: this.translocoService.translate(
+                            'confirmation.cancel_button'
+                        ),
                     },
                 },
                 dismissible: false,
@@ -265,7 +332,7 @@ export class DialogProductWaitComponent implements OnInit {
         if (isAllSelected) {
             // เลือกทั้งหมด: เพิ่ม object ของทุกแถวใน multiSelect
             this.datarow.forEach((row: any) => {
-                if (!this.multiSelect.some(item => item.id === row.id)) {
+                if (!this.multiSelect.some((item) => item.id === row.id)) {
                     this.multiSelect.push(row); // เพิ่ม object ถ้ายังไม่มีใน multiSelect
                 }
                 row.selected = true; // ตั้งค่า selected เป็น true
@@ -273,7 +340,9 @@ export class DialogProductWaitComponent implements OnInit {
         } else {
             // ยกเลิกการเลือกทั้งหมด: ลบ object ของทุกแถวออกจาก multiSelect
             this.datarow.forEach((row: any) => {
-                const index = this.multiSelect.findIndex(item => item.id === row.id);
+                const index = this.multiSelect.findIndex(
+                    (item) => item.id === row.id
+                );
                 if (index !== -1) {
                     this.multiSelect.splice(index, 1); // ลบ object ออกจาก multiSelect
                 }
@@ -288,7 +357,9 @@ export class DialogProductWaitComponent implements OnInit {
             this.multiSelect.push(row);
         } else {
             // ลบ object ออกจาก multiSelect
-            const index = this.multiSelect.findIndex(item => item.id === row.id);
+            const index = this.multiSelect.findIndex(
+                (item) => item.id === row.id
+            );
             if (index !== -1) {
                 this.multiSelect.splice(index, 1); // ใช้ splice เพื่อลบค่าออก
             }

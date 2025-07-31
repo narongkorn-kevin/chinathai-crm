@@ -1,0 +1,29 @@
+<h2 mat-dialog-title class="text-center">{{ 'thai_warehouse.dialog_barcode.waiting_scan' | transloco }}</h2>
+
+<mat-dialog-content class="flex flex-col items-center justify-center gap-4 py-4">
+  <app-scan-barcode (codeScanned)="onScan($event)"></app-scan-barcode>
+
+  <table class="w-full border border-gray-300 rounded-lg overflow-hidden">
+    <thead class="bg-gray-100">
+      <tr>
+        <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700 border border-gray-300">#</th>
+        <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700 border border-gray-300">Barcode</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let item of barcodeList; let i = index" class="odd:bg-white even:bg-gray-50 hover:bg-blue-50">
+        <td class="px-4 py-2 border border-gray-200 text-sm text-gray-800">{{ i + 1 }}</td>
+        <td class="px-4 py-2 border border-gray-200 text-sm text-gray-800">{{ item.barcode }}</td>
+      </tr>
+    </tbody>
+  </table>
+</mat-dialog-content>
+
+<mat-dialog-actions align="center">
+  <button mat-button color="primary" (click)="simulateScan()">
+    {{ 'thai_warehouse.dialog_barcode.add_barcode' | transloco }}
+  </button>
+  <button mat-button color="warn" (click)="cancel()">
+    {{ 'thai_warehouse.dialog_barcode.cancel' | transloco }}
+  </button>
+</mat-dialog-actions>

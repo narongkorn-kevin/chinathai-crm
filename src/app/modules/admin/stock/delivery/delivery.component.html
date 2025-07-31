@@ -17,7 +17,6 @@
                     <mat-icon [svgIcon]="'heroicons_solid:cog-6-tooth'"></mat-icon>
                     <span class="ml-2">{{ 'shipment.settings' | transloco }}</span>
                 </button>
-
                 <button [cdkMenuTriggerFor]="menu" mat-flat-button class="!text-white" [color]="'primary'">
                     <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:shopping-bag'"></mat-icon>
                     <div class="flex items-center gap-2">
@@ -25,7 +24,6 @@
                         <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:chevron-up'"></mat-icon>
                     </div>
                 </button>
-
                 <ng-template #menu>
                     <div class="manage-menu bg-primary" cdkMenu>
                         <button class="manage-menu-item text-white" cdkMenuItem (click)="exportData('copy')">

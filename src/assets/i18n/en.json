@@ -36,7 +36,7 @@
         "yuan": "Yuan",
         "baht": "Baht"
     },
-    "dalivery_order": {
+    "delivery_order": {
         "title": {
             "main": "Parcel Summary List",
             "subtitle": "Warehouse Entry/PO List"

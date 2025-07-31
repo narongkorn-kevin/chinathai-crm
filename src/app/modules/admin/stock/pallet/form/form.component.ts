@@ -230,6 +230,7 @@ export class FormComponent implements OnInit, AfterViewInit {
             // Patch delivery_order_lists
             const deliveryOrderLists = this.data.pallet_lists.map((order) => ({
                 delivery_order_list_item_id:order.delivery_order_list_items.id,
+                member_code:order?.delivery_order?.member?.code,
                 importer_code: order?.delivery_order?.member?.importer_code,
                 delivery_order_id: order.delivery_order_id,
                 delivery_order_list_id: order.delivery_order_list_id,
@@ -252,7 +253,8 @@ export class FormComponent implements OnInit, AfterViewInit {
                 listArray.push(this.formBuilder.group(item))
             );
             this.lists = listArray.value;
-
+            console.log(this.lists);
+            
 
 
         }

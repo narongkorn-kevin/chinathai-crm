@@ -1,7 +1,7 @@
 <div class="p-6 flex flex-col h-screen">
     <!-- หัวข้อ -->
     <h2 class="text-2xl font-semibold mb-4">
-        {{ 'dalivery_order.view.title.number' | transloco }}: {{ this.data?.delivery_order?.po_no }}
+        {{ 'delivery_order.view.title.number' | transloco }}: {{ this.data?.delivery_order?.po_no }}
     </h2>
 
     <!-- Progress + ข้อมูล PO -->
@@ -34,7 +34,7 @@
                     <th class="px-6 py-3 text-left border">
                         {{ 'pallet.view.barcode_number' | transloco }}
                     </th>
-                    <th class="px-6 py-3 text-left border">Packing List</th>
+                    <th class="px-6 py-3 text-left border">หมายเลขขึ้นตู้</th>
                     <th class="px-6 py-3 text-left border">
                         {{ 'packing_list.view.container_number' | transloco }}
                     </th>

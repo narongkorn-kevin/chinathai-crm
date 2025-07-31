@@ -11,7 +11,7 @@ export class DeliveryNoteService {
 
     datatable(dataTablesParameters: any) {
         return this.http
-            .post('/api/bills_page', dataTablesParameters)
+            .post('/api/delivery_in_thai_control_page', dataTablesParameters)
             .pipe(
                 map((resp: any) => {
                     return resp;
@@ -71,5 +71,26 @@ export class DeliveryNoteService {
     }
     getDeliveryDocByBill(id:number) {
         return this.http.get('/api/get_delivery_doc_by_bill/'+id);
+    }
+
+    getCustomers() {
+        return this.http.get('/api/get_delivery_thai_by_member');
+    }
+
+    createBills(data: any){
+        console.log(data)
+        return this.http.post('/api/delivery_in_thai_control',data)
+    }
+
+    updateBills(id: number, data: any) {
+        return this.http.put('/api/delivery_in_thai_control/' + id, data);
+    }
+
+    getDeliveryInThaiById(id: number) {
+        return this.http.get('/api/delivery_in_thai/' + id);
+    }
+
+    getDeliveryInThaiControlById(id: number) {
+        return this.http.get('/api/delivery_in_thai_control/' + id);
     }
 }

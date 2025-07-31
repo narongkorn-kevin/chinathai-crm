@@ -1,7 +1,4 @@
-::ng-deep .mat-mdc-tab-body-content {
-    display: none !important;
-}
+// :host {
+//   display: block;
+// }
 
-::ng-deep .mat-mdc-tab-body-content.mat-mdc-tab-body-active {
-    display: block !important;
-}

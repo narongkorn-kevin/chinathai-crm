@@ -10,7 +10,7 @@ const menuTitles = {
     dashboard: { th: "Dashboard", en: "Dashboard", cn: "仪表板" },
 
     self_employee: { th: "รายการรวมพัสดุ", en: "Package List", cn: "包裹列表" },
-    delivery_orders: { th: "รายการพัสดุเข้าคลัง/PO", en: "Warehouse/PO Parcels", cn: "仓库/PO 包裹" },
+    delivery_orders: { th: "รายการพัสดุเข้าโกดังจีน", en: "Warehouse/PO Parcels", cn: "仓库/PO 包裹" },
     pallet: { th: "พาเลท/Pallet", en: "Pallet", cn: "托盘" },
     sack: { th: "กระสอบ", en: "Sack", cn: "袋子" },
     delivery: { th: "Shipment", en: "Shipment", cn: "货运" },
@@ -128,7 +128,7 @@ export const defaultNavigation: FuseNavigationItem[] = [
     },
     {
         id: 'sale-order',
-        title: 'SO',
+        title: 'คำสั่งซื้อ',
         type: 'collapsable',
         icon: 'heroicons_outline:clipboard-document-list',
         children: [
@@ -142,16 +142,6 @@ export const defaultNavigation: FuseNavigationItem[] = [
                     classes: 'px-2 bg-red-600 text-white rounded-full',
                 },
 
-            },
-            {
-                id: 'sale-order.crm',
-                title: 'CRM',
-                type: 'basic',
-                // link: '/follow-up',
-                // badge: {
-                //     title: '3',
-                //     classes: 'px-2 bg-red-600 text-white rounded-full',
-                // },
             },
             {
                 id: 'sale-order.claim',
@@ -168,60 +158,9 @@ export const defaultNavigation: FuseNavigationItem[] = [
                 title: 'เปิดบิลฝากส่ง',
                 type: 'basic',
                 link: '/order-request',
-                // badge: {
-                //     title: '3',
-                //     classes: 'px-2 bg-red-600 text-white rounded-full',
-                // },
             },
         ]
     },
-    {
-        id: 'purchase-order',
-        title: 'PO',
-        type: 'collapsable',
-        icon: 'heroicons_outline:clipboard-document-list',
-        children: [
-            {
-                id: 'purchase-order.po',
-                title: 'PO',
-                type: 'basic',
-                link: '/purchase-order',
-                badge: {
-                    title: '3',
-                    classes: 'px-2 bg-red-600 text-white rounded-full',
-                },
-
-            },
-            {
-                id: 'purchase-order.refund',
-                title: 'ร้านค้าคืนเงิน ',
-                type: 'basic',
-                // link: '/follow-up',
-                // badge: {
-                //     title: '3',
-                //     classes: 'px-2 bg-red-600 text-white rounded-full',
-                // },
-            },
-            {
-                id: 'purchase-order.report-refund',
-                title: 'รายงานคืนเงิน',
-                type: 'basic',
-                // link: '/follow-up',
-
-            },
-            {
-                id: 'sale-order.purchase-report',
-                title: 'Purchase Report',
-                type: 'basic',
-                // link: '/follow-up',
-                // badge: {
-                //     title: '3',
-                //     classes: 'px-2 bg-red-600 text-white rounded-full',
-                // },
-            },
-        ]
-    },
-
     {
         id: 'payment',
         title: 'ชำระเงิน',
@@ -239,23 +178,23 @@ export const defaultNavigation: FuseNavigationItem[] = [
                 },
 
             },
-            {
-                id: 'payment.withdraw',
-                title: 'ถอนเงิน ',
-                type: 'basic',
-                // link: '/follow-up',
-                badge: {
-                    title: '4',
-                    classes: 'px-2 bg-red-600 text-white rounded-full',
-                },
-            },
-            {
-                id: 'payment.statement',
-                title: 'รายการเดินบัญชี',
-                type: 'basic',
-                // link: '/follow-up',
+            // {
+            //     id: 'payment.withdraw',
+            //     title: 'ถอนเงิน ',
+            //     type: 'basic',
+            //     // link: '/follow-up',
+            //     badge: {
+            //         title: '4',
+            //         classes: 'px-2 bg-red-600 text-white rounded-full',
+            //     },
+            // },
+            // {
+            //     id: 'payment.statement',
+            //     title: 'รายการเดินบัญชี',
+            //     type: 'basic',
+            //     // link: '/follow-up',
 
-            },
+            // },
             {
                 id: 'payment.statement-transport',
                 title: 'รายการเดินบัญชีค่าขนส่ง',
@@ -266,16 +205,16 @@ export const defaultNavigation: FuseNavigationItem[] = [
                 //     classes: 'px-2 bg-red-600 text-white rounded-full',
                 // },
             },
-            {
-                id: 'payment.cr-dr',
-                title: 'Cr/Dr',
-                type: 'basic',
-                // link: '/follow-up',
-                // badge: {
-                //     title: '3',
-                //     classes: 'px-2 bg-red-600 text-white rounded-full',
-                // },
-            },
+            // {
+            //     id: 'payment.cr-dr',
+            //     title: 'Cr/Dr',
+            //     type: 'basic',
+            //     // link: '/follow-up',
+            //     // badge: {
+            //     //     title: '3',
+            //     //     classes: 'px-2 bg-red-600 text-white rounded-full',
+            //     // },
+            // },
         ]
     },
     {
@@ -314,7 +253,7 @@ export const defaultNavigation: FuseNavigationItem[] = [
                         id: 'warehouse.cn.lost-owner',
                         title: 'สินค้าไม่ระบุเจ้าของ',
                         type: 'basic',
-                        link: '/follow-up',
+                        // link: '/follow-up',
                         badge: {
                             title: '3',
                             classes: 'px-2 bg-red-600 text-white rounded-full',
@@ -344,6 +283,16 @@ export const defaultNavigation: FuseNavigationItem[] = [
                         id: 'warehouse.cn.packinglist',
                         title: 'จัดกระสอบเตรียมขึ้นตู้',
                         type: 'basic',
+                        link: '/pallet',
+                        badge: {
+                            title: '3',
+                            classes: 'px-2 bg-green-600 text-white rounded-full',
+                        },
+                    },
+                    {
+                        id: 'warehouse.cn.packinglist',
+                        title: 'ขึ้นตู้',
+                        type: 'basic',
                         link: '/lot',
                         badge: {
                             title: '3',
@@ -363,16 +312,16 @@ export const defaultNavigation: FuseNavigationItem[] = [
                 type: 'group',
                 icon: 'heroicons_outline:archive-box',
                 children: [
-                    {
-                        id: 'warehouse.th.container1',
-                        title: 'ตู้คอนเทนเนอร์',
-                        type: 'basic',
-                    },
-                    {
-                        id: 'warehouse.th.container2',
-                        title: 'ตู้คอนเทนเนอร์ 2',
-                        type: 'basic',
-                    },
+                    // {
+                    //     id: 'warehouse.th.container1',
+                    //     title: 'ตู้คอนเทนเนอร์',
+                    //     type: 'basic',
+                    // },
+                    // {
+                    //     id: 'warehouse.th.container2',
+                    //     title: 'ตู้คอนเทนเนอร์ 2',
+                    //     type: 'basic',
+                    // },
                     {
                         id: 'warehouse.th.th-warehouse',
                         title: 'โกดังไทย',
@@ -381,6 +330,7 @@ export const defaultNavigation: FuseNavigationItem[] = [
                             title: '405',
                             classes: 'px-2 bg-red-600 text-white rounded-full',
                         },
+                        link: '/thai-warehouse'
                     },
                     {
                         id: 'warehouse.th.prepare-shipment',
@@ -390,6 +340,7 @@ export const defaultNavigation: FuseNavigationItem[] = [
                             title: '35',
                             classes: 'px-2 bg-blue-600 text-white rounded-full',
                         },
+                        link : '/delivery-note'
                     },
                     {
                         id: 'warehouse.th.prepare-shipment-address',
@@ -744,7 +695,7 @@ export const horizontalNavigation: FuseNavigationItem[] = [
         children: [
             {
                 id: 'self-employee',
-                title: 'รายการพัสดุเข้าคลัง/PO',
+                title: 'รายการพัสดุเข้าโกดังจีน',
                 type: 'basic',
                 link: '/po',
             },

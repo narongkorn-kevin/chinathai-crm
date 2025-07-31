@@ -31,7 +31,10 @@ import { map, Observable, Subject } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { MatDivider } from '@angular/material/divider';
 import { ADTSettings } from 'angular-datatables/src/models/settings';
-import { MatDatepickerModule, MatDateRangePicker } from '@angular/material/datepicker';
+import {
+    MatDatepickerModule,
+    MatDateRangePicker,
+} from '@angular/material/datepicker';
 import {
     trigger,
     state,
@@ -40,12 +43,15 @@ import {
     animate,
 } from '@angular/animations';
 import { InvoiceService } from '../invoice.service';
+import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
+
 @Component({
     selector: 'app-invoice-dialog-status',
     standalone: true,
     templateUrl: './dialog-status.component.html',
     styleUrl: './dialog-status.component.scss',
     imports: [
+        TranslocoModule,
         CommonModule,
         DataTablesModule,
         MatIconModule,
@@ -90,8 +96,10 @@ export class DialogStatusComponent implements OnInit {
     formFieldHelpers: string[] = ['fuse-mat-dense'];
     tracks = [];
     code: string;
+    id: number;
 
     constructor(
+        private translocoService: TranslocoService,
         private dialogRef: MatDialogRef<DialogStatusComponent>,
         @Inject(MAT_DIALOG_DATA) public data: any,
         public dialog: MatDialog,
@@ -99,31 +107,43 @@ export class DialogStatusComponent implements OnInit {
         private fuseConfirmationService: FuseConfirmationService,
         private toastr: ToastrService,
         private http: HttpClient,
-        private _service: InvoiceService,
+        private _service: InvoiceService
     ) {
         this.code = data?.code;
+        this.id = data?.id;
         this.form = this.FormBuilder.group({
             payment_status: [''],
         });
     }
 
     ngOnInit(): void {
-
-
+        this.form.patchValue({
+            payment_status: this.data?.status,
+        });
     }
-    ngAfterViewInit() {
+    ngAfterViewInit() {}
 
-    }
-
-    ngOnDestroy(): void {
-
-    }
+    ngOnDestroy(): void {}
 
     Submit() {
+        if (this.form.invalid) {
+            this.toastr.error(
+                this.translocoService.translate('toastr.missing_fields')
+            );
+            this.form.markAllAsTouched();
+            return;
+        }
         const formValue = this.form.value;
+        console.log(formValue);
+
+        const payload = {
+            status: formValue.payment_status,
+            orders: [this.id],
+        };
+        console.log(payload);
 
         const confirmation = this.fuseConfirmationService.open({
-            title: 'ยืนยันการบันทึกข้อมูล',
+            title: this.translocoService.translate('confirmation.save_title'),
             icon: {
                 show: true,
                 name: 'heroicons_outline:exclamation-triangle',
@@ -132,12 +152,16 @@ export class DialogStatusComponent implements OnInit {
             actions: {
                 confirm: {
                     show: true,
-                    label: 'ยืนยัน',
+                    label: this.translocoService.translate(
+                        'confirmation.confirm_button'
+                    ),
                     color: 'primary',
                 },
                 cancel: {
                     show: true,
-                    label: 'ยกเลิก',
+                    label: this.translocoService.translate(
+                        'confirmation.cancel_button'
+                    ),
                 },
             },
             dismissible: false,
@@ -145,7 +169,19 @@ export class DialogStatusComponent implements OnInit {
 
         confirmation.afterClosed().subscribe((result) => {
             if (result == 'confirmed') {
-                this.dialogRef.close(formValue);
+                this._service.updateStatusBill(payload).subscribe({
+                    next: (resp: any) => {
+                        this.toastr.success(
+                            this.translocoService.translate('toastr.success')
+                        );
+                        this.dialogRef.close(true);
+                    },
+                    error: (err) => {
+                        this.toastr.error(
+                            this.translocoService.translate('toastr.error')
+                        );
+                    },
+                });
             }
         });
     }

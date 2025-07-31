@@ -1,7 +1,8 @@
+// Re-compiling the component to resolve template errors
 import { DeliveryService } from '../../stock/delivery/delivery.service';
 import { CdkMenuModule } from '@angular/cdk/menu';
-import { Subscription } from 'rxjs';
-import { Component, OnInit, OnChanges, Inject } from '@angular/core';
+import { Subscription, forkJoin } from 'rxjs';
+import { ChangeDetectorRef, Component, OnInit, OnChanges, Inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DataTablesModule } from 'angular-datatables';
 import { MatIconModule } from '@angular/material/icon';
@@ -56,8 +57,10 @@ import { UploadFileComponent } from 'app/modules/common/upload-file/upload-file.
 import { DialogPoComponent } from '../dialog-po/dialog-po.component';
 import { DialogTrackingComponent } from '../dialog-tracking/dialog-tracking.component';
 import { UploadImageComponent } from 'app/modules/common/upload-image/upload-image.component';
+import { PictureComponent } from 'app/modules/shared/picture/picture.component';
 
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
+import { DeliveryNoteService } from '../delivery-note.service';
 
 @Component({
     selector: 'app-delivery-note-view-order',
@@ -81,7 +84,7 @@ import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
         MatRadioModule,
         MatFormFieldModule,
         MatDatepickerModule,
-        MatDivider,
+        MatDividerModule,
         RouterLink,
         SelectMemberComponent,
         CdkMenuModule,
@@ -116,10 +119,17 @@ export class ViewOrderComponent implements OnInit {
     Id: number;
     data: any;
     lists = [];
+    allDeliveryOrders: any[] = [];
     filteredDeliveryOrders: any[] = [];
     filteredOut: any[] = [];
     filteredtracking: any[] = [];
     Form: FormGroup;
+    customers: any = [];
+    truckImages: any[] = [];
+    productImages: any[] = [];
+    deliveryNoteImage: any;
+    imageLoadedMap: { [key: string]: boolean } = {};
+   
 
     status_type: string;
 
@@ -127,20 +137,31 @@ export class ViewOrderComponent implements OnInit {
         private translocoService: TranslocoService,
         private FormBuilder: FormBuilder,
         public _service: DeliveryService,
+        private _deliveryNoteService: DeliveryNoteService,
         private fuseConfirmationService: FuseConfirmationService,
         private toastr: ToastrService,
         private _router: Router,
         private activated: ActivatedRoute,
-        public dialog: MatDialog
+        public dialog: MatDialog,
+        private _changeDetectorRef: ChangeDetectorRef
     ) {
         this.type = this.activated.snapshot.data.type;
         this.Id = this.activated.snapshot.params.id;
         this.data = this.activated.snapshot.data.data?.data;
-        // this.status_type = this.activated.snapshot.data.data?.status_type;
-        // this.status_type = 'send';
-        this.status_type = 'pick';
+        if (this.data?.transport_type === 'รถบริษัท') {
+            this.status_type = 'send';
+        } else {
+            this.status_type = 'pick';
+        }
     }
     ngOnInit(): void {
+        if (this.type === 'edit' && this.data?.member) {
+            this.customers = [this.data.member];
+        } else {
+            this._deliveryNoteService.getCustomers().subscribe((resp: any) => {
+                this.customers = resp.data;
+            });
+        }
         this.Form = this.FormBuilder.group({
             customerCode: [''],
             warehouseDate: [''],
@@ -159,18 +180,92 @@ export class ViewOrderComponent implements OnInit {
             code: [''],
             sack_code: [''],
         });
-        this.filteredDeliveryOrders = this.data?.delivery_orders;
+        
+        if (this.data) {
+            if (this.data.delivery_in_thai_images && this.data.delivery_in_thai_images.length > 0) {
+                this.truckImages = this.data.delivery_in_thai_images.filter(img => img.type === 'truck');
+                this.productImages = this.data.delivery_in_thai_images.filter(img => img.type === 'product');
+                this._changeDetectorRef.markForCheck();
+            }
 
-        this.filterForm
-            .get('in_store')
-            .valueChanges.pipe(debounceTime(500))
-            .subscribe((value) => {
-                if (this.filterForm.get('in_store').value !== null) {
-                    this.filteredDeliveryOrders =
-                        this.data.delivery_orders.filter((order) =>
-                            order.delivery_order.code.includes(value)
-                        );
+            if (this.data.image_url) {
+                this.deliveryNoteImage = { image_url: this.data.image_url };
+                this._changeDetectorRef.markForCheck();
+            }
+
+            const observables = this.data.delivery_in_thai_control_lists.map(item =>
+                this._deliveryNoteService.getDeliveryInThaiById(item.delivery_in_thai_id)
+            );
+
+            forkJoin(observables).subscribe((responses: any[]) => {
+                this.allDeliveryOrders = responses.map(resp => resp.data);
+                this.filteredDeliveryOrders = [...this.allDeliveryOrders];
+                this.filteredOut = [...this.allDeliveryOrders];
+                this._changeDetectorRef.markForCheck();
+            });
+
+            this.Form.patchValue({
+                customerCode: this.data.member_id,
+                warehouseDate: this.data.date_in,
+                note: this.data.remark,
+                shippedBy: this.data.transport_type,
+                fullName: this.data.member_address?.contact_name,
+                driverPhone: this.data.member_address?.contact_phone,
+            });
+        }
+
+        if (this.type !== 'edit') {
+            this.Form.get('customerCode').valueChanges.subscribe(val => {
+                const selectedCustomer = this.customers.find(c => c.id === val);
+                if (selectedCustomer) {
+                    console.log(selectedCustomer)
+                    this.Form.patchValue({
+                        fullName: selectedCustomer.fname,
+                        driverPhone: selectedCustomer.phone
+                    });
+                    if (selectedCustomer.delivery_in_thais) {
+                        this.filteredDeliveryOrders = selectedCustomer.delivery_in_thais;
+                    }
+                } else {
+                    this.filteredDeliveryOrders = [];
                 }
+            });
+        }
+
+        this.filterForm.get('in_store').valueChanges.pipe(debounceTime(500)).subscribe(value => {
+            if (value) {
+                this.filteredDeliveryOrders = this.allDeliveryOrders.filter(order =>
+                    order.code.toLowerCase().includes(value.toLowerCase())
+                );
+            } else {
+                this.filteredDeliveryOrders = [...this.allDeliveryOrders];
+            }
+        });
+    }
+
+    onImageError(url: string) {
+        this.imageLoadedMap[url] = false;
+    }
+    
+    onImageLoad(url: string) {
+        this.imageLoadedMap[url] = true;
+    }
+    
+    isImageLoaded(url: string): boolean {
+        return this.imageLoadedMap[url] !== false;
+    }
+
+    showPicture(imgObject: string): void {
+        console.log(imgObject);
+        this.dialog
+            .open(PictureComponent, {
+                autoFocus: false,
+                data: {
+                    imgSelected: imgObject,
+                },
+            })
+            .afterClosed()
+            .subscribe(() => {
             });
     }
 
@@ -191,19 +286,18 @@ export class ViewOrderComponent implements OnInit {
 
     openfillter() {
         this.showFilterForm = !this.showFilterForm;
-        this.filteredDeliveryOrders = this.data.delivery_orders;
+        this.filterForm.reset();
+        this.filteredDeliveryOrders = [...this.allDeliveryOrders];
     }
 
     applyFilter() {
         const { code, member_id, sack_code } = this.filterForm.value;
-        this.filteredDeliveryOrders = this.data.delivery_orders.filter(
+        this.filteredDeliveryOrders = this.allDeliveryOrders.filter(
             (order) => {
                 return (
-                    (!code || order.delivery_order.code.includes(code)) &&
-                    (!member_id ||
-                        order.delivery_order.member_id.includes(member_id)) &&
-                    (!sack_code ||
-                        order.delivery_order.sack_code.includes(sack_code))
+                    (!code || order.code.includes(code)) &&
+                    (!member_id || order.member_id.toString().includes(member_id)) &&
+                    (!sack_code || (order.sack_code && order.sack_code.includes(sack_code)))
                 );
             }
         );
@@ -211,11 +305,15 @@ export class ViewOrderComponent implements OnInit {
 
     clearFilter() {
         this.filterForm.reset();
-        this.filteredDeliveryOrders = this.data.delivery_orders;
+        this.filteredDeliveryOrders = [...this.allDeliveryOrders];
     }
 
     close() {
         this._router.navigate(['/delivery-note']);
+    }
+
+    print() {
+        window.open(`https://cargo-api.dev-asha9.com/api/get_delivery_doc_by_bill/${this.Id}`);
     }
     Submit() {
         if (this.Form.invalid) {
@@ -225,41 +323,57 @@ export class ViewOrderComponent implements OnInit {
             this.Form.markAllAsTouched();
             return;
         }
-        const confirmation = this.fuseConfirmationService.open({
-            title: this.translocoService.translate('confirmation.save_title'),
-            icon: {
-                show: true,
-                name: 'heroicons_outline:exclamation-triangle',
-                color: 'primary',
-            },
-            actions: {
-                confirm: {
-                    show: true,
-                    label: this.translocoService.translate(
-                        'confirmation.confirm_button'
-                    ),
-                    color: 'primary',
-                },
-                cancel: {
-                    show: true,
-                    label: this.translocoService.translate(
-                        'confirmation.cancel_button'
-                    ),
-                },
-            },
-            dismissible: false,
-        });
 
-        confirmation.afterClosed().subscribe((result) => {
-            if (result == 'confirmed') {
-                this._router.navigate([
-                    '/delivery-note/view-order-after/' + this.Id,
-                ]);
-                this.toastr.success(
-                    this.translocoService.translate('toastr.success')
-                );
-            }
-        });
+        if (this.type === 'edit') {
+            const payload = {
+                billing_id: this.Id,
+                member_id: this.Form.value.customerCode,
+                member_address_id: this.data.member_address_id,
+                date_in: this.Form.value.warehouseDate,
+                date_out: this.data.date_out,
+                remark: this.Form.value.note,
+                transport_type: this.Form.value.shippedBy,
+                image: this.deliveryNoteImage?.image,
+                image_url: this.deliveryNoteImage?.image_url,
+                delivery_in_thai_images: [...this.truckImages, ...this.productImages]
+            };
+
+            this._deliveryNoteService.updateBills(this.Id, payload).subscribe({
+                next: (resp) => {
+                    this.toastr.success('บันทึกสำเร็จ');
+                    this._router.navigate(['/delivery-note']);
+                },
+                error: (err) => {
+                    this.toastr.error('เกิดข้อผิดพลาด');
+                }
+            });
+        } else {
+            const selectedCustomer = this.customers.find(c => c.id === this.Form.value.customerCode);
+            const lists = this.filteredDeliveryOrders.map(order => ({ delivery_in_thai_id: order.id }));
+
+            const payload = {
+                member_id: selectedCustomer.id,
+                member_address_id: selectedCustomer.delivery_in_thais[0].member_address_id,
+                date_in: this.Form.value.warehouseDate,
+                date_out: null,
+                remark: this.Form.value.note,
+                transport_type: this.Form.value.shippedBy,
+                image_url: this.deliveryNoteImage?.image_url,
+                image: this.deliveryNoteImage?.image,
+                images: [...this.truckImages, ...this.productImages],
+                lists: lists
+            };
+
+            this._deliveryNoteService.createBills(payload).subscribe({
+                next: (resp) => {
+                    this.toastr.success('บันทึกสำเร็จ');
+                    this._router.navigate(['/delivery-note']);
+                },
+                error: (err) => {
+                    this.toastr.error('เกิดข้อผิดพลาด');
+                }
+            });
+        }
     }
     opendialogpo() {
         const DialogRef = this.dialog.open(DialogPoComponent, {
@@ -300,11 +414,37 @@ export class ViewOrderComponent implements OnInit {
             exitAnimationDuration: 300,
             data: {
                 title: title,
+                type: "BILL_CONTROLL_ACTION"
             },
         });
         DialogRef.afterClosed().subscribe((result) => {
+            console.log(result)
             if (result) {
-                console.log(result, 'result');
+                if (title === 'รูปรถ') {
+                    const newImages = result.map(imgData => ({
+                        image: imgData.image,
+                        image_url: imgData.image_url,
+                        type: 'truck',
+                        delivery_in_thai_c_id: this.Id
+                    }));
+                    this.truckImages.push(...newImages);
+                } else if (title === 'รูปสินค้า') {
+                    const newImages = result.map(imgData => ({
+                        image: imgData.image,
+                        image_url: imgData.image_url,
+                        type: 'product',
+                        delivery_in_thai_c_id: this.Id
+                    }));
+                    this.productImages.push(...newImages);
+                } else if (title === 'รูปใบส่งของ') {
+                    const imgData = result[0];
+                    if (imgData) {
+                        this.deliveryNoteImage = {
+                            image: imgData.image,
+                            image_url: imgData.image_url
+                        };
+                    }
+                }
             }
         });
     }

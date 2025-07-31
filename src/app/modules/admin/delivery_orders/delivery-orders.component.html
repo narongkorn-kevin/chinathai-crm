@@ -5,11 +5,11 @@
                 <div class="flex space-x-2">
                     <button class="md:text-sm font-medium tracking-tight leading-7 sm:leading-10 truncate"
                         routerLinkActive="router-link-active">
-                        {{ 'dalivery_order.title.main' | transloco }}
+                        {{ 'delivery_order.title.main' | transloco }}
                     </button>
                 </div>
                 <p class="md:text-2xl text-[#DF0B12] font-bold tracking-tight leading-7 sm:leading-10 truncate">
-                    {{ 'dalivery_order.title.subtitle' | transloco }}
+                    {{ 'delivery_order.title.subtitle' | transloco }}
                 </p>
             </div>
             <div class="flex flex-col md:flex-row ml-auto gap-2 md:gap-4 container">
@@ -84,7 +84,7 @@
                     <div class="metric-content">
                         <img src="assets/images/item/cart.png" alt="Items" class="metric-icon">
                         <div class="metric-text">
-                            <h2>{{ 'dalivery_order.labels.number_of_items' | transloco }}</h2>
+                            <h2>{{ 'delivery_order.labels.number_of_items' | transloco }}</h2>
                             <p class="big-number">{{ sumdashbord?.total_items | number }}</p>
                         </div>
                     </div>
@@ -95,7 +95,7 @@
                     <div class="metric-card">
                         <img src="assets/images/item/cube.png" alt="CBM" class="metric-icon">
                         <div class="metric-info">
-                            <h3>{{ 'dalivery_order.labels.total_cbm' | transloco }}</h3>
+                            <h3>{{ 'delivery_order.labels.total_cbm' | transloco }}</h3>
                             <p>{{ sumdashbord?.summary.total_cbm | number : '1.4' }}</p>
                         </div>
                     </div>
@@ -103,7 +103,7 @@
                     <div class="metric-card">
                         <img src="assets/images/item/kg.png" alt="Weight" class="metric-icon">
                         <div class="metric-info">
-                            <h3>{{ 'dalivery_order.labels.total_weight' | transloco }}</h3>
+                            <h3>{{ 'delivery_order.labels.total_weight' | transloco }}</h3>
                             <p>{{ sumdashbord?.summary.total_weight_kg | number }}</p>
                         </div>
                     </div>
@@ -111,7 +111,7 @@
                     <div class="metric-card">
                         <img src="assets/images/item/race.png" alt="Truck" class="metric-icon">
                         <div class="metric-info">
-                            <h3>{{ 'dalivery_order.labels.transport_truck' | transloco }}</h3>
+                            <h3>{{ 'delivery_order.labels.transport_truck' | transloco }}</h3>
                             <p>{{ sumdashbord?.summary.transport_truck | number }}</p>
                         </div>
                     </div>
@@ -119,7 +119,7 @@
                     <div class="metric-card">
                         <img src="assets/images/item/ship.png" alt="Ship" class="metric-icon">
                         <div class="metric-info">
-                            <h3>{{ 'dalivery_order.labels.transport_ship' | transloco }}</h3>
+                            <h3>{{ 'delivery_order.labels.transport_ship' | transloco }}</h3>
                             <p>{{ sumdashbord?.summary.transport_ship | number }}</p>
                         </div>
                     </div>
@@ -130,7 +130,7 @@
             <div class="categories-section">
                 <div class="section-header">
                     <h2>{{ 'ประเภทสินค้า' | transloco }}</h2>
-                    <p class="total-summary">{{ sumdashbord.total_items }} {{ 'dalivery_order.labels.items' | transloco
+                    <p class="total-summary">{{ sumdashbord.total_items }} {{ 'delivery_order.labels.items' | transloco
                         }}</p>
                 </div>
 
@@ -141,7 +141,7 @@
                             <span class="cbm-value">{{ category.cbm }} CBM</span>
                         </div>
                         <div class="category-details">
-                            <p class="boxes-count">{{ category.boxes }} {{ 'dalivery_order.labels.boxes' | transloco }}
+                            <p class="boxes-count">{{ category.boxes }} {{ 'delivery_order.labels.boxes' | transloco }}
                             </p>
                             <div class="percentage-bar">
                                 <div class="bar-fill"
@@ -157,7 +157,7 @@
         <form *ngIf="!showFilterForm" [formGroup]="filterForm">
             <div class="flex flex-col md:flex-row w-full gap-2 items-end">
                 <mat-form-field class="w-full" [ngClass]="formFieldHelpers">
-                    <mat-label>{{ 'dalivery_order.labels.warehouse_date' | transloco }}</mat-label>
+                    <mat-label>{{ 'delivery_order.labels.warehouse_date' | transloco }}</mat-label>
                     <mat-date-range-input [rangePicker]="picker">
                         <input matStartDate formControlName="start_date">
                         <input matEndDate formControlName="end_date">
@@ -169,7 +169,7 @@
                     <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
                         <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:magnifying-glass'"></mat-icon>
                         <input matInput class="ml-2"
-                            [placeholder]=" 'dalivery_order.labels.search_placeholder' | transloco "
+                            [placeholder]=" 'delivery_order.labels.search_placeholder' | transloco "
                             formControlName="po_no">
                     </mat-form-field>
                 </div>
@@ -190,7 +190,7 @@
             </div>
             <div class="grid md:grid-cols-4 md:flex-row w-full gap-x-2 mt-2">
                 <mat-form-field class="w-full" [ngClass]="formFieldHelpers">
-                    <mat-label>{{ 'dalivery_order.labels.warehouse_date' | transloco }}</mat-label>
+                    <mat-label>{{ 'delivery_order.labels.warehouse_date' | transloco }}</mat-label>
                     <mat-date-range-input [rangePicker]="picker">
                         <input matStartDate formControlName="start_date">
                         <input matEndDate formControlName="end_date">
@@ -200,19 +200,19 @@
                 </mat-form-field>
                 <div class="w-full">
                     <mat-form-field class="w-full" [ngClass]="formFieldHelpers">
-                        <mat-label>{{ 'dalivery_order.labels.receipt_code' | transloco }}</mat-label>
+                        <mat-label>{{ 'delivery_order.labels.receipt_code' | transloco }}</mat-label>
                         <input matInput formControlName="po_no">
                     </mat-form-field>
                 </div>
                 <div class="w-full">
                     <mat-form-field class="w-full" [ngClass]="formFieldHelpers">
-                        <mat-label>{{ 'dalivery_order.labels.shipment' | transloco }}</mat-label>
+                        <mat-label>{{ 'delivery_order.labels.shipment' | transloco }}</mat-label>
                         <mat-select formControlName="shipment_by">
-                            <mat-option value="Ship">{{ 'dalivery_order.transport_methods.ship' | transloco
+                            <mat-option value="Ship">{{ 'delivery_order.transport_methods.ship' | transloco
                                 }}</mat-option>
-                            <mat-option value="Car">{{ 'dalivery_order.transport_methods.car' | transloco
+                            <mat-option value="Car">{{ 'delivery_order.transport_methods.car' | transloco
                                 }}</mat-option>
-                            <mat-option value="Train">{{ 'dalivery_order.transport_methods.train' | transloco
+                            <mat-option value="Train">{{ 'delivery_order.transport_methods.train' | transloco
                                 }}</mat-option>
                         </mat-select>
                     </mat-form-field>
@@ -220,7 +220,7 @@
 
                 <div class="w-full">
                     <mat-form-field class="w-full" [ngClass]="formFieldHelpers">
-                        <mat-label>{{ 'dalivery_order.labels.warehouse' | transloco }}</mat-label>
+                        <mat-label>{{ 'delivery_order.labels.warehouse' | transloco }}</mat-label>
                         <mat-select formControlName="store_id">
                             <mat-option *ngFor="let store of stores" [value]="store.id">{{ store.name }}</mat-option>
                         </mat-select>
@@ -228,7 +228,7 @@
                 </div>
                 <div class="w-full">
                     <mat-form-field class="w-full" [ngClass]="formFieldHelpers">
-                        <mat-label>{{ 'dalivery_order.labels.product_type' | transloco }}</mat-label>
+                        <mat-label>{{ 'delivery_order.labels.product_type' | transloco }}</mat-label>
                         <mat-select formControlName="product_type_id">
                             <mat-option *ngFor="let product_type of product_types" [value]="product_type.id">{{
                                 product_type.name }}</mat-option>
@@ -238,37 +238,37 @@
 
                 <div class="w-full">
                     <mat-form-field class="w-full" [ngClass]="formFieldHelpers">
-                        <mat-label>{{ 'dalivery_order.labels.status' | transloco }}</mat-label>
+                        <mat-label>{{ 'delivery_order.labels.status' | transloco }}</mat-label>
                         <mat-select formControlName="status">
-                            <mat-option value="warehouse">{{ 'dalivery_order.statuses.warehouse' | transloco
+                            <mat-option value="warehouse">{{ 'delivery_order.statuses.warehouse' | transloco
                                 }}</mat-option>
-                            <mat-option value="pallet">{{ 'dalivery_order.statuses.pallet' | transloco }}</mat-option>
-                            <mat-option value="transit_china">{{ 'dalivery_order.statuses.transit_china' | transloco
+                            <mat-option value="pallet">{{ 'delivery_order.statuses.pallet' | transloco }}</mat-option>
+                            <mat-option value="transit_china">{{ 'delivery_order.statuses.transit_china' | transloco
                                 }}</mat-option>
-                            <mat-option value="booking">{{ 'dalivery_order.statuses.booking' | transloco }}</mat-option>
-                            <mat-option value="close_container_china">{{ 'dalivery_order.statuses.close_container_china'
+                            <mat-option value="booking">{{ 'delivery_order.statuses.booking' | transloco }}</mat-option>
+                            <mat-option value="close_container_china">{{ 'delivery_order.statuses.close_container_china'
                                 | transloco }}</mat-option>
-                            <mat-option value="customs_china">{{ 'dalivery_order.statuses.customs_china' | transloco
+                            <mat-option value="customs_china">{{ 'delivery_order.statuses.customs_china' | transloco
                                 }}</mat-option>
-                            <mat-option value="inspection_china">{{ 'dalivery_order.statuses.inspection_china' |
+                            <mat-option value="inspection_china">{{ 'delivery_order.statuses.inspection_china' |
                                 transloco }}</mat-option>
                             <mat-option value="transit_china_thailand">{{
-                                'dalivery_order.statuses.transit_china_thailand' | transloco }}</mat-option>
-                            <mat-option value="customs_thailand">{{ 'dalivery_order.statuses.customs_thailand'
+                                'delivery_order.statuses.transit_china_thailand' | transloco }}</mat-option>
+                            <mat-option value="customs_thailand">{{ 'delivery_order.statuses.customs_thailand'
                                 |transloco }}</mat-option>
-                            <mat-option value="warehouse_arrival">{{ 'dalivery_order.statuses.warehouse_arrival' |
+                            <mat-option value="warehouse_arrival">{{ 'delivery_order.statuses.warehouse_arrival' |
                                 transloco }}</mat-option>
-                            <mat-option value="customer_arrival">{{ 'dalivery_order.statuses.customer_arrival' |
+                            <mat-option value="customer_arrival">{{ 'delivery_order.statuses.customer_arrival' |
                                 transloco }}</mat-option>
-                            <mat-option value="customer_received">{{ 'dalivery_order.statuses.customer_received' |
+                            <mat-option value="customer_received">{{ 'delivery_order.statuses.customer_received' |
                                 transloco }}</mat-option>
-                            <mat-option value="close_container_thai">{{ 'dalivery_order.statuses.close_container_thai' |
+                            <mat-option value="close_container_thai">{{ 'delivery_order.statuses.close_container_thai' |
                                 transloco }}</mat-option>
                         </mat-select>
                     </mat-form-field>
                 </div>
                 <div class="w-full">
-                    <mat-label>{{ 'dalivery_order.labels.customer' | transloco }}</mat-label>
+                    <mat-label>{{ 'delivery_order.labels.customer' | transloco }}</mat-label>
                     <asha-select-member (change)="selectMember($event)"
                         class="w-full [&_input]:!mt-0 [&_input]:!pt-1 [&_input]:!pb-1 [&_.mdc-text-field]:!mt-0">
                     </asha-select-member>
@@ -334,8 +334,10 @@
 </ng-template>
 
 <ng-template #importerCode let-data="adtData">
-    <div> <span>{{data?.member?.importer_code}}</span><span *ngIf="data?.member_importer"> -
-            {{data?.member_importer?.importer_code}}</span></div>
+    <div>
+        <!-- <span>{{data?.member?.fname}} {{data?.member?.lname}}</span> -->
+        <span>{{data?.member?.code}}</span>
+    </div>
 </ng-template>
 
 <ng-template #date let-data="adtData">
@@ -346,25 +348,25 @@
     <div>
         <div *ngIf="data.order?.status == 'payment'"
             class="px-4 py-1.5 rounded-full text-sm inline-flex items-center justify-center font-medium bg-green-50 text-green-600 border border-green-200">
-            {{ 'dalivery_order.view.status_paid' | transloco }}</div>
+            {{ 'delivery_order.view.status_paid' | transloco }}</div>
         <div *ngIf="data.order?.status == 'awaiting_summary'"
             class="px-4 py-1.5 rounded-full text-sm inline-flex items-center justify-center font-medium bg-orange-50 text-orange-600 border border-orange-200">
-            {{ 'dalivery_order.view.status_awaiting_summary' | transloco }}</div>
+            {{ 'delivery_order.view.status_awaiting_summary' | transloco }}</div>
         <div *ngIf="data.order?.status == 'awaiting_payment'"
             class="px-4 py-1.5 rounded-full text-sm inline-flex items-center justify-center font-medium bg-yellow-50 text-yellow-600 border border-yellow-200">
-            {{ 'dalivery_order.view.status_awaiting_payment' | transloco }}</div>
+            {{ 'delivery_order.view.status_awaiting_payment' | transloco }}</div>
         <div *ngIf="data.order?.status == 'in_progress'"
             class="px-4 py-1.5 rounded-full text-sm inline-flex items-center justify-center font-medium bg-blue-50 text-blue-600 border border-blue-200">
-            {{ 'dalivery_order.view.status_in_progress' | transloco }}</div>
+            {{ 'delivery_order.view.status_in_progress' | transloco }}</div>
         <div *ngIf="data.order?.status == 'preparing_shipment'"
             class="px-4 py-1.5 rounded-full text-sm inline-flex items-center justify-center font-medium bg-purple-50 text-purple-600 border border-purple-200">
-            {{ 'dalivery_order.view.status_preparing_shipment' | transloco }}</div>
+            {{ 'delivery_order.view.status_preparing_shipment' | transloco }}</div>
         <div *ngIf="data.order?.status == 'shipped'"
             class="px-4 py-1.5 rounded-full text-sm inline-flex items-center justify-center font-medium bg-teal-50 text-teal-600 border border-teal-200">
-            {{ 'dalivery_order.view.status_shipped' | transloco }}</div>
+            {{ 'delivery_order.view.status_shipped' | transloco }}</div>
         <div *ngIf="data.order?.status == 'cancelled'"
             class="px-4 py-1.5 rounded-full text-sm inline-flex items-center justify-center font-medium bg-red-50 text-red-500 border border-red-200">
-            {{ 'dalivery_order.view.status_cancelled' | transloco }}</div>
+            {{ 'delivery_order.view.status_cancelled' | transloco }}</div>
     </div>
 </ng-template>
 
@@ -372,18 +374,18 @@
     <div>
         <div *ngIf="data.status == 'arrived_china_warehouse'"
             class="px-4 py-1.5 rounded-full text-sm inline-flex items-center justify-center font-medium bg-gray-50 text-gray-600 border border-gray-200">
-            {{ 'dalivery_order.shipment_statuses.arrived_china_warehouse' | transloco }}</div>
+            {{ 'delivery_order.shipment_statuses.arrived_china_warehouse' | transloco }}</div>
         <div *ngIf="data.status == 'in_transit'"
             class="px-4 py-1.5 rounded-full text-sm inline-flex items-center justify-center font-medium bg-blue-50 text-blue-600 border border-blue-200">
-            {{ 'dalivery_order.shipment_statuses.in_transit' | transloco }}</div>
+            {{ 'delivery_order.shipment_statuses.in_transit' | transloco }}</div>
         <div *ngIf="data.status == 'arrived_thailand_warehouse'"
             class="px-4 py-1.5 rounded-full text-sm inline-flex items-center justify-center font-medium bg-gray-50 text-gray-600 border border-gray-200">
-            {{ 'dalivery_order.shipment_statuses.arrived_thailand_warehouse' | transloco }}</div>
+            {{ 'delivery_order.shipment_statuses.arrived_thailand_warehouse' | transloco }}</div>
         <div *ngIf="data.status == 'awaiting_payment'"
             class="px-4 py-1.5 rounded-full text-sm inline-flex items-center justify-center font-medium bg-yellow-50 text-yellow-600 border border-yellow-200">
-            {{ 'dalivery_order.shipment_statuses.awaiting_payment' | transloco }}</div>
+            {{ 'delivery_order.shipment_statuses.awaiting_payment' | transloco }}</div>
         <div *ngIf="data.status == 'delivered'"
             class="px-4 py-1.5 rounded-full text-sm inline-flex items-center justify-center font-medium bg-green-50 text-green-600 border border-green-200">
-            {{ 'dalivery_order.shipment_statuses.delivered' | transloco }}</div>
+            {{ 'delivery_order.shipment_statuses.delivered' | transloco }}</div>
     </div>
 </ng-template>

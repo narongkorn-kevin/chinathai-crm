@@ -3,6 +3,7 @@ import {
     Component,
     OnInit,
     ChangeDetectorRef,
+    ElementRef, ViewChildren, QueryList
 } from '@angular/core';
 import { CommonModule, CurrencyPipe } from '@angular/common';
 import { DataTableDirective, DataTablesModule } from 'angular-datatables';
@@ -53,6 +54,8 @@ import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { environment } from 'environments/environment';
 import { PictureMultiComponent } from 'app/modules/shared/picture-multi/picture-multi.component';
 import { ADTSettings } from 'angular-datatables/src/models/settings';
+import JsBarcode from 'jsbarcode';
+
 @Component({
     selector: 'app-member-view',
     standalone: true,
@@ -124,6 +127,7 @@ export class ViewComponent implements OnInit {
     protected _onDestroy = new Subject<void>();
 
     dtElement: DataTableDirective;
+    @ViewChildren('barcodeSvg') barcodeSvgs!: QueryList<ElementRef>;
 
     constructor(
         private FormBuilder: FormBuilder,
@@ -142,8 +146,6 @@ export class ViewComponent implements OnInit {
         this.data = this.activated.snapshot.data.data.data;
         this.product_type = this.activated.snapshot.data?.product_type?.data;
         this.standard_size = this.activated.snapshot.data?.standard_size?.data;
-
-        console.log(this.data, 'data');
 
         this.filterForm = this.FormBuilder.group({
             type: [''],
@@ -203,10 +205,18 @@ export class ViewComponent implements OnInit {
         // Patch ค่า CBM รวมกลับเข้า selectedTrack หรือที่อื่นที่ต้องการ
         this.selectedTrack.total_cbm = +totalCbm.toFixed(4);
 
-        this.barcodeLists =
-            this.selectedTrack.barcode_lists;
+        this.barcodeLists = this.data.delivery_order_tracks.flatMap((track: any) =>
+            (track.barcode_lists || []).map((barcode: any) => ({
+                ...barcode,
+                track_no: track.track_no
+            }))
+        );
+
+        console.log(this.barcodeLists, 'barcodeLists');
 
 
+        // หน่วงเวลาเล็กน้อยเพื่อให้ HTML render แล้ว generate barcode
+        setTimeout(() => this.generateBarcodes(), 100);
     }
 
     Close() {
@@ -262,7 +272,7 @@ export class ViewComponent implements OnInit {
 
         this.selectedTrack = track;
         this._changeDetectorRef.detectChanges();
-      this.filteredDeliveryOrderLists = this.selectedTrack.delivery_order_lists.map((item: any) => {
+        this.filteredDeliveryOrderLists = this.selectedTrack.delivery_order_lists.map((item: any) => {
             const width = Number(item.width || 0);
             const height = Number(item.height || 0);
             const long = Number(item.long || 0);
@@ -287,7 +297,6 @@ export class ViewComponent implements OnInit {
 
     applyFilter() {
         const filterValues = this.filterForm.value;
-        console.log(filterValues);
     }
     clearFilter() {
         this.filterForm.reset();
@@ -303,8 +312,6 @@ export class ViewComponent implements OnInit {
         });
     }
     Filter(): void {
-        console.log('filterForm', this.filterForm.value);
-        console.log('selectedTrack.delivery_order_lists', this.selectedTrack.delivery_order_lists);
 
         const filterValues = this.filterForm.value;
 
@@ -363,6 +370,18 @@ export class ViewComponent implements OnInit {
             },
             width: '90vw',
             height: '90vh',
+        });
+    }
+
+    generateBarcodes() {
+        this.barcodeSvgs.forEach((svgEl, index) => {
+            JsBarcode(svgEl.nativeElement, this.barcodeLists[index].barcode, {
+                format: 'CODE128', // รูปแบบ Barcode
+                lineColor: '#000',
+                width: 2,
+                height: 60,
+                displayValue: false
+            });
         });
     }
 }
