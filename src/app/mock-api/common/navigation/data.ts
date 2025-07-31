@@ -10,7 +10,7 @@ const menuTitles = {
     dashboard: { th: "Dashboard", en: "Dashboard", cn: "仪表板" },
 
     self_employee: { th: "รายการรวมพัสดุ", en: "Package List", cn: "包裹列表" },
-    delivery_orders: { th: "รายการพัสดุเข้าคลัง/PO", en: "Warehouse/PO Parcels", cn: "仓库/PO 包裹" },
+    delivery_orders: { th: "รายการพัสดุเข้าโกดังจีน", en: "Warehouse/PO Parcels", cn: "仓库/PO 包裹" },
     pallet: { th: "พาเลท/Pallet", en: "Pallet", cn: "托盘" },
     sack: { th: "กระสอบ", en: "Sack", cn: "袋子" },
     delivery: { th: "Shipment", en: "Shipment", cn: "货运" },
@@ -754,7 +754,7 @@ export const horizontalNavigation: FuseNavigationItem[] = [
         children: [
             {
                 id: 'self-employee',
-                title: 'รายการพัสดุเข้าคลัง/PO',
+                title: 'รายการพัสดุเข้าโกดังจีน',
                 type: 'basic',
                 link: '/po',
             },

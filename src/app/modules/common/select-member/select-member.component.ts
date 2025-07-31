@@ -174,7 +174,7 @@ export class SelectMemberComponent implements OnInit {
         const selectedData = event;
         if (selectedData) {
             this.change.emit(selectedData);
-            this.memberFilter.setValue(selectedData.importer_code);
+            this.memberFilter.setValue(selectedData.fullname);
         } else {
             if (this.memberFilter.invalid) {
                 this.memberFilter.markAsTouched();
@@ -212,7 +212,7 @@ export class SelectMemberComponent implements OnInit {
                     ...resp,
                     data: resp.data.map((e) => ({
                         ...e,
-                        fullname: `${e.importer_code} ${e.fname} ${e.lname}`.trim() ,
+                        fullname: `${e.fname} ${e.lname}`.trim() ,
                     })),
                 }))
             )
@@ -236,7 +236,7 @@ export class SelectMemberComponent implements OnInit {
         );
 
         if (selectedMember) {
-            this.memberFilter.setValue(selectedMember.importer_code);
+            this.memberFilter.setValue(selectedMember.fullname);
             this.change.emit(selectedMember);
         }
     }

@@ -40,7 +40,7 @@
     "delivery_order": {
         "title": {
             "main": "รายการรวมพัสดุ",
-            "subtitle": "รายการพัสดุเข้าคลัง/PO"
+            "subtitle": "รายการพัสดุเข้าโกดังจีน"
         },
         "labels": {
             "totalItems": "รายการทั้งหมด",
@@ -160,7 +160,7 @@
         },
         "form": {
             "delivery_orders": "รายการรวมพัสดุ",
-            "warehouse_orders": "รายการพัสดุเข้าคลัง/PO",
+            "warehouse_orders": "รายการพัสดุเข้าโกดังจีน",
             "po_number": "เลขที่ PO",
             "warehouse_entry_date": "วันที่เข้าโกดัง",
             "customer": "ลูกค้า",
@@ -471,7 +471,7 @@
             "shipment_details": "รายละเอียด Shipment",
             "shipment_number": "Shipment No",
             "shipment_creation_date": "วันที่สร้าง Shipment",
-            "inbound_po_list": "รายการพัสดุเข้าคลัง/PO",
+            "inbound_po_list": "รายการพัสดุเข้าโกดังจีน",
             "search_by_shipment": "ค้นหาด้วย Shipment No",
             "warehouse_receipt": "รหัสใบรับเข้าคลัง",
             "customer_code": "รหัสลูกค้า",
@@ -612,7 +612,7 @@
                 "transport_method": "ขนส่งโดย",
                 "destination": "ปลายทาง",
                 "note": "หมายเหตุ",
-                "inbound_po": "รายการพัสดุเข้าคลัง/PO",
+                "inbound_po": "รายการพัสดุเข้าโกดังจีน",
                 "search_warehouse": "ค้นหาด้วยรหัสใบรับของคลังสินค้า",
                 "po_tracking": "PO / Tracking",
                 "sack_code": "หมายเลขกระสอบ",
@@ -709,7 +709,7 @@
             "transport_by": "ขนส่งโดย",
             "destination": "ปลายทาง",
             "note": "หมายเหตุ",
-            "incoming_warehouse_parcels_po": "รายการพัสดุเข้าคลัง/PO",
+            "incoming_warehouse_parcels_po": "รายการพัสดุเข้าโกดังจีน",
             "item_types": "ประเภทรายการ",
             "all_items": "รายการทั้งหมด",
             "items": "รายการ",
