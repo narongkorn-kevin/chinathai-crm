@@ -12,12 +12,11 @@
                         <button
                             class="md:text-sm font-medium tracking-tight leading-7 sm:leading-10 truncate text-[#DF0B12]"
                             [routerLink]="['/delivery_orders']" routerLinkActive="router-link-active">
-                            {{ 'delivery_order.title.subtitle' | transloco }}
+                            {{ 'รายการพัสดุเข้าโกดังจีน' | transloco }}
                         </button>
                     </div>
-
                     <p class="md:text-2xl text-[#DF0B12] font-bold tracking-tight leading-7 sm:leading-10 truncate">
-                        {{ 'delivery_order.form.warehouse_orders' | transloco }}
+                        {{ 'รายการพัสดุเข้าโกดังจีน' | transloco }}
                     </p>
                 </div>
                 <div class="flex items-center justify-end gap-2">
@@ -242,9 +241,9 @@
                             <div class="text-xl md:text-3xl font-bold w-full  md:w-1/2">
                                 {{ 'delivery_order.form.additional_costs' | transloco }}
                             </div>
-                            <button mat-flat-button [color]="'primary'" class="w-full md:w-1/2" (click)="addService()">
+                            <button mat-flat-button [color]="'primary'" class="w-full md:w-fit" (click)="addService()">
                                 <mat-icon [svgIcon]="'heroicons_solid:plus'"></mat-icon>
-                                <span class="ml-2">{{ 'เพิ่มค่าบริการเพิ่มเติม' | transloco }}</span>
+                                <span class="ml-2">{{ 'เพิ่มค่าบริการ' | transloco }}</span>
                             </button>
                         </div>
 
