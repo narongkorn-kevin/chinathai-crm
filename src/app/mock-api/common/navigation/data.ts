@@ -401,6 +401,7 @@ export const defaultNavigation: FuseNavigationItem[] = [
                             title: '35',
                             classes: 'px-2 bg-blue-600 text-white rounded-full',
                         },
+                        link : '/delivery-note'
                     },
                     {
                         id: 'warehouse.th.prepare-shipment-address',

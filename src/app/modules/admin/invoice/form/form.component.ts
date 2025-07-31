@@ -409,29 +409,28 @@ export class FormComponent implements OnInit, AfterViewInit {
             this.form.markAllAsTouched();
             return;
         }
+        console.log(this.groupedTableData, 'groupedTableData');
+        
+        // const payload = {
+        //     in_thai_date: this.form.get('in_thai_date').value,
+        //     transportation_channel: [this.form.get('transportation_channel').value],
+            
+        //     billing_lists: this.groupedTableData.map(item => ({
+        //         member_id: item.delivery_order.member_id,
+        //         member_address_id: item.delivery_order.order.member_address_id,
+        //         delivery_order_list_id: item.delivery_order_list_id,
+        //         delivery_order_thai_list_id: item.delivery_order_thai_list_id,
+        //         delivery_order_thai_id: item.delivery_order_thai_id,
+        //     })),
+        //     // เพิ่ม fields อื่นๆ ที่จำเป็นต้องส่งไป API
+        //     packing_list_id: this.form.get('packing_list_id').value,
+        //     address: this.form.get('address').value,
+        //     customer_type: this.form.get('client_type').value,
+        //     note: this.form.get('note').value,
+        // };
 
-        const payload = {
-            in_thai_date: this.form.get('in_thai_date').value,
-            transportation_channel: [this.form.get('transportation_channel').value],
-            billing_lists: this.groupedTableData.map(item => ({
-                member_id: item.delivery_order.member_id,
-                member_address_id: item.delivery_order.order.member_address_id,
-                delivery_order_list_id: item.delivery_order_list_id,
-                delivery_order_thai_list_id: item.delivery_order_thai_list_id,
-                delivery_order_thai_id: item.delivery_order_thai_id,
-            })),
-            // เพิ่ม fields อื่นๆ ที่จำเป็นต้องส่งไป API
-            packing_list_id: this.form.get('packing_list_id').value,
-            address: this.form.get('address').value,
-            customer_type: this.form.get('client_type').value,
-            note: this.form.get('note').value,
-        };
-
-        console.log(payload);
-        return;
-
-
-
+        // console.log(payload);
+        
         const confirmation = this.fuseConfirmationService.open({
             title: this.translocoService.translate('confirmation.save_title'),
             icon: {

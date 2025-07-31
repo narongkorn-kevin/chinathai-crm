@@ -114,7 +114,7 @@ export class ViewComponent implements OnInit {
     data: any;
     lists = [];
     filteredDeliveryOrders: any[] = [{ delivery_order: 'test' }]; // Add a new property to store filtered delivery orders
-
+    memberAddress: string = ''
     constructor(
         private FormBuilder: FormBuilder,
         public _service: DeliveryService,
@@ -137,7 +137,8 @@ export class ViewComponent implements OnInit {
             sack_code: [''],
         });
         this.filteredDeliveryOrders = this.data.bill_lists;
-
+        const ma = this.data.member_address
+        this.memberAddress = `${ma.address} ${ma.sub_district} ${ma.district} ${ma.province} ${ma.postal_code}`
         this.filterForm
             .get('in_store')
             .valueChanges.pipe(debounceTime(500))

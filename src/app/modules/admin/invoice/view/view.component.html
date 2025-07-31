@@ -1,255 +1,299 @@
 <div class="flex flex-col flex-auto justify-start items-center w-full">
     <div class="w-full flex-col justify-between items-center flex overflow-hidden">
         <div class="w-full flex-col justify-start items-start flex">
-            <div class="w-full px-4 md:px-10 pt-5 pb-2.5 bg-white justify-between items-center flex">
-                <div class="flex flex-col">
-                    <div class="flex space-x-2">
-                        <button class="md:text-sm font-medium tracking-tight leading-7 sm:leading-10 truncate"
+            <!-- Header Section -->
+            <div class="w-full px-4 md:px-10 pt-5 pb-2.5 bg-white justify-between items-center flex border-b">
+                <div class="flex flex-col space-y-2">
+                    <div class="flex space-x-2 items-center">
+                        <button class="text-sm font-medium text-gray-600 hover:text-gray-800"
                             [routerLink]="['/invoice']" routerLinkActive="router-link-active">
                             {{ 'invoice.document' | transloco }}
                         </button>
-                        <p class="md:text-sm font-medium tracking-tight leading-7 sm:leading-10 truncate">></p>
-                        <button
-                            class="md:text-sm font-medium tracking-tight leading-7 sm:leading-10 truncate text-[#DF0B12]"
-                            [routerLink]="['/invoice']" routerLinkActive="router-link-active">
+                        <span class="text-gray-400">/</span>
+                        <button class="text-sm font-medium text-[#DF0B12]" [routerLink]="['/invoice']"
+                            routerLinkActive="router-link-active">
                             {{ 'invoice.view.delivery_note' | transloco }}
                         </button>
                     </div>
 
-                    <p class="md:text-2xl text-[#DF0B12] font-bold tracking-tight leading-7 sm:leading-10 truncate">
+                    <h1 class="text-2xl font-bold text-[#DF0B12]">
                         {{ 'invoice.view.invoice_number' | transloco }}: {{ data?.code }}
-                    </p>
+                    </h1>
                 </div>
-                <div class="justify-end items-center gap-2 flex">
-                    <button mat-flat-button [color]="'accent'" class="!text-white" (click)="edit()">
-                        <mat-icon [svgIcon]="'mat_outline:edit_note'" class=""></mat-icon>
-                        <span class="ml-2">{{ 'buttons.edit' | transloco }}</span>
-                    </button>
-                </div>
+
+                <button mat-flat-button color="accent" class="!text-white flex items-center">
+                    <mat-icon [svgIcon]="'mat_outline:edit_note'"></mat-icon>
+                    <span class="ml-2">{{ 'buttons.edit' | transloco }}</span>
+                </button>
             </div>
-            <div class="w-full px-4 md:px-10 flex flex-col gap-2 bg-white">
-                <div class="flex flex-row md:flex-col">
-                    <div class="flex flex-col md:grid md:grid-cols-4 gap-2 w-full mb-4">
-                        <div>
-                            <h2 class="font-semibold text-lg md:text-xl">{{ 'invoice.view.customer_information' |
-                                transloco }}</h2>
-                        </div>
 
-                        <div class="flex flex-col w-full">
-                            <div class="w-full font-bold">{{ 'invoice.view.importer_code' | transloco }}:</div>
-                            <div class="w-full text-left">{{ data?.member?.importer_code ?? '-' }}</div>
-                            <div class="w-full font-bold">{{ 'invoice.view.address' | transloco }}:</div>
-                            <div class="w-full text-left">{{ data?.shipped_by ?? '-' }}</div>
-                        </div>
+            <!-- Main Content -->
+            <div class="w-full px-4 md:px-10 py-4 bg-white space-y-6">
+                <!-- Customer and Shipping Info -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Customer Information Card -->
+                    <div class="bg-gray-50 p-4 rounded-lg border">
+                        <h2 class="font-semibold text-lg mb-4 text-[#DF0B12]">
+                            {{ 'invoice.view.customer_information' | transloco }}
+                        </h2>
 
-                        <div class="flex flex-col w-full">
-                            <div class="w-full font-bold">{{ 'invoice.view.phone_number' | transloco }}:</div>
-                            <div class="w-full text-left">{{ data?.member?.phone ?? '-' }}</div>
-                        </div>
-
-                        <div class="flex flex-col w-full">
-                            <div class="w-full font-bold">{{ 'invoice.view.convenient_receiving_time' | transloco }}:
+                        <div class="grid grid-cols-1 gap-3">
+                            <div>
+                                <label class="font-medium text-gray-700">{{ 'invoice.view.importer_code' | transloco
+                                    }}:</label>
+                                <p>{{ data?.member?.code ?? '-' }}</p>
                             </div>
-                            <div class="w-full text-left">
-                                {{
-                                data?.member?.avaliable_time === 'morning'
-                                ? 'ช่วงเช้า'
-                                : data?.member?.avaliable_time === 'afternoon'
-                                ? 'ช่วงบ่าย'
-                                : '-'
-                                }}
+
+                            <div>
+                                <label class="font-medium text-gray-700">{{ 'invoice.view.address' | transloco
+                                    }}:</label>
+                                <p>{{ memberAddress ?? '-' }}</p>
+                            </div>
+
+                            <div>
+                                <label class="font-medium text-gray-700">{{ 'invoice.view.phone_number' | transloco
+                                    }}:</label>
+                                <p>{{ data?.member?.phone ?? '-' }}</p>
+                            </div>
+
+                            <div>
+                                <label class="font-medium text-gray-700">{{ 'invoice.view.convenient_receiving_time' |
+                                    transloco }}:</label>
+                                <p>
+                                    {{
+                                    data?.member?.avaliable_time === 'morning'
+                                    ? 'ช่วงเช้า'
+                                    : data?.member?.avaliable_time === 'afternoon'
+                                    ? 'ช่วงบ่าย'
+                                    : '-'
+                                    }}
+                                </p>
                             </div>
                         </div>
                     </div>
-                    <div class="flex flex-col md:grid md:grid-cols-4 gap-2 w-full mb-4">
-                        <div>
-                            <h2 class="font-semibold text-lg md:text-xl">{{ 'invoice.view.shipping_information' |
-                                transloco }}</h2>
-                        </div>
 
-                        <div class="flex flex-col w-full">
-                            <div class="w-full font-bold">{{ 'invoice.view.shipment_no' | transloco }}:</div>
-                            <div class="w-full text-left">-</div>
-                        </div>
+                    <!-- Shipping Information Card -->
+                    <div class="bg-gray-50 p-4 rounded-lg border">
+                        <h2 class="font-semibold text-lg mb-4 text-[#DF0B12]">
+                            {{ 'invoice.view.shipping_information' | transloco }}
+                        </h2>
 
-                        <div class="flex flex-col w-full">
-                            <div class="w-full font-bold">{{ 'invoice.view.shipping_terms' | transloco }}:</div>
-                            <div class="w-full text-left">{{ data?.received_date ?? '-' }}</div>
-                        </div>
+                        <div class="grid grid-cols-1 gap-3">
+                            <div>
+                                <label class="font-medium text-gray-700">{{ 'invoice.view.shipment_no' | transloco
+                                    }}:</label>
+                                <p>-</p>
+                            </div>
 
-                        <div class="flex flex-col w-full">
-                            <div class="w-full font-bold">{{ 'invoice.view.payment_terms' | transloco }}:</div>
-                            <div class="w-full text-left">{{ data?.shipped_by ?? '-' }}</div>
+                            <div>
+                                <label class="font-medium text-gray-700">{{ 'invoice.view.shipping_terms' | transloco
+                                    }}:</label>
+                                <p>{{ data?.received_date ?? '-' }}</p>
+                            </div>
+
+                            <div>
+                                <label class="font-medium text-gray-700">{{ 'invoice.view.payment_terms' | transloco
+                                    }}:</label>
+                                <p>{{ data?.shipped_by ?? '-' }}</p>
+                            </div>
                         </div>
                     </div>
-
                 </div>
-                <div class="bg-[#fdeaeb] rounded-md p-4 flex flex-row">
-                    <div class="mr-4 ">
-                        <mat-icon [svgIcon]="'heroicons_outline:megaphone'" class="text-red-600"></mat-icon>
-                    </div>
+
+                <!-- Alert Box -->
+                <div class="bg-[#fdeaeb] rounded-md p-4 flex items-start">
+                    <mat-icon [svgIcon]="'heroicons_outline:megaphone'" class="text-red-600 mr-4 mt-1"></mat-icon>
                     <div>
-                        <p class="text-red-600">{{ 'invoice.view.estimated_thai_arrival' | transloco }}: {{ data?.time
-                            }}</p>
+                        <p class="text-red-600 font-medium">{{ 'invoice.view.estimated_thai_arrival' | transloco }}: {{
+                            data?.time }}</p>
                         <p class="text-red-600">{{ 'invoice.view.shipping_note' | transloco }}</p>
                     </div>
                 </div>
-                <div class="w-full p-4 my-4 border border-gray-300 rounded-lg min-h-[300px] flex flex-col">
-                    <div class="flex flex-row w-full gap-2 mb-6">
-                        <div class="w-full text-xl md:text-3xl font-bold">{{ 'invoice.view.delivery_list' | transloco }}
-                        </div>
+
+                <!-- Delivery List Section -->
+                <div class="border border-gray-300 rounded-lg p-4">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-xl md:text-2xl font-bold">
+                            {{ 'invoice.view.delivery_list' | transloco }}
+                        </h2>
                     </div>
-                    <form *ngIf="!showFilterForm" [formGroup]="filterForm">
-                        <div class="flex flex-col md:flex-row w-full gap-2 items-end">
-                            <div class="w-full">
-                                <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
-                                    <mat-icon class="icon-size-5 mr-2"
-                                        [svgIcon]="'heroicons_solid:magnifying-glass'"></mat-icon>
-                                    <input matInput class="ml-2" formControlName="in_store"
-                                        [placeholder]="'view.search_warehouse_receipt' | transloco">
-                                </mat-form-field>
-                            </div>
-                            <div>
-                                <button mat-flat-button [color]="'primary'" class="mb-5">
-                                    <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:cog-6-tooth'"></mat-icon>
-                                </button>
-                            </div>
+
+                    <!-- Search Form -->
+                    <!-- <form *ngIf="!showFilterForm" [formGroup]="filterForm" class="mb-6">
+                        <div class="flex gap-2">
+                            <mat-form-field appearance="outline" class="flex-grow">
+                                <mat-icon matPrefix [svgIcon]="'heroicons_solid:magnifying-glass'"></mat-icon>
+                                <input matInput formControlName="in_store"
+                                    [placeholder]="'view.search_warehouse_receipt' | transloco">
+                            </mat-form-field>
+                            <button mat-flat-button color="primary">
+                                <mat-icon [svgIcon]="'heroicons_solid:cog-6-tooth'"></mat-icon>
+                            </button>
                         </div>
-                    </form>
+                    </form> -->
+
+                    <!-- Delivery Items Table -->
                     <div class="overflow-x-auto mb-6">
-                        <table class="whitespace-nowrap w-full">
-                            <thead>
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50">
                                 <tr>
-                                    <th rowspan="2" class="px-6 py-3 border border-x-0 w-10 sticky left-0 bg-white">#
-                                    </th>
-                                    <th rowspan="2" class="px-6 py-3 border border-l-0 w-10 sticky left-13 bg-white">a
-                                    </th>
-                                    <th rowspan="2" class="px-6 py-3 border border-x-0">{{ 'invoice.view.customer_code'
-                                        | transloco }}</th>
-                                    <th rowspan="2" class="px-6 py-3 border border-x-0">{{ 'invoice.view.item' |
-                                        transloco }}</th>
-                                    <th rowspan="2" class="px-6 py-3 border border-x-0">{{
-                                        'invoice.view.chinese_postal_code' | transloco }}</th>
-                                    <th rowspan="2" class="px-6 py-3 border border-x-0">{{
-                                        'invoice.view.warehouse_receipt_code' | transloco }}</th>
-                                    <th rowspan="2" class="px-6 py-3 border border-x-0">{{
-                                        'invoice.view.transport_method' | transloco }}</th>
-                                    <th rowspan="2" class="px-6 py-3 border border-x-0">{{ 'invoice.view.warehouse' |
-                                        transloco }}</th>
-                                    <th rowspan="2" class="px-6 py-3 border border-x-0">{{ 'invoice.view.type' |
-                                        transloco }}</th>
-                                    <th rowspan="2" class="px-6 py-3 border border-x-0">{{ 'invoice.view.quantity' |
-                                        transloco }}</th>
-                                    <th colspan="3" class="px-6 py-1 border border-x-0">{{ 'invoice.view.dimensions' |
-                                        transloco }}</th>
-                                    <th rowspan="2" class="px-6 py-3 border border-x-0">{{ 'invoice.view.cubic_meter' |
-                                        transloco }}</th>
-                                    <th rowspan="2" class="px-6 py-3 border border-x-0">{{ 'invoice.view.kilogram' |
-                                        transloco }}</th>
-                                    <th rowspan="2" class="px-6 py-3 border border-x-0">{{ 'invoice.view.total_cbm' |
-                                        transloco }}</th>
-                                    <th rowspan="2" class="px-6 py-3 border border-x-0">{{ 'invoice.view.total_kg' |
-                                        transloco }}</th>
-                                    <th rowspan="2" class="px-6 py-3 border border-x-0">{{ 'invoice.view.price' |
-                                        transloco }}</th>
+                                    <th rowspan="2"
+                                        class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider sticky left-0 bg-white">
+                                        #</th>
+                                    <th rowspan="2"
+                                        class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider sticky left-12 bg-white">
+                                        Action</th>
+                                    <th rowspan="2"
+                                        class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        {{ 'invoice.view.customer_code' | transloco }}</th>
+                                    <th rowspan="2"
+                                        class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        {{ 'invoice.view.item' | transloco }}</th>
+                                    <th rowspan="2"
+                                        class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        {{ 'Tracking No.' | transloco }}</th>
+                                    <th rowspan="2"
+                                        class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        {{ 'invoice.view.transport_method' | transloco }}</th>
+                                    <th rowspan="2"
+                                        class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        {{ 'invoice.view.warehouse' | transloco }}</th>
+                                    <th rowspan="2"
+                                        class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        {{ 'invoice.view.type' | transloco }}</th>
+                                    <th rowspan="2"
+                                        class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        {{ 'invoice.view.quantity' | transloco }}</th>
+                                    <th colspan="3"
+                                        class="px-4 py-2 text-center text-xs font-medium text-gray-500 uppercase tracking-wider border-b">
+                                        {{ 'invoice.view.dimensions' | transloco }}</th>
+                                    <th rowspan="2"
+                                        class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        {{ 'invoice.view.cubic_meter' | transloco }}</th>
+                                    <th rowspan="2"
+                                        class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        {{ 'invoice.view.kilogram' | transloco }}</th>
+                                    <th rowspan="2"
+                                        class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        {{ 'invoice.view.total_cbm' | transloco }}</th>
+                                    <th rowspan="2"
+                                        class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        {{ 'invoice.view.total_kg' | transloco }}</th>
+                                    <th rowspan="2"
+                                        class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        {{ 'invoice.view.price' | transloco }}</th>
                                 </tr>
                                 <tr>
-                                    <th class="px-6 py-1 border border-x-0">{{ 'invoice.view.length' | transloco }}</th>
-                                    <th class="px-6 py-1 border border-x-0">{{ 'invoice.view.width' | transloco }}</th>
-                                    <th class="px-6 py-1 border border-x-0">{{ 'invoice.view.height' | transloco }}</th>
+                                    <th
+                                        class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        {{ 'invoice.view.length' | transloco }}</th>
+                                    <th
+                                        class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        {{ 'invoice.view.width' | transloco }}</th>
+                                    <th
+                                        class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        {{ 'invoice.view.height' | transloco }}</th>
                                 </tr>
                             </thead>
-                            <tbody>
-                                <tr *ngFor="let list of data?.packing_list_order_lists; let i = index" class="text-center">
-                                    <td class="px-6 py-3 border border-x-0 sticky left-0 bg-white">{{ i + 1 }}</td>
-                                    <td class="px-6 py-3 border border-l-0 sticky left-13 bg-white">
-                                        <button
-                                            class="bg-[#d4a85d] rounded-md min-w-10 min-h-10 items-center justify-center"
+                            <tbody class="bg-white divide-y divide-gray-200">
+                                <tr *ngFor="let list of data?.packing_list_order_lists; let i = index"
+                                    class="hover:bg-gray-50">
+                                    <td
+                                        class="px-4 py-3 whitespace-nowrap text-sm text-gray-500 sticky left-0 bg-white">
+                                        {{ i + 1 }}</td>
+                                    <td class="px-4 py-3 whitespace-nowrap sticky left-12 bg-white">
+                                        <button class="bg-[#d4a85d] rounded-md p-2 text-white hover:bg-[#c3994d]"
                                             (click)="opendialogeditprice(list.id)">
-                                            <mat-icon [svgIcon]="'mat_outline:edit_note'" class="text-white"></mat-icon>
+                                            <mat-icon [svgIcon]="'mat_outline:edit_note'"
+                                                class="icon-size-5"></mat-icon>
                                         </button>
                                     </td>
-                                    <td class="px-6 py-3 border border-x-0">{{data.member?.importer_code ?? '-'
+                                    <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500">
+                                        {{data.member?.code ?? '-'}}</td>
+                                    <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500">{{
+                                        list?.delivery_order_thai_list?.delivery_order_list?.product_name ?? '-' }}</td>
+                                    <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500">{{
+                                        list?.delivery_order_thai_list?.delivery_order.po_no ?? '-' }}</td>
+                                    <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500">{{
+                                        getShipmentMethod(list?.delivery_order_thai_list?.delivery_order.shipment_by) }}
+                                    </td>
+                                    <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500">{{
+                                        list?.delivery_order_thai_list?.delivery_order.store?.name ?? '-' }}</td>
+                                    <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500">{{
+                                        list?.delivery_order_thai_list?.delivery_order_list?.product_type?.name ?? '-'
                                         }}</td>
-                                    <td class="px-6 py-3 border border-x-0">{{
-                                        list?.delivery_order_thai_list?.delivery_order_list?.product_name ?? '-' }}
-                                    </td>
-                                    <td class="px-6 py-3 border border-x-0">{{
-                                        getShipmentMethod(list?.delivery_order?.shipped_by) }}</td>
-                                    <td class="px-6 py-3 border border-x-0">{{
-                                        list?.delivery_order_thai_list?.delivery_order.po_no ??
-                                        '-' }}</td>
-                                    <td class="px-6 py-3 border border-x-0">{{
-                                        getShipmentMethod(list?.delivery_order_thai_list?.delivery_order.shipment_by) }}</td>
-                                    <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order_thai_list?.delivery_order.store?.name ?? '-' }}
-                                    </td>
-                                    <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order_thai_list?.delivery_order_list?.product_type?.name ?? '-' }}</td>
-                                    <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order_thai_list?.delivery_order_list?.qty ?? '-' }}</td>
-                                    <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order_thai_list?.delivery_order_list?.long ?? '-' }}</td>
-                                    <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order_thai_list?.delivery_order_list?.width ?? '-' }}</td>
-                                    <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order_thai_list?.delivery_order_list?.height ?? '-' }}</td>
-                                    <td class="px-6 py-3 border border-x-0">-</td>
-                                    <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order_thai_list?.delivery_order_list?.weight ?? '-' }}</td>
-                                    <td class="px-6 py-3 border border-x-0">{{ calculateCBM(list?.delivery_order_thai_list?.delivery_order_list) }}</td>
-                                    <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order_thai_list?.delivery_order_list?.weight ?? '-' }}</td>
-                                    <td class="px-6 py-3 border border-x-0">{{ list?.amount ?? '-' }}</td>
+                                    <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500">{{
+                                        list?.delivery_order_thai_list?.delivery_order_list?.qty ?? '-' }}</td>
+                                    <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500">{{
+                                        list?.delivery_order_thai_list?.delivery_order_list?.long ?? '-' }}</td>
+                                    <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500">{{
+                                        list?.delivery_order_thai_list?.delivery_order_list?.width ?? '-' }}</td>
+                                    <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500">{{
+                                        list?.delivery_order_thai_list?.delivery_order_list?.height ?? '-' }}</td>
+                                    <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500">-</td>
+                                    <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500">{{
+                                        list?.delivery_order_thai_list?.delivery_order_list?.weight ?? '-' }}</td>
+                                    <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500">{{
+                                        calculateCBM(list?.delivery_order_thai_list?.delivery_order_list) }}</td>
+                                    <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500">{{
+                                        list?.delivery_order_thai_list?.delivery_order_list?.weight ?? '-' }}</td>
+                                    <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500">{{ list?.amount ?? '-'
+                                        }}</td>
                                 </tr>
                             </tbody>
                         </table>
                     </div>
-                    <div class="bg-white p-4 rounded-lg shadow-md gap-4">
-                        <div class="flex flex-col md:grid md:grid-cols-5 gap-4 mb-4">
-                            <div class="w-full text-xl md:text-3xl font-bold">{{ 'invoice.view.summary' | transloco }}
-                            </div>
-                            <div class="text-center gap-y-2 flex flex-col">
-                                <div class="justify-between items-center flex gap-4 ">
-                                    <span class="text-right w-full">{{ 'invoice.view.total_items' | transloco }}:</span>
-                                    <span class="font-bold w-full text-left">{{data.bill_lists?.length}}</span>
+
+                    <!-- Summary Section -->
+                    <div class="bg-white p-6 rounded-lg shadow border">
+                        <h2 class="text-xl md:text-2xl font-bold mb-6">
+                            {{ 'invoice.view.summary' | transloco }}
+                        </h2>
+
+                        <div class="grid grid-cols-1 md:grid-cols-5 gap-6">
+                            <!-- Left Summary -->
+                            <div class="space-y-4">
+                                <div class="flex justify-between">
+                                    <span>{{ 'invoice.view.total_items' | transloco }}:</span>
+                                    <span class="font-semibold">{{data.bill_lists?.length}}</span>
                                 </div>
-                                <div class="justify-between items-center flex gap-4">
-                                    <span class="text-right w-full">{{ 'invoice.view.total_cmb' | transloco }}:</span>
-                                    <span class="font-bold w-full text-left">{{data?.total_cbm}}</span>
+                                <div class="flex justify-between">
+                                    <span>{{ 'invoice.view.total_cmb' | transloco }}:</span>
+                                    <span class="font-semibold">{{data?.total_cbm}}</span>
                                 </div>
-                                <div class="justify-between items-center flex gap-4">
-                                    <span class="text-right w-full">{{ 'invoice.view.total_kilograms' | transloco
-                                        }}:</span>
-                                    <span class="font-bold w-full text-left">{{data?.total_weight}}</span>
-                                </div>
-                            </div>
-                            <div class="text-center gap-y-2 flex flex-col">
-                                <div class="justify-between items-center flex gap-4">
-                                    <span class="text-right w-full">{{ 'invoice.view.domestic_shipping_fee' | transloco
-                                        }}:</span>
-                                    <span class="font-bold w-full text-left">- บาท</span>
-                                </div>
-                                <div class="justify-between items-center flex gap-4">
-                                    <span class="text-right w-full">{{ 'invoice.view.china_service_fee' | transloco
-                                        }}:</span>
-                                    <span class="font-bold w-full text-left">- บาท</span>
-                                </div>
-                                <div class="justify-between items-center flex gap-4">
-                                    <span class="text-right w-full">{{ 'invoice.view.repacking_fee' | transloco
-                                        }}:</span>
-                                    <span class="font-bold w-full text-left">- บาท</span>
-                                </div>
-                                <div class="justify-between items-center flex gap-4">
-                                    <span class="text-right w-full">{{ 'invoice.view.wrapping_fee' | transloco
-                                        }}:</span>
-                                    <span class="font-bold w-full text-left">- บาท</span>
-                                </div>
-                                <div class="justify-between items-center flex gap-4">
-                                    <span class="text-right w-full">{{ 'invoice.view.qc_check_fee' | transloco
-                                        }}:</span>
-                                    <span class="font-bold w-full text-left">- บาท</span>
+                                <div class="flex justify-between">
+                                    <span>{{ 'invoice.view.total_kilograms' | transloco }}:</span>
+                                    <span class="font-semibold">{{data?.total_weight}}</span>
                                 </div>
                             </div>
+
+                            <!-- Middle Summary -->
+                            <div class="space-y-4">
+                                <div class="flex justify-between">
+                                    <span>{{ 'invoice.view.domestic_shipping_fee' | transloco }}:</span>
+                                    <span class="font-semibold">- บาท</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span>{{ 'invoice.view.china_service_fee' | transloco }}:</span>
+                                    <span class="font-semibold">- บาท</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span>{{ 'invoice.view.repacking_fee' | transloco }}:</span>
+                                    <span class="font-semibold">- บาท</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span>{{ 'invoice.view.qc_check_fee' | transloco }}:</span>
+                                    <span class="font-semibold">- บาท</span>
+                                </div>
+                            </div>
+
+                            <!-- Total Amount -->
                             <div
-                                class="bg-gray-800 text-white p-10 rounded-lg flex justify-between items-center col-span-2">
-                                <span class="text-2xl font-semibold">{{ 'invoice.view.total_amount' | transloco
-                                    }}</span>
-                                <div class="flex gap-2">
-                                    <span class="text-xl md:text-3xl font-bold">{{ data?.total_amount ?? 0 }}</span>
-                                    <span class="text-2xl font-semibold">บาท</span>
+                                class="md:col-span-3 bg-gray-800 text-white p-6 rounded-lg flex justify-between items-center">
+                                <span class="text-xl font-semibold">{{ 'invoice.view.total_amount' | transloco }}</span>
+                                <div class="flex items-center gap-2">
+                                    <span class="text-2xl md:text-3xl font-bold">{{ data?.total_amount ?? 0 }}</span>
+                                    <span class="text-xl">บาท</span>
                                 </div>
                             </div>
                         </div>

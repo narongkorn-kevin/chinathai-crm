@@ -16,6 +16,10 @@ export default [
         },
     },
     {
+        path: 'view-order',
+        component: ViewOrderComponent,
+    },
+    {
         path: 'view/:id',
         component: ViewComponent,
         resolve: {
@@ -26,7 +30,17 @@ export default [
         path: 'view-order/:id',
         component: ViewOrderComponent,
         resolve: {
-            data: (route) => inject(DeliveryNoteService).get(route.params['id']),
+            data: (route) => inject(DeliveryNoteService).getDeliveryInThaiControlById(route.params['id']),
+        }
+    },
+    {
+        path: 'view-order/edit/:id',
+        component: ViewOrderComponent,
+        data: {
+            type: 'edit',
+        },
+        resolve: {
+            data: (route) => inject(DeliveryNoteService).getDeliveryInThaiControlById(route.params['id']),
         }
     },
     {
