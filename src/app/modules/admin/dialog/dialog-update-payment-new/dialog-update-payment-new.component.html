@@ -1,5 +1,5 @@
 <div class="mx-auto bg-white rounded-lg w-full">
-    <h2 class="text-lg font-semibold mb-4 border-b-2">บันทึกรับชำระเงิน</h2>
+    <h2 class="text-lg font-semibold mb-4 border-b-2">{{ 'dialog.dialog_update_payment_new.payment_record' | transloco }}</h2>
     <!-- {{ order | json }} -->
     <form [formGroup]="form">
         <div class="space-y-3">
@@ -19,18 +19,18 @@
 
             <!-- Date & Time -->
             <div>
-                <label class="block font-bold">วันและเวลาที่ทำการโอนเงิน</label>
+                <label class="block font-bold">{{ 'dialog.dialog_update_payment_new.transfer_datetime' | transloco }}</label>
                 <input [formControlName]="'date'" type="datetime-local" class="w-full px-3 py-2 border rounded-lg">
             </div>
 
             <!-- Payment Proof -->
             <div class="flex flex-col justify-center">
-                <label class="w-full block font-bold">แนบรูปหลักฐานการโอน:</label>
+                <label class="w-full block font-bold">{{ 'dialog.dialog_update_payment_new.attach_proof' | transloco }}:</label>
                 <!-- <asha-image-upload class="flex w-full justify-center"></asha-image-upload> -->
                 <!-- <div class="flex items-center gap-2">
                     <input type="text" placeholder="วางลิงก์ของคุณที่นี่"
                         class="w-full px-3 py-2 border rounded-lg">
-                    <span>หรือ</span>
+                    <span>{{ 'lables.or' | transloco }}</span>
                     <input type="file" (change)="onFileSelect($event)" class="border px-3 py-2 rounded-lg">
                 </div> -->
                 <div class="flex flex-row w-full gap-4">
@@ -38,20 +38,22 @@
                         <div class="md:w-full">
                             <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
                                 <!-- <mat-label>วางลิ้งของคุณที่นี่</mat-label> -->
-                                <input matInput [placeholder]="'วางลิ้งของคุณที่นี่'" formControlName="image_url">
+                                <input matInput [placeholder]="'lables.paste_your_link' | transloco "
+                                    formControlName="image_url">
                             </mat-form-field>
                         </div>
                     </div>
                     <div class="flex items-center">
-                        <p>หรือ</p>
+                        <p>{{ 'lables.or' | transloco }}</p>
                     </div>
                     <div class="flex flex-col w-1/2 md:flex">
                         <div class="md:w-full">
                             <!-- การลากไฟล์หรือเลือกไฟล์ -->
                             <label for="fileInput"
                                 class="block p-4 text-sm text-center text-gray-600 bg-gray-100 border-2 border-red-500 border-dashed rounded-lg cursor-pointer">
-                                ลากไฟล์ของคุณมาหรือ
-                                <span class="font-medium text-red-500">เลือกจากไฟล์ที่มี</span>
+                                {{ 'lables.drag_or_select_file' | transloco }}
+                                <span class="font-medium text-red-500">{{ 'lables.select_from_existing' | transloco
+                                    }}</span>
                                 <input type="file" id="fileInput" class="hidden" (change)="onFilesSelected($event)" />
                             </label>
                         </div>
@@ -91,15 +93,15 @@
             <div mat-dialog-actions class="flex justify-between border-t-2 pt-4">
                 <div class="flex justify-between font-bold">
                     <span class="text-red-500 mr-5">{{ sumPrices | number:'1.2-2' }}</span>
-                    <span>ยอดชำระสุทธิ:</span>
+                    <span>{{ 'dialog.dialog_update_payment_new.net_payment' | transloco }}:</span>
                 </div>
 
                 <div class="flex justify-end">
                     <button class="px-6 ml-3" mat-flat-button [color]="'primary'" (click)="Submit()">
-                        ตกลง
+                        {{ 'buttons.submit' | transloco }}
                     </button>
                     <button class="px-6 ml-3" mat-flat-button [color]="'warn'" (click)="onClose()">
-                        ยกเลิก
+                        {{ 'buttons.cancel' | transloco }}
                     </button>
                 </div>
 

@@ -329,6 +329,18 @@ export class PalletComponent implements OnInit, AfterViewInit {
                                 return menuTitles.shipping_type.types.train[
                                     this.langues
                                 ];
+                            case 'car':
+                                return menuTitles.shipping_type.types.car[
+                                    this.langues
+                                ];
+                            case 'ship':
+                                return menuTitles.shipping_type.types.ship[
+                                    this.langues
+                                ];
+                            case 'train':
+                                return menuTitles.shipping_type.types.train[
+                                    this.langues
+                                ];
                             default:
                                 return row.shipped_by;
                         }
@@ -527,7 +539,7 @@ export class PalletComponent implements OnInit, AfterViewInit {
 
     openfillter() {
         this.showFilterForm = !this.showFilterForm;
-        
+
     }
 
     applyFilter() {
@@ -557,7 +569,7 @@ export class PalletComponent implements OnInit, AfterViewInit {
 
     getDashbaordPallet() {
         const formValue = this.filterForm.value;
-            // ตรวจสอบว่า start_date มีค่าหรือไม่
+        // ตรวจสอบว่า start_date มีค่าหรือไม่
         if (formValue.start_date) {
             formValue.start_date = this.formatDate(new Date(formValue.start_date));
         }

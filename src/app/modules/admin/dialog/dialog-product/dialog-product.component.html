@@ -1,6 +1,6 @@
 <div class="md:max-w-full">
     <div class="flex flex-row justify-between">
-        <h1 mat-dialog-title class="text-xl font-semibold mb-4">สินค้า</h1>
+        <h1 mat-dialog-title class="text-xl font-semibold mb-4">{{ 'dialog.dialog_product.product' | transloco }}</h1>
 
         <button class="ml-auto" mat-icon-button mat-dialog-close>
             <mat-icon class="text-current" [svgIcon]="'heroicons_outline:x-mark'"></mat-icon>
@@ -12,13 +12,24 @@
 
         <!-- ข้อมูลสินค้า -->
         <div>
+            <p class="text-[12px] text-slate-400 leading-4">
+                ({{ product?.nick}})
+            </p>
             <h2 class="text-xl font-bold">{{ product?.title }}</h2>
-            <p class="text-red-500 text-lg font-semibold">฿{{ product?.price }}</p>
-
+            <p class="text-[11px] text-slate-400 leading-4">
+                ({{ product?.title | translateText:'zh-CN':'th' | async }})
+            </p>
+            <!-- <p class="text-red-500 text-lg font-semibold">{{ product?.price }}</p> -->
             @for (prop of props; track $index) {
-            <label class="block mt-2 text-sm font-medium">{{prop.name}}</label>
+            <label class="block mt-2 text-sm font-medium">{{prop.name}}  <span class="text-[11px] text-slate-400 leading-4">
+                ({{ prop?.name | translateText:'zh-CN':'th' | async }})
+            </span></label>
             <select (change)="onSelectChange($event, $index)" class="w-full p-2 border rounded">
-                <option *ngFor="let item of prop?.list" [value]="item">{{ item }}</option>
+                <option *ngFor="let item of prop?.list" [value]="item">{{ item }}
+                    <span class="text-[11px] text-slate-400 leading-4">
+                        ({{ item | translateText:'zh-CN':'th' | async }})
+                    </span>
+                </option>
             </select>
             }
 
@@ -26,7 +37,7 @@
                 <div *ngFor="let item of addOnServices" class="flex items-center mb-2">
                     <mat-checkbox [id]="'item-' + item.id" [checked]="isSelected(item.id)"
                         (change)="toggleItem(item.id, item.standard_price)" color="primary">
-                        {{ item.name }} - {{ item.standard_price }} บาท
+                        {{ item.name }} {{ 'dialog.dialog_product.price_unit' | transloco }}
                     </mat-checkbox>
                 </div>
             </div>
@@ -41,8 +52,8 @@
 
             <!-- ปุ่มเพิ่มลงตะกร้า -->
             <button (click)="addToCart()"
-                class="mt-4 w-full bg-green-500 text-white py-2 rounded-lg hover:bg-green-600">
-                เพิ่มลงตะกร้า
+                class="mt-4 w-full bg-[#D4A85D] text-white py-2 rounded-lg hover:bg-green-600">
+                {{ 'dialog.dialog_product.add_to_cart' | transloco }}
             </button>
         </div>
     </div>

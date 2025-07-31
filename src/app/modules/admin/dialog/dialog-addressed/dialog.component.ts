@@ -12,7 +12,12 @@ import {
     MatDialogRef,
     MAT_DIALOG_DATA,
 } from '@angular/material/dialog';
-import { FormBuilder, FormGroup, FormsModule, Validators } from '@angular/forms';
+import {
+    FormBuilder,
+    FormGroup,
+    FormsModule,
+    Validators,
+} from '@angular/forms';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -20,13 +25,22 @@ import { MatInputModule } from '@angular/material/input';
 import { FuseConfirmationService } from '@fuse/services/confirmation';
 import { ToastrService } from 'ngx-toastr';
 import { MatRadioModule } from '@angular/material/radio';
+import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
+
 @Component({
     selector: 'app-dialog-product-form-addressed',
     standalone: true,
     templateUrl: './dialog.component.html',
     styleUrl: './dialog.component.scss',
-    imports: [CommonModule, DataTablesModule, MatIconModule, MatFormFieldModule, MatInputModule,
-        FormsModule, MatToolbarModule,
+    imports: [
+        TranslocoModule,
+        CommonModule,
+        DataTablesModule,
+        MatIconModule,
+        MatFormFieldModule,
+        MatInputModule,
+        FormsModule,
+        MatToolbarModule,
         MatButtonModule,
         MatDialogTitle,
         MatDialogContent,
@@ -35,26 +49,24 @@ import { MatRadioModule } from '@angular/material/radio';
         ReactiveFormsModule,
         MatInputModule,
         MatFormFieldModule,
-        MatRadioModule
-    ]
+        MatRadioModule,
+    ],
 })
 export class DialogAddressedComponent implements OnInit {
-
     form: FormGroup;
     stores: any[] = [];
     formFieldHelpers: string[] = ['fuse-mat-dense'];
     dtOptions: DataTables.Settings = {};
     addForm: FormGroup;
     constructor(
+        private translocoService: TranslocoService,
         private dialogRef: MatDialogRef<DialogAddressedComponent>,
         @Inject(MAT_DIALOG_DATA) public data: any,
         public dialog: MatDialog,
         private FormBuilder: FormBuilder,
         private fuseConfirmationService: FuseConfirmationService,
-        private toastr: ToastrService,
-    ) {
-
-    }
+        private toastr: ToastrService
+    ) {}
 
     ngOnInit(): void {
         this.form = this.FormBuilder.group({
@@ -67,72 +79,76 @@ export class DialogAddressedComponent implements OnInit {
         if (this.data.type === 'EDIT') {
             this.form.patchValue({
                 ...this.data.value,
-            })
-
+            });
         }
     }
 
     Submit() {
         if (this.form.invalid) {
-            return
+            this.toastr.error(
+                this.translocoService.translate('toastr.missing_fields')
+            );
+            this.form.markAllAsTouched();
+            return;
         }
 
         const formValue = {
-            ...this.form.value
-        }
+            ...this.form.value,
+        };
 
         const confirmation = this.fuseConfirmationService.open({
-            title: "ยืนยันการบันทึกข้อมูล",
+            title: this.translocoService.translate('confirmation.save_title'),
             icon: {
                 show: true,
-                name: "heroicons_outline:exclamation-triangle",
-                color: "primary"
+                name: 'heroicons_outline:exclamation-triangle',
+                color: 'primary',
             },
             actions: {
                 confirm: {
                     show: true,
-                    label: "ยืนยัน",
-                    color: "primary"
+                    label: this.translocoService.translate(
+                        'confirmation.confirm_button'
+                    ),
+                    color: 'primary',
                 },
                 cancel: {
                     show: true,
-                    label: "ยกเลิก"
-                }
+                    label: this.translocoService.translate(
+                        'confirmation.cancel_button'
+                    ),
+                },
             },
-            dismissible: false
-        })
+            dismissible: false,
+        });
 
-        confirmation.afterClosed().subscribe(
-            result => {
-                // if (result == 'confirmed') {
-                //     if (this.data.type === 'NEW') {
-                //         this._service.create(formValue).subscribe({
-                //             error: (err) => {
-                //                 this.toastr.error('ไม่สามารถบันทึกข้อมูลได้')
-                //             },
-                //             complete: () => {
-                //                 this.toastr.success('ดำเนินการเพิ่มข้อมูลสำเร็จ')
-                //                 this.dialogRef.close(true)
-                //             },
-                //         });
-                //     } else {
-                //         this._service.update(this.data.value.id, formValue).subscribe({
-                //             error: (err) => {
-                //                 this.toastr.error('ไม่สามารถบันทึกข้อมูลได้')
-                //             },
-                //             complete: () => {
-                //                 this.toastr.success('ดำเนินการแก้ไขข้อมูลสำเร็จ')
-                //                 this.dialogRef.close(true)
-                //             },
-                //         });
-                //     }
-                // }
-            }
-        )
+        confirmation.afterClosed().subscribe((result) => {
+            // if (result == 'confirmed') {
+            //     if (this.data.type === 'NEW') {
+            //         this._service.create(formValue).subscribe({
+            //             error: (err) => {
+            //                 this.toastr.error('ไม่สามารถบันทึกข้อมูลได้')
+            //             },
+            //             complete: () => {
+            //                 this.toastr.success('ดำเนินการเพิ่มข้อมูลสำเร็จ')
+            //                 this.dialogRef.close(true)
+            //             },
+            //         });
+            //     } else {
+            //         this._service.update(this.data.value.id, formValue).subscribe({
+            //             error: (err) => {
+            //                 this.toastr.error('ไม่สามารถบันทึกข้อมูลได้')
+            //             },
+            //             complete: () => {
+            //                 this.toastr.success('ดำเนินการแก้ไขข้อมูลสำเร็จ')
+            //                 this.dialogRef.close(true)
+            //             },
+            //         });
+            //     }
+            // }
+        });
     }
 
     onClose() {
-        this.dialogRef.close()
+        this.dialogRef.close();
     }
-
 }

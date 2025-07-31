@@ -13,7 +13,12 @@ import {
     MAT_DIALOG_DATA,
     MatDialogClose,
 } from '@angular/material/dialog';
-import { FormBuilder, FormGroup, FormsModule, Validators } from '@angular/forms';
+import {
+    FormBuilder,
+    FormGroup,
+    FormsModule,
+    Validators,
+} from '@angular/forms';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -22,13 +27,23 @@ import { FuseConfirmationService } from '@fuse/services/confirmation';
 import { ToastrService } from 'ngx-toastr';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
+import { TranslateTextPipe } from 'app/modules/shared/translate.pipe';
+
 @Component({
     selector: 'app-dialog-product',
     standalone: true,
     templateUrl: './dialog-product.component.html',
     styleUrl: './dialog-product.component.scss',
-    imports: [CommonModule, DataTablesModule, MatIconModule, MatFormFieldModule, MatInputModule,
-        FormsModule, MatToolbarModule,
+    imports: [
+        TranslocoModule,
+        CommonModule,
+        DataTablesModule,
+        MatIconModule,
+        MatFormFieldModule,
+        MatInputModule,
+        FormsModule,
+        MatToolbarModule,
         MatButtonModule,
         MatDialogTitle,
         MatDialogClose,
@@ -37,11 +52,11 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
         MatInputModule,
         MatFormFieldModule,
         MatRadioModule,
-        MatCheckboxModule
-    ]
+        MatCheckboxModule,
+        TranslateTextPipe
+    ],
 })
 export class DialogProductComponent implements OnInit {
-
     form: FormGroup;
     stores: any[] = [];
     formFieldHelpers: string[] = ['fuse-mat-dense'];
@@ -50,26 +65,36 @@ export class DialogProductComponent implements OnInit {
 
     product: any;
     addOnServices: any[] = [];
-    options: { option_name: string, option_image: string, option_note: string }[] = [];
+    options: {
+        option_name: string;
+        option_image: string;
+        option_note: string;
+    }[] = [];
 
-    selectedItems: { add_on_service_id: number, add_on_service_price: number }[] = [];
+    selectedItems: {
+        add_on_service_id: number;
+        add_on_service_price: number;
+    }[] = [];
 
     props: any[] = [];
 
     constructor(
+        private translocoService: TranslocoService,
         private dialogRef: MatDialogRef<DialogProductComponent>,
         @Inject(MAT_DIALOG_DATA) public data: any,
         public dialog: MatDialog,
         private FormBuilder: FormBuilder,
         private fuseConfirmationService: FuseConfirmationService,
-        private toastr: ToastrService,
+        private toastr: ToastrService
     ) {
-        this.product = data.product.item
-        this.addOnServices = data.addOnServices
+        this.product = data.product.item;
+        console.log(this.product, 'product');
+        
+        this.addOnServices = data.addOnServices.filter(e => e?.standard_price != 0);
 
-        const props_list: string[] = Object.values(this.product.props_list)
+        const props_list: string[] = Object.values(this.product.props_list);
 
-        const group = {}
+        const group = {};
         for (const prop of props_list) {
             const _prop = prop.split(':');
 
@@ -85,14 +110,17 @@ export class DialogProductComponent implements OnInit {
             }
         }
 
-        this.props = Object.entries(group).map(([name, list]) => ({ name, list }));
+        this.props = Object.entries(group).map(([name, list]) => ({
+            name,
+            list,
+        }));
 
         for (const prop of this.props) {
             this.options.push({
                 option_name: prop.list[0],
-                option_image: "",
-                option_note: ""
-            })
+                option_image: '',
+                option_note: '',
+            });
         }
     }
 
@@ -107,15 +135,20 @@ export class DialogProductComponent implements OnInit {
             product_note: [''],
             product_price: [this.product.price],
             product_qty: [1],
+            product_shop: [this.product.nick],
         });
     }
 
-
     toggleItem(itemId: number, itemPrice: number): void {
-        const index = this.selectedItems.findIndex(item => item.add_on_service_id === itemId);
+        const index = this.selectedItems.findIndex(
+            (item) => item.add_on_service_id === itemId
+        );
         if (index === -1) {
             // เพิ่มรายการที่เลือก
-            this.selectedItems.push({ add_on_service_id: itemId, add_on_service_price: itemPrice });
+            this.selectedItems.push({
+                add_on_service_id: itemId,
+                add_on_service_price: itemPrice,
+            });
         } else {
             // ลบรายการที่เลือก
             this.selectedItems.splice(index, 1);
@@ -123,74 +156,85 @@ export class DialogProductComponent implements OnInit {
     }
 
     isSelected(itemId: number): boolean {
-        return this.selectedItems.some(item => item.add_on_service_id === itemId);
+        return this.selectedItems.some(
+            (item) => item.add_on_service_id === itemId
+        );
     }
 
-    get getSelectedItems(): { add_on_service_id: number, add_on_service_price: number }[] {
+    get getSelectedItems(): {
+        add_on_service_id: number;
+        add_on_service_price: number;
+    }[] {
         return this.selectedItems;
     }
 
     Submit() {
         if (this.form.invalid) {
-            return
+            this.toastr.error(
+                this.translocoService.translate('toastr.missing_fields')
+            );
+            this.form.markAllAsTouched();
+            return;
         }
 
         const formValue = {
-            ...this.form.value
-        }
+            ...this.form.value,
+        };
 
         const confirmation = this.fuseConfirmationService.open({
-            title: "ยืนยันการบันทึกข้อมูล",
+            title: this.translocoService.translate('confirmation.save_title'),
             icon: {
                 show: true,
-                name: "heroicons_outline:exclamation-triangle",
-                color: "primary"
+                name: 'heroicons_outline:exclamation-triangle',
+                color: 'primary',
             },
             actions: {
                 confirm: {
                     show: true,
-                    label: "ยืนยัน",
-                    color: "primary"
+                    label: this.translocoService.translate(
+                        'confirmation.confirm_button'
+                    ),
+                    color: 'primary',
                 },
                 cancel: {
                     show: true,
-                    label: "ยกเลิก"
-                }
+                    label: this.translocoService.translate(
+                        'confirmation.cancel_button'
+                    ),
+                },
             },
-            dismissible: false
-        })
+            dismissible: false,
+        });
 
-        confirmation.afterClosed().subscribe(
-            result => {
-                // if (result == 'confirmed') {
-                //     if (this.data.type === 'NEW') {
-                //         this._service.create(formValue).subscribe({
-                //             error: (err) => {
-                //                 this.toastr.error('ไม่สามารถบันทึกข้อมูลได้')
-                //             },
-                //             complete: () => {
-                //                 this.toastr.success('ดำเนินการเพิ่มข้อมูลสำเร็จ')
-                //                 this.dialogRef.close(true)
-                //             },
-                //         });
-                //     } else {
-                //         this._service.update(this.data.value.id, formValue).subscribe({
-                //             error: (err) => {
-                //                 this.toastr.error('ไม่สามารถบันทึกข้อมูลได้')
-                //             },
-                //             complete: () => {
-                //                 this.toastr.success('ดำเนินการแก้ไขข้อมูลสำเร็จ')
-                //                 this.dialogRef.close(true)
-                //             },
-                //         });
-                //     }
-                // }
-            }
-        )
+        confirmation.afterClosed().subscribe((result) => {
+            // if (result == 'confirmed') {
+            //     if (this.data.type === 'NEW') {
+            //         this._service.create(formValue).subscribe({
+            //             error: (err) => {
+            //                 this.toastr.error('ไม่สามารถบันทึกข้อมูลได้')
+            //             },
+            //             complete: () => {
+            //                 this.toastr.success('ดำเนินการเพิ่มข้อมูลสำเร็จ')
+            //                 this.dialogRef.close(true)
+            //             },
+            //         });
+            //     } else {
+            //         this._service.update(this.data.value.id, formValue).subscribe({
+            //             error: (err) => {
+            //                 this.toastr.error('ไม่สามารถบันทึกข้อมูลได้')
+            //             },
+            //             complete: () => {
+            //                 this.toastr.success('ดำเนินการแก้ไขข้อมูลสำเร็จ')
+            //                 this.dialogRef.close(true)
+            //             },
+            //         });
+            //     }
+            // }
+        });
     }
 
     onClose() {
-        this.dialogRef.close()
+        this.dialogRef.close();
     }
 
     addToCart() {
@@ -198,14 +242,14 @@ export class DialogProductComponent implements OnInit {
             ...this.form.value,
             add_on_services: this.getSelectedItems,
             options: this.options,
-        }
+        };
 
-        this.dialogRef.close(body)
+        this.dialogRef.close(body);
     }
 
     onSelectChange(event: any, index: number) {
         const selectedValue = event.target.value;
-        this.options[index].option_name = selectedValue
+        this.options[index].option_name = selectedValue;
     }
 
     increaseQuantity() {
@@ -213,7 +257,7 @@ export class DialogProductComponent implements OnInit {
         qty++; // เพิ่มค่า
 
         this.form.patchValue({
-            product_qty: qty
+            product_qty: qty,
         });
     }
 
@@ -222,9 +266,8 @@ export class DialogProductComponent implements OnInit {
         if (qty > 1) {
             qty--; // ลดค่าเมื่อมากกว่า 1
             this.form.patchValue({
-                product_qty: qty
+                product_qty: qty,
             });
         }
     }
-
 }

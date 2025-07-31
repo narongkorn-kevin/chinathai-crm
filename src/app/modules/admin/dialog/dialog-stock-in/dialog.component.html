@@ -1,7 +1,7 @@
 <div class="">
     <div class="flex flex-row items-start justify-between w-full">
         <h1 mat-dialog-title class="px-0 pb-1 mb-2 text-xl font-semibold">
-            รายการผลิตภัณฑ์ใบรับเข้าคลังใหม่</h1>
+            {{ 'dialog.dialog_stock_in.new_warehouse_receipt' | transloco }}</h1>
         <!-- <button class="px-6 ml-3" mat-flat-button [color]="'primary'" (click)="Submit()">
             <mat-icon svgIcon="heroicons_solid:camera"></mat-icon>
             <span class="ml-2">เปิดกล้อง</span>
@@ -10,7 +10,7 @@
         <label for="cameraInput"
             class="flex items-center px-4 py-2 space-x-2 text-white transition duration-300 bg-red-500 rounded-md cursor-pointer hover:bg-red-600">
             <mat-icon svgIcon="heroicons_solid:camera" class="text-white"></mat-icon>
-            <span>เปิดกล้อง</span>
+            <span>{{ 'dialog.dialog_stock_in.open_camera' | transloco }}</span>
             <input type="file" id="cameraInput" class="hidden" accept="image/*" capture="environment"
                 (change)="onCameraCapture($event)" />
         </label>
@@ -19,14 +19,14 @@
     <form [formGroup]="form" class="flex flex-col w-full overflow-scroll">
         <div class="flex flex-row items-start justify-between w-full border-t-2">
             <h1 mat-dialog-title class="px-0 pb-1 mb-2 text-xl font-semibold">
-                รายละเอียดรายการ</h1>
+                {{ 'dialog.dialog_stock_in.item_details' | transloco }}</h1>
         </div>
         <div mat-dialog-content class="px-0 overflow-y-auto border-t-2 md:max-h-180">
             <div class="flex flex-row w-full gap-4">
                 <div class="flex flex-col w-1/2 md:flex">
                     <div class="md:w-full">
                         <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
-                            <mat-label>ประเภท</mat-label>
+                            <mat-label>{{ 'dialog.dialog_stock_in.product_type' | transloco }}</mat-label>
                             <mat-select formControlName="product_type_id">
                                 <mat-option *ngFor="let type of product_type" [value]="type.id">{{ type.name
                                     }}</mat-option>
@@ -37,8 +37,9 @@
                 <div class="flex flex-col w-1/2 md:flex">
                     <div class="md:w-full">
                         <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
-                            <mat-label>โลโก้</mat-label>
-                            <input matInput [placeholder]="'โลโก้'" formControlName="product_logo">
+                            <mat-label>{{ 'dialog.dialog_stock_in.product_logo' | transloco }}</mat-label>
+                            <input matInput [placeholder]="'dialog.dialog_stock_in.product_logo' | transloco"
+                                formControlName="product_logo">
                         </mat-form-field>
                     </div>
                 </div>
@@ -47,7 +48,7 @@
                 <div class="flex flex-col w-full md:flex">
                     <div class="md:w-full">
                         <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
-                            <mat-label>ชื่อผลิตภัณฑ์</mat-label>
+                            <mat-label>{{ 'dialog.dialog_stock_in.product_name' | transloco }}</mat-label>
                             <input matInput [placeholder]="''" formControlName="product_name">
                         </mat-form-field>
                     </div>
@@ -57,9 +58,10 @@
                 <div class="flex flex-col w-1/2 md:flex">
                     <div class="md:w-full">
                         <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
-                            <mat-label>รูปแบบบรรจุภัณฑ์</mat-label>
+                            <mat-label>{{ 'dialog.dialog_stock_in.packaging_type' | transloco }}</mat-label>
                             <mat-select formControlName="unit_id">
-                                <mat-option *ngFor="let unit of unit" [value]="unit.id">{{ unit.name }}</mat-option>
+                                <mat-option *ngFor="let packing_type of packing_type" [value]="packing_type.id">{{
+                                    packing_type.name_th }}</mat-option>
                             </mat-select>
                         </mat-form-field>
                     </div>
@@ -67,8 +69,8 @@
                 <div class="flex flex-col w-1/2 md:flex">
                     <div class="md:w-full">
                         <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
-                            <mat-label>ขนาดมาตราฐาน</mat-label>
-                            <mat-select formControlName="standard_size_id" (selectionChange)="onSizeChange($event)">
+                            <mat-label>{{ 'dialog.dialog_stock_in.standard_size' | transloco }}</mat-label>
+                            <mat-select formControlName="standard_size_id">
                                 <mat-option *ngFor="let size of standard_size" [value]="size.id">{{ size.name
                                     }}</mat-option>
                             </mat-select>
@@ -80,7 +82,7 @@
                 <div class="flex flex-col w-1/2 md:flex">
                     <div class="md:w-full">
                         <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
-                            <mat-label>จำนวนชิ้น</mat-label>
+                            <mat-label>{{ 'dialog.dialog_stock_in.quantity' | transloco }}</mat-label>
                             <input matInput [placeholder]="''" formControlName="qty" type="number">
                         </mat-form-field>
                     </div>
@@ -88,7 +90,7 @@
                 <div class="flex flex-col w-1/2 md:flex">
                     <div class="md:w-full">
                         <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
-                            <mat-label>น้ำหนัก</mat-label>
+                            <mat-label>{{ 'dialog.dialog_stock_in.weight' | transloco }}</mat-label>
                             <input matInput [placeholder]="''" formControlName="weight" type="number">
                         </mat-form-field>
                     </div>
@@ -98,7 +100,7 @@
                 <div class="flex flex-col w-1/2 md:flex">
                     <div class="md:w-full">
                         <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
-                            <mat-label>จำนวนลัง</mat-label>
+                            <mat-label>{{ 'dialog.dialog_stock_in.box_quantity' | transloco }}</mat-label>
                             <input matInput [placeholder]="''" formControlName="qty_box" type="number">
                         </mat-form-field>
                     </div>
@@ -106,7 +108,7 @@
                 <div class="flex flex-col w-1/2 md:flex">
                     <div class="md:w-full">
                         <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
-                            <mat-label>กว้าง</mat-label>
+                            <mat-label>{{ 'dialog.dialog_stock_in.width' | transloco }}</mat-label>
                             <input matInput [placeholder]="''" formControlName="width" type="number">
                         </mat-form-field>
                     </div>
@@ -116,7 +118,7 @@
                 <div class="flex flex-col w-1/2 md:flex">
                     <div class="md:w-full">
                         <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
-                            <mat-label>ยาว</mat-label>
+                            <mat-label>{{ 'dialog.dialog_stock_in.length' | transloco }}</mat-label>
                             <input matInput [placeholder]="''" formControlName="long" type="number">
                         </mat-form-field>
                     </div>
@@ -124,7 +126,7 @@
                 <div class="flex flex-col w-1/2 md:flex">
                     <div class="md:w-full">
                         <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
-                            <mat-label>สูง</mat-label>
+                            <mat-label>{{ 'dialog.dialog_stock_in.height' | transloco }}</mat-label>
                             <input matInput [placeholder]="''" formControlName="height" type="number">
                         </mat-form-field>
                     </div>
@@ -133,32 +135,53 @@
         </div>
         <div class="flex flex-row items-start justify-between w-full border-t-2">
             <h1 mat-dialog-title class="px-0 pb-1 mb-2 text-xl font-semibold">
-                รายละเอียดเพิ่มเติม</h1>
+                {{ 'dialog.dialog_stock_in.additional_details' | transloco }}</h1>
         </div>
         <div class="flex flex-row w-full gap-4">
             <div class="flex flex-col w-1/2 md:flex">
                 <div class="md:w-full">
                     <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
                         <!-- <mat-label>วางลิ้งของคุณที่นี่</mat-label> -->
-                        <input matInput [placeholder]="'วางลิ้งของคุณที่นี่'" formControlName="image_url">
+                        <input matInput [placeholder]="'lables.paste_your_link' | transloco "
+                            formControlName="image_url">
                     </mat-form-field>
                 </div>
             </div>
             <div class="flex items-center">
-                <p>หรือ</p>
+                <p>{{ 'lables.or' | transloco }}</p>
             </div>
             <div class="flex flex-col w-1/2 md:flex">
                 <div class="md:w-full">
                     <!-- การลากไฟล์หรือเลือกไฟล์ -->
                     <label for="fileInput"
                         class="block p-4 text-sm text-center text-gray-600 bg-gray-100 border-2 border-red-500 border-dashed rounded-lg cursor-pointer">
-                        ลากไฟล์ของคุณมาหรือ
-                        <span class="font-medium text-red-500">เลือกจากไฟล์ที่มี</span>
+                        {{ 'lables.drag_or_select_file' | transloco }}
+                        <span class="font-medium text-red-500">{{ 'lables.select_from_existing' | transloco }}</span>
                         <input type="file" id="fileInput" class="hidden" (change)="onFilesSelected($event)" />
                     </label>
                 </div>
             </div>
         </div>
+        <!-- แสดงรูปภาพจาก this.data.images -->
+        <!-- <div *ngIf="form?.value?.images?.length > 0" class="space-y-4 mb-4">
+            <div *ngFor="let img of data.images"
+                class="flex items-center p-4 space-x-4 border border-gray-300 rounded-lg bg-gray-50">
+
+                <img [src]="img.image_url" alt="Preview"
+                    class="object-cover w-16 h-16 border border-gray-300 rounded-md" />
+
+                <div class="flex-1">
+                    <p class="text-sm font-medium text-gray-700 truncate">{{ img.image }}</p>
+                </div>
+
+                <button
+                    class="flex items-center justify-center w-8 h-8 text-gray-500 bg-gray-200 rounded-full hover:bg-red-100 hover:text-red-500"
+                    (click)="removeExistingImage(img)">
+                    ✕
+                </button>
+            </div>
+        </div> -->
+
         <div class="flex flex-row w-full gap-4">
             <div class="flex flex-col w-full md:flex">
                 <div class="md:w-full">
@@ -186,14 +209,13 @@
                     </div>
                 </div>
             </div>
-
         </div>
         <div mat-dialog-actions class="flex justify-end pt-4 border-t-2">
             <button class="px-6 ml-3" mat-flat-button [color]="'primary'" (click)="Submit()">
-                ตกลง
+                {{ 'buttons.submit' | transloco }}
             </button>
             <button class="px-6 ml-3" mat-flat-button [color]="'warn'" (click)="onClose()">
-                ยกเลิก
+                {{ 'buttons.cancel' | transloco }}
             </button>
         </div>
     </form>
