@@ -290,51 +290,51 @@ export const defaultNavigation: FuseNavigationItem[] = [
                 type: 'group',
                 icon: 'heroicons_outline:bars-3',
                 children: [
-                    {
-                        id: 'warehouse.cn.sign',
-                        title: 'เซ็นต์รับสินค้า',
-                        type: 'basic',
-                        // link: '/follow-up',
-                        // badge: {
-                        //     title: '3',
-                        //     classes: 'px-2 bg-red-600 text-white rounded-full',
-                        // },
-                    },
-                    {
-                        id: 'warehouse.cn.receipt-mobile',
-                        title: 'Receipt-Mobile',
-                        type: 'basic',
-                        // link: '/follow-up',
-                        // badge: {
-                        //     title: '3',
-                        //     classes: 'px-2 bg-red-600 text-white rounded-full',
-                        // },
-                    },
+                    // {
+                    //     id: 'warehouse.cn.sign',
+                    //     title: 'เซ็นต์รับสินค้า',
+                    //     type: 'basic',
+                    //     // link: '/follow-up',
+                    //     // badge: {
+                    //     //     title: '3',
+                    //     //     classes: 'px-2 bg-red-600 text-white rounded-full',
+                    //     // },
+                    // },
+                    // {
+                    //     id: 'warehouse.cn.receipt-mobile',
+                    //     title: 'Receipt-Mobile',
+                    //     type: 'basic',
+                    //     // link: '/follow-up',
+                    //     // badge: {
+                    //     //     title: '3',
+                    //     //     classes: 'px-2 bg-red-600 text-white rounded-full',
+                    //     // },
+                    // },
                     {
                         id: 'warehouse.cn.lost-owner',
                         title: 'สินค้าไม่ระบุเจ้าของ',
                         type: 'basic',
-                        link: '/follow-up',
+                        // link: '/follow-up',
                         badge: {
                             title: '3',
                             classes: 'px-2 bg-red-600 text-white rounded-full',
                         },
                     },
-                    {
-                        id: 'warehouse.cn.pre-receipt',
-                        title: 'เตรียมรับเข้าโกดัง',
-                        type: 'basic',
-                        // link: '/follow-up',
-                        badge: {
-                            title: '3',
-                            classes: 'px-2 bg-yellow-600 text-white rounded-full',
-                        },
-                    },
+                    // {
+                    //     id: 'warehouse.cn.pre-receipt',
+                    //     title: 'เตรียมรับเข้าโกดัง',
+                    //     type: 'basic',
+                    //     // link: '/follow-up',
+                    //     badge: {
+                    //         title: '3',
+                    //         classes: 'px-2 bg-yellow-600 text-white rounded-full',
+                    //     },
+                    // },
                     {
                         id: 'warehouse.cn.cn',
                         title: 'โกดังจีน',
                         type: 'basic',
-                        // link: '/follow-up',
+                        link: '/delivery_orders',
                         badge: {
                             title: '3',
                             classes: 'px-2 bg-blue-600 text-white rounded-full',
@@ -343,6 +343,16 @@ export const defaultNavigation: FuseNavigationItem[] = [
                     {
                         id: 'warehouse.cn.packinglist',
                         title: 'จัดกระสอบเตรียมขึ้นตู้',
+                        type: 'basic',
+                        link: '/pallet',
+                        badge: {
+                            title: '3',
+                            classes: 'px-2 bg-green-600 text-white rounded-full',
+                        },
+                    },
+                    {
+                        id: 'warehouse.cn.packinglist',
+                        title: 'ขึ้นตู้',
                         type: 'basic',
                         link: '/lot',
                         badge: {
