@@ -340,7 +340,7 @@ export const defaultNavigation: FuseNavigationItem[] = [
                             title: '35',
                             classes: 'px-2 bg-blue-600 text-white rounded-full',
                         },
-                        link : '/delivery-note'
+                        link: '/delivery-note'
                     },
                     {
                         id: 'warehouse.th.prepare-shipment-address',
@@ -360,6 +360,34 @@ export const defaultNavigation: FuseNavigationItem[] = [
                 ],
             }
 
+        ]
+    },
+    {
+        id: 'account',
+        title: 'บัญชี',
+        type: 'collapsable',
+        icon: 'heroicons_outline:banknotes',
+        children: [
+            {
+                id: 'account.bill',
+                title: 'ใบแจ้งหนี้',
+                type: 'basic',
+                link: '/invoice',
+                badge: {
+                    title: '3',
+                    classes: 'px-2 bg-red-600 text-white rounded-full',
+                },
+            },
+            {
+                id: 'account.bill',
+                title: 'ใบส่งสินค้า',
+                type: 'basic',
+                // link: '/delivery-note',
+                badge: {
+                    title: '5',
+                    classes: 'px-2 bg-green-600 text-white rounded-full',
+                },
+            },
         ]
     },
     {
