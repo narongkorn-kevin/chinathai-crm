@@ -611,6 +611,7 @@ export class ScanComponent implements OnInit {
             exitAnimationDuration: 300,
             data: {
                 text: this.data?.code,
+                status: this.data
             },
         });
         DialogRef.afterClosed().subscribe((result) => {

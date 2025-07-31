@@ -235,14 +235,14 @@
                                         <button mat-flat-button [color]="'primary'" (click)="deleteSelected()"
                                             [disabled]="selectedItems.length === 0">
                                             <mat-icon svgIcon="feather:trash"></mat-icon>
-                                            <span class="ml-2">{{ 'delivery_order.form.delete' | transloco }}</span>
+                                            <span class="ml-2">{{ 'dalivery_order.form.delete' | transloco }}</span>
                                         </button>
                                         <button mat-flat-button [color]="'primary'" (click)="showScanner()">
                                             <mat-icon
                                                 [svgIcon]="showScanbarCode ? 'heroicons_solid:x-mark' : 'heroicons_solid:qr-code'"></mat-icon>
                                             <span class="ml-2">
                                                 @if (!showScanbarCode) {
-                                                {{ 'delivery_order.form.scan_camera' | transloco }}
+                                                {{ 'dalivery_order.form.scan_camera' | transloco }}
                                                 }
                                                 @else {
                                                 {{ 'packing_list.scan.close_scanner' | transloco }}
@@ -345,7 +345,7 @@
                                         <thead>
                                             <tr>
                                                 <th class="px-6 py-3 border border-x-0">
-                                                    <mat-checkbox (change)="toggleAllSelection($event.checked)"
+                                                    <mat-checkbox (change)="toggleAllSelection($event.checked)" [color]="'primary'"
                                                         [checked]="isAllSelected()"
                                                         [indeterminate]="isIndeterminate()"></mat-checkbox>
                                                 </th>
@@ -372,7 +372,7 @@
                                             <tr *ngFor="let list of filteredDeliveryOrders; let i = index"
                                                 class="text-center">
                                                 <td class="sticky left-0 z-10 bg-white px-3 py-3 border border-l-0">
-                                                    <mat-checkbox [checked]="selectedItems.includes(list)"
+                                                    <mat-checkbox [checked]="selectedItems.includes(list)" [color]="'primary'"
                                                         (change)="toggleSelection(list, $event.checked)"></mat-checkbox>
                                                 </td>
                                                 <td class="px-6 py-3 border border-x-0">{{ i + 1 }}</td>
