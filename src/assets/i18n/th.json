@@ -37,7 +37,7 @@
         "yuan": "หยวน",
         "baht": "บาท"
     },
-    "dalivery_order": {
+    "delivery_order": {
         "title": {
             "main": "รายการรวมพัสดุ",
             "subtitle": "รายการพัสดุเข้าคลัง/PO"

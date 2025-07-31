@@ -1,0 +1,13 @@
+.barcode-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.barcode-card {
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: center;
+    background: #fff;
+    border-radius: 5px;
+}

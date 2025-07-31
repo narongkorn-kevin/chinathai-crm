@@ -6,18 +6,18 @@
                     <div class="flex space-x-2">
                         <button class="md:text-sm font-medium tracking-tight leading-7 sm:leading-10 truncate"
                             [routerLink]="['/delivery_orders']" routerLinkActive="router-link-active">
-                            {{ 'dalivery_order.title.main' | transloco }}
+                            {{ 'delivery_order.title.main' | transloco }}
                         </button>
                         <p class="md:text-sm font-medium tracking-tight leading-7 sm:leading-10 truncate">></p>
                         <button
                             class="md:text-sm font-medium tracking-tight leading-7 sm:leading-10 truncate text-[#DF0B12]"
                             [routerLink]="['/delivery_orders']" routerLinkActive="router-link-active">
-                            {{ 'dalivery_order.title.subtitle' | transloco }}
+                            {{ 'delivery_order.title.subtitle' | transloco }}
                         </button>
                     </div>
 
                     <p class="md:text-2xl text-[#DF0B12] font-bold tracking-tight leading-7 sm:leading-10 truncate">
-                        {{ 'dalivery_order.setting.standard_settings' | transloco }}
+                        {{ 'delivery_order.setting.standard_settings' | transloco }}
                     </p>
                 </div>
                 <div class="justify-end items-center gap-2 flex flex-col md:flex-row" *ngIf="edit">
@@ -45,7 +45,7 @@
                         <div class="w-full">
                             <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
                                 <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:magnifying-glass'"></mat-icon>
-                                <input matInput class="ml-2" [placeholder]="'dalivery_order.setting.search_with_item' | transloco" formControlName="name">
+                                <input matInput class="ml-2" [placeholder]="'delivery_order.setting.search_with_item' | transloco" formControlName="name">
                             </mat-form-field>
                         </div>
                     </div>
@@ -58,15 +58,15 @@
                             <tr>
                                 <th class="px-6 py-3 tracking-wider border border-l-0 w-10">#</th>
                                 <th class="px-6 py-3 tracking-wider border border-x-0 ">{{
-                                    'dalivery_order.setting.items' | transloco }}</th>
+                                    'delivery_order.setting.items' | transloco }}</th>
                                 <th class="px-6 py-3 tracking-wider border border-x-0 ">{{
-                                    'dalivery_order.setting.width' | transloco }}</th>
+                                    'delivery_order.setting.width' | transloco }}</th>
                                 <th class="px-6 py-3 tracking-wider border border-x-0 ">{{
-                                    'dalivery_order.setting.length' | transloco }}</th>
+                                    'delivery_order.setting.length' | transloco }}</th>
                                 <th class="px-6 py-3 tracking-wider border border-x-0 ">{{
-                                    'dalivery_order.setting.height' | transloco }}</th>
+                                    'delivery_order.setting.height' | transloco }}</th>
                                 <th class="px-6 py-3 tracking-wider border border-x-0 ">{{
-                                    'dalivery_order.setting.weight' | transloco }}</th>
+                                    'delivery_order.setting.weight' | transloco }}</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -91,15 +91,15 @@
                                     <th class="px-6 py-3 tracking-wider border border-x-0 w-10"></th>
                                     <th class="px-6 py-3 tracking-wider border border-l-0 w-10">#</th>
                                     <th class="px-6 py-3 tracking-wider border border-x-0 ">{{
-                                        'dalivery_order.setting.items' | transloco }}</th>
+                                        'delivery_order.setting.items' | transloco }}</th>
                                     <th class="px-6 py-3 tracking-wider border border-x-0 ">{{
-                                        'dalivery_order.setting.width' | transloco }}</th>
+                                        'delivery_order.setting.width' | transloco }}</th>
                                     <th class="px-6 py-3 tracking-wider border border-x-0 ">{{
-                                        'dalivery_order.setting.length' | transloco }}</th>
+                                        'delivery_order.setting.length' | transloco }}</th>
                                     <th class="px-6 py-3 tracking-wider border border-x-0 ">{{
-                                        'dalivery_order.setting.height' | transloco }}</th>
+                                        'delivery_order.setting.height' | transloco }}</th>
                                     <th class="px-6 py-3 tracking-wider border border-x-0 ">{{
-                                        'dalivery_order.setting.weight' | transloco }}</th>
+                                        'delivery_order.setting.weight' | transloco }}</th>
                                 </tr>
                             </thead>
                             <tbody formArrayName="data">

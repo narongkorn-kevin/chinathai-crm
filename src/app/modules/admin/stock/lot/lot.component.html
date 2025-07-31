@@ -169,13 +169,13 @@
 
                     <div class="w-full">
                         <mat-form-field class="w-full" [ngClass]="formFieldHelpers">
-                            <mat-label>{{ 'dalivery_order.labels.shipment' | transloco }}</mat-label>
+                            <mat-label>{{ 'delivery_order.labels.shipment' | transloco }}</mat-label>
                             <mat-select formControlName="transport_by">
-                                <mat-option value="Ship">{{ 'dalivery_order.transport_methods.ship' | transloco
+                                <mat-option value="Ship">{{ 'delivery_order.transport_methods.ship' | transloco
                                     }}</mat-option>
-                                <mat-option value="Car">{{ 'dalivery_order.transport_methods.car' | transloco
+                                <mat-option value="Car">{{ 'delivery_order.transport_methods.car' | transloco
                                     }}</mat-option>
-                                <mat-option value="Train">{{ 'dalivery_order.transport_methods.train' | transloco
+                                <mat-option value="Train">{{ 'delivery_order.transport_methods.train' | transloco
                                     }}</mat-option>
                             </mat-select>
                         </mat-form-field>
@@ -279,47 +279,47 @@
         <!-- เดิม -->
         <div *ngIf="data.status == 'pending'"
             class="px-4 py-1.5 rounded-full text-sm inline-flex items-center justify-center font-medium bg-gray-100 text-gray-700 border border-gray-300">
-            {{ 'dalivery_order.shipment_statuses.pending' | transloco }}
+            {{ 'delivery_order.shipment_statuses.pending' | transloco }}
         </div>
 
         <div *ngIf="data.status == 'sealed'"
             class="px-4 py-1.5 rounded-full text-sm inline-flex items-center justify-center font-medium bg-blue-100 text-blue-700 border border-blue-300">
-            {{ 'dalivery_order.shipment_statuses.sealed' | transloco }}
+            {{ 'delivery_order.shipment_statuses.sealed' | transloco }}
         </div>
 
         <div *ngIf="data.status == 'departed_china'"
             class="px-4 py-1.5 rounded-full text-sm inline-flex items-center justify-center font-medium bg-yellow-100 text-yellow-800 border border-yellow-300">
-            {{ 'dalivery_order.shipment_statuses.departed_china' | transloco }}
+            {{ 'delivery_order.shipment_statuses.departed_china' | transloco }}
         </div>
 
         <div *ngIf="data.status == 'arrived_thailand'"
             class="px-4 py-1.5 rounded-full text-sm inline-flex items-center justify-center font-medium bg-green-100 text-green-800 border border-green-300">
-            {{ 'dalivery_order.shipment_statuses.arrived_thailand' | transloco }}
+            {{ 'delivery_order.shipment_statuses.arrived_thailand' | transloco }}
         </div>
 
         <div *ngIf="data.status == 'arrived_china_warehouse'"
             class="px-4 py-1.5 rounded-full text-sm inline-flex items-center justify-center font-medium bg-gray-50 text-gray-600 border border-gray-200">
-            {{ 'dalivery_order.shipment_statuses.arrived_china_warehouse' | transloco }}
+            {{ 'delivery_order.shipment_statuses.arrived_china_warehouse' | transloco }}
         </div>
 
         <div *ngIf="data.status == 'in_transit'"
             class="px-4 py-1.5 rounded-full text-sm inline-flex items-center justify-center font-medium bg-indigo-50 text-indigo-700 border border-indigo-200">
-            {{ 'dalivery_order.shipment_statuses.in_transit' | transloco }}
+            {{ 'delivery_order.shipment_statuses.in_transit' | transloco }}
         </div>
 
         <div *ngIf="data.status == 'arrived_thailand_warehouse'"
             class="px-4 py-1.5 rounded-full text-sm inline-flex items-center justify-center font-medium bg-gray-200 text-gray-800 border border-gray-300">
-            {{ 'dalivery_order.shipment_statuses.arrived_thailand_warehouse' | transloco }}
+            {{ 'delivery_order.shipment_statuses.arrived_thailand_warehouse' | transloco }}
         </div>
 
         <div *ngIf="data.status == 'awaiting_payment'"
             class="px-4 py-1.5 rounded-full text-sm inline-flex items-center justify-center font-medium bg-orange-100 text-orange-700 border border-orange-300">
-            {{ 'dalivery_order.shipment_statuses.awaiting_payment' | transloco }}
+            {{ 'delivery_order.shipment_statuses.awaiting_payment' | transloco }}
         </div>
 
         <div *ngIf="data.status == 'delivered'"
             class="px-4 py-1.5 rounded-full text-sm inline-flex items-center justify-center font-medium bg-green-50 text-green-700 border border-green-300">
-            {{ 'dalivery_order.shipment_statuses.delivered' | transloco }}
+            {{ 'delivery_order.shipment_statuses.delivered' | transloco }}
         </div>
 
         <!-- เพิ่มตาม mat-option -->

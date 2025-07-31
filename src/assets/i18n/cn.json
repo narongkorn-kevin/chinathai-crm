@@ -36,7 +36,7 @@
         "yuan": "元",
         "baht": "铢"
     },
-    "dalivery_order": {
+    "delivery_order": {
         "title": {
             "main": "包裹汇总清单",
             "subtitle": "仓库入库/采购订单清单"

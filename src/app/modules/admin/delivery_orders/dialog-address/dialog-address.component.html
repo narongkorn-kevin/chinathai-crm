@@ -2,28 +2,28 @@
     <div class="flex items-center">
         <div class="bg-white rounded-lg w-full">
             <div class="flex justify-start">
-                <h2 class="text-xl mb-4 font-bold text-black">{{ 'dalivery_order.dialog_address.pay_on_receipt_and_sender' | transloco }}</h2>
+                <h2 class="text-xl mb-4 font-bold text-black">{{ 'delivery_order.dialog_address.pay_on_receipt_and_sender' | transloco }}</h2>
             </div>
 
             <form [formGroup]="form" class="overflow-y-auto border-b border-gray-300">
                 <div class="flex flex-col md:flex-row w-full gap-2">
                     <div class="w-full">
                         <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
-                            <mat-label>{{ 'dalivery_order.dialog_address.customer_name' | transloco }}</mat-label>
-                            <input matInput [placeholder]="'dalivery_order.dialog_address.customer_name' | transloco" formControlName="name" appUppercaseEnglish>
+                            <mat-label>{{ 'delivery_order.dialog_address.customer_name' | transloco }}</mat-label>
+                            <input matInput [placeholder]="'delivery_order.dialog_address.customer_name' | transloco" formControlName="name" appUppercaseEnglish>
                         </mat-form-field>
                     </div>
                     <div class="w-full">
                         <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
-                            <mat-label>{{ 'dalivery_order.dialog_address.contact_phone' | transloco }}</mat-label>
-                            <input matInput [placeholder]="'dalivery_order.dialog_address.contact_phone' | transloco" formControlName="phone" appUppercaseEnglish>
+                            <mat-label>{{ 'delivery_order.dialog_address.contact_phone' | transloco }}</mat-label>
+                            <input matInput [placeholder]="'delivery_order.dialog_address.contact_phone' | transloco" formControlName="phone" appUppercaseEnglish>
                         </mat-form-field>
                     </div>
                 </div>
                 <div class="w-full">
                     <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
-                        <mat-label>{{ 'dalivery_order.dialog_address.shipping_address' | transloco }}</mat-label>
-                        <textarea matInput [placeholder]="'dalivery_order.dialog_address.shipping_address' | transloco" formControlName="address" [rows]="4" appUppercaseEnglish></textarea>
+                        <mat-label>{{ 'delivery_order.dialog_address.shipping_address' | transloco }}</mat-label>
+                        <textarea matInput [placeholder]="'delivery_order.dialog_address.shipping_address' | transloco" formControlName="address" [rows]="4" appUppercaseEnglish></textarea>
                     </mat-form-field>
                 </div>
             </form>
