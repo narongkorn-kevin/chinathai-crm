@@ -54,53 +54,57 @@ import { DialogQRCodeComponent } from 'app/modules/common/dialog-qrcode/dialog-q
 import { debounceTime } from 'rxjs/operators';
 import { DialogEditPriceComponent } from '../dialog-edtr-price/dialog-edit-price.component';
 
+import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
+import { calculateCBM } from 'app/helper';
+
 @Component({
     selector: 'app-invoice-view',
     standalone: true,
     templateUrl: './view.component.html',
     styleUrl: './view.component.scss',
     imports: [
-    CommonModule,
-    DataTablesModule,
-    MatIconModule,
-    MatFormFieldModule,
-    MatInputModule,
-    FormsModule,
-    MatToolbarModule,
-    MatButtonModule,
-    MatSelectModule,
-    ReactiveFormsModule,
-    MatInputModule,
-    MatFormFieldModule,
-    MatRadioModule,
-    MatFormFieldModule,
-    MatDatepickerModule,
-    MatDivider,
-    RouterLink,
-    SelectMemberComponent,
-    CdkMenuModule,
-],
-animations: [
-    trigger('slideToggleFilter', [
-        state(
-            'open',
-            style({
-                height: '*',
-                opacity: 1,
-                overflow: 'hidden',
-            })
-        ),
-        state(
-            'closed',
-            style({
-                height: '0px',
-                opacity: 0,
-                overflow: 'hidden',
-            })
-        ),
-        transition('open <=> closed', [animate('300ms ease-in-out')]),
-    ]),
-],
+        TranslocoModule,
+        CommonModule,
+        DataTablesModule,
+        MatIconModule,
+        MatFormFieldModule,
+        MatInputModule,
+        FormsModule,
+        MatToolbarModule,
+        MatButtonModule,
+        MatSelectModule,
+        ReactiveFormsModule,
+        MatInputModule,
+        MatFormFieldModule,
+        MatRadioModule,
+        MatFormFieldModule,
+        MatDatepickerModule,
+        MatDivider,
+        RouterLink,
+        SelectMemberComponent,
+        CdkMenuModule,
+    ],
+    animations: [
+        trigger('slideToggleFilter', [
+            state(
+                'open',
+                style({
+                    height: '*',
+                    opacity: 1,
+                    overflow: 'hidden',
+                })
+            ),
+            state(
+                'closed',
+                style({
+                    height: '0px',
+                    opacity: 0,
+                    overflow: 'hidden',
+                })
+            ),
+            transition('open <=> closed', [animate('300ms ease-in-out')]),
+        ]),
+    ],
 })
 export class ViewComponent implements OnInit {
     formFieldHelpers: string[] = ['fuse-mat-dense'];
@@ -109,7 +113,7 @@ export class ViewComponent implements OnInit {
     Id: number;
     data: any;
     lists = [];
-    filteredDeliveryOrders: any[] = [{delivery_order:'test'}]; // Add a new property to store filtered delivery orders
+    filteredDeliveryOrders: any[] = [{ delivery_order: 'test' }]; // Add a new property to store filtered delivery orders
 
     constructor(
         private FormBuilder: FormBuilder,
@@ -118,11 +122,12 @@ export class ViewComponent implements OnInit {
         private toastr: ToastrService,
         private _router: Router,
         private activated: ActivatedRoute,
-        public dialog: MatDialog,
+        public dialog: MatDialog
     ) {
         this.type = this.activated.snapshot.data.type;
         this.Id = this.activated.snapshot.params.id;
         this.data = this.activated.snapshot.data.data?.data;
+        console.log(this.data, 'data');
     }
     ngOnInit(): void {
         this.filterForm = this.FormBuilder.group({
@@ -131,32 +136,32 @@ export class ViewComponent implements OnInit {
             code: [''],
             sack_code: [''],
         });
-        this.filteredDeliveryOrders = this.data.delivery_orders;
+        this.filteredDeliveryOrders = this.data.bill_lists;
 
-        this.filterForm.get('in_store').valueChanges.pipe(
-            debounceTime(500)
-        ).subscribe(value => {
-            if(this.filterForm.get('in_store').value !== null) {
-                this.filteredDeliveryOrders = this.data.delivery_orders.filter(order =>
-                    order.delivery_order.code.includes(value)
-                );
-            }
-        });
-
+        this.filterForm
+            .get('in_store')
+            .valueChanges.pipe(debounceTime(500))
+            .subscribe((value) => {
+                if (this.filterForm.get('in_store').value !== null) {
+                    this.filteredDeliveryOrders =
+                        this.data.delivery_orders.filter((order) =>
+                            order.delivery_order.code.includes(value)
+                        );
+                }
+            });
     }
 
     getShipmentMethod(shippedBy: string): string {
-        if (shippedBy === 'Car') {
+        if (shippedBy === 'Car' || shippedBy === 'car') {
             return 'ขนส่งทางรถ';
-        } else if (shippedBy === 'Ship') {
+        } else if (shippedBy === 'Ship' || shippedBy === 'ship') {
             return 'ขนส่งทางเรือ';
-        } else if (shippedBy === 'Train') {
+        } else if (shippedBy === 'Train' || shippedBy === 'train') {
             return 'ขนส่งทางรถไฟ';
         } else {
             return '-';
         }
     }
-
 
     filterForm: FormGroup;
     showFilterForm: boolean = false;
@@ -168,11 +173,17 @@ export class ViewComponent implements OnInit {
 
     applyFilter() {
         const { code, member_id, sack_code } = this.filterForm.value;
-        this.filteredDeliveryOrders = this.data.delivery_orders.filter(order => {
-            return (!code || order.delivery_order.code.includes(code)) &&
-                   (!member_id || order.delivery_order.member_id.includes(member_id)) &&
-                   (!sack_code || order.delivery_order.sack_code.includes(sack_code));
-        });
+        this.filteredDeliveryOrders = this.data.delivery_orders.filter(
+            (order) => {
+                return (
+                    (!code || order.delivery_order.code.includes(code)) &&
+                    (!member_id ||
+                        order.delivery_order.member_id.includes(member_id)) &&
+                    (!sack_code ||
+                        order.delivery_order.sack_code.includes(sack_code))
+                );
+            }
+        );
     }
 
     clearFilter() {
@@ -183,20 +194,18 @@ export class ViewComponent implements OnInit {
     edit() {
         this._router.navigate(['/invoice/edit/' + this.Id]);
     }
-    print(){
+    print() {
         console.log('print');
     }
 
-    opendialogeditprice(){
-       const DialogRef = this.dialog.open(DialogEditPriceComponent, {
+    opendialogeditprice(id: any) {
+        const DialogRef = this.dialog.open(DialogEditPriceComponent, {
             disableClose: true,
             width: '50%',
             maxHeight: '90vh',
             enterAnimationDuration: 300,
             exitAnimationDuration: 300,
-            data: {
-
-            },
+            data: { id: id},
         });
         DialogRef.afterClosed().subscribe((result) => {
             if (result) {
@@ -204,5 +213,16 @@ export class ViewComponent implements OnInit {
                 // this.rerender();
             }
         });
+    }
+
+    calculateCBM(data: any) {
+    const cbm = calculateCBM(
+            +data.width,
+            +data.height,
+            +data.long,
+            1
+        );
+        return cbm ? cbm.toFixed(4) : '0.00';
+
     }
 }
