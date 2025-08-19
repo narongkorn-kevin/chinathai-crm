@@ -113,8 +113,6 @@ export class DialogForm implements OnInit {
     uploadedFiles: UploadedFile[] = [];
     protected _onDestroy = new Subject<void>();
 
-
-
     constructor(
         private translocoService: TranslocoService,
         private dialogRef: MatDialogRef<DialogForm>,

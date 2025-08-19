@@ -23,7 +23,7 @@ export default [
         path: 'view/:id',
         component: ViewComponent,
         resolve: {
-            data: (route) => inject(DeliveryNoteService).get(route.params['id']),
+            data: (route) => inject(DeliveryNoteService).getDeliveryInThaiControlById(route.params['id']),
         }
     },
     {

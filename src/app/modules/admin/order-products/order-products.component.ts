@@ -361,7 +361,7 @@ export class OrderProductsComponent implements OnInit, AfterViewInit {
                     data: 'total_price',
                     className: 'text-center',
                     render: function (data, type, row) {
-                        return parseFloat(data).toFixed(4);
+                        return parseFloat(data).toFixed(2);
                     },
                 },
                 {
@@ -373,7 +373,7 @@ export class OrderProductsComponent implements OnInit, AfterViewInit {
                         if (data === null || data === undefined) {
                             return '0.00';
                         }
-                        return parseFloat(data).toFixed(4);
+                        return parseFloat(data).toFixed(2);
                     }
                 },
                 {

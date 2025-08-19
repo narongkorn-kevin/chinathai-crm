@@ -20,6 +20,8 @@ export class PictureComponent implements OnInit, OnDestroy {
         // private _service: BriefPlanService,
         private _matDialogRef: MatDialogRef<PictureComponent>
     ) {
+        console.log(this._data, 'data');
+
     }
 
     // -----------------------------------------------------------------------------------------------------
@@ -44,6 +46,13 @@ export class PictureComponent implements OnInit, OnDestroy {
         this._unsubscribeAll.complete();
     }
 
+    setImage(url: string) {
+        this.imgSelected = url.startsWith('//') ? 'https:' + url : url;
+    }
+
+    onImgError(event: Event) {
+        (event.target as HTMLImageElement).src = 'assets/images/empty.png'; // fallback image
+    }
     // -----------------------------------------------------------------------------------------------------
     // @ Public methods
     // -----------------------------------------------------------------------------------------------------
