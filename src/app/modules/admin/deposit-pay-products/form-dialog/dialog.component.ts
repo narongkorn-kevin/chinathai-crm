@@ -102,7 +102,7 @@ export class DialogForm implements OnInit {
         { id: 2, name: 'นาย B' },
     ];
     types: any[] = [
-        { id: 1, name: 'เติม Aliplay' },
+        { id: 1, name: 'เติม alipay' },
         { id: 2, name: 'เติม Wechat pay' },
     ];
 

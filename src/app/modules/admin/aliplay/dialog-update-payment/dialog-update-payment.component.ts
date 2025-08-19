@@ -23,7 +23,7 @@ import { UploadedFile } from '../form-dialog/dialog.component';
 import { MatDivider } from '@angular/material/divider';
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { environment } from 'environments/environment';
-import { AliplayService } from '../aliplay.service';
+import { AlipayService } from '../alipay.service';
 @Component({
     selector: 'app-dialog-update-payment-new-product-form-addressed-2',
     standalone: true,
@@ -67,7 +67,7 @@ export class DialogUpdatePaymentComponent implements OnInit {
         private fuseConfirmationService: FuseConfirmationService,
         private toastr: ToastrService,
         private service: OrderProductsService,
-        private _service: AliplayService
+        private _service: AlipayService
     ) {
         console.log(this.data, 'data');
 

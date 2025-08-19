@@ -377,6 +377,8 @@ export class OrderCreateComponent implements OnInit, AfterViewInit {
             .subscribe(
                 (data) => {
                     this.dataSource = new MatTableDataSource(data);
+                    console.log(this.dataSource, 'data');
+                    
                 },
                 (error) => {
                     console.error('Error fetching data:', error);

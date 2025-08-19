@@ -171,7 +171,7 @@ export const defaultNavigation: FuseNavigationItem[] = [
                 id: 'payment.topup',
                 title: 'เติมเงิน',
                 type: 'basic',
-                // link: '/follow-up',
+                link: '/alipay',
                 badge: {
                     title: '3',
                     classes: 'px-2 bg-red-600 text-white rounded-full',

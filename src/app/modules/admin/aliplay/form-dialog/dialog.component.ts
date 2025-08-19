@@ -30,7 +30,7 @@ import { MatInputModule } from '@angular/material/input';
 import { FuseConfirmationService } from '@fuse/services/confirmation';
 import { ToastrService } from 'ngx-toastr';
 import { MatRadioModule } from '@angular/material/radio';
-import { AliplayService } from '../aliplay.service';
+import { AlipayService } from '../alipay.service';
 import { createFileFromBlob } from 'app/modules/shared/helper';
 import { MatDivider } from '@angular/material/divider';
 export interface UploadedFile {
@@ -42,6 +42,7 @@ export interface UploadedFile {
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { OrderProductsService } from '../../order-products/order-products.service';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
 
 @Component({
     selector: 'app-alipaly-form-dialog',
@@ -68,11 +69,14 @@ import { MatAutocompleteModule } from '@angular/material/autocomplete';
         MatFormFieldModule,
         MatRadioModule,
         MatDivider,
-        MatAutocompleteModule
+        MatAutocompleteModule,
+        NgxMatSelectSearchModule
     ],
 })
 export class DialogForm implements OnInit {
     form: FormGroup;
+
+    
     stores: any[] = [];
     formFieldHelpers: string[] = ['fuse-mat-dense'];
     dtOptions: DataTables.Settings = {};
@@ -101,21 +105,25 @@ export class DialogForm implements OnInit {
         { id: 2, name: 'นาย B' },
     ];
     types: any[] = [
-        { id: 1, name: 'เติม Aliplay' },
+        { id: 3, name: 'โอนเงินธนาคาร' },
+        { id: 1, name: 'เติม alipay' },
         { id: 2, name: 'เติม Wechat pay' },
     ];
 
     uploadedFiles: UploadedFile[] = [];
     protected _onDestroy = new Subject<void>();
+
+
+
     constructor(
         private translocoService: TranslocoService,
         private dialogRef: MatDialogRef<DialogForm>,
         @Inject(MAT_DIALOG_DATA) public data: any,
         public dialog: MatDialog,
         private FormBuilder: FormBuilder,
-        public _service: AliplayService,
+        public _service: AlipayService,
         private fuseConfirmationService: FuseConfirmationService,
-        private userService: AliplayService,
+        private userService: AlipayService,
         private toastr: ToastrService,
         private service: OrderProductsService,
     ) {
@@ -136,6 +144,8 @@ export class DialogForm implements OnInit {
             image_slip_url: [null],
             total_price: [0],
         });
+
+        
 
         this._service
             .getMember()

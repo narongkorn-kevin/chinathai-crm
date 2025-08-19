@@ -30,7 +30,6 @@ import { MatInputModule } from '@angular/material/input';
 import { FuseConfirmationService } from '@fuse/services/confirmation';
 import { ToastrService } from 'ngx-toastr';
 import { MatRadioModule } from '@angular/material/radio';
-import { AliplayService } from '../aliplay.service';
 import { createFileFromBlob } from 'app/modules/shared/helper';
 import { MatDivider } from '@angular/material/divider';
 import { MatDatepickerModule } from '@angular/material/datepicker';
@@ -42,6 +41,7 @@ export interface UploadedFile {
 }
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { OrderProductsService } from '../../order-products/order-products.service';
+import { AlipayService } from '../alipay.service';
 
 @Component({
     selector: 'app-member-form-view-3',
@@ -87,9 +87,9 @@ export class ViewComponent implements OnInit {
         @Inject(MAT_DIALOG_DATA) public data: any,
         public dialog: MatDialog,
         private FormBuilder: FormBuilder,
-        public _service: AliplayService,
+        public _service: AlipayService,
         private fuseConfirmationService: FuseConfirmationService,
-        private userService: AliplayService,
+        private userService: AlipayService,
         private toastr: ToastrService,
         private service: OrderProductsService,
     ) {

@@ -22,7 +22,6 @@ import { DialogRef } from '@angular/cdk/dialog';
 import { MatDialog } from '@angular/material/dialog';
 import { Router, RouterLink } from '@angular/router';
 import { ProductComposeComponent } from '../product/dialog/product-compose/product-compose.component';
-import { AliplayService } from './aliplay.service';
 import { DialogForm } from './form-dialog/dialog.component';
 import {
     FormArray,
@@ -50,9 +49,10 @@ import { ExportService } from 'app/modules/shared/export.service';
 import { DialogUpdatePaymentComponent } from './dialog-update-payment/dialog-update-payment.component';
 import { PictureComponent } from 'app/modules/shared/picture/picture.component';
 import { DateTime } from 'luxon';
+import { AlipayService } from './alipay.service';
 
 @Component({
-    selector: 'app-aliplay',
+    selector: 'app-alipay',
     standalone: true,
     imports: [
         TranslocoModule,
@@ -96,11 +96,11 @@ import { DateTime } from 'luxon';
             transition('open <=> closed', [animate('300ms ease-in-out')]),
         ]),
     ],
-    templateUrl: './aliplay.component.html',
-    styleUrl: './aliplay.component.scss',
+    templateUrl: './alipay.component.html',
+    styleUrl: './alipay.component.scss',
     changeDetection: ChangeDetectionStrategy.Default,
 })
-export class AliplayComponent implements OnInit, AfterViewInit {
+export class AlipayComponent implements OnInit, AfterViewInit {
     dtOptions: any = {};
     dtTrigger: Subject<ADTSettings> = new Subject<ADTSettings>();
     formFieldHelpers: string[] = ['fuse-mat-dense'];
@@ -120,7 +120,7 @@ export class AliplayComponent implements OnInit, AfterViewInit {
     @ViewChild('tableElement') tableElement!: ElementRef;
     constructor(
         private translocoService: TranslocoService,
-        private _service: AliplayService,
+        private _service: AlipayService,
         private fuseConfirmationService: FuseConfirmationService,
         private toastr: ToastrService,
         public dialog: MatDialog,
@@ -340,27 +340,27 @@ export class AliplayComponent implements OnInit, AfterViewInit {
                 {
                     title: menuTitles.customer[this.langues],
                     data: 'fullname',
-                    defaultContent: '',
+                    defaultContent: '-',
                     className: '',
                 },
                 {
                     title: menuTitles.amount_due[this.langues],
                     data: 'total',
                     defaultContent: '',
-                    className: 'text-center', // เพิ่ม class จัดตำแหน่งถ้าต้องการ
+                    className: 'text-right', // เพิ่ม class จัดตำแหน่งถ้าต้องการ
                     render: function (data, type, row) {
                         const value = parseFloat(data);
-                        return isNaN(value) ? '0.00' : value.toFixed(4);
+                        return isNaN(value) ? '0.00' : value.toFixed(2);
                     }
                 },
                 {
                     title: menuTitles.transfer_amount[this.langues],
                     data: 'amount',
                     defaultContent: '',
-                    className: '',
+                    className: 'text-right',
                     render: function (data, type, row) {
                         const value = parseFloat(data);
-                        return isNaN(value) ? '0.00' : value.toFixed(4);
+                        return isNaN(value) ? '0.00' : value.toFixed(2);
                     }
                 },
                 {
@@ -381,26 +381,26 @@ export class AliplayComponent implements OnInit, AfterViewInit {
                 {
                     title: menuTitles.remark[this.langues],
                     data: 'note',
-                    defaultContent: '',
+                    defaultContent: '-',
                     className: '',
                 },
-                {
-                    title: menuTitles.alipay_qrcode[this.langues],
-                    data: null,
-                    defaultContent: '',
-                    className: '',
-                    ngTemplateRef: {
-                        ref: this.pic_qr
-                    },
-                },
-                {
-                    title: menuTitles.alipay_evidence[this.langues],
-                    data: null,
-                    defaultContent: '',
-                    ngTemplateRef: {
-                        ref: this.pic_url,
-                    },
-                },
+                // {
+                //     title: menuTitles.alipay_qrcode[this.langues],
+                //     data: null,
+                //     defaultContent: '',
+                //     className: '',
+                //     ngTemplateRef: {
+                //         ref: this.pic_qr
+                //     },
+                // },
+                // {
+                //     title: menuTitles.alipay_evidence[this.langues],
+                //     data: null,
+                //     defaultContent: '',
+                //     ngTemplateRef: {
+                //         ref: this.pic_url,
+                //     },
+                // },
                 {
                     title: menuTitles.status[this.langues],
                     data: 'status',

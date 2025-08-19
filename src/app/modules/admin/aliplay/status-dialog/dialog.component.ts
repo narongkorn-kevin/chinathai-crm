@@ -30,7 +30,7 @@ import { MatInputModule } from '@angular/material/input';
 import { FuseConfirmationService } from '@fuse/services/confirmation';
 import { ToastrService } from 'ngx-toastr';
 import { MatRadioModule } from '@angular/material/radio';
-import { AliplayService } from '../aliplay.service';
+import { AlipayService } from '../alipay.service';
 import { createFileFromBlob } from 'app/modules/shared/helper';
 import { MatDivider } from '@angular/material/divider';
 export interface UploadedFile {
@@ -90,9 +90,9 @@ export class DialogStatus implements OnInit {
         @Inject(MAT_DIALOG_DATA) public data: any,
         public dialog: MatDialog,
         private FormBuilder: FormBuilder,
-        public _service: AliplayService,
+        public _service: AlipayService,
         private fuseConfirmationService: FuseConfirmationService,
-        private userService: AliplayService,
+        private userService: AlipayService,
         private toastr: ToastrService
     ) {
         console.log(' this.form', this.data);

@@ -1369,7 +1369,7 @@
         "status": "状态",
         "tranfer": "描述语言",
         "record_payment": "记录付款",
-        "topup_aliplay": "充值ALiPLAY",
+        "topup_alipay": "充值alipay",
         "update_status": "更新状态",
         "dialog_update_payment": {
             "record_payment": "记录收款",
@@ -1421,13 +1421,13 @@
         }
         
     },
-    "aliplay": {
+    "alipay": {
         "service": "服务",
-        "topup_aliplay": "充值ALiPAY",
+        "topup_alipay": "充值ALiPAY",
         "date": "日期",
-        "search_by_aliplay_code": "按ALIPLAY充值码搜索",
-        "search_by_aliplay_name": "按客户名称搜索",
-        "aliplay_code": "ALIPLAY充值码",
+        "search_by_alipay_code": "按alipay充值码搜索",
+        "search_by_alipay_name": "按客户名称搜索",
+        "alipay_code": "alipay充值码",
         "customer": "客户",
         "status": "状态",
         "record_payment": "记录付款",
@@ -1437,7 +1437,7 @@
             "customer": "客户",
             "transaction_type": "交易类型",
             "transfer_amount": "转账金额",
-            "aliplay_service_fee": "ALiPAY充值服务费",
+            "alipay_service_fee": "ALiPAY充值服务费",
             "reference_phone": "参考电话号码",
             "upload_payment_channel": "上传支付渠道图片"
         },

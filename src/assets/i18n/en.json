@@ -1370,7 +1370,7 @@
         "tranfer": "Description",
         "status": "Status",
         "record_payment": "Record Payment",
-        "topup_aliplay": "Top Up ALiPLAY",
+        "topup_alipay": "Top Up alipay",
         "update_status": "Update Status",
         "dialog_update_payment": {
             "record_payment": "Record Payment Receipt",
@@ -1421,13 +1421,13 @@
             "cancelled": "Cancelled/Failed"
         }
     },
-    "aliplay": {
+    "alipay": {
         "service": "Service",
-        "topup_aliplay": "Top Up ALiPAY",
+        "topup_alipay": "Top Up ALiPAY",
         "date": "Date",
-        "search_by_aliplay_code": "Search by ALIPLAY Top-up Code",
-        "search_by_aliplay_name": "Search by Customer name",
-        "aliplay_code": "ALIPLAY Top-up Code",
+        "search_by_alipay_code": "Search by alipay Top-up Code",
+        "search_by_alipay_name": "Search by Customer name",
+        "alipay_code": "alipay Top-up Code",
         "customer": "Customer",
         "status": "Status",
         "record_payment": "Record Payment",
@@ -1437,7 +1437,7 @@
             "customer": "Customer",
             "transaction_type": "Transaction Type",
             "transfer_amount": "Transfer Amount",
-            "aliplay_service_fee": "ALiPAY Top-up Service Fee",
+            "alipay_service_fee": "ALiPAY Top-up Service Fee",
             "reference_phone": "Reference Phone Number",
             "upload_payment_channel": "Upload Payment Channel Image"
         },

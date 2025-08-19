@@ -1,13 +1,13 @@
 <div class="overflow-y-auto flex flex-col w-full">
     <div class="flex flex-row items-start justify-between w-full">
         <h1 mat-dialog-title class="px-0 pb-1 mb-2 text-xl font-semibold">
-            {{ 'aliplay.status_dialog.update_status' | transloco }}</h1>
+            {{ 'alipay.status_dialog.update_status' | transloco }}</h1>
     </div>
     <!-- <h1 mat-dialog-title class="mb-4 text-xl font-semibold" *ngIf="this.data?.type === 'EDIT'">แก้ไขค่าบริการ</h1> -->
     <form [formGroup]="form" class="flex flex-col w-full overflow-scroll">
         <div mat-dialog-content class="px-0 overflow-y-auto border-t-2 md:max-h-180">
             <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
-                <mat-label>{{ 'aliplay.status_dialog.select_status' | transloco }}</mat-label>
+                <mat-label>{{ 'alipay.status_dialog.select_status' | transloco }}</mat-label>
                 <mat-select formControlName="status">
                     <mat-option *ngFor="let item of status" [value]="item.value">{{ item.name }}</mat-option>
                 </mat-select>

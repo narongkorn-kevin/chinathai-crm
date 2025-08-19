@@ -8,7 +8,7 @@ import { environment } from 'environments/environment';
 @Injectable({
     providedIn: 'root',
 })
-export class AliplayService {
+export class AlipayService {
     private _categories: BehaviorSubject<any[] | null> = new BehaviorSubject(
         null
     );

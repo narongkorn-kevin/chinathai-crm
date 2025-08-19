@@ -1362,7 +1362,7 @@
         "tranfer": "รายละเอียด",
         "status": "สถานะ",
         "record_payment": "บันทึกชำระเงิน",
-        "topup_aliplay": "เติม ALiPLAY",
+        "topup_alipay": "เติม alipay",
         "product_deposit_fee": "ฝากชำระค่าสินค้า",
         "update_status": "อัปเดตสถานะ",
         "dialog_update_payment": {
@@ -1414,13 +1414,13 @@
             "cancelled": "ยกเลิก/ล้มเหลว"
         }
     },
-    "aliplay": {
+    "alipay": {
         "service": "บริการ",
-        "topup_aliplay": "เติม ALiPAY",
+        "topup_alipay": "เติม ALiPAY",
         "date": "วันที่",
-        "search_by_aliplay_code": "ค้นหาด้วย รหัสเติม ALIPLAY",
-        "search_by_aliplay_name": "ค้นหาด้วย ชื่อลูกค้า",
-        "aliplay_code": "รหัสเติม ALIPLAY",
+        "search_by_alipay_code": "ค้นหาด้วย รหัสเติม alipay",
+        "search_by_alipay_name": "ค้นหาด้วย ชื่อลูกค้า",
+        "alipay_code": "รหัสเติม alipay",
         "customer": "ลูกค้า",
         "status": "สถานะ",
         "record_payment": "บันทึกชำระเงิน",
@@ -1430,7 +1430,7 @@
             "customer": "ลูกค้า",
             "transaction_type": "ธุรกรรมที่ทำ",
             "transfer_amount": "ยอดเงินที่ต้องการโอน",
-            "aliplay_service_fee": "ค่าธรรมเนียมบริการเติม ALiPAY",
+            "alipay_service_fee": "ค่าธรรมเนียมบริการเติม ALiPAY",
             "reference_phone": "เบอร์โทรศัพท์อ้างอิง",
             "upload_payment_channel": "อัปโหลดรูปภาพช่องทางการชำระเงิน"
         },

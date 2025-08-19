@@ -1,126 +1,138 @@
 <div class="overflow-y-auto flex flex-col w-full">
-    <div class="flex flex-row items-start justify-between w-full">
+    <div class="flex items-start justify-between w-full">
         <h1 mat-dialog-title class="px-0 pb-1 mb-2 text-xl font-semibold">
-            {{ 'aliplay.form_dialog.add_item' | transloco }}</h1>
+            {{ 'alipay.form_dialog.add_item' | transloco }}
+        </h1>
     </div>
-    <!-- <h1 mat-dialog-title class="mb-4 text-xl font-semibold" *ngIf="this.data?.type === 'EDIT'">แก้ไขค่าบริการ</h1> -->
+
     <form [formGroup]="form" class="flex flex-col w-full">
         <div mat-dialog-content class="px-0 border-t-2 md:max-h-180">
-             <!-- Customer -->
-             <mat-form-field [ngClass]="formFieldHelpers" class="w-full md:w-4/4">
+            <!-- Customer -->
+            <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
                 <mat-label>{{ 'import_produst_order.order_creat.customer' | transloco }}</mat-label>
-                <input matInput [formControl]="memberFilter" [matAutocomplete]="memberAutoComplete"
-                    [placeholder]="'deposit_pay_products.form_dialog.customer' | transloco" />
-                <mat-autocomplete #memberAutoComplete="matAutocomplete"
-                    (optionSelected)="onSelectMember($event.option.value)">
-                    <mat-option *ngFor="let item of filterMember | async" [value]="item">
-                        {{item.fullname}}
+                <mat-select formControlName="member_id">
+                    <mat-option>
+                        <ngx-mat-select-search [formControl]="memberFilter" [placeholderLabel]="'ค้นหาลูกค้า'"
+                            noEntriesFoundLabel="ไม่พบข้อมูล">
+                        </ngx-mat-select-search>
                     </mat-option>
-                </mat-autocomplete>
+                    <mat-option *ngFor="let m of filterMember | async;" [value]="m.id">
+                        {{ m.fullname }}
+                    </mat-option>
+                </mat-select>
             </mat-form-field>
-            <div class="flex flex-col w-full">
-                <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
-                    <mat-label>{{ 'aliplay.form_dialog.transaction_type' | transloco }}</mat-label>
-                    <mat-select formControlName="transaction">
-                        <mat-option *ngFor="let type of types" [value]="type.name">{{ type.name}}</mat-option>
-                    </mat-select>
-                </mat-form-field>
-            </div>
-            <div class="flex flex-row w-full gap-2">
-                <div class="flex flex-col w-full">
-                    <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
-                        <mat-label>{{ 'aliplay.form_dialog.transfer_amount' | transloco }}</mat-label>
-                        <input matInput [placeholder]="''" formControlName="amount">
-                        <span matSuffix>{{ 'lables.yuan' | transloco }}</span>
-                    </mat-form-field>
-                </div>
-            </div>
-            <div class="flex flex-row w-full gap-2">
-                <div class="flex flex-col w-full">
-                    <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
-                        <mat-label>{{ 'aliplay.form_dialog.aliplay_service_fee' | transloco }}</mat-label>
-                        <input matInput [placeholder]="''" formControlName="fee">
-                        <span matSuffix>{{ 'lables.yuan' | transloco }}</span>
-                    </mat-form-field>
-                </div>
-            </div>
-            <div class="flex flex-col w-full">
-                <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
-                    <mat-label>{{ 'aliplay.form_dialog.reference_phone' | transloco }}</mat-label>
-                    <input matInput [placeholder]="''" formControlName="phone">
-                </mat-form-field>
-            </div>
-        </div>
-        <div class="flex flex-row items-start justify-between w-full border-t-2">
-            <h1 mat-dialog-title class="px-0 pb-1 mb-2 text-xl font-semibold">{{
-                'aliplay.form_dialog.upload_payment_channel' | transloco }}</h1>
-        </div>
-        <div class="flex flex-row w-full gap-4">
-            <div class="flex flex-col w-1/2">
-                <div class="md:w-full">
-                    <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
-                        <!-- <mat-label>วางลิ้งของคุณที่นี่</mat-label> -->
-                        <input matInput [placeholder]="'lables.paste_your_link' | transloco "
-                            formControlName="image_url">
-                    </mat-form-field>
-                </div>
-            </div>
-            <div class="flex items-center">
-                <p>{{ 'lables.or' | transloco }}</p>
-            </div>
-            <div class="flex flex-col w-1/2">
-                <div class="md:w-full">
-                    <!-- การลากไฟล์หรือเลือกไฟล์ -->
-                    <label for="fileInput"
-                        class="block p-4 text-sm text-center text-gray-600 bg-gray-100 border-2 border-red-500 border-dashed rounded-lg cursor-pointer">
-                        {{ 'lables.drag_or_select_file' | transloco }}
-                        <span class="font-medium text-red-500">{{ 'lables.select_from_existing' | transloco }}</span>
-                        <input type="file" id="fileInput" class="hidden" (change)="onFilesSelected($event)" />
-                    </label>
-                </div>
-            </div>
-        </div>
-        <div class="flex flex-row w-full gap-4 mt-2">
-            <div class="flex flex-col w-full">
-                <div class="w-full">
-                    <!-- แสดงไฟล์ที่เลือก -->
-                    <div *ngIf="uploadedFiles.length > 0" class="space-y-4">
-                        <div *ngFor="let file of uploadedFiles; let i = index"
-                            class="flex items-center p-4 space-x-4 border border-gray-300 rounded-lg bg-gray-50">
-                            <!-- รูปตัวอย่าง -->
-                            <img [src]="file.imagePreview" alt="Preview"
-                                class="object-cover w-16 h-16 border border-gray-300 rounded-md" />
 
-                            <!-- รายละเอียดไฟล์ -->
-                            <div class="flex-1">
-                                <p class="text-sm font-medium text-gray-700 truncate">{{ file.name }}</p>
-                                <p class="text-xs text-gray-500">{{ file.size }} kb</p>
-                            </div>
+            <!-- Transaction type -->
+            <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                <mat-label>{{ 'alipay.form_dialog.transaction_type' | transloco }}</mat-label>
+                <mat-select formControlName="transaction">
+                    <mat-option *ngFor="let t of types" [value]="t.name">
+                        {{ t.name }}
+                    </mat-option>
+                </mat-select>
+                <mat-error *ngIf="form.controls.transaction.hasError('required')">
+                    {{ 'errors.required' | transloco }}
+                </mat-error>
+            </mat-form-field>
 
-                            <!-- ปุ่มลบ -->
-                            <button
-                                class="flex items-center justify-center w-8 h-8 text-gray-500 bg-gray-200 rounded-full hover:bg-red-100 hover:text-red-500"
-                                (click)="removeFile(i)">
-                                ✕
-                            </button>
-                        </div>
-                    </div>
+            <!-- Amount -->
+            <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                <mat-label>{{ 'alipay.form_dialog.transfer_amount' | transloco }}</mat-label>
+                <input matInput inputmode="decimal" formControlName="amount" />
+                <span matSuffix>{{ 'บาท' | transloco }}</span>
+                <mat-error *ngIf="form.controls.amount.invalid">
+                    {{ 'errors.number_required' | transloco }}
+                </mat-error>
+            </mat-form-field>
+
+            <!-- Fee -->
+            <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                <mat-label>{{ 'alipay.form_dialog.alipay_service_fee' | transloco }}</mat-label>
+                <input matInput inputmode="decimal" formControlName="fee" />
+                <span matSuffix>{{ 'บาท' | transloco }}</span>
+            </mat-form-field>
+
+            <!-- Account number -->
+            <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                <mat-label>{{ 'deposit_pay_products.form_dialog.account_number' | transloco }}</mat-label>
+                <input matInput formControlName="account_number" />
+            </mat-form-field>
+
+            <!-- Account Info (bank transfer only) -->
+            <ng-container *ngIf="form.get('transaction').value === 'โอนเงินธนาคาร'">
+                <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                    <mat-label>{{ 'deposit_pay_products.form_dialog.account_name' | transloco }}</mat-label>
+                    <input matInput formControlName="account_name" />
+                    <mat-error *ngIf="form.controls.account_name.hasError('required')">
+                        {{ 'errors.required' | transloco }}
+                    </mat-error>
+                </mat-form-field>
+
+                <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                    <mat-label>{{ 'deposit_pay_products.form_dialog.bank_name' | transloco }}</mat-label>
+                    <input matInput formControlName="bank_name" />
+                    <mat-error *ngIf="form.controls.bank_name.hasError('required')">
+                        {{ 'errors.required' | transloco }}
+                    </mat-error>
+                </mat-form-field>
+            </ng-container>
+
+            <!-- Reference phone -->
+            <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                <mat-label>{{ 'alipay.form_dialog.reference_phone' | transloco }}</mat-label>
+                <input matInput formControlName="phone" />
+            </mat-form-field>
+        </div>
+
+        <!-- Upload section -->
+        <div class="flex items-start justify-between w-full border-t-2">
+            <h1 mat-dialog-title class="px-0 pb-1 mb-2 text-xl font-semibold">
+                {{ 'alipay.form_dialog.upload_payment_channel' | transloco }}
+            </h1>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                <input matInput [placeholder]="'lables.paste_your_link' | transloco" formControlName="image_url" />
+            </mat-form-field>
+
+            <label for="fileInput"
+                class="block p-4 text-sm text-center text-gray-600 bg-gray-100 border-2 border-dashed rounded-lg cursor-pointer">
+                {{ 'lables.drag_or_select_file' | transloco }}
+                <span class="font-medium text-red-500">{{ 'lables.select_from_existing' | transloco }}</span>
+                <input type="file" id="fileInput" class="hidden" accept="image/*" (change)="onFilesSelected($event)" />
+            </label>
+        </div>
+
+        <!-- File list -->
+        <div *ngIf="uploadedFiles.length" class="mt-2 space-y-3">
+            <div *ngFor="let f of uploadedFiles; index as i; trackBy: trackByIndex"
+                class="flex items-center p-3 gap-3 border rounded-lg bg-gray-50">
+                <img [src]="f.imagePreview" alt="Preview" class="w-16 h-16 object-cover border rounded-md" />
+                <div class="flex-1 min-w-0">
+                    <p class="text-sm font-medium truncate">{{ f.name }}</p>
+                    <p class="text-xs text-gray-500">{{ f.size }} kb</p>
                 </div>
+                <button type="button" mat-icon-button (click)="removeFile(i)" aria-label="remove">
+                    <mat-icon>close</mat-icon>
+                </button>
             </div>
         </div>
-        <!-- Buttons -->
+
+        <!-- Footer -->
         <div mat-dialog-actions class="flex justify-end border-t-2 pt-4">
             <div class="flex flex-col md:flex-row w-full justify-between items-end md:items-center gap-2">
-                <div class="flex justify-between text-red-500 font-bold space-x-2">
-                    <span>{{ this.form.value.total_price | number:'1.2-2' }}</span>
-                    <span class="text-black font-semibold"> {{ 'deposit_pay_products.dialog_update_payment.net_payment'
-                        | transloco }}</span>
+                <div class="flex items-center gap-2 text-red-500 font-bold">
+                    <span>{{ form.value.total_price | number:'1.2-2' }}</span>
+                    <span class="text-black font-semibold">
+                        {{ 'deposit_pay_products.dialog_update_payment.net_payment' | transloco }}
+                    </span>
                 </div>
-                <div>
-                    <button class="px-6 ml-3" mat-flat-button [color]="'primary'" (click)="Submit()">
+                <div class="flex gap-2">
+                    <button class="px-6" mat-flat-button color="primary" (click)="Submit()">
                         {{ 'buttons.submit' | transloco }}
                     </button>
-                    <button class="px-6 ml-3" mat-flat-button [color]="'warn'" (click)="onClose()">
+                    <button class="px-6" mat-flat-button color="warn" (click)="onClose()">
                         {{ 'buttons.cancel' | transloco }}
                     </button>
                 </div>

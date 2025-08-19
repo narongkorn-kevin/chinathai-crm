@@ -1,20 +1,17 @@
 import { Routes } from '@angular/router';
-import { AliplayComponent } from './aliplay.component';
 import { ViewComponent } from './view/view.component';
-import { AliplayService } from './aliplay.service';
 import { inject } from '@angular/core';
+import { AlipayComponent } from './alipay.component';
 
 export default [
     {
         path: '',
-        component: AliplayComponent,
+        component: AlipayComponent,
     },
     {
         path: 'view/:id',
         component: ViewComponent,
         resolve: {
-            // transport: () => inject(AliplayService).getTransport(),
-            // data: (route) => inject(AliplayService).get(route.params['id']),
         }
     },
 ] as Routes;

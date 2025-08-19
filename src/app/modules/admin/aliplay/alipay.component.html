@@ -4,12 +4,12 @@
             <div class="flex flex-col">
                 <div class="flex space-x-2">
                     <p class="md:text-sm font-medium tracking-tight leading-7 sm:leading-10 truncate">
-                        {{ 'aliplay.service' | transloco }}
+                        {{ 'alipay.service' | transloco }}
                     </p>
                 </div>
 
                 <p class="md:text-2xl text-[#DF0B12] font-bold tracking-tight leading-7 sm:leading-10 truncate">
-                    {{ 'aliplay.topup_aliplay' | transloco }}
+                    {{ 'เติมเงิน' | transloco }}
                 </p>
             </div>
             <div class="flex flex-col md:flex-row ml-auto gap-2">
@@ -53,7 +53,7 @@
             <div class="flex flex-col md:flex-row w-full gap-2 items-end">
                 <div class="w-full">
                     <mat-form-field class="w-full" [ngClass]="formFieldHelpers">
-                        <mat-label>{{ 'aliplay.date' | transloco }}</mat-label>
+                        <mat-label>{{ 'alipay.date' | transloco }}</mat-label>
                         <mat-date-range-input [rangePicker]="picker">
                             <input matStartDate formControlName="start_date">
                             <input matEndDate formControlName="end_date">
@@ -65,7 +65,7 @@
                 <div class="w-full">
                     <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
                         <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:magnifying-glass'"></mat-icon>
-                        <input matInput class="ml-2" [placeholder]="'aliplay.search_by_aliplay_code' | transloco"
+                        <input matInput class="ml-2" [placeholder]="'alipay.search_by_alipay_code' | transloco"
                             formControlName="code">
                     </mat-form-field>
                 </div>
@@ -87,7 +87,7 @@
             </div>
             <div class="flex flex-col md:grid md:grid-cols-2 md:flex-row w-full gap-x-2 mt-2">
                 <mat-form-field class="w-full" [ngClass]="formFieldHelpers">
-                    <mat-label>{{ 'aliplay.date' | transloco }}</mat-label>
+                    <mat-label>{{ 'alipay.date' | transloco }}</mat-label>
                     <mat-date-range-input [rangePicker]="picker">
                         <input matStartDate formControlName="start_date">
                         <input matEndDate formControlName="end_date">
@@ -97,21 +97,21 @@
                 </mat-form-field>
                 <div class="w-full">
                     <mat-form-field class="w-full" [ngClass]="formFieldHelpers">
-                        <mat-label>{{ 'aliplay.aliplay_code' | transloco }}</mat-label>
-                        <input matInput class="ml-2" [placeholder]="'aliplay.search_by_aliplay_code' | transloco"
+                        <mat-label>{{ 'alipay.alipay_code' | transloco }}</mat-label>
+                        <input matInput class="ml-2" [placeholder]="'alipay.search_by_alipay_code' | transloco"
                             formControlName="code">
                     </mat-form-field>
                 </div>
                 <div class="w-full">
                     <mat-form-field class="w-full" [ngClass]="formFieldHelpers">
-                        <mat-label>{{ 'aliplay.customer' | transloco }}</mat-label>
-                        <input matInput class="ml-2" [placeholder]="'aliplay.search_by_aliplay_name' | transloco"
+                        <mat-label>{{ 'alipay.customer' | transloco }}</mat-label>
+                        <input matInput class="ml-2" [placeholder]="'alipay.search_by_alipay_name' | transloco"
                             formControlName="fname">
                     </mat-form-field>
                 </div>
                 <div class="w-full">
                     <mat-form-field class="w-full" [ngClass]="formFieldHelpers">
-                        <mat-label>{{ 'aliplay.status' | transloco }}</mat-label>
+                        <mat-label>{{ 'alipay.status' | transloco }}</mat-label>
                         <mat-select formControlName="status">
                             <mat-option value="awaiting_payment">{{ 'deposit_pay_products.status_order.awaiting_payment' | transloco
                                 }}</mat-option>
@@ -169,20 +169,13 @@
     </mat-menu>
 </ng-template>
 
-<!-- <ng-template #checkbox_head let-data="adtData">
-    <mat-checkbox [checked]="isAllSelected()" [indeterminate]="isSomeSelected()"
-        (click)="$event.stopPropagation()"
-        (change)="toggleSelectAll($event.checked)">
-    </mat-checkbox>
-</ng-template> -->
-
 <ng-template #checkbox let-data="adtData">
     <mat-checkbox class="text-white" [color]="'primary'" [checked]="data.selected"
         (change)="onCheckboxChange($event, data.id)"></mat-checkbox>
 </ng-template>
 
 <ng-template #gotoRoute let-data="adtData">
-    <a class="text-[#DF0B12CC]" [routerLink]="['/aliplay/view', data.id]"
+    <a class="text-[#DF0B12CC]" [routerLink]="['/alipay/view', data.id]"
         routerLinkActive="router-link-active">{{data?.code}}</a>
 </ng-template>
 
@@ -206,15 +199,15 @@
         <div class="manage-menu bg-primary" cdkMenu>
             <button class="manage-menu-item text-white" cdkMenuItem (click)="openDialogview(data)">
                 <mat-icon class="icon-size-5 text-white" [svgIcon]="'heroicons_solid:banknotes'"></mat-icon>
-                <span class="ml-2">{{ 'aliplay.record_payment' | transloco }}</span>
+                <span class="ml-2">{{ 'alipay.record_payment' | transloco }}</span>
             </button>
-            <button class="manage-menu-item text-white" cdkMenuItem (click)="openDialogviewQR(data)">
+            <!-- <button class="manage-menu-item text-white" cdkMenuItem (click)="openDialogviewQR(data)">
                 <mat-icon class="icon-size-5 text-white" [svgIcon]="'heroicons_solid:plus'"></mat-icon>
-                <span class="ml-2">{{ 'aliplay.aliplay_code' | transloco }}</span>
-            </button>
+                <span class="ml-2">{{ 'alipay.alipay_code' | transloco }}</span>
+            </button> -->
             <button class="manage-menu-item text-white" cdkMenuItem (click)="openDialogStatus(data)">
                 <mat-icon class="icon-size-5 text-white" [svgIcon]="'heroicons_solid:table-cells'"></mat-icon>
-                <span class="ml-2">{{ 'aliplay.update_status' | transloco }}</span>
+                <span class="ml-2">{{ 'alipay.update_status' | transloco }}</span>
             </button>
         </div>
     </ng-template>
