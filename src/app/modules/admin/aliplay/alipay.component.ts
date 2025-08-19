@@ -158,36 +158,36 @@ export class AlipayComponent implements OnInit, AfterViewInit {
         }
 
         merge(
-                    this.filterForm.get('start_date')!.valueChanges.pipe(distinctUntilChanged()),
-                    this.filterForm.get('end_date')!.valueChanges.pipe(distinctUntilChanged())
-                )
-                    .pipe(
-                    debounceTime(500)
-                )
-                    .subscribe(() => {
-                    const start = this.filterForm.get('start_date')!.value;
-                    const end = this.filterForm.get('end_date')!.value;
-                                
-                    if (start && end) {
-                        this.rerender();
-                    }
-                });
+            this.filterForm.get('start_date')!.valueChanges.pipe(distinctUntilChanged()),
+            this.filterForm.get('end_date')!.valueChanges.pipe(distinctUntilChanged())
+        )
+            .pipe(
+                debounceTime(500)
+            )
+            .subscribe(() => {
+                const start = this.filterForm.get('start_date')!.value;
+                const end = this.filterForm.get('end_date')!.value;
+
+                if (start && end) {
+                    this.rerender();
+                }
+            });
 
         setTimeout(() => this.loadTable());
 
         this.filterForm
-        .get('code')
-        ?.valueChanges.pipe(debounceTime(500), distinctUntilChanged())
-        .subscribe(() => {
-        this.rerender();
-        });
+            .get('code')
+            ?.valueChanges.pipe(debounceTime(500), distinctUntilChanged())
+            .subscribe(() => {
+                this.rerender();
+            });
 
         this.filterForm
-        .get('fname')
-        ?.valueChanges.pipe(debounceTime(500), distinctUntilChanged())
-        .subscribe(() => {
-        this.rerender();
-        });
+            .get('fname')
+            ?.valueChanges.pipe(debounceTime(500), distinctUntilChanged())
+            .subscribe(() => {
+                this.rerender();
+            });
 
     }
 
@@ -280,7 +280,7 @@ export class AlipayComponent implements OnInit, AfterViewInit {
                 if (this.filterForm.value.start_date && this.filterForm.value.end_date) {
                     const start_date: DateTime = this.filterForm.value.start_date;
                     const end_date: DateTime = this.filterForm.value.end_date;
-                                                                
+
                     dataTablesParameters.created_at = start_date.toFormat('yyyy-MM-dd');
                     dataTablesParameters.end_date = end_date.toFormat('yyyy-MM-dd');
                 }
@@ -300,7 +300,7 @@ export class AlipayComponent implements OnInit, AfterViewInit {
                 }
                 if (endDate) {
                     dataTablesParameters.end_date = this.formatDate(endDate);
-                }   
+                }
                 this._service
                     .datatable(dataTablesParameters)
                     .pipe(map((resp: { data: any }) => resp.data))
@@ -437,14 +437,14 @@ export class AlipayComponent implements OnInit, AfterViewInit {
     rerender(): void {
         setTimeout(() => {
             this.dtElement?.dtInstance?.then((dtInstance: DataTables.Api) => {
-            const el = this.tableElement?.nativeElement;
-            if (!el || !document.body.contains(el)) {
-                console.warn('Table element is not in the document. Skip destroy.');
-                return;
-            }
+                const el = this.tableElement?.nativeElement;
+                if (!el || !document.body.contains(el)) {
+                    console.warn('Table element is not in the document. Skip destroy.');
+                    return;
+                }
 
-            dtInstance.destroy();
-            this.dtTrigger.next(this.dtOptions);
+                dtInstance.destroy();
+                this.dtTrigger.next(this.dtOptions);
             });
         }, 0); // ให้ DOM มีโอกาส update ก่อน
     }
@@ -599,7 +599,7 @@ export class AlipayComponent implements OnInit, AfterViewInit {
         });
     }
     showPicture(imgObject: string): void {
-        console.log(imgObject);
+         
         this.dialog
             .open(PictureComponent, {
                 autoFocus: false,
@@ -684,27 +684,27 @@ export class AlipayComponent implements OnInit, AfterViewInit {
     }
 
     applyFilter() {
-    const filter = this.filterForm.value;
-    if (!this.dataRow) return;
+        const filter = this.filterForm.value;
+        if (!this.dataRow) return;
 
-    if (!filter.start_date) {
-        // ถ้าไม่เลือกวัน ก็แสดงข้อมูลทั้งหมด
-        this.filteredDataRow = this.dataRow;
-    } else {
-        const start = new Date(filter.start_date);
-        const startOfDay = new Date(start.setHours(0, 0, 0, 0)).getTime();
-        const endOfDay = new Date(start.setHours(23, 59, 59, 999)).getTime();
+        if (!filter.start_date) {
+            // ถ้าไม่เลือกวัน ก็แสดงข้อมูลทั้งหมด
+            this.filteredDataRow = this.dataRow;
+        } else {
+            const start = new Date(filter.start_date);
+            const startOfDay = new Date(start.setHours(0, 0, 0, 0)).getTime();
+            const endOfDay = new Date(start.setHours(23, 59, 59, 999)).getTime();
 
-        this.filteredDataRow = this.dataRow.filter((item: any) => {
-            const createdAt = new Date(item.transfer_at).getTime();
-            return createdAt >= startOfDay && createdAt <= endOfDay;
-        });
+            this.filteredDataRow = this.dataRow.filter((item: any) => {
+                const createdAt = new Date(item.transfer_at).getTime();
+                return createdAt >= startOfDay && createdAt <= endOfDay;
+            });
+        }
+
+        // แสดงข้อมูล filteredDataRow ในตารางแทนข้อมูลเดิม
+        this.dataRow = this.filteredDataRow;
+        this.rerender();
     }
-
-    // แสดงข้อมูล filteredDataRow ในตารางแทนข้อมูลเดิม
-    this.dataRow = this.filteredDataRow;
-    this.rerender();
-}
 
     clearFilter() {
         this.filterForm.reset();
@@ -733,11 +733,35 @@ export class AlipayComponent implements OnInit, AfterViewInit {
     isImageFile(url: string | null | undefined): boolean {
         if (typeof url !== 'string' || !url.trim()) return false;
         return /\.(jpe?g|png|gif|bmp|webp)$/i.test(url);
-      }
-      
-      getFileNameFromUrl(url: string | null | undefined): string {
+    }
+
+    getFileNameFromUrl(url: string | null | undefined): string {
         if (typeof url !== 'string' || !url.trim()) return 'download';
         return url.split('/').pop() || 'download';
-      }
+    }
+
+
+
+
+    // ใช้ map เก็บสถานะราย URL: 'loading' | 'ok' | 'error'
+    imageState: Record<string, 'loading' | 'ok' | 'error'> = {};
+
+    private ensureState(url?: string) {
+        if (!url) return;
+        if (!this.imageState[url]) this.imageState[url] = 'loading';
+    }
+
+    // เรียกหลังจาก datasource พร้อมแล้ว/ทุกครั้งที่ binding แถวใหม่
+    onRowBind(url?: string) {
+        this.ensureState(url);
+    }
+
+    setImageOk(url: string) {
+        this.imageState[url] = 'ok';
+    }
+
+    setImageError(url: string) {
+        this.imageState[url] = 'error';
+    }
 
 }

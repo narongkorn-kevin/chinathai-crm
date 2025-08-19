@@ -256,7 +256,7 @@ export class ViewOrderComponent implements OnInit {
     }
 
     showPicture(imgObject: string): void {
-        console.log(imgObject);
+         
         this.dialog
             .open(PictureComponent, {
                 autoFocus: false,

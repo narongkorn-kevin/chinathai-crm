@@ -31,7 +31,7 @@ export class PictureComponent implements OnInit, OnDestroy {
      */
     ngOnInit(): void {
         this.imgSelected = this._data.imgSelected;
-        console.log(this.imgSelected)
+        // console.log(this.imgSelected)
 
     }
 

@@ -414,7 +414,7 @@ export class MemberComponent implements OnInit, AfterViewInit {
         });
     }
     showPicture(imgObject: string): void {
-        console.log(imgObject);
+         
         this.dialog
             .open(PictureComponent, {
                 autoFocus: false,

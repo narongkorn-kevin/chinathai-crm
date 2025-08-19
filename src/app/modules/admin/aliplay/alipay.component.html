@@ -113,13 +113,15 @@
                     <mat-form-field class="w-full" [ngClass]="formFieldHelpers">
                         <mat-label>{{ 'alipay.status' | transloco }}</mat-label>
                         <mat-select formControlName="status">
-                            <mat-option value="awaiting_payment">{{ 'deposit_pay_products.status_order.awaiting_payment' | transloco
+                            <mat-option value="awaiting_payment">{{ 'deposit_pay_products.status_order.awaiting_payment'
+                                | transloco
                                 }}</mat-option>
-                            <mat-option value="in_progress">{{ 'deposit_pay_products.status_order.in_progress' | transloco
+                            <mat-option value="in_progress">{{ 'deposit_pay_products.status_order.in_progress' |
+                                transloco
                                 }}</mat-option>
-                            <mat-option value="completed">{{ 'deposit_pay_products.status_order.completed' | transloco 
+                            <mat-option value="completed">{{ 'deposit_pay_products.status_order.completed' | transloco
                                 }}</mat-option>
-                            <mat-option value="cancelled">{{ 'deposit_pay_products.status_order.cancelled' | transloco 
+                            <mat-option value="cancelled">{{ 'deposit_pay_products.status_order.cancelled' | transloco
                                 }}</mat-option>
                         </mat-select>
                     </mat-form-field>
@@ -273,26 +275,33 @@
 
 
 <ng-template #pic let-data="adtData">
-    <div class="flex flex-row justify-center cursor-pointer">
-        <ng-container *ngIf="isImageFile(data?.fullImage); else notImage">
-            <div class="relative">
-                <img [src]="data.fullImage" alt="Image" class="rounded-md w-10 h-15"
-                    (click)="showPicture(data.fullImage)" (error)="onImageError(data.fullImage)"
-                    (load)="onImageLoad(data.fullImage)" />
-                <ng-container *ngIf="imageLoadedMap[data.fullImage] === false">
-                    <mat-icon class="absolute inset-0 m-auto text-gray-400 text-6xl">
-                        image_not_supported
-                    </mat-icon>
-                </ng-container>
-            </div>
-        </ng-container>
+    <div class="flex justify-center">
+        <div class="relative w-16 h-16 rounded-md border overflow-hidden grid place-items-center">
+            <!-- แสดง/ซ่อนด้วย class แทน *ngIf -->
+            <img [src]="data.fullImage" alt="" class="max-w-full max-h-full object-contain"
+                (load)="setImageOk(data.fullImage)" (error)="setImageError(data.fullImage)"
+                [class.hidden]="imageState[data.fullImage] === 'error'" (click)="showPicture(data.fullImage)" />
+
+            <!-- Error / 404 -->
+            <ng-container *ngIf="imageState[data.fullImage] === 'error'">
+                <mat-icon class="text-gray-400 text-4xl">image_not_supported</mat-icon>
+                <!-- หรือถ้าอยากใช้ placeholder -->
+                <!-- <img src="assets/placeholder.png" alt="" class="max-w-full max-h-full object-contain" /> -->
+            </ng-container>
+        </div>
+
+
         <ng-template #notImage>
-            <a [href]="data.fullImage" target="_blank" download="{{ getFileNameFromUrl(data.fullImage) }}">
-                <mat-icon class="text-gray-400 text-6xl">description</mat-icon>
+            <a [href]="data.fullImage" target="_blank" [download]="getFileNameFromUrl(data.fullImage)"
+                class="flex items-center justify-center w-16 h-16">
+                <mat-icon class="text-gray-400 text-4xl">description</mat-icon>
             </a>
         </ng-template>
     </div>
 </ng-template>
+
+
+
 
 <ng-template #picSlip let-data="adtData">
     <div class="flex flex-row justify-center cursor-pointer">
