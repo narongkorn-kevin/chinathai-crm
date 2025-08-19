@@ -107,7 +107,7 @@ export class AlipayService {
                         }
                         return {
                             ...item,
-                            fullname: `${code} ${fname} ${lname}`.trim(),
+                            fullname: `${fname} ${lname}`.trim(),
                             total: total,
                             fullImageSlip: fullImageSlip,
                             fullImage: fullImage,

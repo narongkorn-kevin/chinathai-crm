@@ -270,6 +270,7 @@ export class AlipayComponent implements OnInit, AfterViewInit {
             pagingType: 'full_numbers',
             serverSide: true,
             scrollX: false,
+            order: [[1, 'desc']],
             language: {
                 url: this.languageUrl,
             },
