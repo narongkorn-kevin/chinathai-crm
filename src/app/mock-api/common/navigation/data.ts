@@ -253,7 +253,7 @@ export const defaultNavigation: FuseNavigationItem[] = [
                         id: 'warehouse.cn.lost-owner',
                         title: 'สินค้าไม่ระบุเจ้าของ',
                         type: 'basic',
-                        // link: '/follow-up',
+                        link: '/delivery_orders/non-member',
                         badge: {
                             title: '3',
                             classes: 'px-2 bg-red-600 text-white rounded-full',
@@ -273,7 +273,7 @@ export const defaultNavigation: FuseNavigationItem[] = [
                         id: 'warehouse.cn.cn',
                         title: 'โกดังจีน',
                         type: 'basic',
-                        link: '/delivery_orders',
+                        link: '/delivery_orders/with-member',
                         badge: {
                             title: '3',
                             classes: 'px-2 bg-blue-600 text-white rounded-full',

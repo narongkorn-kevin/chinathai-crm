@@ -8,8 +8,11 @@
                         {{ 'delivery_order.title.main' | transloco }}
                     </button>
                 </div>
-                <p class="md:text-2xl text-[#DF0B12] font-bold tracking-tight leading-7 sm:leading-10 truncate">
+                <p class="md:text-2xl text-[#DF0B12] font-bold tracking-tight leading-7 sm:leading-10 truncate" *ngIf="!typeRouter">
                     {{ 'delivery_order.title.subtitle' | transloco }}
+                </p>
+                <p class="md:text-2xl text-[#DF0B12] font-bold tracking-tight leading-7 sm:leading-10 truncate" *ngIf="typeRouter === 'non-member'">
+                    {{ 'รายการพัสดุเข้าโกดังจีนไม่มีเจ้าของ' | transloco }}
                 </p>
             </div>
             <div class="flex flex-col md:flex-row ml-auto gap-2 md:gap-4 container">
@@ -130,7 +133,7 @@
             <div class="categories-section">
                 <div class="section-header">
                     <h2>{{ 'ประเภทสินค้า' | transloco }}</h2>
-                    <p class="total-summary">{{ sumdashbord.total_items }} {{ 'delivery_order.labels.items' | transloco
+                    <p class="total-summary">{{ sumdashbord.total_items | number }} {{ 'delivery_order.labels.items' | transloco
                         }}</p>
                 </div>
 
@@ -138,7 +141,7 @@
                     <div *ngFor="let category of sumdashbord?.categories" class="category-card">
                         <div class="category-header">
                             <h3>{{ category.name }}</h3>
-                            <span class="cbm-value">{{ category.cbm }} CBM</span>
+                            <span class="cbm-value">{{ category.cbm | number : '1.4' }} CBM</span>
                         </div>
                         <div class="category-details">
                             <p class="boxes-count">{{ category.boxes }} {{ 'delivery_order.labels.boxes' | transloco }}

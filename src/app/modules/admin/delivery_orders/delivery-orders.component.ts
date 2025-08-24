@@ -275,7 +275,7 @@ export class DeliveryOrdersComponent implements OnInit, AfterViewInit {
         }
     };
 
-
+    typeRouter: string = null
     constructor(
         private _service: DeliveryOrdersService,
         private fuseConfirmationService: FuseConfirmationService,
@@ -289,6 +289,8 @@ export class DeliveryOrdersComponent implements OnInit, AfterViewInit {
         private exportService: ExportService,
         private datePipe: DatePipe
     ) {
+        this.typeRouter = this.activated.snapshot.data.type
+        
         this.filterForm = this._fb.group({
             start_date: [''],
             end_date: [''],

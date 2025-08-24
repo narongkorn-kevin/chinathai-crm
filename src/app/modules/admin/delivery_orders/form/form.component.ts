@@ -496,7 +496,7 @@ export class FormComponent implements OnInit, AfterViewInit {
                         this.toastr.success(
                             this.translocoService.translate('toastr.success')
                         );
-                        this._router.navigate(['delivery_orders']);
+                        this._router.navigate(['delivery_orders/with-member']);
                     },
                     error: () => {
                         this.toastr.error(
@@ -510,7 +510,7 @@ export class FormComponent implements OnInit, AfterViewInit {
                         this.toastr.success(
                             this.translocoService.translate('toastr.edit')
                         );
-                        this._router.navigate(['delivery_orders']);
+                        this._router.navigate(['delivery_orders/with-member']);
                     },
                     error: () => {
                         this.toastr.error(
@@ -523,7 +523,7 @@ export class FormComponent implements OnInit, AfterViewInit {
     }
 
     Close(): void {
-        this._router.navigate(['delivery_orders']);
+        this._router.navigate(['delivery_orders/with-member']);
     }
 
     // Track selection methods

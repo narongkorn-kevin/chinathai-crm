@@ -22,9 +22,38 @@ export default [
         }
     },
     {
+        path: 'with-member',
+        component: DeliveryOrdersComponent,
+        resolve: {
+            tracking: () => inject(DeliveryOrdersService).gettacking(),
+            members: () => inject(DeliveryOrdersService).getmember(),
+            stores: () => inject(DeliveryOrdersService).getstore(),
+            category_products: () => inject(DeliveryOrdersService).getcategory_product(),
+            transports: () => inject(DeliveryOrdersService).getTransport(),
+            product_types: () => inject(DeliveryOrdersService).getProductType(),
+            dashboard_delivery_order: () => inject(DeliveryOrdersService).getDashboardDeliveryOrder(),
+        }
+    },
+    {
+        path: 'non-member',
+        component: DeliveryOrdersComponent,
+        data: {
+            type: 'non-member'
+        },
+        resolve: {
+            tracking: () => inject(DeliveryOrdersService).gettacking(),
+            members: () => inject(DeliveryOrdersService).getmember(),
+            stores: () => inject(DeliveryOrdersService).getstore(),
+            category_products: () => inject(DeliveryOrdersService).getcategory_product(),
+            transports: () => inject(DeliveryOrdersService).getTransport(),
+            product_types: () => inject(DeliveryOrdersService).getProductType(),
+            dashboard_delivery_order: () => inject(DeliveryOrdersService).getDashboardDeliveryOrder(),
+        }
+    },
+    {
         path: 'form',
         component: FormComponent,
-        data:{
+        data: {
             type: 'NEW',
         },
         resolve: {
@@ -53,7 +82,7 @@ export default [
     {
         path: 'edit/:id',
         component: FormComponent,
-        data:{
+        data: {
             type: 'EDIT',
         },
         resolve: {
@@ -73,7 +102,7 @@ export default [
     {
         path: 'setting',
         component: SettingComponent,
-        data:{
+        data: {
             // type: 'EDIT',
         },
         resolve: {
