@@ -29,25 +29,7 @@ export class PackagingService {
         return this.http.post('/api/member/' + id + '/topup', data);
     }
     //=========================================================================================================
-    datatable(dataTablesParameters: any) {
-        const resp = {
-            data: {
-                data: [
-                    { No: 1, nameTh: 'Taobao', nameCn: 'Taobao', nameEn: 'Taobao', url: 'https://google.co.th', image: 'https://placehold.co/600x400' }
-                ],
-                total: 10,
-            }
-        }
 
-        return of(resp);
-
-
-        // return this.http.post('/api/member_page', dataTablesParameters).pipe(
-        //     map((resp: any) => {
-        //         return resp;
-        //     })
-        // );
-    }
     get(id: number) {
         return this.http.get(
             environment.apiUrl + '/api/member/' + id
@@ -79,16 +61,24 @@ export class PackagingService {
     }
 
     createAddress(data: any) {
-        return this.http.post('/api/member_address', data)
+        return this.http.post('/api/packing_type', data)
     }
 
     updateAddress(data: any) {
-        return this.http.put('/api/update_member_address/' + data.id, data)
+        return this.http.put('/api/packing_type/' + data.id, data)
     }
 
     deleteAddress(id: number) {
         return this.http.delete(
             environment.apiUrl + '/api/member_address/' + id
+        );
+    }
+
+    datatable(dataTablesParameters: any) {
+        return this.http.post('/api/packing_type_page', dataTablesParameters).pipe(
+            map((resp: any) => {
+                return resp;
+            })
         );
     }
 }

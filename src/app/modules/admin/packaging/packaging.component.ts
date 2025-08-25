@@ -188,17 +188,20 @@ export class PackagingComponent implements OnInit, AfterViewInit {
                 },
                 {
                     title: 'ชื่อรายการ (ไทย)',
-                    data: 'nameTh',
+                    data: 'name_th',
+                    defaultContent: '-',
                     className: 'text-center',
                 },
                 {
                     title: 'ชื่อรายการ (จีน)',
-                    data: 'nameCn',
+                    data: 'name_cn',
+                    defaultContent: '-',
                     className: 'text-center',
                 },
                 {
                     title: 'ชื่อรายการ (อังกฤษ)',
-                    data: 'nameEn',
+                    data: 'name_en',
+                    defaultContent: '-',
                     className: 'text-center',
                 },
             ]
@@ -230,12 +233,19 @@ export class PackagingComponent implements OnInit, AfterViewInit {
     }
 
     openDialogEdit(data: any) {
-        this.dialog.open(DialogComposePackagingComponent, {
+        const DialogRef = this.dialog.open(DialogComposePackagingComponent, {
             width: '50%',
             data: {
-                action: 'EDIT'
+                action: 'EDIT',
+                data: data
             }
         })
+
+        DialogRef.afterClosed().subscribe((result) => {
+            if (result) {
+                this.rerender();
+            }
+        });
     }
 
     opendialogdelete() {
@@ -267,19 +277,8 @@ export class PackagingComponent implements OnInit, AfterViewInit {
                     const id = this.multiSelect;
 
                     for (let i = 0; i < id.length; i++) {
-                        // this._service.delete(id[i]).subscribe({
-                        //     error: (err) => {
-                        //         this.toastr.error('ลบรายการสมาชิก ล้มเหลว โปรดลองใหม่อีกครั้งภายหลัง');
-                        //         console.log(err, 'err');
-                        //     },
-                        //     complete: () => {
-                        //         if (i == id.length - 1) {
-                        //             this.multiSelect = [];
-                        this.toastr.success('ลบรายการสมาชิก สำเร็จ');
+                        this.toastr.success('ลบสำเร็จ');
                         this.rerender();
-                        //         }
-                        //     },
-                        // });
                     }
                     if (id.length === 1) {
                         this.rerender();
@@ -288,6 +287,7 @@ export class PackagingComponent implements OnInit, AfterViewInit {
             }
         )
     }
+
     showPicture(imgObject: string): void {
         console.log(imgObject)
         this.dialog

@@ -27,17 +27,6 @@
                         <input matInput [placeholder]="'ค้นหาด้วยชื่อ'">
                     </mat-form-field>
                 </div>
-                <!-- <div>
-                    <button mat-flat-button [color]="'primary'" (click)="openfillter()" class="mb-5">
-                        <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:bars-3'"></mat-icon>
-                        <span class="ml-2">ค้นหาโดยใช้ตัวกรอง</span>
-                    </button>
-                </div> -->
-                <!-- <div>
-                    <button mat-flat-button [color]="'primary'" class="mb-5">
-                        <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:cog-6-tooth'"></mat-icon>
-                    </button>
-                </div> -->
             </div>
         </form>
         <form [formGroup]="filterForm" class="p-4 rounded-md" [@slideToggleFilter]="showFilterForm ? 'open' : 'closed'">

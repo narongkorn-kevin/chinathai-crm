@@ -78,7 +78,7 @@ export class StoreComponent implements OnInit, AfterViewInit {
                     )
                     .subscribe({
                         next: (resp: any) => {
-                            console.log('resp',resp);
+                            console.log('resp', resp);
 
                             callback({
                                 recordsTotal: resp.total,
@@ -220,4 +220,9 @@ export class StoreComponent implements OnInit, AfterViewInit {
             }
         )
     }
+    
+    onImageError(data: any): void {
+        data.imageError = true;
+    }
+
 }

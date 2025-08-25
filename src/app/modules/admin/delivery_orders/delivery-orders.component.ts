@@ -548,10 +548,6 @@ export class DeliveryOrdersComponent implements OnInit, AfterViewInit {
                     dataTablesParameters.product_type_id =
                         this.filterForm.value.product_type_id;
                 }
-                // if (this.filterForm.value.shipping_type) {
-                //     dataTablesParameters.shipping_type =
-                //         this.filterForm.value.shipping_type;
-                // }
                 if (this.filterForm.value.shipment_by) {
                     dataTablesParameters.shipment_by =
                         this.filterForm.value.shipment_by;
@@ -562,6 +558,9 @@ export class DeliveryOrdersComponent implements OnInit, AfterViewInit {
                 if (this.filterForm.value.packing_list_code) {
                     dataTablesParameters.packing_list_code =
                         this.filterForm.value.packing_list_code;
+                }
+                if (this.typeRouter === 'non-member') {
+                    dataTablesParameters.member_id = 0
                 }
                 this._service
                     .datatable(dataTablesParameters)

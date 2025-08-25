@@ -86,29 +86,43 @@
                     <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
                         <mat-label>{{ 'invoice.form.note' | transloco }}</mat-label>
 
-                        <textarea matInput [placeholder]="'invoice.form.enter_note' | transloco"
-                            formControlName="note" [rows]="5"></textarea>
+                        <textarea matInput [placeholder]="'invoice.form.enter_note' | transloco" formControlName="note"
+                            [rows]="5"></textarea>
                     </mat-form-field>
                 </div>
 
-                <div class="w-full p-4 my-4 border border-gray-300 rounded-lg min-h-[300px] flex flex-col bg-white shadow">
+                <div
+                    class="w-full p-4 my-4 border border-gray-300 rounded-lg min-h-[300px] flex flex-col bg-white shadow">
                     <div class="overflow-x-auto mb-6">
                         <table class="whitespace-nowrap w-full rounded-lg overflow-hidden shadow">
                             <thead class="bg-white">
                                 <tr>
-                                    <th rowspan="2" class="px-6 py-3 border border-x-0 w-10 sticky left-0 z-10 bg-white">#</th>
-                                    <th rowspan="2" class="px-6 py-3 border border-l-0 w-10 sticky left-10 z-10 bg-white">a</th>
-                                    <th rowspan="2" class="px-6 py-3 border border-x-0">{{ 'invoice.view.order_code' | transloco }}</th>
-                                    <th rowspan="2" class="px-6 py-3 border border-x-0">{{ 'invoice.view.warehouse_receipt_code' | transloco }}</th>
-                                    <th rowspan="2" class="px-6 py-3 border border-x-0">{{ 'invoice.view.transport_method' | transloco }}</th>
-                                    <th rowspan="2" class="px-6 py-3 border border-x-0">{{ 'invoice.view.customer_code' | transloco }}</th>
-                                    <th rowspan="2" class="px-6 py-3 border border-x-0">{{ 'invoice.view.item' | transloco }}</th>
-                                    <th rowspan="2" class="px-6 py-3 border border-x-0">{{ 'invoice.view.type' | transloco }}</th>
-                                    <th rowspan="2" class="px-6 py-3 border border-x-0">{{ 'invoice.view.quantity' | transloco }}</th>
-                                    <th colspan="3" class="px-6 py-1 border border-x-0">{{ 'invoice.view.dimensions' | transloco }}</th>
-                                    <th rowspan="2" class="px-6 py-3 border border-x-0">{{ 'invoice.view.cubic_meter' | transloco }}</th>
-                                    <th rowspan="2" class="px-6 py-3 border border-x-0">{{ 'invoice.view.kilogram' | transloco }}</th>
-                                    <th rowspan="2" class="px-6 py-3 border border-x-0">{{ 'invoice.view.total_cbm' | transloco }}</th>
+                                    <th rowspan="2"
+                                        class="px-6 py-3 border border-x-0 w-10 sticky left-0 z-10 bg-white">#</th>
+                                    <th rowspan="2"
+                                        class="px-6 py-3 border border-l-0 w-10 sticky left-10 z-10 bg-white">a</th>
+                                    <th rowspan="2" class="px-6 py-3 border border-x-0">{{ 'invoice.view.order_code' |
+                                        transloco }}</th>
+                                    <th rowspan="2" class="px-6 py-3 border border-x-0">{{
+                                        'invoice.view.warehouse_receipt_code' | transloco }}</th>
+                                    <th rowspan="2" class="px-6 py-3 border border-x-0">{{
+                                        'invoice.view.transport_method' | transloco }}</th>
+                                    <th rowspan="2" class="px-6 py-3 border border-x-0">{{ 'invoice.view.customer_code'
+                                        | transloco }}</th>
+                                    <th rowspan="2" class="px-6 py-3 border border-x-0">{{ 'invoice.view.item' |
+                                        transloco }}</th>
+                                    <th rowspan="2" class="px-6 py-3 border border-x-0">{{ 'invoice.view.type' |
+                                        transloco }}</th>
+                                    <th rowspan="2" class="px-6 py-3 border border-x-0">{{ 'invoice.view.quantity' |
+                                        transloco }}</th>
+                                    <th colspan="3" class="px-6 py-1 border border-x-0">{{ 'invoice.view.dimensions' |
+                                        transloco }}</th>
+                                    <th rowspan="2" class="px-6 py-3 border border-x-0">{{ 'invoice.view.cubic_meter' |
+                                        transloco }}</th>
+                                    <th rowspan="2" class="px-6 py-3 border border-x-0">{{ 'invoice.view.kilogram' |
+                                        transloco }}</th>
+                                    <th rowspan="2" class="px-6 py-3 border border-x-0">{{ 'invoice.view.total_cbm' |
+                                        transloco }}</th>
                                 </tr>
                                 <tr>
                                     <th class="px-6 py-1 border border-x-0">{{ 'invoice.view.length' | transloco }}</th>
@@ -117,31 +131,42 @@
                                 </tr>
                             </thead>
                             <tbody class="bg-white">
-                                <tr *ngFor="let list of groupedTableData; let i = index" class="text-center bg-white hover:bg-gray-50 transition-colors">
+                                <tr *ngFor="let list of groupedTableData; let i = index"
+                                    class="text-center bg-white hover:bg-gray-50 transition-colors">
                                     <td class="px-6 py-3 border border-x-0 sticky left-0 z-10 bg-white">{{ i + 1 }}</td>
                                     <td class="px-6 py-3 border border-l-0 sticky left-10 z-10 bg-white">
-                                        <button class="bg-[#d4a85d] rounded-md min-w-10 min-h-10 items-center justify-center">
+                                        <button
+                                            class="bg-[#d4a85d] rounded-md min-w-10 min-h-10 items-center justify-center">
                                             <mat-icon [svgIcon]="'mat_outline:edit_note'" class="text-white"></mat-icon>
                                         </button>
                                     </td>
                                     <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order?.code ?? '-' }}</td>
-                                    <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order?.po_no ?? '-' }}</td>
-                                    <td class="px-6 py-3 border border-x-0">{{ getShipmentMethod(list?.delivery_order?.shipment_by) ?? '-' }}</td>
-                                    <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order?.member?.importer_code ?? '-' }}</td>
-                                    <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order_list?.product_name ?? '-' }}</td>
-                                    <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order_list?.product_type_id ?? '-' }}</td>
-                                    <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order_list?.qty ?? '-' }}</td>
-                                    <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order_list?.long ?? '-' }}</td>
-                                    <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order_list?.width ?? '-' }}</td>
-                                    <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order_list?.height ?? '-' }}</td>
+                                    <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order?.po_no ?? '-' }}
+                                    </td>
+                                    <td class="px-6 py-3 border border-x-0">{{
+                                        getShipmentMethod(list?.delivery_order?.shipment_by) ?? '-' }}</td>
+                                    <td class="px-6 py-3 border border-x-0">{{
+                                        list?.delivery_order?.member?.importer_code ?? '-' }}</td>
+                                    <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order_list?.product_name
+                                        ?? '-' }}</td>
+                                    <td class="px-6 py-3 border border-x-0">{{
+                                        list?.delivery_order_list?.product_type_id ?? '-' }}</td>
+                                    <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order_list?.qty ?? '-' }}
+                                    </td>
+                                    <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order_list?.long ?? '-' }}
+                                    </td>
+                                    <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order_list?.width ?? '-'
+                                        }}</td>
+                                    <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order_list?.height ?? '-'
+                                        }}</td>
                                     <td class="px-6 py-3 border border-x-0">-</td>
-                                    <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order_list?.weight ?? '-' }}</td>
+                                    <td class="px-6 py-3 border border-x-0">{{ list?.delivery_order_list?.weight ?? '-'
+                                        }}</td>
                                     <td class="px-6 py-3 border border-x-0">{{ list?.total_cbm | number:'1.2-2' }}</td>
                                 </tr>
                             </tbody>
                         </table>
                     </div>
-                    <pre>{{this.form.value | json}}</pre>
                 </div>
             </div>
         </div>

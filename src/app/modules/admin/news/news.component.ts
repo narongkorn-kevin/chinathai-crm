@@ -44,12 +44,14 @@ export class NewsComponent implements OnInit, AfterViewInit {
         public dialog: MatDialog,
         private activated: ActivatedRoute
 
-    ) { }
+    ) 
+    { 
+
+    }
 
     ngOnInit(): void {
         setTimeout(() =>
             this.loadTable());
-
     }
 
     ngAfterViewInit() {

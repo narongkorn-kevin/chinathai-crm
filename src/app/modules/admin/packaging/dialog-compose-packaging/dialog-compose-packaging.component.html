@@ -10,22 +10,17 @@
             <div class="flex-auto">
                 <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
                     <mat-label>ชื่อรายการ (ไทย)</mat-label>
-                    <input matInput [placeholder]="''">
+                    <input matInput [placeholder]="''" formControlName="name_th">
                 </mat-form-field>
 
                 <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
                     <mat-label>ชื่อรายการ (จีน)</mat-label>
-                    <input matInput [placeholder]="''">
+                    <input matInput [placeholder]="''" formControlName="name_cn">
                 </mat-form-field>
 
                 <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
                     <mat-label>ชื่อรายการ (อังกฤษ)</mat-label>
-                    <input matInput [placeholder]="''">
-                </mat-form-field>
-
-                <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
-                    <mat-label>ที่อยู่ลิงค์</mat-label>
-                    <input matInput [placeholder]="''">
+                    <input matInput [placeholder]="''" formControlName="name_en">
                 </mat-form-field>
             </div>
             <div mat-dialog-actions class="flex justify-end border-t-2 pt-4">

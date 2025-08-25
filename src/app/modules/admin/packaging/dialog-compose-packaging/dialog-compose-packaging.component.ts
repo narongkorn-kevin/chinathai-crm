@@ -41,7 +41,7 @@ export class DialogComposePackagingComponent implements OnInit {
 
     constructor(
         private dialogRef: MatDialogRef<DialogComposePackagingComponent>,
-        @Inject(MAT_DIALOG_DATA) public data: { action: 'NEW' | 'EDIT' },
+        @Inject(MAT_DIALOG_DATA) public data: any,
         public dialog: MatDialog,
         private FormBuilder: FormBuilder,
         public _service: PackagingService,
@@ -57,23 +57,20 @@ export class DialogComposePackagingComponent implements OnInit {
         // this.shipAddress = this.data.shipAddress;
         this.form = this.FormBuilder.group({
             id: '',
-            member_id: '',
-            address: '',
-            province: '',
-            district: '',
-            sub_district: '',
-            postal_code: '',
-            latitude: '',
-            longitude: '',
+            status: '',
+            name_th: '',
+            name_cn: '',
+            name_en: '',
         })
-
     }
 
     ngOnInit(): void {
-        // this.form.patchValue({
-        //     ...this.shipAddress,
-        //     member_id: this.data.member_id.id
-        // })
+        console.log(this.data, 'datg');
+        
+        if(this.data.action === 'EDIT')
+        this.form.patchValue({
+            ...this.data.data
+        })
     }
 
     onClose() {
@@ -119,7 +116,7 @@ export class DialogComposePackagingComponent implements OnInit {
                     this.memberService.updateAddress(this.form.value).subscribe({
                         next: (resp: any) => {
                             this.toastr.success('แก้ไขข้อมูลสำเร็จ');
-                            this.dialogRef.close()
+                            this.dialogRef.close(true)
                         },
                         error: (err) => {
                             this.toastr.error('แก้ไขข้อมูลไม่สำเร็จ');

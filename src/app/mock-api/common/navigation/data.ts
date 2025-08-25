@@ -542,6 +542,12 @@ export const defaultNavigation: FuseNavigationItem[] = [
                 ],
             },
             {
+                id: 'setting-transport-rate',
+                title: menuTitles.shipping_rates[langues],
+                type: 'basic',
+                link: '/shipping-rates',
+            },
+            {
                 id: 'setting-faq',
                 title: menuTitles.exchangeRate[langues],
                 type: 'basic',

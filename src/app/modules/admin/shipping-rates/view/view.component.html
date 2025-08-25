@@ -14,9 +14,7 @@
                             [routerLink]="['/shipping-rates']" routerLinkActive="router-link-active">
                             {{ 'shipping_rate.shipping_rates' | transloco }}
                         </button>
-
                     </div>
-
                     <p class="md:text-2xl text-[#DF0B12] font-bold tracking-tight leading-7 sm:leading-10 truncate">
                         {{ 'shipping_rate.view.shipping_rate_code' | transloco }}: {{ data?.code }}
                     </p>
@@ -25,7 +23,6 @@
                     <div class="justify-end items-center gap-2 flex">
                         <button mat-flat-button [color]="'primary'" (click)="setDefault()">
                             <div class="flex flex-row">
-                                <img class="w-3 h-auto" src="assets/images/flags/flags_white.png" alt="flags">
                                 <a class="ml-2">{{ 'shipping_rate.view.set_as_default' | transloco }}</a>
                             </div>
                         </button>
@@ -38,8 +35,6 @@
                         </button>
                     </div>
                 </div>
-
-
             </div>
             <div class="w-full px-4 md:px-10 flex flex-col gap-2 bg-white ">
                 <h2 class="font-semibold text-2xl">{{ 'shipping_rate.view.shipping_rate_details' | transloco }}</h2>

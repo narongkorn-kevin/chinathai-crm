@@ -35,14 +35,10 @@
 
 <ng-template #pic let-data="adtData">
   <div class="flex flex-row justify-center">
-    <img
-      *ngIf="data?.image"
-      [src]="validImageSrc(data.image)"
-      (error)="onImageError($event)"
-      alt="Image"
-      class="rounded-md w-20 text-center"
-    />
-    <div *ngIf="!data?.image" class="w-20 h-20 flex items-center justify-center bg-gray-100 text-gray-400 rounded-md">
+    <img *ngIf="data?.image && !data.imageError" [src]="data.image" (error)="onImageError(data)" alt="Image"
+      class="rounded-md w-20 text-center" />
+    <div *ngIf="!data?.image || data.imageError"
+      class="w-20 h-20 flex items-center justify-center bg-gray-100 text-gray-400 rounded-md">
       No Image
     </div>
   </div>

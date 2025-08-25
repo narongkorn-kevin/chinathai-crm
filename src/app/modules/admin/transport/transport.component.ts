@@ -214,8 +214,9 @@ export class TransportComponent implements OnInit, AfterViewInit {
         return src;
     }
 
-    onImageError(event: Event) {
-        const img = event.target as HTMLImageElement;
-        img.src = this.fallbackImage;
+    onImageError(data: any): void {
+        data.imageError = true;
     }
+
+
 }
