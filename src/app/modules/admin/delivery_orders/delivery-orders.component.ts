@@ -560,7 +560,7 @@ export class DeliveryOrdersComponent implements OnInit, AfterViewInit {
                         this.filterForm.value.packing_list_code;
                 }
                 if (this.typeRouter === 'non-member') {
-                    dataTablesParameters.member_id = 0
+                    dataTablesParameters.member_id = ""
                 }
                 this._service
                     .datatable(dataTablesParameters)

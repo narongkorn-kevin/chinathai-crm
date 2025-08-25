@@ -507,12 +507,18 @@ export const defaultNavigation: FuseNavigationItem[] = [
                         title: menuTitles.routePath[langues],
                         type: 'basic',
                         link: '/route-path',
+                        hidden(item) {
+                            return true;
+                        },
                     },
                     {
                         id: 'faq-1',
                         title: menuTitles.transportType[langues],
                         type: 'basic',
                         link: '/transport-type',
+                        hidden(item) {
+                            return true;
+                        },
                     },
                     {
                         id: 'setting-rate',
