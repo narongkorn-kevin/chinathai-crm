@@ -305,12 +305,12 @@
 
 <ng-template #picSlip let-data="adtData">
     <div class="flex flex-row justify-center cursor-pointer">
-        <ng-container *ngIf="isImageFile(data?.fullImageSlip); else notImageSlip">
+        <ng-container *ngIf="isImageFile('https://scontent.fbkk13-2.fna.fbcdn.net/v/t39.30808-6/486227708_1193830322128007_4993615349794665835_n.jpg?_nc_cat=111&ccb=1-7&_nc_sid=833d8c&_nc_ohc=C6StGygVN04Q7kNvwHXQy4y&_nc_oc=AdnvHtIDjNmQe7ay94rbkJ734oR7fWoyfYQ5me1KU8yexeoLQ9O-LqqZ4rBF8wv8qQ8&_nc_zt=23&_nc_ht=scontent.fbkk13-2.fna&_nc_gid=xyl617h3_PuIqcleMqk0bA&oh=00_AfVotgoX3APohemRf6IiRpRjqH_YiWYXQ25Gkp3JtNWmOg&oe=6897BEEB'); else notImageSlip">
             <div class="relative">
-                <img [src]="data.fullImageSlip" alt="Image" class="rounded-md w-10 h-15"
-                    (click)="showPicture(data.fullImageSlip)" (error)="onImageError(data.fullImageSlip)"
-                    (load)="onImageLoad(data.fullImageSlip)" />
-                <ng-container *ngIf="imageLoadedMap[data.fullImageSlip] === false">
+                <img [src]="'https://scontent.fbkk13-2.fna.fbcdn.net/v/t39.30808-6/486227708_1193830322128007_4993615349794665835_n.jpg?_nc_cat=111&ccb=1-7&_nc_sid=833d8c&_nc_ohc=C6StGygVN04Q7kNvwHXQy4y&_nc_oc=AdnvHtIDjNmQe7ay94rbkJ734oR7fWoyfYQ5me1KU8yexeoLQ9O-LqqZ4rBF8wv8qQ8&_nc_zt=23&_nc_ht=scontent.fbkk13-2.fna&_nc_gid=xyl617h3_PuIqcleMqk0bA&oh=00_AfVotgoX3APohemRf6IiRpRjqH_YiWYXQ25Gkp3JtNWmOg&oe=6897BEEB'" alt="Image" class="rounded-md w-10 h-15"
+                    (click)="showPicture('https://scontent.fbkk13-2.fna.fbcdn.net/v/t39.30808-6/486227708_1193830322128007_4993615349794665835_n.jpg?_nc_cat=111&ccb=1-7&_nc_sid=833d8c&_nc_ohc=C6StGygVN04Q7kNvwHXQy4y&_nc_oc=AdnvHtIDjNmQe7ay94rbkJ734oR7fWoyfYQ5me1KU8yexeoLQ9O-LqqZ4rBF8wv8qQ8&_nc_zt=23&_nc_ht=scontent.fbkk13-2.fna&_nc_gid=xyl617h3_PuIqcleMqk0bA&oh=00_AfVotgoX3APohemRf6IiRpRjqH_YiWYXQ25Gkp3JtNWmOg&oe=6897BEEB')" (error)="onImageError('https://scontent.fbkk13-2.fna.fbcdn.net/v/t39.30808-6/486227708_1193830322128007_4993615349794665835_n.jpg?_nc_cat=111&ccb=1-7&_nc_sid=833d8c&_nc_ohc=C6StGygVN04Q7kNvwHXQy4y&_nc_oc=AdnvHtIDjNmQe7ay94rbkJ734oR7fWoyfYQ5me1KU8yexeoLQ9O-LqqZ4rBF8wv8qQ8&_nc_zt=23&_nc_ht=scontent.fbkk13-2.fna&_nc_gid=xyl617h3_PuIqcleMqk0bA&oh=00_AfVotgoX3APohemRf6IiRpRjqH_YiWYXQ25Gkp3JtNWmOg&oe=6897BEEB')"
+                    (load)="onImageLoad('https://scontent.fbkk13-2.fna.fbcdn.net/v/t39.30808-6/486227708_1193830322128007_4993615349794665835_n.jpg?_nc_cat=111&ccb=1-7&_nc_sid=833d8c&_nc_ohc=C6StGygVN04Q7kNvwHXQy4y&_nc_oc=AdnvHtIDjNmQe7ay94rbkJ734oR7fWoyfYQ5me1KU8yexeoLQ9O-LqqZ4rBF8wv8qQ8&_nc_zt=23&_nc_ht=scontent.fbkk13-2.fna&_nc_gid=xyl617h3_PuIqcleMqk0bA&oh=00_AfVotgoX3APohemRf6IiRpRjqH_YiWYXQ25Gkp3JtNWmOg&oe=6897BEEB')" />
+                <ng-container *ngIf="imageLoadedMap['https://scontent.fbkk13-2.fna.fbcdn.net/v/t39.30808-6/486227708_1193830322128007_4993615349794665835_n.jpg?_nc_cat=111&ccb=1-7&_nc_sid=833d8c&_nc_ohc=C6StGygVN04Q7kNvwHXQy4y&_nc_oc=AdnvHtIDjNmQe7ay94rbkJ734oR7fWoyfYQ5me1KU8yexeoLQ9O-LqqZ4rBF8wv8qQ8&_nc_zt=23&_nc_ht=scontent.fbkk13-2.fna&_nc_gid=xyl617h3_PuIqcleMqk0bA&oh=00_AfVotgoX3APohemRf6IiRpRjqH_YiWYXQ25Gkp3JtNWmOg&oe=6897BEEB'] === false">
                     <mat-icon class="absolute inset-0 m-auto text-gray-400 text-6xl">
                         image_not_supported
                     </mat-icon>
@@ -318,7 +318,7 @@
             </div>
         </ng-container>
         <ng-template #notImageSlip>
-            <a [href]="data.fullImageSlip" target="_blank" download="{{ getFileNameFromUrl(data.fullImageSlip) }}">
+            <a [href]="'https://scontent.fbkk13-2.fna.fbcdn.net/v/t39.30808-6/486227708_1193830322128007_4993615349794665835_n.jpg?_nc_cat=111&ccb=1-7&_nc_sid=833d8c&_nc_ohc=C6StGygVN04Q7kNvwHXQy4y&_nc_oc=AdnvHtIDjNmQe7ay94rbkJ734oR7fWoyfYQ5me1KU8yexeoLQ9O-LqqZ4rBF8wv8qQ8&_nc_zt=23&_nc_ht=scontent.fbkk13-2.fna&_nc_gid=xyl617h3_PuIqcleMqk0bA&oh=00_AfVotgoX3APohemRf6IiRpRjqH_YiWYXQ25Gkp3JtNWmOg&oe=6897BEEB'" target="_blank" download="{{ getFileNameFromUrl('https://scontent.fbkk13-2.fna.fbcdn.net/v/t39.30808-6/486227708_1193830322128007_4993615349794665835_n.jpg?_nc_cat=111&ccb=1-7&_nc_sid=833d8c&_nc_ohc=C6StGygVN04Q7kNvwHXQy4y&_nc_oc=AdnvHtIDjNmQe7ay94rbkJ734oR7fWoyfYQ5me1KU8yexeoLQ9O-LqqZ4rBF8wv8qQ8&_nc_zt=23&_nc_ht=scontent.fbkk13-2.fna&_nc_gid=xyl617h3_PuIqcleMqk0bA&oh=00_AfVotgoX3APohemRf6IiRpRjqH_YiWYXQ25Gkp3JtNWmOg&oe=6897BEEB') }}">
                 <mat-icon class="text-gray-400 text-6xl">description</mat-icon>
             </a>
         </ng-template>
@@ -329,11 +329,11 @@
 
 <ng-template #picQr let-data="adtData">
     <div class="flex flex-row justify-center cursor-pointer">
-        <ng-container *ngIf="isImageFile(data?.fullImageQr); else notImageQr">
+        <ng-container *ngIf="isImageFile('https://scontent.fbkk13-2.fna.fbcdn.net/v/t39.30808-6/486227708_1193830322128007_4993615349794665835_n.jpg?_nc_cat=111&ccb=1-7&_nc_sid=833d8c&_nc_ohc=C6StGygVN04Q7kNvwHXQy4y&_nc_oc=AdnvHtIDjNmQe7ay94rbkJ734oR7fWoyfYQ5me1KU8yexeoLQ9O-LqqZ4rBF8wv8qQ8&_nc_zt=23&_nc_ht=scontent.fbkk13-2.fna&_nc_gid=xyl617h3_PuIqcleMqk0bA&oh=00_AfVotgoX3APohemRf6IiRpRjqH_YiWYXQ25Gkp3JtNWmOg&oe=6897BEEB'); else notImageQr">
             <div class="relative">
-                <img [src]="data.fullImageQr" alt="Image" class="rounded-md w-10 h-15"
-                    (click)="showPicture(data.fullImageQr)" (error)="onImageError(data.fullImageQr)"
-                    (load)="onImageLoad(data.fullImageQr)" />
+                <img [src]="'https://scontent.fbkk13-2.fna.fbcdn.net/v/t39.30808-6/486227708_1193830322128007_4993615349794665835_n.jpg?_nc_cat=111&ccb=1-7&_nc_sid=833d8c&_nc_ohc=C6StGygVN04Q7kNvwHXQy4y&_nc_oc=AdnvHtIDjNmQe7ay94rbkJ734oR7fWoyfYQ5me1KU8yexeoLQ9O-LqqZ4rBF8wv8qQ8&_nc_zt=23&_nc_ht=scontent.fbkk13-2.fna&_nc_gid=xyl617h3_PuIqcleMqk0bA&oh=00_AfVotgoX3APohemRf6IiRpRjqH_YiWYXQ25Gkp3JtNWmOg&oe=6897BEEB'" alt="Image" class="rounded-md w-10 h-15"
+                    (click)="showPicture('https://scontent.fbkk13-2.fna.fbcdn.net/v/t39.30808-6/486227708_1193830322128007_4993615349794665835_n.jpg?_nc_cat=111&ccb=1-7&_nc_sid=833d8c&_nc_ohc=C6StGygVN04Q7kNvwHXQy4y&_nc_oc=AdnvHtIDjNmQe7ay94rbkJ734oR7fWoyfYQ5me1KU8yexeoLQ9O-LqqZ4rBF8wv8qQ8&_nc_zt=23&_nc_ht=scontent.fbkk13-2.fna&_nc_gid=xyl617h3_PuIqcleMqk0bA&oh=00_AfVotgoX3APohemRf6IiRpRjqH_YiWYXQ25Gkp3JtNWmOg&oe=6897BEEB')" (error)="onImageError(data.fullImageQr)"
+                    (load)="onImageLoad('https://scontent.fbkk13-2.fna.fbcdn.net/v/t39.30808-6/486227708_1193830322128007_4993615349794665835_n.jpg?_nc_cat=111&ccb=1-7&_nc_sid=833d8c&_nc_ohc=C6StGygVN04Q7kNvwHXQy4y&_nc_oc=AdnvHtIDjNmQe7ay94rbkJ734oR7fWoyfYQ5me1KU8yexeoLQ9O-LqqZ4rBF8wv8qQ8&_nc_zt=23&_nc_ht=scontent.fbkk13-2.fna&_nc_gid=xyl617h3_PuIqcleMqk0bA&oh=00_AfVotgoX3APohemRf6IiRpRjqH_YiWYXQ25Gkp3JtNWmOg&oe=6897BEEB')" />
                 <ng-container *ngIf="imageLoadedMap[data.fullImageQr] === false">
                     <mat-icon class="absolute inset-0 m-auto text-gray-400 text-6xl">
                         image_not_supported
@@ -342,7 +342,7 @@
             </div>
         </ng-container>
         <ng-template #notImageQr>
-            <a [href]="data.fullImageQr" target="_blank" download="{{ getFileNameFromUrl(data.fullImageQr) }}">
+            <a [href]="data.fullImageQr" target="_blank" download="{{ 'https://scontent.fbkk13-2.fna.fbcdn.net/v/t39.30808-6/486227708_1193830322128007_4993615349794665835_n.jpg?_nc_cat=111&ccb=1-7&_nc_sid=833d8c&_nc_ohc=C6StGygVN04Q7kNvwHXQy4y&_nc_oc=AdnvHtIDjNmQe7ay94rbkJ734oR7fWoyfYQ5me1KU8yexeoLQ9O-LqqZ4rBF8wv8qQ8&_nc_zt=23&_nc_ht=scontent.fbkk13-2.fna&_nc_gid=xyl617h3_PuIqcleMqk0bA&oh=00_AfVotgoX3APohemRf6IiRpRjqH_YiWYXQ25Gkp3JtNWmOg&oe=6897BEEB' }}">
                 <mat-icon class="text-gray-400 text-6xl">description</mat-icon>
             </a>
         </ng-template>
