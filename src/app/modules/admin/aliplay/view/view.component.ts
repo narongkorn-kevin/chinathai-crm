@@ -42,6 +42,7 @@ export interface UploadedFile {
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { OrderProductsService } from '../../order-products/order-products.service';
 import { AlipayService } from '../alipay.service';
+import { environment } from 'environments/environment';
 
 @Component({
     selector: 'app-member-form-view-3',
@@ -101,6 +102,7 @@ export class ViewComponent implements OnInit {
             total: (+this.data.value.amount) + (+this.data.value.fee),
             image_slip: null,
             image_slip_url: [''],
+            image_url: [''],
             note: [''],
             id: this.data.value.id
         });
@@ -288,5 +290,20 @@ export class ViewComponent implements OnInit {
 
     removeFile(index: number): void {
         this.uploadedFiles.splice(index, 1);
+    }
+
+    validImage = true;
+
+    onImageError() {
+        this.validImage = false;
+    }
+
+    getFullUrl(path: string): string {
+        if (!path) return '';
+        // ถ้ามี http หรือ https อยู่แล้วให้ return เลย
+        if (/^https?:\/\//i.test(path)) {
+            return path;
+        }
+        return `${environment.apiUrl}/${path}`;
     }
 }

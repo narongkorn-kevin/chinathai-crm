@@ -175,9 +175,10 @@ export class FormComponent implements OnInit {
                 frequent_importer: 'ไม่บ่อย', //เอาจากแบบสอบถามหน้าสมัคร
                 need_transport_type: 'Express', //เอาจากแบบสอบถามหน้าสมัคร
                 additional_requests: 'Deliver with extra care', //เอาจากแบบสอบถามหน้าสมัคร
-
+                found_via_line: [''],
+                found_via_facebook: [''],
+                found_via_google: [''],
                 //============ นิติบุคคล ============
-
                 comp_name: [''],
                 comp_tax: [''],
                 comp_phone: [''],
@@ -314,13 +315,13 @@ export class FormComponent implements OnInit {
     }
 
     Submit() {
-        if (this.form.invalid) {
-            this.toastr.error(
-                this.translocoService.translate('toastr.missing_fields')
-            );
-            this.form.markAllAsTouched();
-            return;
-        }
+        // if (this.form.invalid) {
+        //     this.toastr.error(
+        //         this.translocoService.translate('toastr.missing_fields')
+        //     );
+        //     this.form.markAllAsTouched();
+        //     return;
+        // }
         this.form.value.birth_date = new Date(this.form.value.birth_date)
             .toISOString()
             .split('T')[0];
