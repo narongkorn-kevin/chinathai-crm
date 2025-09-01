@@ -196,16 +196,16 @@ export const defaultNavigation: FuseNavigationItem[] = [
             //     // link: '/follow-up',
 
             // },
-            {
-                id: 'payment.statement-transport',
-                title: 'รายการเดินบัญชีค่าขนส่ง',
-                type: 'basic',
-                // link: '/follow-up',
-                // badge: {
-                //     title: '3',
-                //     classes: 'px-2 bg-red-600 text-white rounded-full',
-                // },
-            },
+            // {
+            //     id: 'payment.statement-transport',
+            //     title: 'รายการเดินบัญชีค่าขนส่ง',
+            //     type: 'basic',
+            //     link: '/follow-up',
+            //     badge: {
+            //         title: '3',
+            //         classes: 'px-2 bg-red-600 text-white rounded-full',
+            //     },
+            // },
             // {
             //     id: 'payment.cr-dr',
             //     title: 'Cr/Dr',

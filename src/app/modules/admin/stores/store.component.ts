@@ -149,8 +149,10 @@ export class StoreComponent implements OnInit, AfterViewInit {
     opendialogapro() {
         const DialogRef = this.dialog.open(DialogForm, {
             disableClose: true,
-            width: '500px',
+            width: '95%', // เปลี่ยนจาก 500px เป็น percentage
+            maxWidth: '800px', // กำหนดความกว้างสูงสุด
             height: 'auto',
+            panelClass: 'responsive-dialog', // เพิ่มคลาสสำหรับ styling เพิ่มเติม
             data: {
                 type: 'NEW',
             }
@@ -165,8 +167,10 @@ export class StoreComponent implements OnInit, AfterViewInit {
     openDialogEdit(item: any) {
         const DialogRef = this.dialog.open(DialogForm, {
             disableClose: true,
-            width: '500px',
+            width: '95%', // เปลี่ยนจาก 500px เป็น percentage
+            maxWidth: '800px', // กำหนดความกว้างสูงสุด
             height: 'auto',
+            panelClass: 'responsive-dialog', // เพิ่มคลาสสำหรับ styling เพิ่มเติม
             data: {
                 type: 'EDIT',
                 value: item,
@@ -220,7 +224,7 @@ export class StoreComponent implements OnInit, AfterViewInit {
             }
         )
     }
-    
+
     onImageError(data: any): void {
         data.imageError = true;
     }

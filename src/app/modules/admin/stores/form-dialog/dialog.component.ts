@@ -67,17 +67,22 @@ export class DialogForm implements OnInit {
     ngOnInit(): void {
         this.form = this.FormBuilder.group({
             name: ['', Validators.required],
-            description: ['', Validators.required],
-            address: ['', Validators.required],
-            phone: ['', Validators.required],
-            map: ['', Validators.required],
-            image: [null],
+            description: [''],
+            address: [''],
+            phone: [''],
+            map: [''],
+            type: ['TH'], // ค่า default
+            name_ch: [''],
+            name_en: [''],
+            address_ch: [''],
+            address_en: [''],
+            image: [null]
         });
 
         if (this.data.type === 'EDIT') {
             this.form.patchValue({
                 ...this.data.value,
-                image:null
+                image: null
             })
 
         }

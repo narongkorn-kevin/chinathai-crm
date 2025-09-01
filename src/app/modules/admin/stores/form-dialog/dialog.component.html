@@ -1,68 +1,100 @@
-<div class="md:max-w-lg">
+<div class="w-full max-w-4xl mx-auto"> <!-- ใช้ max-w-4xl และ mx-auto แทน md:max-w-4xl -->
     <h1 mat-dialog-title class="text-xl font-semibold mb-4" *ngIf="this.data?.type === 'NEW'">เพิ่มข้อมูล</h1>
     <h1 mat-dialog-title class="text-xl font-semibold mb-4" *ngIf="this.data?.type === 'EDIT'">แก้ไขข้อมูล</h1>
-    <form [formGroup]="form">
-        <div mat-dialog-content class="overflow-y-auto md:max-h-180">
-            <div class="flex-auto">
-                <div class="flex flex-col md:flex mb-6">
-                    <div class="md:w-full">
-                        <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
-                            <mat-label>ชื่อ</mat-label>
-                            <input matInput [placeholder]="'กรุณาระบุชื่อ'" formControlName="name">
-                        </mat-form-field>
-                    </div>
-                </div>
-                <div class="flex flex-col md:flex mb-6">
-                    <div class="md:w-full">
-                        <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
-                            <mat-label>เบอร์โทรศัพท์</mat-label>
-                            <input matInput [placeholder]="'กรุณาระบุเบอร์โทรศัพท์'" formControlName="phone">
-                        </mat-form-field>
-                    </div>
-                </div>
-                <div class="flex flex-col md:flex mb-6">
-                    <div class="md:w-full">
-                        <mat-form-field [ngClass]="formFieldHelpers" class="w-full" type="textarea">
-                            <mat-label>รายละเอียด</mat-label>
-                            <textarea  matInput [placeholder]="'กรุณาระบุรายละเอียด'" formControlName="description"></textarea>
-                        </mat-form-field>
-                    </div>
-                </div>
-                <div class="flex flex-col md:flex mb-6">
-                    <div class="md:w-full">
-                        <mat-form-field [ngClass]="formFieldHelpers" class="w-full" type="textarea">
-                            <mat-label>ที่อยู่</mat-label>
-                            <textarea  matInput [placeholder]="'กรุณาระบุที่อยู่'" formControlName="address"></textarea>
-                        </mat-form-field>
-                    </div>
-                </div>
-                <div class="flex flex-col md:flex mb-6">
-                    <div class="md:w-full">
-                        <mat-form-field [ngClass]="formFieldHelpers" class="w-full" type="textarea">
-                            <mat-label>ที่ตั้ง</mat-label>
-                            <textarea  matInput [placeholder]="'กรุณาระบุที่ตั้ง'" formControlName="map"></textarea>
-                        </mat-form-field>
-                    </div>
-                </div>
-                <div class="flex w-full flex-col justify-center gap-2">
-                    <div class="flex w-full justify-center">
-                        <asha-image-upload [initial]="null" (uploadSuccess)="uploadSuccess($event)" accept="image/*"></asha-image-upload>
-                    </div>
 
-                    <div class="flex justify-center w-full">
-                        <img [src]="imageUrl" alt="" class="w-auto">
-                    </div>
+    <form [formGroup]="form">
+        <div mat-dialog-content class="overflow-y-auto max-h-[70vh]"> <!-- ใช้ max-h แทน md:max-h -->
+            <!-- ใช้ grid layout สำหรับ 2 columns -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4"> <!-- เพิ่ม gap responsive -->
+
+                <!-- Column 1 -->
+                <div class="flex flex-col">
+                    <!-- ชื่อ -->
+                    <mat-form-field appearance="outline" class="w-full mb-3"> <!-- ลดระยะห่างระหว่างฟิลด์ -->
+                        <mat-label>ชื่อ</mat-label>
+                        <input matInput placeholder="กรุณาระบุชื่อ" formControlName="name">
+                    </mat-form-field>
+
+                    <!-- เบอร์โทรศัพท์ -->
+                    <mat-form-field appearance="outline" class="w-full mb-3">
+                        <mat-label>เบอร์โทรศัพท์</mat-label>
+                        <input matInput placeholder="กรุณาระบุเบอร์โทรศัพท์" formControlName="phone">
+                    </mat-form-field>
+
+                    <!-- ประเภท -->
+                    <mat-form-field appearance="outline" class="w-full mb-3">
+                        <mat-label>ประเภท</mat-label>
+                        <input matInput placeholder="เช่น TH" formControlName="type">
+                    </mat-form-field>
+
+                    <!-- ชื่อจีน -->
+                    <mat-form-field appearance="outline" class="w-full mb-3">
+                        <mat-label>ชื่อ (จีน)</mat-label>
+                        <input matInput placeholder="กรุณาระบุชื่อภาษาจีน" formControlName="name_ch">
+                    </mat-form-field>
+
+                    <!-- ชื่ออังกฤษ -->
+                    <mat-form-field appearance="outline" class="w-full mb-3">
+                        <mat-label>ชื่อ (อังกฤษ)</mat-label>
+                        <input matInput placeholder="กรุณาระบุชื่อภาษาอังกฤษ" formControlName="name_en">
+                    </mat-form-field>
+                </div>
+
+                <!-- Column 2 -->
+                <div class="flex flex-col">
+                    <!-- ที่อยู่ -->
+                    <mat-form-field appearance="outline" class="w-full mb-3">
+                        <mat-label>ที่อยู่</mat-label>
+                        <textarea matInput placeholder="กรุณาระบุที่อยู่" formControlName="address" rows="2"></textarea>
+                    </mat-form-field>
+
+                    <!-- ที่อยู่จีน -->
+                    <mat-form-field appearance="outline" class="w-full mb-3">
+                        <mat-label>ที่อยู่ (จีน)</mat-label>
+                        <textarea matInput placeholder="กรุณาระบุที่อยู่ภาษาจีน" formControlName="address_ch"
+                            rows="2"></textarea>
+                    </mat-form-field>
+
+                    <!-- ที่อยู่ภาษาอังกฤษ -->
+                    <mat-form-field appearance="outline" class="w-full mb-3">
+                        <mat-label>ที่อยู่ (อังกฤษ)</mat-label>
+                        <textarea matInput placeholder="กรุณาระบุที่อยู่ภาษาอังกฤษ" formControlName="address_en"
+                            rows="2"></textarea>
+                    </mat-form-field>
+
+                    <!-- ที่ตั้ง -->
+                    <mat-form-field appearance="outline" class="w-full mb-3">
+                        <mat-label>ที่ตั้ง (Google Map URL)</mat-label>
+                        <textarea matInput placeholder="กรุณาระบุที่ตั้ง" formControlName="map" rows="2"></textarea>
+                    </mat-form-field>
+
+                    <!-- รายละเอียด -->
+                    <mat-form-field appearance="outline" class="w-full mb-3">
+                        <mat-label>รายละเอียด</mat-label>
+                        <textarea matInput placeholder="กรุณาระบุรายละเอียด" formControlName="description"
+                            rows="2"></textarea>
+                    </mat-form-field>
+                </div>
+            </div>
+
+            <!-- อัพโหลดรูป (แสดงเต็มความกว้างใต้ grid 2 columns) -->
+            <div class="mt-4 flex w-full flex-col justify-center gap-2">
+                <div class="flex w-full justify-center">
+                    <asha-image-upload [initial]="imageUrl" (uploadSuccess)="uploadSuccess($event)"
+                        accept="image/*"></asha-image-upload>
+                </div>
+                <div class="flex justify-center w-full" *ngIf="imageUrl">
+                    <img [src]="imageUrl" alt="preview" class="w-auto max-h-40 rounded-md shadow">
                 </div>
             </div>
         </div>
-        <!-- <div> check : {{this.form.value | json}}</div> -->
-        <div mat-dialog-actions class="flex justify-end">
-            <button class="px-6 ml-3" mat-flat-button [color]="'primary'" (click)="Submit()">
-                ตกลง
-            </button>
-            <button class="px-6 ml-3" mat-flat-button [color]="'warn'" (click)="onClose()">
-                ยกเลิก
-            </button>
+
+        <div mat-dialog-actions class="flex flex-col-reverse sm:flex-row justify-end mt-4 gap-2 sm:gap-0">
+            <!-- ปรับปุ่มให้ responsive -->
+            <button class="px-4 sm:px-6 sm:ml-3 order-2 sm:order-1" mat-flat-button color="warn"
+                (click)="onClose()">ยกเลิก</button>
+            <button class="px-4 sm:px-6 order-1 sm:order-2 mb-2 sm:mb-0" mat-flat-button color="primary"
+                (click)="Submit()">ตกลง</button>
         </div>
     </form>
 </div>
