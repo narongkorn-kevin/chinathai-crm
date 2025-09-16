@@ -78,40 +78,49 @@ export class DialogOrderFeeComponent implements OnInit {
     ) { }
 
     ngOnInit(): void {
-        console.log(this.data, 'data');
-        this.orderProductService.getfee().subscribe((res: any) => {
-            console.log(res, 'fee');
-            this.fee = res.rate;
-            this.form = this.FormBuilder.group({
-                china_shipping_fee: [this.data.orderLists.china_shipping_fee, Validators.required],
-                deposit_fee: [this.data.orderLists.deposit_fee, Validators.required],
-                exchange_rate: [this.data.orderLists.exchange_rate, Validators.required],
-                order_lists: this.FormBuilder.array(
-                    this.data.orderLists.order_lists.map((item: any) => {
-                        return this.FormBuilder.group({
-                            order_list_id: [item.order_list_id],
-                            product_real_price: [item.product_real_price],
-                            product_shop: [item.product_shop],
-                            product_real_link: [item?.product_real_link],
-                            qty: [item?.qty],
-                            product_negotiated_price: [item?.product_negotiated_price],
-                        });
-                    })
-                ),
-                total_price: [0],
-            })
-            this.form.patchValue({
-                exchange_rate: this.fee,
-            });
+        // Initialize form synchronously to avoid undefined FormGroup in template
+        const orderLists = this.data?.orderLists?.order_lists || [];
+
+        this.form = this.FormBuilder.group({
+            china_shipping_fee: [this.data?.orderLists?.china_shipping_fee ?? null, Validators.required],
+            deposit_fee: [
+                this.data?.orderLists?.deposit_fee != null ? +this.data.orderLists.deposit_fee : null,
+                Validators.required,
+            ],
+            exchange_rate: [null, Validators.required],
+            order_lists: this.FormBuilder.array(
+                orderLists.map((item: any) => {
+                    return this.FormBuilder.group({
+                        order_list_id: [item.order_list_id],
+                        product_real_price: [item.product_real_price],
+                        product_shop: [item.product_shop],
+                        product_real_link: [item?.product_real_link],
+                        qty: [item?.qty],
+                        product_negotiated_price: [item?.product_negotiated_price],
+                    });
+                })
+            ),
+            total_price: [0],
         });
-        if (this.data.type === 'EDIT') {
+
+        // Fetch fee and patch the exchange rate (and EDIT data) after form exists
+        this.orderProductService.getfee().subscribe((res: any) => {
+            this.fee = res?.rate;
             this.form.patchValue({
-                ...this.data.value,
+                exchange_rate: +res?.rate || 0,
             });
-        }
+
+            if (this.data?.type === 'EDIT') {
+                this.form.patchValue({
+                    ...this.data.value,
+                });
+            }
+        });
     }
 
     Submit() {
+        console.log(this.form.value , 'form.value');
+        
         if (this.form.invalid) {
             this.toastr.error(
                 this.translocoService.translate('toastr.missing_fields')
