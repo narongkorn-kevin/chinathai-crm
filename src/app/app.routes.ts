@@ -80,6 +80,7 @@ export const appRoutes: Route[] = [
             { path: 'user', loadChildren: () => import('app/modules/admin/user/user.routes') },
             { path: 'branch', loadChildren: () => import('app/modules/admin/branch/page.routes') },
             { path: 'banner', loadChildren: () => import('app/modules/admin/banner/banner.routes') },
+            { path: 'banners', loadChildren: () => import('app/modules/admin/banners/page.routes') },
             { path: 'member', loadChildren: () => import('app/modules/admin/member/member.routes') },
             { path: 'panel', loadChildren: () => import('app/modules/admin/panel/page.routes') },
             { path: 'category', loadChildren: () => import('app/modules/admin/category/page.routes') },

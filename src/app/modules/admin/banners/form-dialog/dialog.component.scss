@@ -1,0 +1,24 @@
+/* สำหรับ responsive dialog */
+.responsive-dialog .mat-dialog-container {
+    padding: 16px;
+    overflow-x: hidden;
+}
+
+/* สำหรับหน้าจอขนาดเล็ก */
+@media screen and (max-width: 600px) {
+    .responsive-dialog .mat-dialog-container {
+        padding: 12px;
+        max-height: 90vh !important;
+    }
+
+    .responsive-dialog .mat-dialog-content {
+        max-height: 65vh !important;
+    }
+}
+
+/* สำหรับหน้าจอขนาดกลาง */
+@media screen and (min-width: 601px) and (max-width: 960px) {
+    .responsive-dialog .mat-dialog-container {
+        max-width: 90vw !important;
+    }
+}

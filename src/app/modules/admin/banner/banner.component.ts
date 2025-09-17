@@ -9,7 +9,7 @@ import {
 import { DataTableDirective, DataTablesModule } from 'angular-datatables';
 import { BannerService } from './banner.service';
 import { ADTSettings } from 'angular-datatables/src/models/settings';
-import { Subject } from 'rxjs';
+import { map, Subject } from 'rxjs';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -23,6 +23,7 @@ import { PictureComponent } from '../picture/picture.component';
 import { BannerComposeComponent } from './dialog/banner-compose/banner-compose.component';
 
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
+import { DateTime } from 'luxon';
 
 @Component({
     selector: 'app-banner-banner',
@@ -44,13 +45,14 @@ import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 export class BannerComponent implements OnInit, AfterViewInit {
     dtOptions: any = {};
     dtTrigger: Subject<ADTSettings> = new Subject<ADTSettings>();
-
+    langues: any;
+    languageUrl: any;
     @ViewChild('btNg') btNg: any;
     @ViewChild('btPicture') btPicture: any;
     @ViewChild(DataTableDirective, { static: false })
     dtElement: DataTableDirective;
     @ViewChild('textStatus') textStatus: any;
-
+dataRow: any[]
     constructor(
         private translocoService: TranslocoService,
         private _service: BannerService,
@@ -58,7 +60,7 @@ export class BannerComponent implements OnInit, AfterViewInit {
         private toastr: ToastrService,
         public dialog: MatDialog,
         private _router: Router
-    ) {}
+    ) { }
     ngOnInit(): void {
         setTimeout(() => this.loadTable());
     }
@@ -75,87 +77,120 @@ export class BannerComponent implements OnInit, AfterViewInit {
     }
 
     loadTable(): void {
+        const menuTitles = {
+            bill_payment_service: {
+                th: 'บริการฝากชำระ',
+                en: 'Payment-on-behalf service',
+                cn: '代付服务',
+            },
+            order_proxy_service: {
+                th: 'บริการฝากสั่ง',
+                en: 'Order-on-behalf service',
+                cn: '代购服务',
+            },
+            alipay_topup_service: {
+                th: 'บริการเติม Alipay',
+                en: 'Alipay top-up service',
+                cn: '支付宝充值服务',
+            },
+            edited_by: {
+                th: 'ผู้แก้ไข',
+                en: 'Edited by',
+                cn: '编辑人',
+            },
+            date: {
+                th: 'วันที่แก้ไข',
+                en: 'Change Date',
+                cn: '日期',
+            },
+
+
+        };
         this.dtOptions = {
             pagingType: 'full_numbers',
-            serverSide: true, // Set the flag
+            serverSide: true,
+            scrollX: false,
+            language: {
+                url: this.languageUrl,
+            },
             ajax: (dataTablesParameters: any, callback) => {
-                dataTablesParameters.filter = {
-                    'filter.category.id': '',
-                };
-
-                this._service.datatable(dataTablesParameters).subscribe({
-                    next: (resp: any) => {
-                        callback({
-                            recordsTotal: resp.meta.totalItems,
-                            recordsFiltered: resp.meta.totalItems,
-                            data: resp.data,
-                        });
-                    },
-                });
+                this._service
+                    .datatable(dataTablesParameters)
+                    .pipe(map((resp: { data: any }) => resp.data))
+                    .subscribe({
+                        next: (resp: any) => {
+                            this.dataRow = resp.data;
+                            callback({
+                                recordsTotal: resp.total,
+                                recordsFiltered: resp.total,
+                                data: resp.data,
+                            });
+                        },
+                    });
             },
             columns: [
                 {
-                    title: 'ลำดับ',
-                    data: 'no',
-                    className: 'w-15 text-center',
+                    title: '#',
+                    data: 'No',
+                    className: 'w-10 text-center',
                 },
-                // {
-                //     title: 'รหัสสินค้า',
-                //     data: 'code',
-                //     className: 'w-40'
-                // },
+
                 {
-                    title: 'ชื่อแบนเนอร์',
-                    data: 'title',
+                    title: menuTitles.bill_payment_service[this.langues],
+                    data: 'product_payment_rate',
                     className: 'text-center',
                 },
-                // {
-                //     title: 'ประเภทสินค้า',
-                //     data: 'category.name'
-                // },
-                // {
-                //     title: 'ราคา',
-                //     data: 'price',
-                //     render: function(data, type, row) {
-                //         // ตรวจสอบว่าประเภทของการแสดงคือแสดงข้อมูลหรือไม่
-                //         if (type === 'display') {
-                //             // จัดรูปแบบข้อมูลเป็นราคาที่มีลูกน้ำคั่นและทศนิยม 2 ตำแหน่ง
-                //             return parseFloat(data).toFixed(4).replace(/\d(?=(\d{3})+\.)/g, '$&,');
-                //         }
-                //         // สำหรับประเภทอื่น ๆ คืนค่าข้อมูลเดิม
-                //         return data;
-                //     }
-                // },
                 {
-                    title: 'รูปแบนเนอร์',
-                    data: null,
-                    defaultContent: '',
-                    ngTemplateRef: {
-                        ref: this.btPicture,
-                    },
-                    className: 'w-20 text-center',
+                    title: menuTitles.order_proxy_service[this.langues],
+                    data: 'deposit_order_rate',
+                    className: 'text-center',
+                },
+                {
+                    title: menuTitles.alipay_topup_service[this.langues],
+                    data: 'alipay_topup_rate',
+                    className: 'text-center',
                 },
 
-                {
-                    title: 'แสดง',
-                    data: null,
-                    defaultContent: '',
-                    ngTemplateRef: {
-                        ref: this.textStatus,
-                    },
-                    className: 'w-30 text-center',
-                },
 
                 {
-                    title: 'จัดการ',
-                    data: null,
-                    defaultContent: '',
-                    ngTemplateRef: {
-                        ref: this.btNg,
+                    title: menuTitles.edited_by[this.langues],
+                    data: 'create_by',
+                    className: 'text-center',
+                },
+                {
+                    title: menuTitles.date[this.langues],
+                    data: function (row: any) {
+                        const createdAt = row.created_at
+                            ? row.created_at
+                            : null;
+
+                        return createdAt
+                            ? DateTime.fromISO(createdAt, { zone: 'utc' }).toLocal().toFormat('dd/MM/yyyy HH:mm')
+                            : '-';
                     },
-                    className: 'w-15 text-center',
+                    className: 'text-center',
                 },
             ],
+            // Declare the use of the extension in the dom parameter
+            dom: 'lfrtip',
+            buttons: [
+                {
+                    extend: 'copy',
+                    className: 'btn-csv-hidden'
+                },
+                {
+                    extend: 'csv',
+                    className: 'btn-csv-hidden'
+                },
+                {
+                    extend: 'excel',
+                    className: 'btn-csv-hidden'
+                },
+                {
+                    extend: 'print',
+                    className: 'btn-csv-hidden'
+                },
+            ]
         };
     }
 
@@ -222,7 +257,7 @@ export class BannerComponent implements OnInit, AfterViewInit {
         confirmation.afterClosed().subscribe((result) => {
             if (result == 'confirmed') {
                 this._service.delete(id).subscribe({
-                    error: (err) => {},
+                    error: (err) => { },
                     complete: () => {
                         this.toastr.success(
                             this.translocoService.translate(
@@ -236,7 +271,7 @@ export class BannerComponent implements OnInit, AfterViewInit {
         });
     }
     showPicture(imgObject: string): void {
-         
+
         this.dialog
             .open(PictureComponent, {
                 autoFocus: false,

@@ -6,7 +6,7 @@ export default [
         path: '',
         component: ServicesComponent,
         resolve: {
-            // branch: () => inject(DeviceService).getBranch(),
+            
         }
     },
 ] as Routes;

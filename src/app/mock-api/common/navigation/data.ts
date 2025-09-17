@@ -473,6 +473,7 @@ export const defaultNavigation: FuseNavigationItem[] = [
         type: 'collapsable',
         icon: 'heroicons_outline:cog-8-tooth',
         children: [
+      
             {
                 id: 'setting-faq',
                 title: menuTitles.warehouseManagement[langues],
@@ -621,6 +622,12 @@ export const defaultNavigation: FuseNavigationItem[] = [
                 title: menuTitles.generalInformation[langues],
                 type: 'collapsable',
                 children: [
+                    {
+                        id: 'setting-banner',
+                        title: 'แบนเนอร์',
+                        type: 'basic',
+                        link: '/banners',
+                    },
                     {
                         id: 'setting-faq',
                         title: menuTitles.faq[langues],
