@@ -1,4 +1,4 @@
-<file-upload [control]="control" class="min-h-50 h-auto w-96 p-5">
+<file-upload [control]="control" accept="image/*" class="min-h-50 h-auto w-96 p-5">
   <ng-template let-isFileDragDropAvailable="isFileDragDropAvailable" #placeholder>
     @if (control.size === 0) {
     <div class="flex flex-row items-center gap-3">
@@ -9,9 +9,9 @@
       </svg>
       <div class="overflow-hidden w-auto text-base">
         @if (isFileDragDropAvailable) {
-        <b>Drag and drop</b> files<br> or click here
+        <b>Drag and drop</b> image<br> or click here
         } @else {
-        <b>Click here</b> to<br> choose a files
+        <b>Click here</b> to<br> choose an image
         }
       </div>
     </div>

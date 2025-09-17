@@ -153,10 +153,14 @@ export class DialogForm implements OnInit {
         this.dialogRef.close()
     }
 
+    isNewImage = false;
+
     uploadSuccess(file: File): void {
         this.form.patchValue({
             image: file
         });
+        this.isNewImage = true;        // มีการอัปโหลดรูปใหม่
+        this.imageUrl = null;
         // this.imageUploadService.upload(event).subscribe({
         //     next: (resp: any) => {
         //         this.form.patchValue({
@@ -168,5 +172,6 @@ export class DialogForm implements OnInit {
         //     },
         // })
     }
+
 
 }

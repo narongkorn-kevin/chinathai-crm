@@ -27,18 +27,23 @@
                     <div class="md:w-full">
                         <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
                             <mat-label>รายอะเอียด</mat-label>
-                            <textarea matInput rows="5" [placeholder]="'รายละเอียด'" formControlName="description"></textarea>
+                            <textarea matInput rows="5" [placeholder]="'รายละเอียด'"
+                                formControlName="description"></textarea>
                         </mat-form-field>
                     </div>
                     <div class="flex w-full flex-row justify-center gap-2">
                         <div class="flex w-full justify-center">
-                            <asha-image-upload [initial]="null" (uploadSuccess)="uploadSuccess($event)" accept="image/*"></asha-image-upload>
+                            <asha-image-upload [initial]="null" (uploadSuccess)="uploadSuccess($event)"
+                                accept="image/*">
+                            </asha-image-upload>
                         </div>
 
                         <div class="flex justify-center w-full">
-                            <img [src]="imageUrl" alt="" class="w-auto">
+                            <!-- แสดงรูปเฉพาะกรณีที่ยังไม่มีการอัปโหลดใหม่ -->
+                            <img *ngIf="!isNewImage && imageUrl" [src]="imageUrl" alt="" class="w-auto">
                         </div>
                     </div>
+
                 </div>
             </div>
         </div>
