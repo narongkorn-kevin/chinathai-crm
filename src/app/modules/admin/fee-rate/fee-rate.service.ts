@@ -28,4 +28,14 @@ export class FeeRateService {
             })
         );
     }
+
+    datatable(dataTablesParameters: any) {
+        return this.http
+            .post('/api/fee_setting_page', dataTablesParameters)
+            .pipe(
+                map((resp: any) => {
+                    return resp;
+                })
+            );
+    }
 }

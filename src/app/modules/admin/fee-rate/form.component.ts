@@ -1,7 +1,7 @@
-import { Subscription } from 'rxjs';
-import { Component, OnInit, OnChanges, Inject } from '@angular/core';
+import { map, Subject, Subscription } from 'rxjs';
+import { Component, OnInit, OnChanges, Inject, ElementRef, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { DataTablesModule } from 'angular-datatables';
+import { DataTableDirective, DataTablesModule } from 'angular-datatables';
 import { MatIcon, MatIconModule } from '@angular/material/icon';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
@@ -53,6 +53,8 @@ import { MatMenuItem, MatMenuModule } from '@angular/material/menu';
 
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { FeeRateService } from './fee-rate.service';
+import { ADTSettings } from 'angular-datatables/src/models/settings';
+import { DateTime } from 'luxon';
 
 @Component({
     selector: 'app-fee-rate-form',
@@ -107,7 +109,12 @@ import { FeeRateService } from './fee-rate.service';
 export class FormComponent implements OnInit {
     formFieldHelpers: string[] = ['fuse-mat-dense'];
     form: FormGroup;
-    dtOptions: DataTables.Settings = {};
+    dtOptions: any = {};
+    dtTrigger: Subject<ADTSettings> = new Subject<ADTSettings>();
+    dataRow: any[] = [];
+    @ViewChild(DataTableDirective, { static: false })
+    dtElement: DataTableDirective;
+    @ViewChild('tableElement') tableElement!: ElementRef;
     type: string;
     isIndividual: boolean = true;
     hidePassword = true;
@@ -149,9 +156,32 @@ export class FormComponent implements OnInit {
         this.form.patchValue({
             ...this.data
         })
+        this.langues = localStorage.getItem('lang');
+        if (this.langues === 'en') {
+            this.languageUrl =
+                'https://cdn.datatables.net/plug-ins/1.11.3/i18n/en-gb.json';
+        } else if (this.langues === 'th') {
+            this.languageUrl =
+                'https://cdn.datatables.net/plug-ins/1.11.3/i18n/th.json';
+        } else if (this.langues === 'cn') {
+            this.languageUrl =
+                'https://cdn.datatables.net/plug-ins/1.11.3/i18n/zh.json';
+        } else {
+            this.languageUrl =
+                'https://cdn.datatables.net/plug-ins/1.11.3/i18n/th.json';
+        }
+
+        setTimeout(() => this.loadTable());
+        this.form.patchValue({
+            ...this.data
+        })
     }
 
+    langues: any;
+    languageUrl: any;
+
     Submit() {
+
         if (this.form.invalid) {
             this.toastr.error(
                 this.translocoService.translate('toastr.missing_fields')
@@ -195,6 +225,7 @@ export class FormComponent implements OnInit {
                             )
                         );
                         this._router.navigate(['fee-rate']);
+                        this.rerender()
                     },
                     error: (err) => {
                         this.toastr.error(
@@ -210,4 +241,138 @@ export class FormComponent implements OnInit {
     Close() {
         this._router.navigate(['fee-rate']);
     }
+
+    loadTable(): void {
+        const menuTitles = {
+            transfer_proxy_service_fee: {
+                th: 'ค่าธรรมเนียมบริการฝากโอน',
+                en: 'Transfer-on-behalf service fee',
+                cn: '代转账服务费',
+            },
+            alipay_topup_service_fee_rate: {
+                th: 'อัตราค่าธรรมเนียมบริการเติมเงิน Alipay',
+                en: 'Alipay top-up service fee rate',
+                cn: '支付宝充值服务费率',
+            },
+            bag_opening_fee: {
+                th: 'ค่าเปิดกระสอบ',
+                en: 'Bag opening fee',
+                cn: '开袋费',
+            },
+            edited_by: {
+                th: 'ผู้แก้ไข',
+                en: 'Edited by',
+                cn: '编辑人',
+            },
+            date: {
+                th: 'วันที่แก้ไข',
+                en: 'Change Date',
+                cn: '日期',
+            },
+
+
+        };
+        this.dtOptions = {
+            pagingType: 'full_numbers',
+            serverSide: true,
+            scrollX: false,
+            language: {
+                url: this.languageUrl,
+            },
+            ajax: (dataTablesParameters: any, callback) => {
+                this._service
+                    .datatable(dataTablesParameters)
+                    .pipe(map((resp: { data: any }) => resp.data))
+                    .subscribe({
+                        next: (resp: any) => {
+                            this.dataRow = resp.data;
+                            callback({
+                                recordsTotal: resp.total,
+                                recordsFiltered: resp.total,
+                                data: resp.data,
+                            });
+                        },
+                    });
+            },
+            columns: [
+                {
+                    title: '#',
+                    data: 'No',
+                    className: 'w-10 text-center',
+                },
+
+                {
+                    title: menuTitles.transfer_proxy_service_fee[this.langues],
+                    data: 'transfer_fee',
+                    className: 'text-center',
+                },
+                {
+                    title: menuTitles.alipay_topup_service_fee_rate[this.langues],
+                    data: 'alipay_fee',
+                    className: 'text-center',
+                },
+                {
+                    title: menuTitles.bag_opening_fee[this.langues],
+                    data: 'account_open_fee',
+                    className: 'text-center',
+                },
+
+
+                {
+                    title: menuTitles.edited_by[this.langues],
+                    data: 'create_by',
+                    className: 'text-center',
+                },
+                {
+                    title: menuTitles.date[this.langues],
+                    data: function (row: any) {
+                        const createdAt = row.created_at
+                            ? row.created_at
+                            : null;
+
+                        return createdAt
+                            ? DateTime.fromISO(createdAt, { zone: 'utc' }).toLocal().toFormat('dd/MM/yyyy HH:mm')
+                            : '-';
+                    },
+                    className: 'text-center',
+                },
+            ],
+            // Declare the use of the extension in the dom parameter
+            dom: 'lfrtip',
+            buttons: [
+                {
+                    extend: 'copy',
+                    className: 'btn-csv-hidden'
+                },
+                {
+                    extend: 'csv',
+                    className: 'btn-csv-hidden'
+                },
+                {
+                    extend: 'excel',
+                    className: 'btn-csv-hidden'
+                },
+                {
+                    extend: 'print',
+                    className: 'btn-csv-hidden'
+                },
+            ]
+        };
+    }
+
+    rerender(): void {
+        this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
+            // Destroy the table first
+            dtInstance.destroy();
+            // Call the dtTrigger to rerender again
+            this.dtTrigger.next(this.dtOptions);
+        });
+    }
+
+    ngAfterViewInit() {
+        setTimeout(() => {
+            this.dtTrigger.next(this.dtOptions);
+        }, 200);
+    }
+
 }

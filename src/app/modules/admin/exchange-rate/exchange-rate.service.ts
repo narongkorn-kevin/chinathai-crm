@@ -33,5 +33,15 @@ export class ExchangeRateService {
         );
     }
 
+    datatable(dataTablesParameters: any) {
+        return this.http
+            .post('/api/exchage_rate_setting_page', dataTablesParameters)
+            .pipe(
+                map((resp: any) => {
+                    return resp;
+                })
+            );
+    }
+
 
 }

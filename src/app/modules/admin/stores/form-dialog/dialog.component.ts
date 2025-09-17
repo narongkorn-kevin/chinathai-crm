@@ -90,11 +90,13 @@ export class DialogForm implements OnInit {
 
     }
 
+    submitting = false;
+
     Submit() {
         if (this.form.invalid) {
             return
         }
-
+        this.submitting = true;
         const confirmation = this.fuseConfirmationService.open({
             title: "ยืนยันการบันทึกข้อมูล",
             icon: {
@@ -167,5 +169,16 @@ export class DialogForm implements OnInit {
         //     },
         // })
     }
+
+    imageError = false;
+
+    onImageError() {
+        this.imageError = true;
+    }
+
+    // openMap() {
+    //     const url = this.form.get('map')?.value;
+    //     if (url) window.open(url, '_blank', 'noopener');
+    // }
 
 }

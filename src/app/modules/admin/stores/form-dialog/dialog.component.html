@@ -1,100 +1,163 @@
-<div class="w-full max-w-4xl mx-auto"> <!-- ใช้ max-w-4xl และ mx-auto แทน md:max-w-4xl -->
-    <h1 mat-dialog-title class="text-xl font-semibold mb-4" *ngIf="this.data?.type === 'NEW'">เพิ่มข้อมูล</h1>
-    <h1 mat-dialog-title class="text-xl font-semibold mb-4" *ngIf="this.data?.type === 'EDIT'">แก้ไขข้อมูล</h1>
+<!-- Dialog Wrapper -->
+<div class="w-full max-w-3xl mx-auto">
 
-    <form [formGroup]="form">
-        <div mat-dialog-content class="overflow-y-auto max-h-[70vh]"> <!-- ใช้ max-h แทน md:max-h -->
-            <!-- ใช้ grid layout สำหรับ 2 columns -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4"> <!-- เพิ่ม gap responsive -->
+    <!-- Title: sticky บนสุดเมื่อเลื่อนยาว -->
+    <div class="sticky top-0 z-10 bg-white border-b px-4 py-3 flex items-center gap-2">
+        <mat-icon class="!text-base">person_add</mat-icon>
+        <h1 mat-dialog-title class="text-lg md:text-xl font-semibold">
+            {{ this.data?.type === 'NEW' ? 'เพิ่มข้อมูล' : 'แก้ไขข้อมูล' }}
+        </h1>
+    </div>
 
-                <!-- Column 1 -->
-                <div class="flex flex-col">
-                    <!-- ชื่อ -->
-                    <mat-form-field appearance="outline" class="w-full mb-3"> <!-- ลดระยะห่างระหว่างฟิลด์ -->
-                        <mat-label>ชื่อ</mat-label>
-                        <input matInput placeholder="กรุณาระบุชื่อ" formControlName="name">
-                    </mat-form-field>
+    <form [formGroup]="form" (ngSubmit)="Submit()" class="px-4">
 
-                    <!-- เบอร์โทรศัพท์ -->
-                    <mat-form-field appearance="outline" class="w-full mb-3">
-                        <mat-label>เบอร์โทรศัพท์</mat-label>
-                        <input matInput placeholder="กรุณาระบุเบอร์โทรศัพท์" formControlName="phone">
-                    </mat-form-field>
+        <!-- เนื้อหาเลื่อนในแนวตั้ง สูงสุด 70vh -->
+        <div mat-dialog-content class="overflow-y-auto max-h-[70vh] pt-4">
 
-                    <!-- ประเภท -->
-                    <mat-form-field appearance="outline" class="w-full mb-3">
-                        <mat-label>ประเภท</mat-label>
-                        <input matInput placeholder="เช่น TH" formControlName="type">
-                    </mat-form-field>
+            <!-- SECTION: ข้อมูลหลัก -->
+            <h2 class="text-sm font-semibold text-gray-600 mb-3 flex items-center gap-2">
+                <mat-icon class="!text-base">badge</mat-icon> ข้อมูลหลัก
+            </h2>
 
-                    <!-- ชื่อจีน -->
-                    <mat-form-field appearance="outline" class="w-full mb-3">
-                        <mat-label>ชื่อ (จีน)</mat-label>
-                        <input matInput placeholder="กรุณาระบุชื่อภาษาจีน" formControlName="name_ch">
-                    </mat-form-field>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
+                <!-- ชื่อ -->
+                <mat-form-field [ngClass]="formFieldHelpers" class="w-full" floatLabel="auto">
+                    <mat-label>ชื่อ</mat-label>
+                    <input matInput placeholder="กรุณาระบุชื่อ" formControlName="name" maxlength="120"
+                        autocomplete="name">
+                    <mat-hint align="end">{{ form.get('name')?.value?.length || 0 }}/120</mat-hint>
+                    <mat-error *ngIf="form.get('name')?.hasError('required')">จำเป็นต้องกรอกชื่อ</mat-error>
+                </mat-form-field>
 
-                    <!-- ชื่ออังกฤษ -->
-                    <mat-form-field appearance="outline" class="w-full mb-3">
-                        <mat-label>ชื่อ (อังกฤษ)</mat-label>
-                        <input matInput placeholder="กรุณาระบุชื่อภาษาอังกฤษ" formControlName="name_en">
-                    </mat-form-field>
-                </div>
+                <!-- เบอร์โทรศัพท์ -->
+                <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                    <mat-label>เบอร์โทรศัพท์</mat-label>
+                    <input matInput formControlName="phone" placeholder="0xx-xxx-xxxx" type="tel" inputmode="tel"
+                        autocomplete="tel" maxlength="20">
+                    <mat-hint>กรอกเฉพาะตัวเลขหรือใส่ขีดคั่นก็ได้</mat-hint>
+                    <mat-error *ngIf="form.get('phone')?.hasError('pattern')">รูปแบบเบอร์ไม่ถูกต้อง</mat-error>
+                </mat-form-field>
 
-                <!-- Column 2 -->
-                <div class="flex flex-col">
-                    <!-- ที่อยู่ -->
-                    <mat-form-field appearance="outline" class="w-full mb-3">
-                        <mat-label>ที่อยู่</mat-label>
-                        <textarea matInput placeholder="กรุณาระบุที่อยู่" formControlName="address" rows="2"></textarea>
-                    </mat-form-field>
+                <!-- ประเภท (ปรับเป็น select) -->
+                <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                    <mat-label>ประเภท</mat-label>
+                    <mat-select formControlName="type">
+                        <mat-option value="" disabled>เลือกประเภท</mat-option>
+                        <mat-option value="TH">TH (ไทย)</mat-option>
+                        <mat-option value="EN">EN (อังกฤษ)</mat-option>
+                        <mat-option value="CN">CN (จีน)</mat-option>
+                    </mat-select>
+                    <mat-error *ngIf="form.get('type')?.hasError('required')">กรุณาเลือกประเภท</mat-error>
+                </mat-form-field>
 
-                    <!-- ที่อยู่จีน -->
-                    <mat-form-field appearance="outline" class="w-full mb-3">
-                        <mat-label>ที่อยู่ (จีน)</mat-label>
-                        <textarea matInput placeholder="กรุณาระบุที่อยู่ภาษาจีน" formControlName="address_ch"
-                            rows="2"></textarea>
-                    </mat-form-field>
+                <!-- ชื่อจีน -->
+                <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                    <mat-label>ชื่อ (จีน)</mat-label>
+                    <input matInput placeholder="กรุณาระบุชื่อภาษาจีน" formControlName="name_ch" maxlength="120"
+                        autocomplete="off">
+                    <mat-hint align="end">{{ form.get('name_ch')?.value?.length || 0 }}/120</mat-hint>
+                </mat-form-field>
 
-                    <!-- ที่อยู่ภาษาอังกฤษ -->
-                    <mat-form-field appearance="outline" class="w-full mb-3">
-                        <mat-label>ที่อยู่ (อังกฤษ)</mat-label>
-                        <textarea matInput placeholder="กรุณาระบุที่อยู่ภาษาอังกฤษ" formControlName="address_en"
-                            rows="2"></textarea>
-                    </mat-form-field>
-
-                    <!-- ที่ตั้ง -->
-                    <mat-form-field appearance="outline" class="w-full mb-3">
-                        <mat-label>ที่ตั้ง (Google Map URL)</mat-label>
-                        <textarea matInput placeholder="กรุณาระบุที่ตั้ง" formControlName="map" rows="2"></textarea>
-                    </mat-form-field>
-
-                    <!-- รายละเอียด -->
-                    <mat-form-field appearance="outline" class="w-full mb-3">
-                        <mat-label>รายละเอียด</mat-label>
-                        <textarea matInput placeholder="กรุณาระบุรายละเอียด" formControlName="description"
-                            rows="2"></textarea>
-                    </mat-form-field>
-                </div>
+                <!-- ชื่ออังกฤษ -->
+                <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                    <mat-label>ชื่อ (อังกฤษ)</mat-label>
+                    <input matInput placeholder="กรุณาระบุชื่อภาษาอังกฤษ" formControlName="name_en" maxlength="120"
+                        autocomplete="off">
+                    <mat-hint align="end">{{ form.get('name_en')?.value?.length || 0 }}/120</mat-hint>
+                </mat-form-field>
             </div>
 
-            <!-- อัพโหลดรูป (แสดงเต็มความกว้างใต้ grid 2 columns) -->
-            <div class="mt-4 flex w-full flex-col justify-center gap-2">
-                <div class="flex w-full justify-center">
-                    <asha-image-upload [initial]="imageUrl" (uploadSuccess)="uploadSuccess($event)"
-                        accept="image/*"></asha-image-upload>
-                </div>
-                <div class="flex justify-center w-full" *ngIf="imageUrl">
-                    <img [src]="imageUrl" alt="preview" class="w-auto max-h-40 rounded-md shadow">
+            <!-- SECTION: ที่อยู่ & รายละเอียด -->
+            <h2 class="text-sm font-semibold text-gray-600 mt-6 mb-3 flex items-center gap-2">
+                <mat-icon class="!text-base">home</mat-icon> ที่อยู่ & รายละเอียด
+            </h2>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
+                <!-- ที่อยู่ -->
+                <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                    <mat-label>ที่อยู่</mat-label>
+                    <textarea matInput placeholder="กรุณาระบุที่อยู่" formControlName="address" rows="2"
+                        maxlength="500"></textarea>
+                    <mat-hint align="end">{{ form.get('address')?.value?.length || 0 }}/500</mat-hint>
+                </mat-form-field>
+
+                <!-- ที่อยู่จีน -->
+                <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                    <mat-label>ที่อยู่ (จีน)</mat-label>
+                    <textarea matInput placeholder="กรุณาระบุที่อยู่ภาษาจีน" formControlName="address_ch" rows="2"
+                        maxlength="500"></textarea>
+                    <mat-hint align="end">{{ form.get('address_ch')?.value?.length || 0 }}/500</mat-hint>
+                </mat-form-field>
+
+                <!-- ที่อยู่อังกฤษ -->
+                <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                    <mat-label>ที่อยู่ (อังกฤษ)</mat-label>
+                    <textarea matInput placeholder="กรุณาระบุที่อยู่ภาษาอังกฤษ" formControlName="address_en" rows="2"
+                        maxlength="500"></textarea>
+                    <mat-hint align="end">{{ form.get('address_en')?.value?.length || 0 }}/500</mat-hint>
+                </mat-form-field>
+
+                <!-- ที่ตั้ง (Google Map URL) -->
+                <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                    <mat-label>ที่ตั้ง (Google Map URL)</mat-label>
+                    <textarea matInput placeholder="เช่น https://maps.google.com/?q=..." formControlName="map"
+                        rows="2"></textarea>
+                    <mat-error *ngIf="form.get('map')?.hasError('mapUrl')">ลิงก์แผนที่ไม่ถูกต้อง</mat-error>
+                    <!-- <button mat-icon-button matSuffix type="button" [disabled]="!form.get('map')?.valid"
+                        (click)="openMap()" aria-label="เปิดดูแผนที่">
+                        <mat-icon>map</mat-icon>
+                    </button> -->
+                </mat-form-field>
+
+                <!-- รายละเอียด -->
+                <mat-form-field [ngClass]="formFieldHelpers" class="w-full md:col-span-2">
+                    <mat-label>รายละเอียด</mat-label>
+                    <textarea matInput placeholder="กรุณาระบุรายละเอียด" formControlName="description" rows="3"
+                        maxlength="800"></textarea>
+                    <mat-hint align="end">{{ form.get('description')?.value?.length || 0 }}/800</mat-hint>
+                </mat-form-field>
+            </div>
+
+            <!-- SECTION: รูปภาพ -->
+            <h2 class="text-sm font-semibold text-gray-600 mt-6 mb-3 flex items-center gap-2">
+                <mat-icon class="!text-base">image</mat-icon> รูปภาพ
+            </h2>
+
+            <div class="flex flex-row items-center gap-3">
+                <asha-image-upload class="w-full items-center" [initial]="imageUrl" (uploadSuccess)="uploadSuccess($event)"
+                    accept="image/*">
+                </asha-image-upload>
+
+                <div class="flex flex-col items-center gap-2" *ngIf="true">
+                    <!-- ถ้ามี imageUrl และยังไม่ error -->
+                    <img *ngIf="imageUrl && !imageError" [src]="imageUrl" alt="preview"
+                        class="w-auto max-h-44 rounded-md shadow" referrerpolicy="no-referrer"
+                        (error)="onImageError()" />
+
+                    <!-- ถ้าไม่มีรูป หรือโหลด error -->
+                    <div *ngIf="!imageUrl || imageError"
+                        class="w-44 h-44 flex items-center justify-center bg-gray-100 text-gray-400 rounded-md shadow">
+                        No Image
+                    </div>
+
+                    <!-- คำอธิบายใต้รูป -->
+                    <div class="text-xs text-gray-500">รองรับ .jpg .png .webp ขนาดไม่เกิน 3MB</div>
                 </div>
             </div>
         </div>
 
-        <div mat-dialog-actions class="flex flex-col-reverse sm:flex-row justify-end mt-4 gap-2 sm:gap-0">
-            <!-- ปรับปุ่มให้ responsive -->
-            <button class="px-4 sm:px-6 sm:ml-3 order-2 sm:order-1" mat-flat-button color="warn"
-                (click)="onClose()">ยกเลิก</button>
-            <button class="px-4 sm:px-6 order-1 sm:order-2 mb-2 sm:mb-0" mat-flat-button color="primary"
-                (click)="Submit()">ตกลง</button>
+        <!-- Actions: sticky ล่าง -->
+        <div mat-dialog-actions
+            class="sticky bottom-0 z-10 bg-white border-t px-4 py-3 flex flex-col-reverse sm:flex-row justify-end gap-2">
+            <button class="px-4 sm:px-6 order-2 sm:order-1" type="button" mat-stroked-button color="warn"
+                (click)="onClose()">
+                ยกเลิก
+            </button>
+            <button class="px-4 sm:px-6 order-1 sm:order-2" type="submit" mat-flat-button color="primary"
+                [disabled]="form.invalid || submitting">
+                {{ submitting ? 'กำลังบันทึก...' : 'ตกลง' }}
+            </button>
         </div>
+
     </form>
 </div>

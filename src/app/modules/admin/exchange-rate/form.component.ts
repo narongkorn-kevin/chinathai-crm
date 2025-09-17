@@ -1,7 +1,7 @@
-import { Subscription } from 'rxjs';
-import { Component, OnInit, OnChanges, Inject } from '@angular/core';
+import { map, Subject, Subscription } from 'rxjs';
+import { Component, OnInit, OnChanges, Inject, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { DataTablesModule } from 'angular-datatables';
+import { DataTableDirective, DataTablesModule } from 'angular-datatables';
 import { MatIcon, MatIconModule } from '@angular/material/icon';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
@@ -53,6 +53,8 @@ import { MatMenuItem, MatMenuModule } from '@angular/material/menu';
 
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { ExchangeRateService } from './exchange-rate.service';
+import { ADTSettings } from 'angular-datatables/src/models/settings';
+import { DateTime } from 'luxon';
 
 @Component({
     selector: 'app-exchange-rate-form',
@@ -76,14 +78,11 @@ import { ExchangeRateService } from './exchange-rate.service';
         MatRadioModule,
         MatFormFieldModule,
         MatDatepickerModule,
-        MatCheckbox,
         MatDivider,
         MatIcon,
         MatSelectModule,
-        ImageUploadComponent,
-        RouterLink,
         MatMenuModule,
-        MatDividerModule,
+        MatDividerModule
     ],
     animations: [
         trigger('slideToggle', [
@@ -110,7 +109,13 @@ import { ExchangeRateService } from './exchange-rate.service';
 export class FormComponent implements OnInit {
     formFieldHelpers: string[] = ['fuse-mat-dense'];
     form: FormGroup;
-    dtOptions: DataTables.Settings = {};
+    dtOptions: any = {};
+    dtTrigger: Subject<ADTSettings> = new Subject<ADTSettings>();
+    dataRow: any[] = [];
+    @ViewChild(DataTableDirective, { static: false })
+    dtElement: DataTableDirective;
+    @ViewChild('tableElement') tableElement!: ElementRef;
+
     type: string;
     isIndividual: boolean = true;
     hidePassword = true;
@@ -139,21 +144,171 @@ export class FormComponent implements OnInit {
     ) {
         // this.type = this.activated.snapshot.data.type;
         this.data = this.activated.snapshot.data.exchange_rete.data;
-        
+
         this.form = this.FormBuilder.group(
-          {
-            product_payment_rate: '',
-            deposit_order_rate: '',
-            alipay_topup_rate: '',
-          }
+            {
+                product_payment_rate: '',
+                deposit_order_rate: '',
+                alipay_topup_rate: '',
+            }
         );
     }
-
+    langues: any;
+    languageUrl: any;
     ngOnInit(): void {
+        this.langues = localStorage.getItem('lang');
+        if (this.langues === 'en') {
+            this.languageUrl =
+                'https://cdn.datatables.net/plug-ins/1.11.3/i18n/en-gb.json';
+        } else if (this.langues === 'th') {
+            this.languageUrl =
+                'https://cdn.datatables.net/plug-ins/1.11.3/i18n/th.json';
+        } else if (this.langues === 'cn') {
+            this.languageUrl =
+                'https://cdn.datatables.net/plug-ins/1.11.3/i18n/zh.json';
+        } else {
+            this.languageUrl =
+                'https://cdn.datatables.net/plug-ins/1.11.3/i18n/th.json';
+        }
+
+        setTimeout(() => this.loadTable());
         this.form.patchValue({
             ...this.data
         })
 
+    }
+
+    loadTable(): void {
+        const menuTitles = {
+            bill_payment_service: {
+                th: 'บริการฝากชำระ',
+                en: 'Payment-on-behalf service',
+                cn: '代付服务',
+            },
+            order_proxy_service: {
+                th: 'บริการฝากสั่ง',
+                en: 'Order-on-behalf service',
+                cn: '代购服务',
+            },
+            alipay_topup_service: {
+                th: 'บริการเติม Alipay',
+                en: 'Alipay top-up service',
+                cn: '支付宝充值服务',
+            },
+            edited_by: {
+                th: 'ผู้แก้ไข',
+                en: 'Edited by',
+                cn: '编辑人',
+            },
+            date: {
+                th: 'วันที่แก้ไข',
+                en: 'Change Date',
+                cn: '日期',
+            },
+
+
+        };
+        this.dtOptions = {
+            pagingType: 'full_numbers',
+            serverSide: true,
+            scrollX: false,
+            language: {
+                url: this.languageUrl,
+            },
+            ajax: (dataTablesParameters: any, callback) => {
+                this.exchangeRateService
+                    .datatable(dataTablesParameters)
+                    .pipe(map((resp: { data: any }) => resp.data))
+                    .subscribe({
+                        next: (resp: any) => {
+                            this.dataRow = resp.data;
+                            callback({
+                                recordsTotal: resp.total,
+                                recordsFiltered: resp.total,
+                                data: resp.data,
+                            });
+                        },
+                    });
+            },
+            columns: [
+                {
+                    title: '#',
+                    data: 'No',
+                    className: 'w-10 text-center',
+                },
+
+                {
+                    title: menuTitles.bill_payment_service[this.langues],
+                    data: 'product_payment_rate',
+                    className: 'text-center',
+                },
+                {
+                    title: menuTitles.order_proxy_service[this.langues],
+                    data: 'deposit_order_rate',
+                    className: 'text-center',
+                },
+                {
+                    title: menuTitles.alipay_topup_service[this.langues],
+                    data: 'alipay_topup_rate',
+                    className: 'text-center',
+                },
+
+
+                {
+                    title: menuTitles.edited_by[this.langues],
+                    data: 'create_by',
+                    className: 'text-center',
+                },
+                {
+                    title: menuTitles.date[this.langues],
+                    data: function (row: any) {
+                        const createdAt = row.created_at
+                            ? row.created_at
+                            : null;
+
+                        return createdAt
+                            ? DateTime.fromISO(createdAt, { zone: 'utc' }).toLocal().toFormat('dd/MM/yyyy HH:mm')
+                            : '-';
+                    },
+                    className: 'text-center',
+                },
+            ],
+            // Declare the use of the extension in the dom parameter
+            dom: 'lfrtip',
+            buttons: [
+                {
+                    extend: 'copy',
+                    className: 'btn-csv-hidden'
+                },
+                {
+                    extend: 'csv',
+                    className: 'btn-csv-hidden'
+                },
+                {
+                    extend: 'excel',
+                    className: 'btn-csv-hidden'
+                },
+                {
+                    extend: 'print',
+                    className: 'btn-csv-hidden'
+                },
+            ]
+        };
+    }
+
+    rerender(): void {
+        this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
+            // Destroy the table first
+            dtInstance.destroy();
+            // Call the dtTrigger to rerender again
+            this.dtTrigger.next(this.dtOptions);
+        });
+    }
+
+    ngAfterViewInit() {
+        setTimeout(() => {
+            this.dtTrigger.next(this.dtOptions);
+        }, 200);
     }
 
     Submit() {
@@ -200,6 +355,7 @@ export class FormComponent implements OnInit {
                             )
                         );
                         this._router.navigate(['exchange-rate']);
+                        this.rerender()
                     },
                     error: (err) => {
                         this.toastr.error(

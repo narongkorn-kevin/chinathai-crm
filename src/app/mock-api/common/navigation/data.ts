@@ -484,12 +484,12 @@ export const defaultNavigation: FuseNavigationItem[] = [
                         type: 'basic',
                         link: '/stores',
                     },
-                    {
-                        id: 'faq-1',
-                        title: menuTitles.thaiWarehouse[langues],
-                        type: 'basic',
-                        link: '/setting/thai-warehouse',
-                    },
+                    // {
+                    //     id: 'faq-1',
+                    //     title: menuTitles.thaiWarehouse[langues],
+                    //     type: 'basic',
+                    //     link: '/setting/thai-warehouse',
+                    // },
                 ],
             },
             {
