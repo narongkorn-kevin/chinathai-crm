@@ -1,21 +1,20 @@
 <div class="overflow-y-auto flex flex-col w-full">
     <div class="flex flex-row items-start justify-between w-full">
-        <h1 mat-dialog-title class="px-0 pb-1 mb-2 text-xl font-semibold" *ngIf="type !== 'QR' ">{{ 'alipay.view.payment_record' | transloco }}</h1>
-        <h1 mat-dialog-title class="px-0 pb-1 mb-2 text-xl font-semibold" *ngIf="type == 'QR' ">{{ 'alipay.view.alipay_topup' | transloco }}</h1>
+        <h1 mat-dialog-title class="px-0 pb-1 mb-2 text-xl font-semibold" *ngIf="type !== 'QR' ">{{
+            'alipay.view.payment_record' | transloco }}</h1>
+        <h1 mat-dialog-title class="px-0 pb-1 mb-2 text-xl font-semibold" *ngIf="type == 'QR' ">{{
+            'alipay.view.alipay_topup' | transloco }}</h1>
     </div>
     <!-- <h1 mat-dialog-title class="mb-4 text-xl font-semibold" *ngIf="this.data?.type === 'EDIT'">แก้ไขค่าบริการ</h1> -->
     <form [formGroup]="form" class="flex flex-col w-full">
         <div mat-dialog-content class="px-0 border-t-2">
-            <div class="flex flex-row items-center justify-center w-full min-h-[150px]" *ngIf="type == 'QR' && data?.value?.image_qr_code">
-                <img *ngIf="data?.value?.image_qr_code; else noImage"
-                     [src]="data.value.image_qr_code"
-                     alt="alipay"
-                     class="w-32 h-32" />
-                <ng-template #noImage>
+            <div class="flex flex-row items-center justify-center w-full min-h-[150px]" *ngIf="type == 'QR'">
+                <img *ngIf="data?.value?.image_qr_code" [src]="getFullUrl(data.value.image_qr_code)" alt="alipay"
+                    class="w-32 h-auto" (error)="onImageError()" />
+                <ng-container *ngIf="!validImage">
                     <span class="text-gray-500 text-sm italic">No QR Code</span>
-                </ng-template>
-              </div>
-
+                </ng-container>
+            </div>
             <div class="flex flex-col w-full gap-2 ">
                 <div class="w-full flex flex-row gap-4 justify-between">
                     <div>{{ 'alipay.view.phone' | transloco }}</div>
@@ -42,7 +41,8 @@
             </div>
 
             <div class="flex flex-row items-start justify-between w-full border-t-2">
-                <h1 mat-dialog-title class="px-0 pb-1 mb-2 text-xl font-semibold">{{ 'alipay.view.attach_proof' | transloco }}</h1>
+                <h1 mat-dialog-title class="px-0 pb-1 mb-2 text-xl font-semibold">{{ 'alipay.view.attach_proof' |
+                    transloco }}</h1>
             </div>
 
             <div class="flex flex-row w-full gap-4">
@@ -50,7 +50,8 @@
                     <div class="md:w-full">
                         <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
                             <!-- <mat-label>วางลิ้งของคุณที่นี่</mat-label> -->
-                            <input matInput [placeholder]="'lables.paste_your_link' | transloco" formControlName="image_url">
+                            <input matInput [placeholder]="'lables.paste_your_link' | transloco"
+                                formControlName="image_url">
                         </mat-form-field>
                     </div>
                 </div>
@@ -109,7 +110,8 @@
         <div mat-dialog-actions class=" pt-4 border-t-2 w-full">
             <div class="flex flex-row justify-between w-full">
                 <div class="flex flex-row w-full items-center">
-                    <div><span class="text-red-600">{{ form.get('total').value | number : '1.2'}}</span> {{ 'alipay.view.net_payment' | transloco }}</div>
+                    <div><span class="text-red-600">{{ form.get('total').value | number : '1.2'}}</span> {{
+                        'alipay.view.net_payment' | transloco }}</div>
                 </div>
                 <div class="flex flex-row w-full justify-end">
                     <button class="px-6 ml-3" mat-flat-button [color]="'primary'" (click)="Submit()">

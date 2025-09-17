@@ -100,8 +100,9 @@ export const defaultNavigation: FuseNavigationItem[] = [
     {
         id: 'customer.info',
         title: 'ข้อมูลลูกค้า',
-        type: 'collapsable',
+        type: 'basic',
         icon: 'heroicons_outline:user-group',
+        link: 'member',
         children: [
             {
                 id: 'customer.info',
@@ -109,21 +110,21 @@ export const defaultNavigation: FuseNavigationItem[] = [
                 type: 'basic',
                 link: 'member'
             },
-            {
-                id: 'customer.info',
-                title: 'ลูกค้า ยอดคงเหลือ',
-                type: 'basic',
-            },
-            {
-                id: 'customer.info',
-                title: 'การใช้งานลูกค้า',
-                type: 'basic',
-            },
-            {
-                id: 'customer.info',
-                title: 'อนุมัติที่อยู่ลูกค้า',
-                type: 'basic',
-            },
+            // {
+            //     id: 'customer.info',
+            //     title: 'ลูกค้า ยอดคงเหลือ',
+            //     type: 'basic',
+            // },
+            // {
+            //     id: 'customer.info',
+            //     title: 'การใช้งานลูกค้า',
+            //     type: 'basic',
+            // },
+            // {
+            //     id: 'customer.info',
+            //     title: 'อนุมัติที่อยู่ลูกค้า',
+            //     type: 'basic',
+            // },
         ]
     },
     {
@@ -143,22 +144,22 @@ export const defaultNavigation: FuseNavigationItem[] = [
                 },
 
             },
-            {
-                id: 'sale-order.claim',
-                title: 'เคลม',
-                type: 'basic',
-                link: '/claim',
-                badge: {
-                    title: '3',
-                    classes: 'px-2 bg-red-600 text-white rounded-full',
-                },
-            },
-            {
-                id: 'sale-order.assign',
-                title: 'เปิดบิลฝากส่ง',
-                type: 'basic',
-                link: '/order-request',
-            },
+            // {
+            //     id: 'sale-order.claim',
+            //     title: 'เคลม',
+            //     type: 'basic',
+            //     link: '/claim',
+            //     badge: {
+            //         title: '3',
+            //         classes: 'px-2 bg-red-600 text-white rounded-full',
+            //     },
+            // },
+            // {
+            //     id: 'sale-order.assign',
+            //     title: 'เปิดบิลฝากส่ง',
+            //     type: 'basic',
+            //     link: '/order-request',
+            // },
         ]
     },
     {
@@ -195,16 +196,16 @@ export const defaultNavigation: FuseNavigationItem[] = [
             //     // link: '/follow-up',
 
             // },
-            {
-                id: 'payment.statement-transport',
-                title: 'รายการเดินบัญชีค่าขนส่ง',
-                type: 'basic',
-                // link: '/follow-up',
-                // badge: {
-                //     title: '3',
-                //     classes: 'px-2 bg-red-600 text-white rounded-full',
-                // },
-            },
+            // {
+            //     id: 'payment.statement-transport',
+            //     title: 'รายการเดินบัญชีค่าขนส่ง',
+            //     type: 'basic',
+            //     link: '/follow-up',
+            //     badge: {
+            //         title: '3',
+            //         classes: 'px-2 bg-red-600 text-white rounded-full',
+            //     },
+            // },
             // {
             //     id: 'payment.cr-dr',
             //     title: 'Cr/Dr',

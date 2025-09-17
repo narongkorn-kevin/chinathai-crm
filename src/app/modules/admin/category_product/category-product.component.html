@@ -35,6 +35,11 @@
 
 <ng-template #pic let-data="adtData">
   <div class="flex flex-row justify-center">
-    <img [src]="data.image" alt="Image" class="rounded-md w-20 text-center" />
+    <ng-container *ngIf="data.image && !data.imageError; else noImage">
+      <img [src]="data.image" alt="Image" class="rounded-md w-20 text-center" (error)="data.imageError = true" />
+    </ng-container>
+    <ng-template #noImage>
+      <span class="text-gray-400 italic">No Image</span>
+    </ng-template>
   </div>
 </ng-template>

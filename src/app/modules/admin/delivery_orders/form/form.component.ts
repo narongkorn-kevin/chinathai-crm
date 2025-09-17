@@ -120,6 +120,20 @@ export class FormComponent implements OnInit, AfterViewInit {
 
     errorAudio = new Audio('assets/sounds/error.mp3');
 
+    couriers = [
+        { code: 'ZTO', name: 'ZTO Express' },
+        { code: 'YUN', name: 'Yunda Express' },
+        { code: 'JD', name: 'Jingdong Express / JD Express' },
+        { code: 'YTO', name: 'YTO Express' },
+        { code: 'SF', name: 'SF Express' },
+        { code: 'EMS', name: 'China Post EMS' },
+        { code: 'J&T', name: 'J&T Express' },
+        { code: 'STO', name: 'STO Express' },
+        { code: 'DEP', name: 'Deppon Express' },
+        { code: 'BEST', name: 'Best Freight' },
+        { code: 'UC', name: 'UC Express' }
+    ];
+
     constructor(
         private formBuilder: FormBuilder,
         public _service: DeliveryOrdersService,

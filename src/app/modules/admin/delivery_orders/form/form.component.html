@@ -199,10 +199,17 @@
                         </mat-form-field>
                     </div>
                     <div class="w-full">
-                        <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                        <!-- <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
                             <mat-label>{{ 'delivery_order.form.chinese_shipping' | transloco }}</mat-label>
                             <input matInput [placeholder]="'delivery_order.form.chinese_shipping' | transloco"
                                 formControlName="shipment_china">
+                        </mat-form-field> -->
+                        <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                            <mat-label>{{ 'delivery_order.form.chinese_shipping' | transloco }}</mat-label>
+                            <mat-select formControlName="shipment_china">
+                                <mat-option *ngFor="let store of couriers" [value]="store.name">{{ store.name
+                                    }}</mat-option>
+                            </mat-select>
                         </mat-form-field>
                     </div>
                     <div class="w-full">
@@ -354,7 +361,7 @@
                                         <td class="px-6 py-3 border border-x-0">{{ product.get('product_name')?.value }}
                                         </td>
                                         <td class="px-6 py-3 border border-x-0">{{ product.get('unit_id')?.value }}</td>
-                                        
+
                                         <td class="px-6 py-3 border border-x-0">{{ product.get('qty_box')?.value ?? 0 }}
                                         </td>
                                         <td class="px-6 py-3 border border-x-0">{{ product.get('qty')?.value }}</td>
