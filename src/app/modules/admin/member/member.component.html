@@ -174,6 +174,11 @@
         (change)="onCheckboxChange($event, data.id)"></mat-checkbox>
 </ng-template>
 
+<ng-template #gotoRouteCode let-data="adtData">
+    <a class="text-[#DF0B12CC]" [routerLink]="['/member/view', data.id]"
+        routerLinkActive="router-link-active">{{data?.code}}</a>
+</ng-template>
+
 <ng-template #gotoRoute let-data="adtData">
     <a class="text-[#DF0B12CC]" [routerLink]="['/member/view', data.id]"
         routerLinkActive="router-link-active">{{data?.importer_code}}</a>

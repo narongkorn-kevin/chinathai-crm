@@ -24,12 +24,13 @@
             <h2 class="text-lg font-semibold mb-4">{{ 'member.view.member_details' | transloco }}</h2>
             <div class="space-y-3">
                 <ng-container *ngFor="let field of [
-          {label: 'user_code', value: form.get('code')?.value},
-          {label: 'member_under_agent', value: form.get('referrer')?.value},
-          {label: 'customer_group', value: form.get('member_type')?.value}
+          {label: 'รหัสลูกค้า', value: form.get('code')?.value},
+          {label: 'รหัสผู้ใช้งาน', value: form.get('importer_code')?.value},
+          {label: 'Member ภายใต้ Agent', value: form.get('referrer')?.value},
+          {label: 'กลุ่มลูกค้า', value: form.get('member_type')?.value}
         ]">
                     <div class="flex justify-between text-sm">
-                        <span class="font-medium text-gray-600">{{ 'member.view.' + field.label | transloco }}:</span>
+                        <span class="font-medium text-gray-600">{{ field.label | transloco }}:</span>
                         <span>{{ field.value ?? '-' }}</span>
                     </div>
                 </ng-container>

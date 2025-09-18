@@ -98,7 +98,7 @@ import { FormExcelComponent } from './form-excel/form-excel.component';
     changeDetection: ChangeDetectionStrategy.Default,
 })
 export class MemberComponent implements OnInit, AfterViewInit {
-    
+
     dtOptions: any = {};
     dtTrigger: Subject<ADTSettings> = new Subject<ADTSettings>();
     formFieldHelpers: string[] = ['fuse-mat-dense'];
@@ -110,6 +110,7 @@ export class MemberComponent implements OnInit, AfterViewInit {
 
     @ViewChild('btNg') btNg: any;
     @ViewChild('gotoRoute') gotoRoute: any;
+    @ViewChild('gotoRouteCode') gotoRouteCode: any;
     @ViewChild('checkbox_head') checkbox_head: any;
     @ViewChild('checkbox') checkbox: any;
     @ViewChild('date') date: any;
@@ -199,124 +200,138 @@ export class MemberComponent implements OnInit, AfterViewInit {
     loadTable(): void {
         // Define multilingual menu titles
         const menuTitles = {
-          customerCode: {
-            th: 'รหัสลูกค้า',
-            en: 'Customer Code',
-            cn: '客户代码',
-          },
-          firstName: {
-            th: 'ชื่อ',
-            en: 'First Name',
-            cn: '名字',
-          },
-          lastName: {
-            th: 'นามสกุล',
-            en: 'Last Name',
-            cn: '姓氏',
-          },
-          phone: {
-            th: 'เบอร์โทร',
-            en: 'Phone Number',
-            cn: '电话号码',
-          },
+            customerCode: {
+                th: 'รหัสลูกค้า',
+                en: 'Customer Code',
+                cn: '客户代码',
+            },
+            customerImporterCode: {
+                th: 'รหัสผู้ใช้งาน',
+                en: 'User Code',     // ✅ แก้จาก Customer Code → User Code
+                cn: '用户代码',       // ✅ แก้จาก 客户代码 → 用户代码
+            },
+
+            firstName: {
+                th: 'ชื่อ',
+                en: 'First Name',
+                cn: '名字',
+            },
+            lastName: {
+                th: 'นามสกุล',
+                en: 'Last Name',
+                cn: '姓氏',
+            },
+            phone: {
+                th: 'เบอร์โทร',
+                en: 'Phone Number',
+                cn: '电话号码',
+            },
         };
 
         this.dtOptions = {
-          pagingType: 'full_numbers',
-          serverSide: true,
-          scrollX: true,
-          language: {
-            url: this.languageUrl,
-          },
-          ajax: (dataTablesParameters: any, callback) => {
-            dataTablesParameters.search = { value: this.filterForm.value.searchQuery };
+            pagingType: 'full_numbers',
+            serverSide: true,
+            scrollX: true,
+            language: {
+                url: this.languageUrl,
+            },
+            ajax: (dataTablesParameters: any, callback) => {
+                dataTablesParameters.search = { value: this.filterForm.value.searchQuery };
 
-            const fullName = this.filterForm.value.fullName?.trim() || '';
-            if (fullName) {
-                const [fname, ...rest] = fullName.split(' ');
-                const lname = rest.join(' ') || '';
-                dataTablesParameters.fname = fname;
-                dataTablesParameters.lname = lname;
-  }
+                const fullName = this.filterForm.value.fullName?.trim() || '';
+                if (fullName) {
+                    const [fname, ...rest] = fullName.split(' ');
+                    const lname = rest.join(' ') || '';
+                    dataTablesParameters.fname = fname;
+                    dataTablesParameters.lname = lname;
+                }
 
-            if (this.filterForm.value.code) {
-              dataTablesParameters.importer_code = this.filterForm.value.code;
-            }
-            if (this.filterForm.value.fname) {
-              dataTablesParameters.fname = this.filterForm.value.fname;
-            }
-            if (this.filterForm.value.lname) {
-              dataTablesParameters.fname = this.filterForm.value.lname;
-            }
-            if (this.filterForm.value.phone) {
-              dataTablesParameters.phone = this.filterForm.value.phone;
-            }
+                if (this.filterForm.value.code) {
+                    dataTablesParameters.importer_code = this.filterForm.value.code;
+                }
+                if (this.filterForm.value.fname) {
+                    dataTablesParameters.fname = this.filterForm.value.fname;
+                }
+                if (this.filterForm.value.lname) {
+                    dataTablesParameters.fname = this.filterForm.value.lname;
+                }
+                if (this.filterForm.value.phone) {
+                    dataTablesParameters.phone = this.filterForm.value.phone;
+                }
 
-            console.log('📦 Payload:', dataTablesParameters);
+                console.log('📦 Payload:', dataTablesParameters);
 
-            this._service
-              .datatable(dataTablesParameters)
-              .pipe(map((resp: { data: any }) => resp.data))
-              .subscribe({
-                next: (resp: any) => {
-                  this.dataRow = resp.data;
-                  callback({
-                    recordsTotal: resp.total,
-                    recordsFiltered: resp.total,
-                    data: resp.data,
-                  });
+                this._service
+                    .datatable(dataTablesParameters)
+                    .pipe(map((resp: { data: any }) => resp.data))
+                    .subscribe({
+                        next: (resp: any) => {
+                            this.dataRow = resp.data;
+                            callback({
+                                recordsTotal: resp.total,
+                                recordsFiltered: resp.total,
+                                data: resp.data,
+                            });
+                        },
+                    });
+            },
+            columns: [
+                {
+                    title: '',
+                    data: null,
+                    defaultContent: '',
+                    ngTemplateRef: {
+                        ref: this.checkbox,
+                    },
+                    className: 'w-10 text-center',
                 },
-              });
-          },
-          columns: [
-            {
-              title: '',
-              data: null,
-              defaultContent: '',
-              ngTemplateRef: {
-                ref: this.checkbox,
-              },
-              className: 'w-10 text-center',
-            },
-            {
-              title: '#',
-              data: 'No',
-              className: 'w-10 text-center',
-            },
-            {
-              title: menuTitles.customerCode[this.langues],
-              data: 'importer_code',
-              className: 'w-30 text-left',
-              ngTemplateRef: {
-                ref: this.gotoRoute,
-              },
-            },
-            {
-              title: menuTitles.firstName[this.langues],
-              data: 'fname',
-              className: 'text-left',
-            },
-            {
-              title: menuTitles.lastName[this.langues],
-              data: 'lname',
-              className: 'text-left',
-            },
-            {
-              title: menuTitles.phone[this.langues],
-              defaultContent: '-',
-              data: 'phone',
-              className: 'text-left',
-            },
-          ],
-          dom: 'lfrtip',
-          buttons: [
-            { extend: 'copy', className: 'btn-csv-hidden' },
-            { extend: 'csv', className: 'btn-csv-hidden' },
-            { extend: 'excel', className: 'btn-csv-hidden' },
-            { extend: 'print', className: 'btn-csv-hidden' },
-          ],
+                {
+                    title: '#',
+                    data: 'No',
+                    className: 'w-10 text-center',
+                },
+                {
+                    title: menuTitles.customerCode[this.langues],
+                    data: 'code',
+                    className: 'w-30 text-left',
+                    ngTemplateRef: {
+                        ref: this.gotoRouteCode,
+                    },
+                },
+                {
+                    title: menuTitles.customerImporterCode[this.langues],
+                    data: 'importer_code',
+                    className: 'w-30 text-left',
+                    ngTemplateRef: {
+                        ref: this.gotoRoute,
+                    },
+                },
+                {
+                    title: menuTitles.firstName[this.langues],
+                    data: 'fname',
+                    className: 'text-left',
+                },
+                {
+                    title: menuTitles.lastName[this.langues],
+                    data: 'lname',
+                    className: 'text-left',
+                },
+                {
+                    title: menuTitles.phone[this.langues],
+                    defaultContent: '-',
+                    data: 'phone',
+                    className: 'text-left',
+                },
+            ],
+            dom: 'lfrtip',
+            buttons: [
+                { extend: 'copy', className: 'btn-csv-hidden' },
+                { extend: 'csv', className: 'btn-csv-hidden' },
+                { extend: 'excel', className: 'btn-csv-hidden' },
+                { extend: 'print', className: 'btn-csv-hidden' },
+            ],
         };
-      }
+    }
 
     rerender(): void {
         this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
@@ -414,7 +429,7 @@ export class MemberComponent implements OnInit, AfterViewInit {
         });
     }
     showPicture(imgObject: string): void {
-         
+
         this.dialog
             .open(PictureComponent, {
                 autoFocus: false,
