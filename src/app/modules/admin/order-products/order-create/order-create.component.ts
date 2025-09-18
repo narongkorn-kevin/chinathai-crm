@@ -158,7 +158,7 @@ export class OrderCreateComponent implements OnInit, AfterViewInit {
                     ...resp,
                     data: resp.data.map((e) => ({
                         ...e,
-                        fullname: `(${e.importer_code}) ${e.fname} ${e.lname}`,
+                        fullname: `(${e.code}) ${e.fname ?? ''} ${e.lname ?? ''}`,
                     })),
                 }))
             )
