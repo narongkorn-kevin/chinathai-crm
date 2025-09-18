@@ -177,6 +177,6 @@ export class OrderProductsService {
 }
 
     getfee() {
-        return this.http.get(environment.apiUrl + '/api/exchange-rate')
+        return this.http.get(environment.apiUrl + '/api/get_exchage_rate_setting')
     }
 }

@@ -105,9 +105,9 @@ export class DialogOrderFeeComponent implements OnInit {
 
         // Fetch fee and patch the exchange rate (and EDIT data) after form exists
         this.orderProductService.getfee().subscribe((res: any) => {
-            this.fee = res?.rate;
+            this.fee = res?.data;
             this.form.patchValue({
-                exchange_rate: +res?.rate || 0,
+                exchange_rate: this.fee?.deposit_order_rate || 0,
             });
 
             if (this.data?.type === 'EDIT') {
