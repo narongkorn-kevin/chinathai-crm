@@ -268,7 +268,6 @@ export class OrderDetailComponent implements OnInit, AfterViewInit {
         this.data.order_lists.forEach((item) => {
             item.IsChecked = false;
         });
-
         this.selectAll = false;
     }
 
@@ -276,7 +275,6 @@ export class OrderDetailComponent implements OnInit, AfterViewInit {
         if (!this.data) {
             return true;
         }
-
         return ['in_progress', 'preparing_shipment', 'shipped', 'cancelled'].includes(this.data?.status)
     }
 
