@@ -1,0 +1,86 @@
+<div class="flex flex-col overflow-y-auto">
+  <mat-toolbar class="flex justify-between">
+    <span></span>
+    <div>
+      <h1 mat-dialog-title class="mb-4 text-xl font-semibold" *ngIf="this.data?.type === 'NEW'">เพิ่มคูปอง</h1>
+      <h1 mat-dialog-title class="mb-4 text-xl font-semibold" *ngIf="this.data?.type === 'EDIT'">แก้ไขคูปอง</h1>
+    </div>
+    <button mat-icon-button mat-dialog-close aria-label="close">
+      <mat-icon svgIcon="heroicons_outline:x-mark"></mat-icon>
+    </button>
+  </mat-toolbar>
+
+  <div class="flex flex-col justify-between">
+    <div mat-dialog-content class="flex justify-center w-full">
+      <form class="flex flex-col w-full md:max-w-[712px] mt-8 p-8 pb-4 bg-card rounded-2xl" [formGroup]="form">
+        <div class="grid w-full gap-3">
+          <div class="w-full mb-2">
+            <mat-form-field class="w-full" subscriptSizing="fixed">
+              <mat-label>ชื่อคูปอง</mat-label>
+              <input matInput formControlName="name" placeholder="ระบุชื่อคูปอง">
+              <mat-error>Required field!</mat-error>
+            </mat-form-field>
+          </div>
+
+          <div class="w-full mb-2">
+            <mat-form-field class="w-full">
+              <mat-label>รายละเอียด</mat-label>
+              <input matInput formControlName="description" placeholder="รายละเอียดเพิ่มเติม">
+            </mat-form-field>
+          </div>
+
+          <div class="w-full flex flex-col md:flex-row gap-3">
+            <mat-form-field class="w-full md:w-1/3">
+              <mat-label>มูลค่า</mat-label>
+              <input matInput formControlName="amount" type="number" placeholder="จำนวน">
+            </mat-form-field>
+
+            <mat-form-field class="w-full md:w-1/3">
+              <mat-label>จำนวน</mat-label>
+              <input matInput formControlName="qty" type="number" placeholder="จำนวนคงเหลือ">
+            </mat-form-field>
+
+            <mat-form-field class="w-full md:w-1/3">
+              <mat-label>หน่วยมูลค่า</mat-label>
+              <input matInput formControlName="type_amount" placeholder="เช่น ฿, %">
+            </mat-form-field>
+          </div>
+
+          <div class="w-full flex flex-col md:flex-row gap-3">
+            <mat-form-field class="w-full md:w-1/2">
+              <mat-label>ประเภท</mat-label>
+              <input matInput formControlName="type" placeholder="เช่น free_point">
+            </mat-form-field>
+
+            <mat-form-field class="w-full md:w-1/2">
+              <mat-label>วันหมดอายุ</mat-label>
+              <input matInput [matDatepicker]="picker" formControlName="expire_date" placeholder="เลือกวันที่">
+              <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+              <mat-datepicker #picker></mat-datepicker>
+            </mat-form-field>
+          </div>
+
+          <div class="flex justify-center">
+            <ngx-awesome-uploader
+              [adapter]="adapter"
+              [accept]="'image/*'"
+              [uploadType]="'single'"
+              class="w-full"
+              [fileMaxSize]="200"
+              (uploadSuccess)="uploadSuccess($event)"
+              (validationError)="onValidationError($event)">
+            </ngx-awesome-uploader>
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <div class="bottom-0 flex justify-between w-full px-8 py-5 mt-8 bg-white border-t dark:bg-gray-700">
+      <div></div>
+      <div mat-dialog-actions class="flex justify-end">
+        <button class="px-6 ml-3" mat-flat-button [color]="'primary'" (click)="Submit()">บันทึก</button>
+        <button class="px-6 ml-3" mat-flat-button [color]="'warn'" (click)="onClose()">ยกเลิก</button>
+      </div>
+    </div>
+  </div>
+</div>

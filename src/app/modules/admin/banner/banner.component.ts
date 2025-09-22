@@ -208,8 +208,11 @@ dataRow: any[]
         this._service.get(item).subscribe((resp: any) => {
             const DialogRef = this.dialog.open(BannerComposeComponent, {
                 disableClose: true,
-                width: '600px',
-                height: '600px',
+                // Responsive dialog sizing
+                width: '95vw',
+                maxWidth: '600px',
+                height: 'auto',
+                maxHeight: '90vh',
                 data: {
                     type: 'EDIT',
                     value: resp,
@@ -288,8 +291,10 @@ dataRow: any[]
     createBanner() {
         const DialogRef = this.dialog.open(BannerComposeComponent, {
             disableClose: true,
-            width: '600px',
-            height: '600px',
+            width: '95vw',
+            maxWidth: '600px',
+            height: 'auto',
+            maxHeight: '90vh',
             // enterAnimationDuration: 300,
             // exitAnimationDuration: 300,
             data: {
