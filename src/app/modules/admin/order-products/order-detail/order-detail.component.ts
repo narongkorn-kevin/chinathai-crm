@@ -544,8 +544,6 @@ export class OrderDetailComponent implements OnInit, AfterViewInit {
             (+this.summary.serviceFeeBaht) +
             (+this.summary.otherFeeYuan);
 
-        // console.log(this.summary);
-
     }
 
 }

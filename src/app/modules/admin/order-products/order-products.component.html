@@ -266,7 +266,10 @@
             {{ 'order_products.order_status.awaiting_payment' | transloco }}</div>
         <div *ngIf="data.status == 'in_progress'"
             class="px-4 py-1.5 rounded-full text-sm inline-flex items-center justify-center font-medium bg-blue-50 text-blue-600 border border-blue-200">
-            {{ 'order_products.order_status.in_progress' | transloco }}</div>
+            {{ 'รอตรวจสอบสลิป' | transloco }}</div>
+        <div *ngIf="data.status == 'confirm_payment'"
+            class="px-4 py-1.5 rounded-full text-sm inline-flex items-center justify-center font-medium bg-blue-50 text-blue-600 border border-blue-200">
+            {{ 'ยืนยันการชำระเงิน' | transloco }}</div>
         <div *ngIf="data.status == 'preparing_shipment'"
             class="px-4 py-1.5 rounded-full text-sm inline-flex items-center justify-center font-medium bg-purple-50 text-purple-600 border border-purple-200">
             {{ 'order_products.order_status.preparing_shipment' | transloco }}</div>

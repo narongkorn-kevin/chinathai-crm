@@ -138,6 +138,7 @@ export const defaultNavigation: FuseNavigationItem[] = [
                 title: 'ใบสั่งซื้อ',
                 type: 'basic',
                 link: '/order-products',
+                queryParams: { type: '' },
                 badge: {
                     title: '3',
                     classes: 'px-2 bg-red-600 text-white rounded-full',
@@ -179,16 +180,17 @@ export const defaultNavigation: FuseNavigationItem[] = [
                 },
 
             },
-            // {
-            //     id: 'payment.withdraw',
-            //     title: 'ถอนเงิน ',
-            //     type: 'basic',
-            //     // link: '/follow-up',
-            //     badge: {
-            //         title: '4',
-            //         classes: 'px-2 bg-red-600 text-white rounded-full',
-            //     },
-            // },
+            {
+                id: 'payment.order',
+                title: 'คำสั่งซื้อ ',
+                type: 'basic',
+                link: '/order-products',
+                queryParams: { type: 'in_progress' },
+                badge: {
+                    title: '4',
+                    classes: 'px-2 bg-red-600 text-white rounded-full',
+                },
+            },
             // {
             //     id: 'payment.statement',
             //     title: 'รายการเดินบัญชี',
@@ -473,7 +475,7 @@ export const defaultNavigation: FuseNavigationItem[] = [
         type: 'collapsable',
         icon: 'heroicons_outline:cog-8-tooth',
         children: [
-      
+
             {
                 id: 'setting-faq',
                 title: menuTitles.warehouseManagement[langues],

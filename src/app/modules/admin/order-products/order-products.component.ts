@@ -216,6 +216,8 @@ export class OrderProductsComponent implements OnInit, AfterViewInit {
         this.dtTrigger.unsubscribe();
     }
 
+    type: string | null = null;
+
     loadTable(): void {
         const menuTitles = {
             action: {
@@ -274,6 +276,10 @@ export class OrderProductsComponent implements OnInit, AfterViewInit {
                 cn: '状态',
             },
         };
+        this.activated.queryParamMap.subscribe(params => {
+            this.type = params.get('type');
+            console.log('Type subscribe:', this.type);
+        });
 
         this.dtOptions = {
             pagingType: 'full_numbers',
@@ -282,7 +288,9 @@ export class OrderProductsComponent implements OnInit, AfterViewInit {
             language: {
                 url: this.languageUrl,
             },
+
             ajax: (dataTablesParameters: any, callback) => {
+
                 if (this.filterForm.value.code) {
                     dataTablesParameters.code = this.filterForm.value.code;
                 }
@@ -292,8 +300,11 @@ export class OrderProductsComponent implements OnInit, AfterViewInit {
                 if (this.form.value.date_start) {
                     dataTablesParameters.date = this.form.value.date_start;
                 }
-
-
+                if (this.type === 'in_progress') {
+                    dataTablesParameters['status'] = this.type;
+                } else {
+                    dataTablesParameters['status'] = this.filterForm.value.status;
+                }
                 dataTablesParameters['date_end'] = !!this.filterForm.value
                     .date_end
                     ? DateTime.fromISO(
@@ -303,7 +314,7 @@ export class OrderProductsComponent implements OnInit, AfterViewInit {
                         .toFormat('yyyy-MM-dd')
                     : '';
 
-                dataTablesParameters['status'] = this.filterForm.value.status;
+
                 dataTablesParameters['member_id'] =
                     this.filterForm.value.member_id;
                 dataTablesParameters['code'] = this.filterForm.value.code;
@@ -693,7 +704,11 @@ export class OrderProductsComponent implements OnInit, AfterViewInit {
                         },
                         {
                             value: 'in_progress',
-                            name: 'อยู่ระหว่างการสั่งซื้อ',
+                            name: 'รอตรวจสอบสลิป',
+                        },
+                        {
+                            value: 'confirm_payment',
+                            name: 'ยืนยันการชำระเงิน',
                         },
                         {
                             value: 'preparing_shipment',
