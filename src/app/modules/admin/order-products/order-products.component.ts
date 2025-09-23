@@ -142,6 +142,11 @@ export class OrderProductsComponent implements OnInit, AfterViewInit {
     languageUrl: any;
 
     ngOnInit(): void {
+        this.activated.queryParamMap.subscribe(params => {
+            this.type = params.get('type');
+            this.rerender()
+            console.log('Type subscribe:', this.type);
+        });
         this._service.getOrders().subscribe((resp: any) => {
             this.orders = resp.data
             const memberIds = new Set();
@@ -167,7 +172,6 @@ export class OrderProductsComponent implements OnInit, AfterViewInit {
                     }
                 }
             }
-
             this.summary.totalMembers = memberIds.size;
             this.summary.totalProducts = totalProducts;
             this.summary.totalPrice = totalPrice;
@@ -276,10 +280,6 @@ export class OrderProductsComponent implements OnInit, AfterViewInit {
                 cn: '状态',
             },
         };
-        this.activated.queryParamMap.subscribe(params => {
-            this.type = params.get('type');
-            console.log('Type subscribe:', this.type);
-        });
 
         this.dtOptions = {
             pagingType: 'full_numbers',
