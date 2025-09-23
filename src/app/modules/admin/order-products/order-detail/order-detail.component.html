@@ -238,13 +238,17 @@
                                     <div class="flex-1">
                                         <h4 class="font-medium text-gray-900 text-lg mb-2">{{ orderList?.product_name }}
                                         </h4>
-
+                                        <p class="text-[11px] text-slate-400 leading-4">
+                                            ({{ orderList?.product_name | translateText:'zh-CN':'th' | async }})
+                                        </p>
                                         @if (orderList?.options?.length > 0) {
                                         <div class="mt-1">
                                             <mat-chip-set aria-label="Fish selection" class="!flex-wrap">
                                                 @for (option of orderList?.options; track option) {
                                                 <mat-chip [disabled]="option.disabled" class="!m-0.5 !text-xs">
                                                     {{ option.option_name }}
+                                                    <span class="text-xs text-slate-400">({{option.option_name | translateText:'zh-CN':'th' | async }})</span>
+                                                    
                                                 </mat-chip>
                                                 }
                                             </mat-chip-set>
