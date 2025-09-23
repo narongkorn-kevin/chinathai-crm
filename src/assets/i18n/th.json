@@ -2665,8 +2665,9 @@
             "completed": "เสร็จสิ้น",
             "waiting_for_document_review": "รอตรวจสอบเอกสาร",
             "waiting_for_tax_payment": "รอชำระภาษี",
-            "in_progress": "อยู่ระหว่างดำเนินการ",
-            "importing_documents": "นำเข้าเอกสาร"
+            "in_progress": "รอตรวจสอบสลิป",
+            "importing_documents": "นำเข้าเอกสาร",
+            "confirm_payment": "ยืนยันการชำระเงิน"
         }
     },
     "confirmation": {

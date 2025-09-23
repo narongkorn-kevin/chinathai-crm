@@ -70,6 +70,7 @@ export class DialogUpdateStatusComponent implements OnInit {
         'awaiting_summary',
         'awaiting_payment',
         'in_progress',
+        'confirm_payment',
         'preparing_shipment',
         'shipped',
         'cancelled',
