@@ -291,13 +291,16 @@
                                     <mat-form-field class="fuse-mat-dense w-full" [ngClass]="formFieldHelpers">
                                         <mat-label>{{ 'order_products.order_detail.product_real_price' | transloco
                                             }}</mat-label>
-                                        <input matInput [(ngModel)]="orderList.product_real_price" mask="separator.2"
-                                            thousandSeparator="," decimalMarker="." [dropSpecialCharacters]="true">
+                                        <input matInput [(ngModel)]="orderList.product_real_price"
+                                            (ngModelChange)="onOrderListFieldChange(orderList, 'product_real_price', $event)"
+                                            mask="separator.2" thousandSeparator="," decimalMarker="."
+                                            [dropSpecialCharacters]="true">
                                     </mat-form-field>
 
                                     <mat-form-field class="fuse-mat-dense w-full" [ngClass]="formFieldHelpers">
                                         <mat-label>ราคาต่อรอง</mat-label>
                                         <input matInput [(ngModel)]="orderList.product_negotiated_price"
+                                            (ngModelChange)="onOrderListFieldChange(orderList, 'product_negotiated_price', $event)"
                                             mask="separator.2" thousandSeparator="," decimalMarker="."
                                             [dropSpecialCharacters]="true">
                                     </mat-form-field>

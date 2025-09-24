@@ -360,6 +360,8 @@ export class OrderDetailComponent implements OnInit, AfterViewInit {
             this.toastr.info(this.translocoService.translate('order_products.order_detail.select_order_list'));
             return;
         }
+        console.log(this.confirmOrder.value);
+        
         this.dialog.open(DialogOrderFeeComponent, {
             width: '500px',
             data: {
@@ -487,8 +489,40 @@ export class OrderDetailComponent implements OnInit, AfterViewInit {
         this.imageLoadedMap[id] = true;
     }
     ////////////////////////////////////////////////////////////////
-    updateProductRealPrice(orderList) {
-        console.log(orderList);
+    onOrderListFieldChange(
+        orderList: any,
+        field: 'product_real_price' | 'product_negotiated_price',
+        value: any
+    ): void {
+        const normalizedValue = this.normalizePriceValue(value);
+
+        orderList[field] = normalizedValue;
+
+        const rawIndex = this.data?.order_lists?.findIndex((item) => item.id === orderList.id) ?? -1;
+        if (rawIndex !== -1) {
+            this.data.order_lists[rawIndex][field] = normalizedValue;
+        }
+
+        const controlIndex = this.orderLists.controls.findIndex(
+            (ctrl) => ctrl.get('order_list_id')?.value === orderList.id
+        );
+
+        if (controlIndex !== -1) {
+            this.orderLists.at(controlIndex).patchValue({ [field]: normalizedValue });
+        }
+    }
+
+    private normalizePriceValue(value: any): number | null {
+        if (value === null || value === undefined || value === '') {
+            return null;
+        }
+
+        const numericValue =
+            typeof value === 'number'
+                ? value
+                : parseFloat(value.toString().replace(/,/g, ''));
+
+        return Number.isNaN(numericValue) ? null : numericValue;
     }
 
 
