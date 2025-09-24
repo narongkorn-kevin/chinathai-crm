@@ -231,9 +231,21 @@
                             <!-- Left Column - Product Info -->
                             <div class="flex-1">
                                 <div class="flex items-start gap-4 mb-4">
-                                    <img class="w-24 h-24 object-cover rounded-md cursor-pointer"
-                                        [src]="orderList?.product_image"
-                                        (click)="showPicture(orderList?.product_image)">
+                                    <div
+                                        class="w-24 h-24 relative rounded-md overflow-hidden flex items-center justify-center bg-gray-100 text-gray-400 cursor-pointer">
+                                        <!-- ถ้าไม่มีรูป หรือโหลดรูปผิดพลาด -->
+                                        <ng-container
+                                            *ngIf="!orderList?.product_image || orderList.imageError; else hasImage">
+                                            <span class="text-xs">No image</span>
+                                        </ng-container>
+
+                                        <!-- ถ้ามีรูป -->
+                                        <ng-template #hasImage>
+                                            <img class="w-full h-full object-cover" [src]="orderList?.product_image"
+                                                alt="Image" (click)="showPicture(orderList?.product_image)"
+                                                (error)="onImageErrorOrderList(orderList)" />
+                                        </ng-template>
+                                    </div>
 
                                     <div class="flex-1">
                                         <h4 class="font-medium text-gray-900 text-lg mb-2">{{ orderList?.product_name }}
@@ -247,8 +259,9 @@
                                                 @for (option of orderList?.options; track option) {
                                                 <mat-chip [disabled]="option.disabled" class="!m-0.5 !text-xs">
                                                     {{ option.option_name }}
-                                                    <span class="text-xs text-slate-400">({{option.option_name | translateText:'zh-CN':'th' | async }})</span>
-                                                    
+                                                    <span class="text-xs text-slate-400">({{option.option_name |
+                                                        translateText:'zh-CN':'th' | async }})</span>
+
                                                 </mat-chip>
                                                 }
                                             </mat-chip-set>

@@ -106,23 +106,10 @@ export class OrderDetailComponent implements OnInit, AfterViewInit {
     id: any;
     formFieldHelpers: string[] = ['fuse-mat-dense'];
     confirmOrder: FormGroup;
-    // dtOptions: any = {};
-    // dtTrigger: Subject<ADTSettings> = new Subject<ADTSettings>();
-
-    // @ViewChild('btNg') btNg: any;
-    // @ViewChild('textStatus') textStatus: any;
-
     @ViewChild('pic') pic: any;
-
-    // @ViewChild(DataTableDirective, { static: false })
-    // dtElement: DataTableDirective;
-
     data: any;
-
     selectAll: boolean = false;
-
     permissionName = null;
-
     summary = {
         rate: 0,
         totalQty: 0,
@@ -360,8 +347,6 @@ export class OrderDetailComponent implements OnInit, AfterViewInit {
             this.toastr.info(this.translocoService.translate('order_products.order_detail.select_order_list'));
             return;
         }
-        console.log(this.confirmOrder.value);
-        
         this.dialog.open(DialogOrderFeeComponent, {
             width: '500px',
             data: {
@@ -580,4 +565,7 @@ export class OrderDetailComponent implements OnInit, AfterViewInit {
 
     }
 
+    onImageErrorOrderList(item: any): void {
+        item.imageError = true;
+    }
 }

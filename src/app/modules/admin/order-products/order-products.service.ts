@@ -149,6 +149,7 @@ export class OrderProductsService {
     }
 
     createOrder(data: any) {
+        alert(2)
         return this.http.post(environment.apiUrl + '/api/orders', data)
     }
 

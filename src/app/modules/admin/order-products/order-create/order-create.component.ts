@@ -378,7 +378,7 @@ export class OrderCreateComponent implements OnInit, AfterViewInit {
                 (data) => {
                     this.dataSource = new MatTableDataSource(data);
                     console.log(this.dataSource, 'data');
-                    
+
                 },
                 (error) => {
                     console.error('Error fetching data:', error);
@@ -522,10 +522,10 @@ export class OrderCreateComponent implements OnInit, AfterViewInit {
     }
 
     submit() {
-        if (this.form.invalid) {
-            this.toastr.error(this.translocoService.translate('toastr.missing_fields'));
-            return;
-        }
+        // if (this.form.invalid) {
+        //     this.toastr.error(this.translocoService.translate('toastr.missing_fields'));
+        //     return;
+        // }
 
         const confirmation = this.fuseConfirmationService.open({
             title: this.translocoService.translate('confirmation.save_title'),
@@ -554,11 +554,30 @@ export class OrderCreateComponent implements OnInit, AfterViewInit {
 
         confirmation.afterClosed().subscribe((result) => {
             if (result == 'confirmed') {
+                alert(1)
+                // หาก this.cart เป็น array ของ FormGroup
+                const products = this.cart.map((p: any) => {
+                    // ถ้า p เป็น FormGroup -> ดึงค่าออก
+                    const value = p?.getRawValue ? p.getRawValue() : p;
+
+                    // กันพลาด: แปลง options ให้เป็น array ของ plain objects เสมอ
+                    const options =
+                        Array.isArray(value.options)
+                            ? value.options
+                            : (value.options?.getRawValue ? value.options.getRawValue() : []);
+
+                    return {
+                        ...value,
+                        options,                 // => [{ option_name, option_image, option_note }]
+                        add_on_services: value.add_on_services ?? []
+                    };
+                });
                 const body = {
                     ...this.form.value,
-                    products: this.cart,
+                    products,
                     total_price: this.calculateTotalPrice(),
                 };
+                console.log(body, 'body');
 
                 this._service.createOrder(body).subscribe(
                     (resp: any) => {
@@ -616,5 +635,9 @@ export class OrderCreateComponent implements OnInit, AfterViewInit {
             order.translatedProductName = null;
             order.currentLang = 'zh-CN';
         }
+    }
+
+    onImageError(item: any): void {
+        item.imageError = true;
     }
 }

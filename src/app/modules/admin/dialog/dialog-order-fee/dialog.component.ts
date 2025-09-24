@@ -82,12 +82,9 @@ export class DialogOrderFeeComponent implements OnInit {
         const orderLists = this.data?.orderLists?.order_lists || [];
 
         this.form = this.FormBuilder.group({
-            china_shipping_fee: [this.data?.orderLists?.china_shipping_fee ?? null, Validators.required],
-            deposit_fee: [
-                this.data?.orderLists?.deposit_fee != null ? +this.data.orderLists.deposit_fee : null,
-                Validators.required,
-            ],
-            exchange_rate: [null, Validators.required],
+            china_shipping_fee: [this.data?.orderLists?.china_shipping_fee ?? 0, Validators.required],
+            deposit_fee: [0],
+            exchange_rate: [0, Validators.required],
             order_lists: this.FormBuilder.array(
                 orderLists.map((item: any) => {
                     return this.FormBuilder.group({
@@ -119,8 +116,8 @@ export class DialogOrderFeeComponent implements OnInit {
     }
 
     Submit() {
-        console.log(this.form.value , 'form.value');
-        
+        console.log(this.form.value, 'form.value');
+
         if (this.form.invalid) {
             this.toastr.error(
                 this.translocoService.translate('toastr.missing_fields')

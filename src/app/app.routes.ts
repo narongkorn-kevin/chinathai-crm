@@ -168,6 +168,7 @@ export const appRoutes: Route[] = [
             { path: 'fee-rate', loadChildren: () => import('app/modules/admin/fee-rate/fee-rate.routes') },
             { path: 'exchange-rate', loadChildren: () => import('app/modules/admin/exchange-rate/exchange-rate.routes') },
             { path: 'shipping-rates', loadChildren: () => import('app/modules/admin/shipping-rates/page.routes') },
+            { path: 'bank', loadChildren: () => import('app/modules/admin/bank/page.routes') },
         ]
     }
 ];
