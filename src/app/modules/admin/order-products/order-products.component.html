@@ -133,6 +133,24 @@
                 </div>
             </div>
         </div>
+        <mat-tab-group class="mb-6" mat-stretch-tabs [selectedIndex]="selectedStatusIndex"
+            (selectedTabChange)="onStatusTabChange($event)">
+            <mat-tab *ngFor="let tab of statusTabs">
+                <ng-template matTabLabel>
+                    <div class="flex items-center gap-2">
+                        <span>{{ tab.labelKey | transloco }}</span>
+                        <span
+                            class="px-2 py-0.5 rounded-full text-xs font-medium"
+                            [ngClass]="{
+                                'bg-primary-50 text-primary-600 border border-primary-100': selectedStatus === tab.value,
+                                'bg-gray-100 text-gray-600 border border-gray-200': selectedStatus !== tab.value
+                            }">
+                            {{ tab.value ? (summary.statuses[tab.value] || 0) : summary.totalOrders }}
+                        </span>
+                    </div>
+                </ng-template>
+            </mat-tab>
+        </mat-tab-group>
         <form *ngIf="!showFilterForm" [formGroup]="form">
             <div class="flex flex-col md:flex-row w-full gap-2 items-end">
                 <div class="w-full">
@@ -204,6 +222,8 @@
                             <mat-option value="awaiting_summary">{{ 'order_products.status_options.awaiting_summary' |
                                 transloco }}</mat-option>
                             <mat-option value="awaiting_payment">{{ 'order_products.status_options.awaiting_payment' |
+                                transloco }}</mat-option>
+                            <mat-option value="confirm_payment">{{ 'order_products.status_options.confirm_payment' |
                                 transloco }}</mat-option>
                             <mat-option value="payment">{{ 'order_products.status_options.payment' | transloco
                                 }}</mat-option>

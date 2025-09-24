@@ -1196,16 +1196,19 @@
             "in_progress": "อยู่ระหว่างการสั่งซื้อ",
             "awaiting_summary": "รอสรุปยอด",
             "awaiting_payment": "รอชำระค่าสั่งซื้อ",
+            "confirm_payment": "ยืนยันการชำระเงิน",
             "payment": "ชำระเงินแล้ว",
             "preparing_shipment": "สินค้าเตรียมจัดส่ง",
             "shipped": "ร้านค้าจัดส่งแล้ว",
             "cancelled": "ยกเลิก/ล้มเหลว"
         },
         "order_status": {
+            "all": "ทั้งหมด",
             "payment": "ชำระเงินแล้ว",
             "awaiting_summary": "รอสรุปยอด",
             "awaiting_payment": "รอชำระค่าสั่งซื้อ",
             "in_progress": "อยู่ระหว่างการสั่งซื้อ",
+            "confirm_payment": "ยืนยันการชำระเงิน",
             "preparing_shipment": "สินค้าเตรียมจัดส่ง",
             "shipped": "ร้านค้าจัดส่งแล้ว",
             "cancelled": "ยกเลิก/ล้มเหลว"

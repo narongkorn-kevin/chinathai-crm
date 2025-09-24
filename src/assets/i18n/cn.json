@@ -1202,16 +1202,19 @@
             "in_progress": "订购中",
             "awaiting_summary": "等待汇总",
             "awaiting_payment": "等待付款",
+            "confirm_payment": "确认付款",
             "payment": "已付款",
             "preparing_shipment": "准备发货",
             "shipped": "商家已发货",
             "cancelled": "已取消/失败"
         },
         "order_status": {
+            "all": "全部",
             "payment": "已付款",
             "awaiting_summary": "等待汇总",
             "awaiting_payment": "等待付款",
             "in_progress": "订购中",
+            "confirm_payment": "确认付款",
             "preparing_shipment": "准备发货",
             "shipped": "商家已发货",
             "cancelled": "已取消/失败"

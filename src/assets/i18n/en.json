@@ -1203,16 +1203,19 @@
             "in_progress": "Order in Progress",
             "awaiting_summary": "Awaiting Summary",
             "awaiting_payment": "Awaiting Payment",
+            "confirm_payment": "Payment Confirmed",
             "payment": "Payment Completed",
             "preparing_shipment": "Preparing Shipment",
             "shipped": "Shipped by Seller",
             "cancelled": "Cancelled/Failed"
         },
         "order_status": {
+            "all": "All",
             "payment": "Payment Completed",
             "awaiting_summary": "Awaiting Summary",
             "awaiting_payment": "Awaiting Payment",
             "in_progress": "Order in Progress",
+            "confirm_payment": "Payment Confirmed",
             "preparing_shipment": "Preparing Shipment",
             "shipped": "Shipped by Seller",
             "cancelled": "Cancelled/Failed"

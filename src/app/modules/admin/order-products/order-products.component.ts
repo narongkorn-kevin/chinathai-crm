@@ -43,6 +43,7 @@ import { PictureComponent } from 'app/modules/shared/picture/picture.component';
 import { copyToClipboard } from 'app/modules/shared/helper';
 import { ExportService } from 'app/modules/shared/export.service';
 import { getPermissionName } from 'app/helper';
+import { MatTabsModule, MatTabChangeEvent } from '@angular/material/tabs';
 @Component({
     selector: 'app-order-products',
     standalone: true,
@@ -65,6 +66,7 @@ import { getPermissionName } from 'app/helper';
         MatCheckboxModule,
         CdkMenuModule,
         SelectMemberComponent,
+        MatTabsModule,
     ],
     templateUrl: './order-products.component.html',
     styleUrl: './order-products.component.scss',
@@ -101,6 +103,18 @@ export class OrderProductsComponent implements OnInit, AfterViewInit {
     filterForm: FormGroup;
     showFilterForm: boolean = false;
     dataRow: any[] = [];
+
+    readonly statusTabs: Array<{ value: string; labelKey: string }> = [
+        { value: '', labelKey: 'order_products.order_status.all' },
+        { value: 'awaiting_summary', labelKey: 'order_products.order_status.awaiting_summary' },
+        { value: 'awaiting_payment', labelKey: 'order_products.order_status.awaiting_payment' },
+        { value: 'confirm_payment', labelKey: 'order_products.order_status.confirm_payment' },
+        { value: 'preparing_shipment', labelKey: 'order_products.order_status.preparing_shipment' },
+        { value: 'shipped', labelKey: 'order_products.order_status.shipped' },
+        { value: 'cancelled', labelKey: 'order_products.order_status.cancelled' },
+    ];
+
+    selectedStatus: string = '';
 
     department: any[] = [];
     position: any[] = [];
@@ -144,7 +158,12 @@ export class OrderProductsComponent implements OnInit, AfterViewInit {
     ngOnInit(): void {
         this.activated.queryParamMap.subscribe(params => {
             this.type = params.get('type');
-            this.rerender()
+            if (this.isStatusInTabs(this.type)) {
+                this.selectedStatus = this.type ?? '';
+            }
+            if (this.dtElement) {
+                this.rerender();
+            }
             console.log('Type subscribe:', this.type);
         });
         this._service.getOrders().subscribe((resp: any) => {
@@ -300,10 +319,11 @@ export class OrderProductsComponent implements OnInit, AfterViewInit {
                 if (this.form.value.date_start) {
                     dataTablesParameters.date = this.form.value.date_start;
                 }
-                if (this.type === 'in_progress') {
-                    dataTablesParameters['status'] = this.type;
+                const statusFilter = this.selectedStatus || this.filterForm.value.status;
+                if (statusFilter) {
+                    dataTablesParameters['status'] = statusFilter;
                 } else {
-                    dataTablesParameters['status'] = this.filterForm.value.status;
+                    delete dataTablesParameters['status'];
                 }
                 dataTablesParameters['date_end'] = !!this.filterForm.value
                     .date_end
@@ -471,6 +491,27 @@ export class OrderProductsComponent implements OnInit, AfterViewInit {
         });
     }
 
+    get selectedStatusIndex(): number {
+        const index = this.statusTabs.findIndex((tab) => tab.value === this.selectedStatus);
+        return index >= 0 ? index : 0;
+    }
+
+    onStatusTabChange(event: MatTabChangeEvent): void {
+        const nextStatus = this.statusTabs[event.index]?.value ?? '';
+        if (this.selectedStatus === nextStatus) {
+            return;
+        }
+        this.selectedStatus = nextStatus;
+        this.filterForm.patchValue({ status: '' }, { emitEvent: false });
+        if (this.dtElement) {
+            this.rerender();
+        }
+    }
+
+    private isStatusInTabs(status: string | null): boolean {
+        return status !== null && this.statusTabs.some((tab) => tab.value === status);
+    }
+
     openfillter() {
         this.showFilterForm = !this.showFilterForm;
         this.filterForm.reset();
@@ -479,6 +520,7 @@ export class OrderProductsComponent implements OnInit, AfterViewInit {
     applyFilter() {
         const filterValues = this.filterForm.value;
         console.log(filterValues);
+        this.selectedStatus = '';
         this.rerender();
     }
 
