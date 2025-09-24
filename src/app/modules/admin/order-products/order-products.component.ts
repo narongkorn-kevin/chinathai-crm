@@ -75,7 +75,6 @@ import { MatTabsModule, MatTabChangeEvent } from '@angular/material/tabs';
 export class OrderProductsComponent implements OnInit, AfterViewInit {
 
     orders: any[] = [];
-
     summary = {
         totalOrders: 0,
         totalMembers: 0,
@@ -106,14 +105,14 @@ export class OrderProductsComponent implements OnInit, AfterViewInit {
 
     readonly baseStatusTabs: Array<{ value: string; labelKey: string }> = [
         { value: '', labelKey: 'order_products.order_status.all' },
-        { value: 'awaiting_summary', labelKey: 'order_products.order_status.awaiting_summary' },
-        { value: 'awaiting_payment', labelKey: 'order_products.order_status.awaiting_payment' },
-        { value: 'in_progress', labelKey: 'order_products.order_status.in_progress' },
-        { value: 'payment', labelKey: 'order_products.order_status.payment' },
-        { value: 'confirm_payment', labelKey: 'order_products.order_status.confirm_payment' },
-        { value: 'preparing_shipment', labelKey: 'order_products.order_status.preparing_shipment' },
-        { value: 'shipped', labelKey: 'order_products.order_status.shipped' },
-        { value: 'cancelled', labelKey: 'order_products.order_status.cancelled' },
+        { value: 'awaiting_summary', labelKey: 'รอสรุปยอด' },
+        { value: 'awaiting_payment', labelKey: 'รอชำระค่าสั่งซื้อ' },
+        { value: 'in_progress', labelKey: 'รอตรวจสอบสลิป' },
+        // { value: 'payment', labelKey: 'order_products.order_status.payment' },
+        { value: 'confirm_payment', labelKey: 'ยืนยันการชำระเงิน' },
+        { value: 'preparing_shipment', labelKey: 'สินค้าเตรียมจัดส่ง' },
+        { value: 'shipped', labelKey: 'ร้านค้าจัดส่งแล้ว' },
+        { value: 'cancelled', labelKey: 'ยกเลิก/ล้มเหลว' },
     ];
 
     statusTabs: Array<{ value: string; labelKey: string }> = [...this.baseStatusTabs];
