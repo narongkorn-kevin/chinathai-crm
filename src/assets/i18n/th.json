@@ -1240,7 +1240,7 @@
             "customer_info": "ข้อมูลลูกค้า",
             "product_info": "ข้อมูลสินค้า",
             "add_product": "เพิ่มสินค้า",
-            "search_product": "ค้นหาสินค้า",
+            "search_product": "ค้นหาสินค้าจากชื่อสินค้าหรือ URL",
             "search": "ค้นหา",
             "fields": {
                 "customer": "ลูกค้า",
