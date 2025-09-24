@@ -130,7 +130,7 @@
                         </div>
 
                         <div class="flex flex-col md:flex-row w-full gap-2">
-                            <mat-form-field class="w-full md:w-1/4">
+                            <mat-form-field class="w-full md:w-1/4" [ngClass]="formFieldHelpers">
                                 <mat-label>{{ 'order_products.order_create.fields.payment_term' | transloco
                                     }}</mat-label>
                                 <mat-select [formControlName]="'payment_term'">
@@ -142,22 +142,22 @@
                                         }}</mat-option>
                                 </mat-select>
                             </mat-form-field>
-                            <mat-form-field class="w-full md:w-1/4">
+                            <mat-form-field class="w-full md:w-1/4" [ngClass]="formFieldHelpers">
                                 <mat-label>{{ 'order_products.order_create.fields.shipping_type' | transloco
                                     }}</mat-label>
                                 <mat-select [formControlName]="'shipping_type'">
-                                    <mat-option value="Car">{{ 'order_products.order_create.fields.shipping_options.car'
+                                    <mat-option value="car">{{ 'order_products.order_create.fields.shipping_options.car'
                                         | transloco
                                         }}</mat-option>
-                                    <mat-option value="Ship">{{
+                                    <mat-option value="ship">{{
                                         'order_products.order_create.fields.shipping_options.ship' | transloco
                                         }}</mat-option>
-                                    <mat-option value="Air">{{ 'order_products.order_create.fields.shipping_options.air'
+                                    <mat-option value="air">{{ 'order_products.order_create.fields.shipping_options.air'
                                         | transloco
                                         }}</mat-option>
                                 </mat-select>
                             </mat-form-field>
-                            <mat-form-field class="w-full md:w-1/4">
+                            <mat-form-field class="w-full md:w-1/4" [ngClass]="formFieldHelpers">
                                 <mat-label>{{ 'order_products.order_create.fields.bill_vat_type' | transloco
                                     }}</mat-label>
                                 <mat-select [formControlName]="'bill_vat'">
@@ -191,7 +191,7 @@
                         <input matInput [formControl]="search">
                     </mat-form-field>
 
-                    <mat-form-field class="w-full md:w-40">
+                    <mat-form-field class="w-full md:w-40" [ngClass]="formFieldHelpers">
                         <mat-label>{{ 'order_products.order_create.fields.service' | transloco }}</mat-label>
                         <mat-select [(value)]="selectedService">
                             <mat-option value="1688">{{ 'order_products.order_create.fields.service_options.1688' |
@@ -325,7 +325,6 @@
                             </button>
                             <mat-label>{{ item?.product_qty}}</mat-label>
                             <button type="button" class="" mat-icon-button (click)="increaseQuantity(item)">
-
                                 <mat-icon svgIcon="heroicons_outline:plus-small"></mat-icon>
                             </button>
                         </div>

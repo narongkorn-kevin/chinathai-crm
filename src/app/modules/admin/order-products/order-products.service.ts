@@ -149,7 +149,6 @@ export class OrderProductsService {
     }
 
     createOrder(data: any) {
-        alert(2)
         return this.http.post(environment.apiUrl + '/api/orders', data)
     }
 
@@ -179,5 +178,8 @@ export class OrderProductsService {
 
     getfee() {
         return this.http.get(environment.apiUrl + '/api/get_exchage_rate_setting')
+    }
+    getProductFromUrl(url:string) {
+        return this.http.get('https://dev-asha9.com/expand_unified.php?url=' + url)
     }
 }

@@ -179,7 +179,7 @@ export class OrderCreateComponent implements OnInit, AfterViewInit {
             total_price: [],
             member_id: [null, Validators.required],
             member_address_id: [null, Validators.required],
-            shipping_type: [null, Validators.required],
+            shipping_type: ['car', Validators.required],
             payment_term: ['2', Validators.required],
             address: [''],
             province: [''],
@@ -356,6 +356,18 @@ export class OrderCreateComponent implements OnInit, AfterViewInit {
             return;
         }
 
+        const value = this.search.value;
+
+        // regex เช็คว่าเป็น URL หรือไม่
+        const urlRegex = /^(https?:\/\/[^\s]+)$/i;
+
+        if (urlRegex.test(value)) {
+            // ถ้าเป็น URL → เรียกฟังก์ชันพิเศษแทน
+            this.handleUrlSearch(value);
+            return;
+        }
+
+
         this._service
             .getCategory(
                 this.search.value,
@@ -387,6 +399,23 @@ export class OrderCreateComponent implements OnInit, AfterViewInit {
             );
     }
 
+    // ฟังก์ชันพิเศษเมื่อเป็น URL
+    handleUrlSearch(url: string) {
+        console.log("Detected URL:", url);
+        // เรียก service หรือ logic อื่น ๆ ได้ตรงนี้
+        this._service.getProductFromUrl(url).subscribe(
+            (res: any) => {
+                this.selectedService = res.platform
+                this.viewDetail(res.productId)
+
+            },
+            (err) => {
+                console.error(err);
+                this.toastr.error(this.translocoService.translate('toastr.search_error'));
+            }
+        );
+    }
+
     viewDetail(num_iid: string) {
         this._service
             .getDetail(num_iid, this.selectedService)
@@ -395,14 +424,27 @@ export class OrderCreateComponent implements OnInit, AfterViewInit {
                 catchError(error => {
                     if (error.name === 'TimeoutError') {
                         this.toastr.warning(this.translocoService.translate('request_timeout'));
+                    } else {
+                        // แสดงข้อความ error ทั่วไป
+                        this.toastr.error(
+                            this.translocoService.translate('ไม่สามารถเรียก API 1688 หรือ taobao ได้'),
+                            this.translocoService.translate('error')
+                        );
                     }
                     return throwError(() => error);
                 })
             )
-            .subscribe((productDetail: any) => {
-                this.openDialog(productDetail);
+            .subscribe({
+                next: (productDetail: any) => {
+                    this.openDialog(productDetail);
+                },
+                error: err => {
+                    console.error('API Error: ', err);
+                    this.translocoService.translate('error')
+                }
             });
     }
+
 
     openDialog(productDetail: any): void {
         const dialogRef = this.dialog.open(DialogProductComponent, {
@@ -554,7 +596,7 @@ export class OrderCreateComponent implements OnInit, AfterViewInit {
 
         confirmation.afterClosed().subscribe((result) => {
             if (result == 'confirmed') {
-                alert(1)
+                
                 // หาก this.cart เป็น array ของ FormGroup
                 const products = this.cart.map((p: any) => {
                     // ถ้า p เป็น FormGroup -> ดึงค่าออก

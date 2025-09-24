@@ -339,7 +339,7 @@ export class DialogStockInComponent implements OnInit {
     }
 
     removeExistingImage(img: any): void {
-        alert(1)
+        
         // กรอง allImages ใหม่ โดยไม่รวมภาพที่มาจาก data.images และตรงกับที่เลือก
         this.allImages = this.allImages.filter(existing => {
             // ถ้า image_url ตรงกันกับ img ที่จะลบ และเป็นของ data.images → ลบ
