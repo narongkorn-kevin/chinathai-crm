@@ -397,7 +397,7 @@ export class PointRecordComponent implements OnInit, AfterViewInit {
                 status: [
                     { value: 'awaiting_summary', name: 'รอสรุปยอด', },
                     { value: 'awaiting_payment', name: 'รอชำระค่าสั่งซื้อ', },
-                    { value: 'in_progress', name: 'อยู่ระหว่างการสั่งซื้อ', },
+                    { value: 'in_progress', name: 'รอตรวจสอบสลิป', },
                     { value: 'preparing_shipment', name: 'สินค้าเตรียมจัดส่ง', },
                     { value: 'shipped', name: 'ร้านค้าจัดส่งแล้ว', },
                     { value: 'cancelled', name: 'ยกเลิก/ล้มเหลว', },

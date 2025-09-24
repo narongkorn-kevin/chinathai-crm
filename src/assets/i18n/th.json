@@ -153,7 +153,7 @@
             "status_paid": "ชำระเงินแล้ว",
             "status_awaiting_summary": "รอสรุปยอด",
             "status_awaiting_payment": "รอชำระค่าสั่งซื้อ",
-            "status_in_progress": "อยู่ระหว่างการสั่งซื้อ",
+            "status_in_progress": "รอตรวจสอบสลิป",
             "status_preparing_shipment": "สินค้าเตรียมจัดส่ง",
             "status_shipped": "ร้านค้าจัดส่งแล้ว",
             "status_cancelled": "ยกเลิก/ล้มเหลว"
@@ -1207,7 +1207,7 @@
             "payment": "ชำระเงินแล้ว",
             "awaiting_summary": "รอสรุปยอด",
             "awaiting_payment": "รอชำระค่าสั่งซื้อ",
-            "in_progress": "อยู่ระหว่างการสั่งซื้อ",
+            "in_progress": "รอตรวจสอบสลิป",
             "confirm_payment": "ยืนยันการชำระเงิน",
             "preparing_shipment": "สินค้าเตรียมจัดส่ง",
             "shipped": "ร้านค้าจัดส่งแล้ว",
