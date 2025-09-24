@@ -28,6 +28,7 @@ import { MatRadioModule } from '@angular/material/radio';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { OrderProductsService } from '../../order-products/order-products.service';
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 @Component({
     selector: 'app-dialog-product-compose',
@@ -52,6 +53,7 @@ import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
         MatFormFieldModule,
         MatRadioModule,
         MatCheckboxModule,
+        MatTooltipModule
     ],
 })
 export class DialogProductComposeComponent implements OnInit {
@@ -88,7 +90,7 @@ export class DialogProductComposeComponent implements OnInit {
         this.form = this.fb.group({
             product_code: [''],
             product_name: ['', Validators.required],
-            product_url: ['', Validators.required],
+            product_url: [''],
             product_image: [''],
             product_category: [''],
             product_store_type: [''],
@@ -259,4 +261,6 @@ export class DialogProductComposeComponent implements OnInit {
             });
         }
     }
+
+    
 }

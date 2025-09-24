@@ -1,98 +1,173 @@
 <form [formGroup]="form" class="md:max-w-full">
-    <div class="flex flex-row justify-between">
-        <h1 mat-dialog-title class="text-xl font-semibold mb-4">{{ 'dialog.dialog_product_compose.product' | transloco }}</h1>
+  <!-- Header -->
+  <div class="flex items-center justify-between px-4 pt-4">
+    <h1 mat-dialog-title class="text-2xl font-semibold tracking-tight">
+      {{ 'dialog.dialog_product_compose.product' | transloco }}
+    </h1>
+    <button mat-icon-button (click)="onClose()" matTooltip="{{ 'buttons.close' | transloco }}">
+      <mat-icon class="text-current" [svgIcon]="'heroicons_outline:x-mark'"></mat-icon>
+    </button>
+  </div>
 
-        <button class="ml-auto" mat-icon-button (click)="onClose()">
-            <mat-icon class="text-current" [svgIcon]="'heroicons_outline:x-mark'"></mat-icon>
-        </button>
-    </div>
-    <div class="flex flex-auto w-full">
-        <div class="grid grid-cols-2 w-full gap-4">
-            <div class="grid grid-cols-1">
-                <div class="flex justify-between h-10">
-                    <h1 class="text-xl font-semibold">{{ 'dialog.dialog_product_compose.product_info' | transloco }}</h1>
-                </div>
-                <div class="flex w-full">
-                    <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
-                        <mat-label>{{ 'dialog.dialog_product_compose.product_name' | transloco }}</mat-label>
-                        <input [formControlName]="'product_name'" matInput [placeholder]="'dialog.dialog_product_compose.product_name' | transloco">
-                    </mat-form-field>
-                </div>
+  <!-- Body -->
+  <div class="flex flex-auto w-full p-4">
+    <div class="grid grid-cols-1 lg:grid-cols-2 w-full gap-4">
 
-                <div class="flex w-full">
-                    <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
-                        <mat-label>{{ 'dialog.dialog_product_compose.price' | transloco }}</mat-label>
-                        <input type="number" min="0" [formControlName]="'product_price'" matInput
-                            [placeholder]="'dialog.dialog_product_compose.price' | transloco">
-                    </mat-form-field>
-                </div>
-
-                <div class="flex w-full">
-                    <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
-                        <mat-label>{{ 'dialog.dialog_product_compose.quantity' | transloco }}</mat-label>
-                        <input type="number" min="0" [formControlName]="'product_qty'" matInput [placeholder]="'dialog.dialog_product_compose.quantity' | transloco">
-                    </mat-form-field>
-                </div>
-
-                <div class="flex w-full">
-                    <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
-                        <mat-label>{{ 'dialog.dialog_product_compose.product_link' | transloco }}</mat-label>
-                        <input [formControlName]="'product_url'" matInput [placeholder]="'dialog.dialog_product_compose.product_link' | transloco">
-                    </mat-form-field>
-                </div>
-
-                <!-- <div class="flex flex-row w-full gap-2">
-                    <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
-                        <mat-label>{{ 'dialog.dialog_product_compose.notes' | transloco }}</mat-label>
-                        <textarea matInput [formControlName]="'dialog.dialog_product_compose.notes' | transloco"></textarea>
-                    </mat-form-field>
-                </div> -->
-
-                <div class="flex flex-wrap">
-                    <div *ngFor="let item of addOnServices" class="flex items-center mb-2">
-                        <mat-checkbox [id]="'item-' + item.id" [checked]="isSelected(item.id)"
-                            (change)="toggleItem(item.id, item.standard_price)" color="primary">
-                            {{ item.name }} - {{ item.standard_price }} {{ 'lables.baht' | transloco }}
-                        </mat-checkbox>
-                    </div>
-                </div>
-            </div>
-            <div class="flex flex-col" formArrayName="options">
-                <div class="flex justify-between">
-                    <h1 class="text-xl font-semibold">{{ 'buttons.options' | transloco }}</h1>
-                    <button class="" mat-icon-button [color]="'primary'" (click)="addOption()">
-                        <mat-icon [svgIcon]="'heroicons_outline:plus'"></mat-icon>
-                    </button>
-                </div>
-
-                @for (option of options.controls; track $index) {
-                <div class="flex flex-row gap-2 items-center" [formGroupName]="$index">
-                    <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
-                        <mat-label>{{ 'dialog.dialog_product_compose.option_name' | transloco }}</mat-label>
-                        <input [formControlName]="'option_name'" matInput>
-                    </mat-form-field>
-
-                    <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
-                        <mat-label>{{ 'dialog.dialog_product_compose.option_notes' | transloco }}</mat-label>
-                        <input [formControlName]="'option_note'" matInput>
-                    </mat-form-field>
-
-                    <button class="" mat-icon-button [color]="'primary'" (click)="removeOption($index)">
-                        <mat-icon [svgIcon]="'feather:trash'"></mat-icon>
-                    </button>
-                </div>
-                }
-            </div>
-
+      <!-- LEFT: Product Info Card -->
+      <div class="bg-white/80 dark:bg-gray-900/60 rounded-2xl shadow-sm ring-1 ring-black/5 p-5">
+        <div class="flex items-center justify-between mb-3">
+          <h2 class="text-lg font-semibold">
+            {{ 'dialog.dialog_product_compose.product_info' | transloco }}
+          </h2>
+          <!-- สรุปราคาเล็ก ๆ -->
+          <div class="text-sm text-gray-500" *ngIf="form.get('product_price')?.value && form.get('product_qty')?.value">
+            {{ 'lables.total' | transloco }} :
+            <span class="font-semibold">
+              {{ (form.get('product_price')?.value * form.get('product_qty')?.value) | number:'1.0-2' }}
+              {{ 'lables.baht' | transloco }}
+            </span>
+          </div>
         </div>
-    </div>
 
-    <div mat-dialog-actions class="flex justify-end border-t-2 pt-4">
-        <button class="px-6 ml-3" mat-flat-button [color]="'primary'" (click)="addToCart()">
-            {{ 'buttons.submit' | transloco }}
-        </button>
-        <button class="px-6 ml-3" mat-flat-button [color]="'warn'" (click)="onClose()">
-            {{ 'buttons.cancel' | transloco }}
-        </button>
+        <div class="grid grid-cols-1 gap-3">
+
+          <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+            <mat-label>{{ 'dialog.dialog_product_compose.product_name' | transloco }}</mat-label>
+            <input matInput [formControlName]="'product_name'"
+                   [placeholder]="'dialog.dialog_product_compose.product_name' | transloco">
+            <!-- <mat-hint align="start">{{ 'lables.required' | transloco }}</mat-hint> -->
+            <mat-error *ngIf="form.get('product_name')?.invalid && form.get('product_name')?.touched">
+              {{ 'กรุณาระบุชื่อสินค้า' | transloco }}
+            </mat-error>
+          </mat-form-field>
+
+          <div class="grid grid-cols-2 gap-3">
+            <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+              <mat-label>{{ 'dialog.dialog_product_compose.price' | transloco }}</mat-label>
+              <input matInput type="number" min="0" inputmode="decimal" [formControlName]="'product_price'"
+                     [placeholder]="'dialog.dialog_product_compose.price' | transloco">
+              <!-- <mat-hint>{{ 'lables.before_addon' | transloco }}</mat-hint> -->
+              <mat-error *ngIf="form.get('product_price')?.invalid && form.get('product_price')?.touched">
+                {{ 'กรุณาระบุราคา' | transloco }}
+              </mat-error>
+            </mat-form-field>
+
+            <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+              <mat-label>{{ 'dialog.dialog_product_compose.quantity' | transloco }}</mat-label>
+              <input matInput type="number" min="0" inputmode="numeric" [formControlName]="'product_qty'"
+                     [placeholder]="'dialog.dialog_product_compose.quantity' | transloco">
+             
+              <mat-error *ngIf="form.get('product_qty')?.invalid && form.get('product_qty')?.touched">
+                {{ 'กรุณาระบุจำนวน' | transloco }}
+              </mat-error>
+            </mat-form-field>
+          </div>
+
+          <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+            <mat-label>{{ 'dialog.dialog_product_compose.product_link' | transloco }}</mat-label>
+            <span matPrefix class="opacity-60">URL&nbsp;</span>
+            <input matInput [formControlName]="'product_url'"
+                   [placeholder]="'dialog.dialog_product_compose.product_link' | transloco">
+            <button matSuffix mat-icon-button *ngIf="form.get('product_url')?.value"
+                    (click)="openUrl(form.get('product_url ')?.value)"
+                    matTooltip="{{ 'buttons.open_link' | transloco }}">
+              <mat-icon [svgIcon]="'heroicons_outline:arrow-top-right-on-square'"></mat-icon>
+            </button>
+      
+          </mat-form-field>
+
+          <!-- Add-on services -->
+          <!-- <div class="mt-1">
+            <div class="text-sm font-medium mb-2">
+              {{ 'lables.addon_services' | transloco }}
+            </div>
+            <div class="flex flex-wrap gap-3">
+              <div *ngFor="let item of addOnServices" class="inline-flex">
+                <mat-checkbox
+                  [id]="'item-' + item.id"
+                  [checked]="isSelected(item.id)"
+                  (change)="toggleItem(item.id, item.standard_price)"
+                  color="primary">
+                  <span class="font-medium">{{ item.name }}</span>
+                  <span class="opacity-60"> · {{ item.standard_price | number:'1.0-2' }} {{ 'lables.baht' | transloco }}</span>
+                </mat-checkbox>
+              </div>
+            </div>
+          </div> -->
+
+          <!-- (optional) Notes -->
+          
+          <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+            <mat-label>{{ 'dialog.dialog_product_compose.notes' | transloco }}</mat-label>
+            <textarea matInput [formControlName]="'notes'" cdkTextareaAutosize></textarea>
+            <!-- <mat-hint align="start">{{ 'lables.optional' | transloco }}</mat-hint> -->
+          </mat-form-field>
+         
+        </div>
+      </div>
+
+      <!-- RIGHT: Options Card -->
+      <div class="bg-white/80 dark:bg-gray-900/60 rounded-2xl shadow-sm ring-1 ring-black/5 p-5" formArrayName="options">
+        <div class="flex items-center justify-between mb-3">
+          <h2 class="text-lg font-semibold">{{ 'เพิ่มตัวเลือก' | transloco }}</h2>
+          <button mat-icon-button color="primary" (click)="addOption()" matTooltip="{{ 'buttons.add' | transloco }}">
+            <mat-icon [svgIcon]="'heroicons_outline:plus'"></mat-icon>
+          </button>
+        </div>
+
+        <div class="space-y-3">
+          @for (option of options.controls; track $index) {
+            <div class="grid grid-cols-[1fr,1fr,auto] gap-2 items-start" [formGroupName]="$index">
+              <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                <mat-label>{{ 'dialog.dialog_product_compose.option_name' | transloco }}</mat-label>
+                <input matInput [formControlName]="'option_name'">
+                <mat-error *ngIf="option.get('option_name')?.invalid && option.get('option_name')?.touched">
+                  {{ 'กรุณาระบุข้อมูล' | transloco }}
+                </mat-error>
+              </mat-form-field>
+
+              <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                <mat-label>{{ 'dialog.dialog_product_compose.option_notes' | transloco }}</mat-label>
+                <input matInput [formControlName]="'option_note'">
+              </mat-form-field>
+
+              <button mat-icon-button color="warn" (click)="removeOption($index)"
+                      matTooltip="{{ 'buttons.delete' | transloco }}"
+                      class="mt-2">
+                <mat-icon [svgIcon]="'feather:trash'"></mat-icon>
+              </button>
+            </div>
+          }
+        </div>
+
+        <!-- Empty state -->
+        <div *ngIf="options?.length === 0" class="mt-4 rounded-xl border border-dashed border-gray-300 p-6 text-center">
+          <div class="text-sm text-gray-500">
+            {{ 'ตัวเลือกเช่น สี ขนาด Size' | transloco }}
+          </div>
+          <button mat-stroked-button color="primary" class="mt-3" (click)="addOption()">
+            <mat-icon class="mr-2" [svgIcon]="'heroicons_outline:plus'"></mat-icon>
+            {{ 'เพิ่มตัวเลือก' | transloco }}
+          </button>
+        </div>
+      </div>
     </div>
+  </div>
+
+  <!-- Sticky Actions -->
+  <div mat-dialog-actions
+       class="sticky bottom-0 z-10 bg-white/90 dark:bg-gray-900/80 backdrop-blur border-t border-gray-200 dark:border-gray-800 px-4 py-3 flex items-center justify-end gap-2">
+    <!-- สรุปราคา (รวม add-on อย่างง่าย ถ้ามีฟังก์ชันคำนวณ) -->
+    <!-- <div class="mr-auto text-sm text-gray-600" *ngIf="summaryText">
+      {{ summaryText }}
+    </div> -->
+
+    <button mat-flat-button color="primary" class="px-6" (click)="addToCart()">
+      <mat-icon class="mr-2" [svgIcon]="'heroicons_solid:shopping-cart'"></mat-icon>
+      {{ 'buttons.submit' | transloco }}
+    </button>
+    <button mat-flat-button color="warn" class="px-4" (click)="onClose()">
+      {{ 'buttons.cancel' | transloco }}
+    </button>
+  </div>
 </form>
