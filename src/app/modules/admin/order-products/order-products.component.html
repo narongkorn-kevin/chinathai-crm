@@ -135,15 +135,15 @@
         </div>
         <mat-tab-group class="mb-6" mat-stretch-tabs [selectedIndex]="selectedStatusIndex"
             (selectedTabChange)="onStatusTabChange($event)">
-            <mat-tab *ngFor="let tab of statusTabs">
+            <mat-tab *ngFor="let tab of statusTabs; let i = index">
                 <ng-template matTabLabel>
                     <div class="flex items-center gap-2">
                         <span>{{ tab.labelKey | transloco }}</span>
                         <span
                             class="px-2 py-0.5 rounded-full text-xs font-medium"
                             [ngClass]="{
-                                'bg-primary-50 text-primary-600 border border-primary-100': selectedStatus === tab.value,
-                                'bg-gray-100 text-gray-600 border border-gray-200': selectedStatus !== tab.value
+                                'bg-primary-50 text-primary-600 border border-primary-100': selectedStatusIndex === i,
+                                'bg-gray-100 text-gray-600 border border-gray-200': selectedStatusIndex !== i
                             }">
                             {{ tab.value ? (summary.statuses[tab.value] || 0) : summary.totalOrders }}
                         </span>

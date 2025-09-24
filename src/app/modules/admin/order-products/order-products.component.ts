@@ -104,15 +104,19 @@ export class OrderProductsComponent implements OnInit, AfterViewInit {
     showFilterForm: boolean = false;
     dataRow: any[] = [];
 
-    readonly statusTabs: Array<{ value: string; labelKey: string }> = [
+    readonly baseStatusTabs: Array<{ value: string; labelKey: string }> = [
         { value: '', labelKey: 'order_products.order_status.all' },
         { value: 'awaiting_summary', labelKey: 'order_products.order_status.awaiting_summary' },
         { value: 'awaiting_payment', labelKey: 'order_products.order_status.awaiting_payment' },
+        { value: 'in_progress', labelKey: 'order_products.order_status.in_progress' },
+        { value: 'payment', labelKey: 'order_products.order_status.payment' },
         { value: 'confirm_payment', labelKey: 'order_products.order_status.confirm_payment' },
         { value: 'preparing_shipment', labelKey: 'order_products.order_status.preparing_shipment' },
         { value: 'shipped', labelKey: 'order_products.order_status.shipped' },
         { value: 'cancelled', labelKey: 'order_products.order_status.cancelled' },
     ];
+
+    statusTabs: Array<{ value: string; labelKey: string }> = [...this.baseStatusTabs];
 
     selectedStatus: string = '';
 
@@ -158,9 +162,15 @@ export class OrderProductsComponent implements OnInit, AfterViewInit {
     ngOnInit(): void {
         this.activated.queryParamMap.subscribe(params => {
             this.type = params.get('type');
-            if (this.isStatusInTabs(this.type)) {
-                this.selectedStatus = this.type ?? '';
-            }
+            this.statusTabs = this.buildStatusTabs(this.type);
+
+            const initialStatus = this.type && this.isStatusInTabs(this.type)
+                ? this.type
+                : (this.statusTabs[0]?.value ?? '');
+
+            this.selectedStatus = initialStatus;
+            this.filterForm.patchValue({ status: '' }, { emitEvent: false });
+
             if (this.dtElement) {
                 this.rerender();
             }
@@ -512,6 +522,17 @@ export class OrderProductsComponent implements OnInit, AfterViewInit {
         return status !== null && this.statusTabs.some((tab) => tab.value === status);
     }
 
+    private buildStatusTabs(type: string | null): Array<{ value: string; labelKey: string }> {
+        if (type === 'in_progress' || type === 'confirm_payment') {
+            return [
+                { value: 'in_progress', labelKey: 'order_products.order_status.in_progress' },
+                { value: 'confirm_payment', labelKey: 'order_products.order_status.confirm_payment' },
+            ];
+        }
+
+        return [...this.baseStatusTabs];
+    }
+
     openfillter() {
         this.showFilterForm = !this.showFilterForm;
         this.filterForm.reset();
@@ -520,7 +541,13 @@ export class OrderProductsComponent implements OnInit, AfterViewInit {
     applyFilter() {
         const filterValues = this.filterForm.value;
         console.log(filterValues);
-        this.selectedStatus = '';
+        if (filterValues.status && this.isStatusInTabs(filterValues.status)) {
+            this.selectedStatus = filterValues.status;
+        } else if (!filterValues.status) {
+            this.selectedStatus = this.statusTabs[0]?.value ?? '';
+        } else {
+            this.selectedStatus = '';
+        }
         this.rerender();
     }
 
