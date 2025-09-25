@@ -78,12 +78,12 @@
 
           <div class="space-y-2">
             <span class="text-sm font-medium text-gray-700">
-              {{ 'dialog.dialog_product_compose.product_image' | transloco }}
+              {{ 'เพิ่มรูปสินค้า' | transloco }}
             </span>
             <label
               class="flex items-center justify-center px-4 py-3 text-sm border-2 border-dashed border-gray-300 rounded-xl cursor-pointer transition hover:border-primary-500 hover:text-primary-600">
               <mat-icon [svgIcon]="'heroicons_outline:photo'" class="text-current"></mat-icon>
-              <span class="ml-2">{{ 'buttons.upload' | transloco }}</span>
+              <span class="ml-2">{{ 'เลือกรูป' | transloco }}</span>
               <input type="file" accept="image/*" class="hidden" (change)="onFileSelected($event)">
             </label>
             <span class="text-xs text-gray-500" *ngIf="isUploading">Uploading...</span>

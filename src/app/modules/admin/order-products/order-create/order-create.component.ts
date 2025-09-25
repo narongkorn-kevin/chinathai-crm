@@ -560,7 +560,24 @@ export class OrderCreateComponent implements OnInit, AfterViewInit {
     }
 
     removeFromCart(item: any): void {
-        this.cart = this.cart.filter((cartItem) => cartItem.id !== item.id);
+        if (!Array.isArray(this.cart) || this.cart.length === 0) {
+            return;
+        }
+
+        const index = this.cart.indexOf(item);
+
+        const removeAt = index !== -1
+            ? index
+            : this.cart.findIndex((cartItem) => cartItem?.id && cartItem.id === item?.id);
+
+        if (removeAt === -1) {
+            return;
+        }
+
+        this.cart = [
+            ...this.cart.slice(0, removeAt),
+            ...this.cart.slice(removeAt + 1),
+        ];
     }
 
     submit() {

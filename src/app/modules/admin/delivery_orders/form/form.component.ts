@@ -1422,7 +1422,21 @@ export class FormComponent implements OnInit, AfterViewInit {
         );
     }
 
-    removeService(index: number): void {
-        this.add_on_servicesArray.removeAt(index);
+    removeService(index: number, event?: Event): void {
+        event?.preventDefault();
+        event?.stopPropagation();
+
+        const services = this.add_on_servicesArray;
+        if (!services || index < 0 || index >= services.length) {
+            return;
+        }
+
+        services.removeAt(index);
+        services.markAsDirty();
+        services.markAsTouched();
+        this.form.markAsDirty();
+        this.form.updateValueAndValidity();
+
+        this._changeDetectorRef.detectChanges();
     }
 }

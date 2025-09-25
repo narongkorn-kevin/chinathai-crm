@@ -432,8 +432,8 @@
 
                                         <!-- ปุ่มลบ -->
                                         <div class="mt-auto">
-                                            <button mat-flat-button [color]="'primary'" class="w-full"
-                                                (click)="removeService(i)">
+                                            <button mat-flat-button type="button" [color]="'primary'" class="w-full"
+                                                (click)="removeService(i, $event)">
                                                 <mat-icon svgIcon="feather:trash"></mat-icon>
                                                 <span class="ml-2">{{ 'delivery_order.form.remove_selected' | transloco
                                                     }}</span>
