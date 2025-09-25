@@ -10,7 +10,7 @@
   </div>
 
   <!-- Body -->
-  <div class="flex flex-auto w-full p-4">
+  <div class="flex flex-auto w-full p-4 dialog-scroll">
     <div class="grid grid-cols-1 lg:grid-cols-2 w-full gap-4">
 
       <!-- LEFT: Product Info Card -->
@@ -75,6 +75,31 @@
             </button>
       
           </mat-form-field>
+
+          <div class="space-y-2">
+            <span class="text-sm font-medium text-gray-700">
+              {{ 'dialog.dialog_product_compose.product_image' | transloco }}
+            </span>
+            <label
+              class="flex items-center justify-center px-4 py-3 text-sm border-2 border-dashed border-gray-300 rounded-xl cursor-pointer transition hover:border-primary-500 hover:text-primary-600">
+              <mat-icon [svgIcon]="'heroicons_outline:photo'" class="text-current"></mat-icon>
+              <span class="ml-2">{{ 'buttons.upload' | transloco }}</span>
+              <input type="file" accept="image/*" class="hidden" (change)="onFileSelected($event)">
+            </label>
+            <span class="text-xs text-gray-500" *ngIf="isUploading">Uploading...</span>
+            <div class="flex items-start gap-3" *ngIf="imagePreview || uploadedImagePath">
+              <img [src]="imagePreview || uploadedImagePath" alt="Preview"
+                   class="object-cover w-20 h-20 border border-gray-200 rounded-lg">
+              <div class="flex flex-col gap-1">
+                <span class="text-xs text-gray-500 break-all" *ngIf="uploadedImagePath">{{ uploadedImagePath }}</span>
+                <button mat-stroked-button color="warn" class="w-fit" (click)="clearProductImage()"
+                        matTooltip="{{ 'buttons.delete' | transloco }}">
+                  <mat-icon class="mr-1" [svgIcon]="'heroicons_outline:trash'"></mat-icon>
+                  {{ 'buttons.delete' | transloco }}
+                </button>
+              </div>
+            </div>
+          </div>
 
           <!-- Add-on services -->
           <!-- <div class="mt-1">

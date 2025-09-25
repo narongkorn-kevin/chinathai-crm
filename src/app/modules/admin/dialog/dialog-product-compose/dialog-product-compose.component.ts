@@ -29,6 +29,8 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { OrderProductsService } from '../../order-products/order-products.service';
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { HttpClient } from '@angular/common/http';
+import { environment } from 'environments/environment';
 
 @Component({
     selector: 'app-dialog-product-compose',
@@ -72,6 +74,10 @@ export class DialogProductComposeComponent implements OnInit {
 
     props: any[] = [];
 
+    imagePreview: string | null = null;
+    uploadedImagePath: string | null = null;
+    isUploading = false;
+
     constructor(
         private translocoService: TranslocoService,
         private dialogRef: MatDialogRef<DialogProductComposeComponent>,
@@ -79,10 +85,9 @@ export class DialogProductComposeComponent implements OnInit {
         public dialog: MatDialog,
         private fb: FormBuilder,
         private fuseConfirmationService: FuseConfirmationService,
-        private toastr: ToastrService
+        private toastr: ToastrService,
+        private http: HttpClient
     ) {
-        console.log(data.addOnServices);
-        
         this.addOnServices = data.addOnServices.filter(e => e?.standard_price != 0);
     }
 
@@ -105,6 +110,16 @@ export class DialogProductComposeComponent implements OnInit {
         //     product_price: 100,
         //     product_qty: 10,
         // })
+
+        if (this.data?.value) {
+            this.form.patchValue(this.data.value);
+        }
+
+        const currentImage = this.form.get('product_image')?.value;
+        if (currentImage) {
+            this.imagePreview = currentImage;
+            this.uploadedImagePath = currentImage;
+        }
     }
 
     get options(): FormArray {
@@ -262,5 +277,69 @@ export class DialogProductComposeComponent implements OnInit {
         }
     }
 
-    
+    onFileSelected(event: Event): void {
+        const input = event.target as HTMLInputElement;
+        if (!input.files || input.files.length === 0) {
+            return;
+        }
+
+        const file = input.files[0];
+        const reader = new FileReader();
+        reader.onload = () => {
+            this.imagePreview = reader.result as string;
+        };
+        reader.readAsDataURL(file);
+
+        this.uploadProductImage(file);
+        input.value = '';
+    }
+
+    clearProductImage(): void {
+        this.imagePreview = null;
+        this.uploadedImagePath = null;
+        this.form.patchValue({ product_image: '' });
+    }
+
+    private uploadProductImage(file: File): void {
+        const formData = new FormData();
+        formData.append('image', file);
+        formData.append('path', 'images/asset/');
+
+        this.isUploading = true;
+        this.http.post<{ data: string }>('/api/upload_images', formData).subscribe({
+            next: (response) => {
+                // สมมติ response.data เป็น path ที่ backend ส่งกลับมา เช่น "/images/asset/abc.png"
+                const fullUrl = this.toAbsoluteUrl(response.data);
+
+                this.uploadedImagePath = fullUrl;                 // ใช้แสดงภาพ/preview
+                this.form.patchValue({ product_image: fullUrl }); // เก็บแบบเต็มโดเมนตามที่ต้องการ
+            },
+            error: () => {
+                this.isUploading = false;
+                this.imagePreview = null;
+                this.uploadedImagePath = null;
+                this.toastr.error(
+                    this.translocoService.translate('toastr.unable_to_upload_image')
+                );
+            },
+            complete: () => {
+                this.isUploading = false;
+            },
+        });
+    }
+
+    private toAbsoluteUrl(p: string | null | undefined): string {
+        if (!p) return '';
+        const s = String(p).trim();
+
+        // ถ้าเป็น absolute อยู่แล้ว (http/https หรือ //) ก็คืนเลย
+        if (/^(?:https?:)?\/\//i.test(s)) return s;
+
+        // ต่อกับโดเมนใน env ให้ได้รูปแบบ base/path (กัน // ซ้ำ)
+        const base = (environment.apiUrl || '').replace(/\/+$/, '');
+        const path = s.replace(/^\/+/, '');
+        return `${base}/${path}`;
+    }
+
+
 }

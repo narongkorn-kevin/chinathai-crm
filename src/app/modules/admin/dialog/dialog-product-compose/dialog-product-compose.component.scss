@@ -1,4 +1,21 @@
+:host {
+    display: block;
+    max-height: 90vh;
+}
+
+:host form {
+    display: flex;
+    flex-direction: column;
+    max-height: 100%;
+    overflow: hidden;
+}
+
+.dialog-scroll {
+    flex: 1 1 auto;
+    overflow-y: auto;
+    min-height: 0;
+}
+
 mat-label {
     font-weight: bold;
 }
-
