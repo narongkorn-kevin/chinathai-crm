@@ -182,6 +182,17 @@ export const defaultNavigation: FuseNavigationItem[] = [
             },
             {
                 id: 'payment.order',
+                title: 'Wallet ',
+                type: 'basic',
+                link: '/expense-record',
+                // queryParams: { type: '' },
+                badge: {
+                    title: '4',
+                    classes: 'px-2 bg-red-600 text-white rounded-full',
+                },
+            },
+            {
+                id: 'payment.order',
                 title: 'คำสั่งซื้อ ',
                 type: 'basic',
                 link: '/order-products',

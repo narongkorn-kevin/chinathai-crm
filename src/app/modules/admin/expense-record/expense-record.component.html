@@ -120,3 +120,69 @@
 <ng-template #code let-data="adtData">
     <a class="text-[#DF0B12CC]" [routerLink]="[ data.code ]">{{data?.code}}</a>
 </ng-template>
+<ng-template #createAt let-data="adtData">
+    <p>{{data.created_at | date: 'dd-MM-yyyy HH:mm:ss'}}</p>
+</ng-template>
+<ng-template #status let-data="adtData">
+    <div>
+        <div *ngIf="data.status == 'pending'"
+            class="px-4 py-1.5 rounded-full text-sm inline-flex items-center justify-center font-medium bg-yellow-50 text-yellow-600 border border-yellow-200">
+            {{ 'รอตรวจสอบสลิป' }}</div>
+        <div *ngIf="data.status == 'confirm_payment'"
+            class="px-4 py-1.5 rounded-full text-sm inline-flex items-center justify-center font-medium bg-green-50 text-green-600 border border-green-200">
+            {{ 'ตรวจสอบแล้ว' }}</div>
+
+        <div *ngIf="data.status == 'cancel'"
+            class="px-4 py-1.5 rounded-full text-sm inline-flex items-center justify-center font-medium bg-red-50 text-red-500 border border-red-200">
+            {{ 'ยกเลิกการเติมเงิน' }}</div>
+    </div>
+</ng-template>
+
+<ng-template #update let-data="adtData">
+    <div class="flex gap-2">
+        <button mat-icon-button (click)="clickUpdateStatus(data)" class="bg-accent rounded-md p-2 shadow-md">
+            <mat-icon svgIcon="mat_outline:account_balance_wallet" class="text-white"></mat-icon>
+        </button>
+    </div>
+</ng-template>
+
+<ng-template #pic let-data="adtData">
+    <div class="flex flex-row justify-center cursor-pointer">
+        <ng-container *ngIf="data?.order_payment; else noImage">
+            <!-- ถ้าเป็นแบบ upload -->
+            <ng-container *ngIf="data.order_payment.payment_type === 'upload'; else useIcon">
+                <ng-container *ngIf="data.order_payment.image; else noImage">
+                    <div (click)="showPicture(data.order_payment.image)">
+                        <img [src]="data.order_payment.image" alt="Image" class="rounded-md w-10 h-15 text-center"
+                            (error)="onImageError(data.order_payment.image)"
+                            (load)="onImageLoad(data.order_payment.image)" />
+                    </div>
+                    <div *ngIf="imageLoadedMap[data.order_payment.image] === false">
+                        <mat-icon class="text-gray-400 text-6xl mb-4">image_not_supported</mat-icon>
+                    </div>
+                </ng-container>
+            </ng-container>
+
+            <!-- ถ้าไม่ใช่แบบ upload ใช้ icon -->
+            <ng-template #useIcon>
+                <ng-container *ngIf="'https://cdn-icons-png.flaticon.com/512/10149/10149443.png'; else noImage">
+                    <div>
+                        <img [src]="'https://cdn-icons-png.flaticon.com/512/10149/10149443.png'" alt="Icon"
+                            class="rounded-md w-10 h-auto text-center"
+                            (error)="onImageError('https://cdn-icons-png.flaticon.com/512/10149/10149443.png')"
+                            (load)="onImageLoad('https://cdn-icons-png.flaticon.com/512/10149/10149443.png')" />
+                    </div>
+                    <div *ngIf="imageLoadedMap['https://cdn-icons-png.flaticon.com/512/10149/10149443.png'] === false">
+                        <mat-icon class="text-gray-400 text-6xl mb-4">image_not_supported</mat-icon>
+                    </div>
+                </ng-container>
+            </ng-template>
+        </ng-container>
+
+        <!-- ถ้าไม่มี order_payment หรือไม่มีรูป -->
+        <ng-template #noImage>
+            <mat-icon class="text-gray-400 text-6xl mb-4">image_not_supported</mat-icon>
+        </ng-template>
+    </div>
+
+</ng-template>

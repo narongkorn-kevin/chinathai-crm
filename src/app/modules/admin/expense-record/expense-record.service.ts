@@ -27,31 +27,33 @@ export class ExpenseRecordService {
 
     constructor(private http: HttpClient) { }
     datatable(dataTablesParameters: any) {
-        const resp = {
-            data: {
-                data: [
-                    { No: 1, code: 'A00001', total: 99999, date: '2025-01-01', nameTh: 'Taobao', nameCn: 'Taobao', nameEn: 'Taobao', url: 'https://google.co.th', image: 'https://placehold.co/600x400' }
-                ],
-                total: 10,
-            }
-        }
-
-        return of(resp);
-
-        // return this.http.post('/api/orders_page', dataTablesParameters).pipe(
-        //     map((resp: any) => {
-        //         return resp;
-        //     })
-        // );
+        return this.http.post('/api/wallet_trans_page', dataTablesParameters).pipe(
+            map((resp: any) => {
+                // ตรวจสอบว่ามีข้อมูลหรือไม่
+                if (Array.isArray(resp.data.data)) {
+                    resp.data.data = resp.data.data.map((item: any) => {
+                        const code = item.member?.code ?? '';
+                        const fname = item.member?.fname ?? '';
+                        const lname = item.member?.lname ?? '';
+                        return {
+                            ...item,
+                            fullname: `${fname} ${lname}`.trim(),
+               
+                        };
+                    });
+                }
+                return resp;
+            })
+        );
     }
 
     datatableMember(dataTablesParameters: any) {
         const resp = {
             data: {
                 data: [
-                    { No: 1, total: 100, change: 100, amount: 200, action: 'เติมเงิน', date: '2025-01-01'},
-                    { No: 2, total: 200, change: -50, amount: 150, action: 'ฝากซื้อสินค้า', date: '2025-01-01'},
-                    { No: 3, total: 150, change: -50, amount: 100, action: 'ฝากชำระค่าสินค้า', date: '2025-01-01'},
+                    { No: 1, total: 100, change: 100, amount: 200, action: 'เติมเงิน', date: '2025-01-01' },
+                    { No: 2, total: 200, change: -50, amount: 150, action: 'ฝากซื้อสินค้า', date: '2025-01-01' },
+                    { No: 3, total: 150, change: -50, amount: 100, action: 'ฝากชำระค่าสินค้า', date: '2025-01-01' },
                 ],
                 total: 10,
             }

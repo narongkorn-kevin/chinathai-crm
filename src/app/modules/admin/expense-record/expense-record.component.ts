@@ -24,6 +24,7 @@ import { DialogUpdateStatusComponent } from '../dialog/dialog-update-status-orde
 import { CdkMenuModule } from '@angular/cdk/menu';
 import { DateTime } from 'luxon';
 import { SelectMemberComponent } from 'app/modules/common/select-member/select-member.component';
+import { DialogUpdateStatusWalletComponent } from '../dialog/dialog-update-status-wallet/dialog.component';
 
 @Component({
     selector: 'app-expense-record',
@@ -65,6 +66,7 @@ export class ExpenseRecordComponent implements OnInit, AfterViewInit {
     @ViewChild('member') member: any;
     @ViewChild('pic') pic: any;
     @ViewChild('update') update: any;
+    @ViewChild('createAt') createAt: any;
     @ViewChild(DataTableDirective, { static: false })
     dtElement: DataTableDirective;
 
@@ -127,22 +129,11 @@ export class ExpenseRecordComponent implements OnInit, AfterViewInit {
             serverSide: true,     // Set the flag
             filter: false,
             ajax: (dataTablesParameters: any, callback) => {
-
-                dataTablesParameters['date_start'] = !!this.filterForm.value.date_start
-                    ? DateTime.fromISO(this.filterForm.value.date_start.toString()).toLocal().toFormat('yyyy-MM-dd')
-                    : '';
-
-                dataTablesParameters['date_end'] = !!this.filterForm.value.date_end
-                    ? DateTime.fromISO(this.filterForm.value.date_end.toString()).toLocal().toFormat('yyyy-MM-dd')
-                    : '';
-
-                dataTablesParameters['status'] = this.filterForm.value.status
-                dataTablesParameters['member_id'] = this.filterForm.value.member_id
-                dataTablesParameters['code'] = this.filterForm.value.code
-
+                dataTablesParameters.type = 'I'
                 this.userService.datatable(dataTablesParameters).subscribe({
                     next: (resp: any) => {
                         this.dataRow = resp.data;
+
 
                         callback({
                             recordsTotal: resp.data.total,
@@ -163,27 +154,59 @@ export class ExpenseRecordComponent implements OnInit, AfterViewInit {
                     orderable: false,
                 },
                 {
-                    title: 'ลูกค้า',
-                    data: 'code',
+                    title: 'จัดการ',
+                    data: null,
+                    defaultContent: '',
+                    ngTemplateRef: {
+                        ref: this.update,
+                    },
+                    className: 'w-10 text-center',
+                    orderable: false,
+                },
+                {
+                    title: 'รหัสลูกค้า',
+                    data: 'member.code',
                     defaultContent: '',
                     className: 'text-center',
-                    ngTemplateRef: {
-                        ref: this.code,
-                    },
+                },
+                {
+                    title: 'ชื่อ - สกุล',
+                    data: 'fullname',
+                    defaultContent: '',
+                    className: 'text-center',
                 },
                 {
                     title: 'ยอดเงิน',
-                    data: 'total',
+                    data: 'amount',
                     defaultContent: 0,
                     className: 'text-center',
                     ngPipeInstance: this.decimalPipe,
                     ngPipeArgs: ['1.2-2']
                 },
                 {
-                    title: 'วัน-เวลาที่ทำรายการ',
-                    data: 'date',
+                    title: 'หลักฐานการชำระเงิน',
+                    data: 'order_payment',
+                    defaultContent: '-',
+                    className: 'text-center',
+                    ngTemplateRef: {
+                        ref: this.pic,
+                    },
+                },
+                {
+                    title: 'สถานะ',
                     defaultContent: '',
                     className: 'text-center',
+                    ngTemplateRef: {
+                        ref: this.status,
+                    },
+                },
+                {
+                    title: 'วัน-เวลาที่ทำรายการ',
+                    defaultContent: '',
+                    className: 'text-center',
+                    ngTemplateRef: {
+                        ref: this.createAt,
+                    },
                 },
             ]
         }
@@ -389,28 +412,40 @@ export class ExpenseRecordComponent implements OnInit, AfterViewInit {
         })
     }
 
-    clickUpdateStatus(item: any) {
-        this.dialog.open(DialogUpdateStatusComponent, {
-            width: '500px',
-            data: {
-                orders: [item],
-                status: [
-                    { value: 'awaiting_summary', name: 'รอสรุปยอด', },
-                    { value: 'awaiting_payment', name: 'รอชำระค่าสั่งซื้อ', },
-                    { value: 'in_progress', name: 'รอตรวจสอบสลิป', },
-                    { value: 'preparing_shipment', name: 'สินค้าเตรียมจัดส่ง', },
-                    { value: 'shipped', name: 'ร้านค้าจัดส่งแล้ว', },
-                    { value: 'cancelled', name: 'ยกเลิก/ล้มเหลว', },
-                ]
-            }
-        }).afterClosed().subscribe(() => {
-            this.rerender();
-        })
-    }
+
 
     selectMember(item: any) {
         this.filterForm.patchValue({
             member_id: item?.id
         })
+    }
+
+    clickUpdateStatus(item: any) {
+        this.dialog
+            .open(DialogUpdateStatusWalletComponent, {
+                width: '500px',
+                data: {
+                    orders: item,
+                    status: [
+                        {
+                            value: 'pending',
+                            name: 'รอตรวจสอบสลิป',
+                        },
+                        {
+                            value: 'confirm_payment',
+                            name: 'ตรวจสอบแล้ว',
+                        },
+
+                        {
+                            value: 'cancelled',
+                            name: 'ยกเลิก/ล้มเหลว'
+                        },
+                    ],
+                },
+            })
+            .afterClosed()
+            .subscribe(() => {
+                this.rerender();
+            });
     }
 }
