@@ -25,6 +25,7 @@ import { CdkMenuModule } from '@angular/cdk/menu';
 import { DateTime } from 'luxon';
 import { SelectMemberComponent } from 'app/modules/common/select-member/select-member.component';
 import { DialogUpdateStatusWalletComponent } from '../dialog/dialog-update-status-wallet/dialog.component';
+import { PictureComponent } from '../picture/picture.component';
 
 @Component({
     selector: 'app-expense-record',
@@ -437,7 +438,7 @@ export class ExpenseRecordComponent implements OnInit, AfterViewInit {
                         },
 
                         {
-                            value: 'cancelled',
+                            value: 'cancel',
                             name: 'ยกเลิก/ล้มเหลว'
                         },
                     ],
@@ -448,4 +449,20 @@ export class ExpenseRecordComponent implements OnInit, AfterViewInit {
                 this.rerender();
             });
     }
+
+    showPicture(imgObject: any): void {
+        this.dialog
+            .open(PictureComponent, {
+                autoFocus: false,
+                data: {
+                    imgSelected: imgObject,
+                },
+            })
+            .afterClosed()
+            .subscribe(() => {
+                // Go up twice because card routes are setup like this; "card/CARD_ID"
+                // this._router.navigate(['./../..'], {relativeTo: this._activatedRoute});
+            });
+    }
+
 }
