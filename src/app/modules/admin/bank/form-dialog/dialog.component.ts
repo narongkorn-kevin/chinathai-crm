@@ -114,12 +114,14 @@ export class DialogForm implements OnInit {
             branch: ['', Validators.required],
             account_name: ['', Validators.required],
             account_number: ['', Validators.required],
+            vat: [false],
             icon: [''],
         });
 
         if (this.data.type === 'EDIT') {
             this.form.patchValue({
                 ...this.data.value,
+                vat: this._coerceBoolean(this.data.value?.vat),
             });
         }
     }
@@ -261,5 +263,27 @@ export class DialogForm implements OnInit {
                 icon: '',
             });
         }
+    }
+
+    private _coerceBoolean(value: any): boolean {
+        if (typeof value === 'boolean') {
+            return value;
+        }
+
+        if (typeof value === 'string') {
+            const normalized = value.trim().toLowerCase();
+            if (normalized === 'true' || normalized === '1' || normalized === 'yes') {
+                return true;
+            }
+            if (normalized === 'false' || normalized === '0' || normalized === 'no') {
+                return false;
+            }
+        }
+
+        if (typeof value === 'number') {
+            return value === 1;
+        }
+
+        return !!value;
     }
 }

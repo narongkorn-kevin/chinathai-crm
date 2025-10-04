@@ -188,8 +188,10 @@ export class BankComponent implements OnInit, AfterViewInit {
     opendialogapro() {
         const DialogRef = this.dialog.open(DialogForm, {
             disableClose: true,
-            width: '500px',
-            height: 'auto',
+            width: '95vw',
+            maxWidth: '800px',
+            maxHeight: '90vh',
+            autoFocus: false,
             data: {
                 type: 'NEW',
             },
@@ -204,8 +206,10 @@ export class BankComponent implements OnInit, AfterViewInit {
     openDialogEdit(item: any) {
         const DialogRef = this.dialog.open(DialogForm, {
             disableClose: true,
-            width: '500px',
-            height: 'auto',
+            width: '95vw',
+            maxWidth: '800px',
+            maxHeight: '90vh',
+            autoFocus: false,
             data: {
                 type: 'EDIT',
                 value: item,

@@ -1973,7 +1973,10 @@
             "confem": "Confirm",
             "cancel": "Cancel",
             "addata": "Add Data",
-            "editdata": "Edit Data"
+            "editdata": "Edit Data",
+            "vat": "VAT",
+            "vatInclude": "Include VAT",
+            "vatExclude": "Exclude VAT"
         },
         "message": {
             "success": "Please check the information. Once deleted, it cannot be recovered."

@@ -1967,7 +1967,10 @@
             "confem": "确认",
             "cancel": "取消",
             "addata": "添加数据",
-            "editdata": "编辑数据"
+            "editdata": "编辑数据",
+            "vat": "增值税",
+            "vatInclude": "含增值税",
+            "vatExclude": "不含增值税"
         },
         "message": {
             "success": "请检查信息，删除后将无法恢复。"
