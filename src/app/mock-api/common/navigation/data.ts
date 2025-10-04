@@ -636,6 +636,12 @@ export const defaultNavigation: FuseNavigationItem[] = [
                 type: 'collapsable',
                 children: [
                     {
+                        id: 'setting-bank',
+                        title: menuTitles.bankAccounts[langues],
+                        type: 'basic',
+                        link: '/bank',
+                    },
+                    {
                         id: 'setting-banner',
                         title: 'แบนเนอร์',
                         type: 'basic',
@@ -706,12 +712,6 @@ export const defaultNavigation: FuseNavigationItem[] = [
                         title: menuTitles.problemsByTopic[langues],
                         type: 'basic',
                         link: '/problem-by-topic',
-                    },
-                    {
-                        id: 'setting-bank',
-                        title: menuTitles.bankAccounts[langues],
-                        type: 'basic',
-                        link: '/bank',
                     },
                 ],
             },
