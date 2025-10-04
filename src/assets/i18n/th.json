@@ -1963,7 +1963,9 @@
             "editdata": "แก้ไขข้อมูล",
             "vat": "ภาษีมูลค่าเพิ่ม",
             "vatInclude": "รวม VAT",
-            "vatExclude": "ไม่รวม VAT"
+            "vatExclude": "ไม่รวม VAT",
+            "bank_icon": "ไอคอนธนาคาร",
+            "promptpay_qr": "QR PromptPay"
         },
         "message": {
             "success": "กรุณาตรวจสอบข้อมูล หากลบข้อมูลแล้วจะไม่สามารถนำกลับมาได้"

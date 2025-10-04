@@ -32,14 +32,22 @@
                     <div class="md:w-full">
                         <label class="text-sm font-medium mb-2 block">{{ 'bank.labels.vat' | transloco }}</label>
                         <mat-radio-group formControlName="vat" class="flex flex-wrap gap-4">
-                            <mat-radio-button [value]="true">{{ 'bank.labels.vatInclude' | transloco }}</mat-radio-button>
-                            <mat-radio-button [value]="false">{{ 'bank.labels.vatExclude' | transloco }}</mat-radio-button>
+                            <mat-radio-button value="Y">{{ 'bank.labels.vatInclude' | transloco }}</mat-radio-button>
+                            <mat-radio-button value="N">{{ 'bank.labels.vatExclude' | transloco }}</mat-radio-button>
                         </mat-radio-group>
                     </div>
                 </div>
-                <div class="flex w-full flex-col justify-center gap-2">
-                    <asha-upload-file [existingImage]="form.get('icon').value"
-                        (filesChanged)="onFilesChange($event)"></asha-upload-file>
+                <div class="flex w-full flex-col justify-center gap-4">
+                    <div>
+                        <label class="text-sm font-medium mb-2 block">{{ 'bank.labels.bank_icon' | transloco }}</label>
+                        <asha-upload-file [existingImage]="form.get('icon').value"
+                            (filesChanged)="onFilesChange($event, 'icon')"></asha-upload-file>
+                    </div>
+                    <div>
+                        <label class="text-sm font-medium mb-2 block">{{ 'bank.labels.promptpay_qr' | transloco }}</label>
+                        <asha-upload-file [existingImage]="form.get('image').value"
+                            (filesChanged)="onFilesChange($event, 'image')"></asha-upload-file>
+                    </div>
                 </div>
             </div>
         </div>

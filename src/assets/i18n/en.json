@@ -1976,7 +1976,9 @@
             "editdata": "Edit Data",
             "vat": "VAT",
             "vatInclude": "Include VAT",
-            "vatExclude": "Exclude VAT"
+            "vatExclude": "Exclude VAT",
+            "bank_icon": "Bank Icon",
+            "promptpay_qr": "PromptPay QR"
         },
         "message": {
             "success": "Please check the information. Once deleted, it cannot be recovered."

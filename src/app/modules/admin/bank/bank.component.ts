@@ -106,6 +106,11 @@ export class BankComponent implements OnInit, AfterViewInit {
             branch: { th: 'สาขาธนาคาร', en: 'Branch', cn: '分行' },
             account_name: { th: 'ชื่อบัญชี', en: 'Account Name', cn: '账户名称' },
             account_number: { th: 'เลขบัญชี', en: 'Account Number', cn: '账户号码' },
+            vat_status: {
+                th: 'สถานะ VAT',
+                en: 'VAT Status',
+                cn: '增值税状态',
+            },
             manage: { th: 'จัดการ', en: 'Manage', cn: '管理' },
 
         }
@@ -162,6 +167,12 @@ export class BankComponent implements OnInit, AfterViewInit {
                     title: tabletitle.account_number[this.langues],
                     data: 'account_number',
                     className: 'text-center',
+                },
+                {
+                    title: tabletitle.vat_status[this.langues],
+                    data: 'vat',
+                    className: 'text-center',
+                    render: (data: string) => this._renderVatStatus(data),
                 },
                 {
                     title: tabletitle.manage[this.langues],
@@ -281,5 +292,59 @@ export class BankComponent implements OnInit, AfterViewInit {
                 imageUrl: imageUrl,
             },
         });
+    }
+
+    private _renderVatStatus(value: string): string {
+        const normalized = (value ?? '').toString().trim().toUpperCase();
+        const statusMap: Record<string, { th: string; en: string; cn: string }> = {
+            Y: {
+                th: 'บัญชี VAT',
+                en: 'VAT Account',
+                cn: '增值税账户',
+            },
+            YES: {
+                th: 'บัญชี VAT',
+                en: 'VAT Account',
+                cn: '增值税账户',
+            },
+            TRUE: {
+                th: 'บัญชี VAT',
+                en: 'VAT Account',
+                cn: '增值税账户',
+            },
+            '1': {
+                th: 'บัญชี VAT',
+                en: 'VAT Account',
+                cn: '增值税账户',
+            },
+            N: {
+                th: 'ไม่ใช่บัญชี VAT',
+                en: 'Non-VAT Account',
+                cn: '非增值税账户',
+            },
+            NO: {
+                th: 'ไม่ใช่บัญชี VAT',
+                en: 'Non-VAT Account',
+                cn: '非增值税账户',
+            },
+            FALSE: {
+                th: 'ไม่ใช่บัญชี VAT',
+                en: 'Non-VAT Account',
+                cn: '非增值税账户',
+            },
+            '0': {
+                th: 'ไม่ใช่บัญชี VAT',
+                en: 'Non-VAT Account',
+                cn: '非增值税账户',
+            },
+        };
+
+        const lang = this.langues ?? 'th';
+        const status = statusMap[normalized];
+        if (!status) {
+            return '-';
+        }
+
+        return status[lang] ?? status.th;
     }
 }

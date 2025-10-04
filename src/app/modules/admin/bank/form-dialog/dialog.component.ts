@@ -67,6 +67,7 @@ export interface UploadedFile {
 export class DialogForm implements OnInit {
     form: FormGroup;
     form_file: FormGroup;
+    form_qr_file: FormGroup;
     stores: any[] = [];
     formFieldHelpers: string[] = ['fuse-mat-dense'];
     dtOptions: DataTables.Settings = {};
@@ -86,6 +87,10 @@ export class DialogForm implements OnInit {
         this.lang = translocoService.getActiveLang();
         this.langues = localStorage.getItem('lang');
         this.form_file = this.FormBuilder.group({
+            file: [null],
+            path: ['files/asset/', Validators.required],
+        });
+        this.form_qr_file = this.FormBuilder.group({
             file: [null],
             path: ['files/asset/', Validators.required],
         });
@@ -114,14 +119,16 @@ export class DialogForm implements OnInit {
             branch: ['', Validators.required],
             account_name: ['', Validators.required],
             account_number: ['', Validators.required],
-            vat: [false],
+            vat: ['N'],
+            image: [''],
             icon: [''],
         });
 
         if (this.data.type === 'EDIT') {
+            const { vat, ...rest } = this.data.value ?? {};
             this.form.patchValue({
-                ...this.data.value,
-                vat: this._coerceBoolean(this.data.value?.vat),
+                ...rest,
+                vat: this._normalizeVat(vat),
             });
         }
     }
@@ -235,55 +242,61 @@ export class DialogForm implements OnInit {
         });
     }
 
-    onFilesChange(files: UploadedFile[]): void {
+    onFilesChange(files: UploadedFile[], control: 'icon' | 'image' = 'icon'): void {
+        const targetForm = control === 'icon' ? this.form_file : this.form_qr_file;
+
         if (files && files.length > 0) {
-            this.form_file.patchValue({
+            targetForm.patchValue({
                 file: files[0].file,
             });
 
             const formData = serialize({
-                ...this.form_file.value,
+                ...targetForm.value,
             });
 
             this._service.upload_file(formData).subscribe({
-                error: (err) => {
+                error: () => {
                     this.toastr.error(
                         this.translocoService.translate('toastr.unable_to_save')
                     );
                 },
                 next: (res: any) => {
-                    this.form.patchValue({
-                        icon: res.path,
-                    });
+                    const patch: Record<string, any> = {};
+                    patch[control] = res.path;
+                    this.form.patchValue(patch);
                 },
             });
         } else {
             // Clear the image if no files
-            this.form.patchValue({
-                icon: '',
-            });
+            const patch: Record<string, any> = {};
+            patch[control] = '';
+            this.form.patchValue(patch);
         }
     }
 
-    private _coerceBoolean(value: any): boolean {
-        if (typeof value === 'boolean') {
+    private _normalizeVat(value: any): 'Y' | 'N' {
+        if (value === 'Y' || value === 'N') {
             return value;
         }
 
-        if (typeof value === 'string') {
-            const normalized = value.trim().toLowerCase();
-            if (normalized === 'true' || normalized === '1' || normalized === 'yes') {
-                return true;
-            }
-            if (normalized === 'false' || normalized === '0' || normalized === 'no') {
-                return false;
-            }
+        if (typeof value === 'boolean') {
+            return value ? 'Y' : 'N';
         }
 
         if (typeof value === 'number') {
-            return value === 1;
+            return value === 1 ? 'Y' : 'N';
         }
 
-        return !!value;
+        if (typeof value === 'string') {
+            const normalized = value.trim().toUpperCase();
+            if (['Y', 'YES', 'TRUE', '1'].includes(normalized)) {
+                return 'Y';
+            }
+            if (['N', 'NO', 'FALSE', '0'].includes(normalized)) {
+                return 'N';
+            }
+        }
+
+        return 'N';
     }
 }

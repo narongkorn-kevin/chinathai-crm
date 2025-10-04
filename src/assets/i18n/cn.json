@@ -1970,7 +1970,9 @@
             "editdata": "编辑数据",
             "vat": "增值税",
             "vatInclude": "含增值税",
-            "vatExclude": "不含增值税"
+            "vatExclude": "不含增值税",
+            "bank_icon": "银行图标",
+            "promptpay_qr": "PromptPay 二维码"
         },
         "message": {
             "success": "请检查信息，删除后将无法恢复。"
