@@ -187,7 +187,7 @@ export const defaultNavigation: FuseNavigationItem[] = [
                 link: '/expense-record',
                 // queryParams: { type: '' },
                 badge: {
-                    title: '4',
+                    title: '0',
                     classes: 'px-2 bg-red-600 text-white rounded-full',
                 },
             },
@@ -198,7 +198,7 @@ export const defaultNavigation: FuseNavigationItem[] = [
                 link: '/order-products',
                 queryParams: { type: 'in_progress' },
                 badge: {
-                    title: '4',
+                    title: '0',
                     classes: 'px-2 bg-red-600 text-white rounded-full',
                 },
             },
