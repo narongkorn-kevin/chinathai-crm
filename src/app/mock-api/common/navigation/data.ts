@@ -54,6 +54,7 @@ const menuTitles = {
     wallet: { th: "วอลเล็ท", en: "Wallet", cn: "钱包" },
     expenseRecord: { th: "บันทึกการใช้จ่าย", en: "Expense Record", cn: "消费记录" },
     pointRecord: { th: "บันทึกคะแนน", en: "Point Record", cn: "积分记录" },
+    rewardRedemption: { th: "รายการแลกของรางวัล", en: "Reward Redemptions", cn: "兑换记录" },
     customerSupport: { th: "ติดต่อกับลูกค้า", en: "Customer Support", cn: "客户支持" },
     reportProblem: { th: "แจ้งปัญหา", en: "Report a Problem", cn: "报告问题" },
 
@@ -190,6 +191,12 @@ export const defaultNavigation: FuseNavigationItem[] = [
                     title: '0',
                     classes: 'px-2 bg-red-600 text-white rounded-full',
                 },
+            },
+            {
+                id: 'payment.reward',
+                title: 'รายการแลกของรางวัล',
+                type: 'basic',
+                link: '/client-reward',
             },
             {
                 id: 'payment.order',

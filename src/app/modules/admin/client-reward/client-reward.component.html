@@ -1,0 +1,75 @@
+<div class="flex flex-col flex-auto min-w-0">
+    <div class="flex-auto sm:p-10 bg-card m-4 p-4 rounded-md">
+        <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between pb-2 my-5">
+            <div>
+                <h2 class="text-2xl md:text-xl font-extrabold tracking-tight leading-7 sm:leading-10 truncate">
+                    รายการแลกของรางวัล
+                </h2>
+                <p class="text-sm text-gray-500">ติดตามคำขอแลกของรางวัลของลูกค้าและอัปเดตสถานะได้จากหน้านี้</p>
+            </div>
+            <div class="flex gap-2">
+                <button mat-stroked-button color="primary" (click)="resetFilters()">
+                    <mat-icon class="icon-size-5" svgIcon="heroicons_outline:arrow-path"></mat-icon>
+                    <span class="ml-2">รีเซ็ตตัวกรอง</span>
+                </button>
+            </div>
+        </div>
+
+        <form [formGroup]="filterForm" class="grid gap-4 md:grid-cols-3 mb-6">
+            <mat-form-field appearance="outline" class="w-full">
+                <mat-label>ค้นหา</mat-label>
+                <input matInput placeholder="ค้นหาจากลูกค้าหรือของรางวัล" formControlName="search">
+                <mat-icon matSuffix svgIcon="heroicons_outline:magnifying-glass"></mat-icon>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="w-full md:col-span-1">
+                <mat-label>สถานะ</mat-label>
+                <mat-select formControlName="status">
+                    <mat-option *ngFor="let option of statusOptions" [value]="option.value">
+                        {{ option.label }}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+
+            <div class="flex items-center gap-2 md:justify-end">
+                <button mat-flat-button color="primary" type="button" (click)="applyFilters()">
+                    <mat-icon class="icon-size-5" svgIcon="heroicons_outline:funnel"></mat-icon>
+                    <span class="ml-2">ใช้ตัวกรอง</span>
+                </button>
+            </div>
+        </form>
+
+        <table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" class="row-border hover w-full"></table>
+    </div>
+</div>
+
+<ng-template #memberTemplate let-data="adtData">
+    <div class="flex flex-col">
+        <span class="font-medium">{{ data.memberCode || '-' }}</span>
+        <span class="text-sm text-gray-500">{{ data.memberName || '-' }}</span>
+    </div>
+</ng-template>
+
+<ng-template #rewardTemplate let-data="adtData">
+    <div class="flex flex-col">
+        <span class="font-medium">{{ data.rewardCode || '-' }}</span>
+        <span class="text-sm text-gray-500">{{ data.rewardName || '-' }}</span>
+    </div>
+</ng-template>
+
+<ng-template #statusTemplate let-data="adtData">
+    <div class="inline-flex items-center justify-center rounded-full px-3 py-1 text-xs font-medium"
+        [ngClass]="statusClass(data.status)">
+        {{ displayStatus(data.status) }}
+    </div>
+</ng-template>
+
+<ng-template #dateTemplate let-data="adtData">
+    <span>{{ data.updated_at | date: 'yyyy-MM-dd HH:mm' }}</span>
+</ng-template>
+
+<ng-template #actionTemplate let-data="adtData">
+    <button mat-icon-button color="primary" (click)="openStatusDialog(data)">
+        <mat-icon svgIcon="heroicons_solid:pencil-square"></mat-icon>
+    </button>
+</ng-template>

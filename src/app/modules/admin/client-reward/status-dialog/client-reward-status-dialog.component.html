@@ -1,0 +1,35 @@
+<h2 mat-dialog-title class="text-lg font-semibold">อัปเดตสถานะการแลกของรางวัล</h2>
+
+<div mat-dialog-content class="flex flex-col gap-4">
+    <div>
+        <div class="text-sm text-gray-500">ลูกค้า</div>
+        <div class="font-medium">{{ data.reward?.memberCode || '-' }} - {{ data.reward?.memberName || '-' }}</div>
+    </div>
+    <div>
+        <div class="text-sm text-gray-500">ของรางวัล</div>
+        <div class="font-medium">{{ data.reward?.rewardCode || '-' }} - {{ data.reward?.rewardName || '-' }}</div>
+    </div>
+
+    <form [formGroup]="form" class="flex flex-col gap-4">
+        <mat-form-field appearance="outline" class="w-full">
+            <mat-label>สถานะ</mat-label>
+            <mat-select formControlName="status">
+                <mat-option *ngFor="let option of data.statusOptions" [value]="option.value">
+                    {{ option.label }}
+                </mat-option>
+            </mat-select>
+            <mat-error *ngIf="form.get('status')?.hasError('required')">
+                กรุณาเลือกสถานะ
+            </mat-error>
+        </mat-form-field>
+    </form>
+</div>
+
+<div mat-dialog-actions class="flex justify-end gap-2">
+    <button mat-stroked-button type="button" (click)="cancel()" [disabled]="submitting">
+        ยกเลิก
+    </button>
+    <button mat-flat-button color="primary" type="button" (click)="submit()" [disabled]="submitting">
+        บันทึก
+    </button>
+</div>

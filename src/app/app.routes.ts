@@ -159,6 +159,7 @@ export const appRoutes: Route[] = [
             { path: 'point-record', loadChildren: () => import('app/modules/admin/point-record/point-record.routes') },
             { path: 'articles', loadChildren: () => import('app/modules/admin/article/article.routes') },
             { path: 'claim', loadChildren: () => import('app/modules/admin/claim/page.routes') },
+            { path: 'client-reward', loadChildren: () => import('app/modules/admin/client-reward/client-reward.routes') },
             { path: 'customer', loadChildren: () => import('app/modules/admin/customer/customer.routes') },
             { path: 'follow-up', loadChildren: () => import('app/modules/admin/follow-up/follow-up.routes') },
             { path: 'sale-order', loadChildren: () => import('app/modules/admin/sale-order/page.routes') },
