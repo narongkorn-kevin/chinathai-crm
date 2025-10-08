@@ -1,35 +1,31 @@
-<!-- style="background-image: url('/assets/images/logo/Sign_in.png');" -->
-<div class="flex flex-col items-center justify-center flex-auto min-w-0 bg-cover bg-center h-full relative p-5" >
-    <img src="assets/images/logo/sign_in_backdrop.jpg" alt="" class="absolute top-0 left-0 -z-1 h-full object-cover brightness-75">
-    <div class="flex items-center justify-center max-w-[455px] py-20 px-12 rounded-2xl shadow bg-card backdrop-blur bg-[#ffffffaa] lg:ml-[50%]">
-        <div class="w-full  mx-auto flex flex-col items-center">
-            <!-- Logo -->
-            <div class="w-full flex items-center justify-center mb-4">
-                <img src="assets/images/logo/logo.png" class="w-40">
+<div class="flex min-h-screen flex-col justify-center bg-gray-100 px-4 py-8 sm:px-6 lg:px-8 w-full">
+    <div class="mx-auto flex w-full max-w-5xl flex-col overflow-hidden rounded-2xl bg-white shadow-xl md:flex-row">
+        <div class="hidden w-full bg-gradient-to-br from-primary-500 to-primary-700 p-10 text-white md:flex md:w-2/5 md:flex-col md:justify-between">
+            <div>
+                <img class="w-50 h-auto" src="assets/images/logo/g-cargo-logo.png" alt="G-Cargo CRM logo">
+                <h2 class="mt-10 text-3xl font-semibold leading-tight">ยินดีต้อนรับกลับ!</h2>
+                <p class="mt-4 text-sm text-gray-100/80">
+                    เข้าสู่ระบบเพื่อจัดการงานขนส่งของคุณได้อย่างรวดเร็วและมีประสิทธิภาพ ผ่านทุกอุปกรณ์
+                </p>
+            </div>
+            <div class="mt-10 text-sm text-gray-100/70">
+                ยังไม่มีบัญชีใช่ไหม?
+                <a routerLink="/register" class="ml-1 font-semibold text-white underline decoration-white/50 decoration-dashed hover:decoration-solid">
+                    สมัครสมาชิกใหม่
+                </a>
+            </div>
+        </div>
+
+        <div class="w-full p-6 sm:p-10 md:w-3/5">
+            <div class="mb-6 text-center md:text-left">
+                <h1 class="text-2xl font-semibold text-gray-900 sm:text-3xl">เข้าสู่ระบบ G-Cargo</h1>
+                <p class="mt-2 text-sm text-gray-500">
+                    กรอกข้อมูลเพื่อเข้าสู่ระบบ หรือสร้างบัญชีใหม่ได้ทันที
+                </p>
             </div>
 
-            <!-- Title -->
-            <div class="text-2xl font-semibold tracking-tight leading-tight">G-Cargo</div>
-            <div class="flex items-baseline mt-0.5 font-medium">
-                <!-- <div>Don't have an account?</div>
-                <a
-                    class="ml-1 text-primary-500 hover:underline"
-                    [routerLink]="['/sign-up']">Sign up
-                </a> -->
-            </div>
-
-            <!-- Alert -->
-            <!-- <fuse-alert
-                class="mt-8"
-                [appearance]="'outline'"
-                [showIcon]="false"
-                [type]="'info'">
-                You are browsing <strong>Fuse Demo</strong>. Click on the "Sign in" button to access the Demo and Documentation.
-            </fuse-alert> -->
-
-            <!-- Alert -->
             <fuse-alert
-                class="mt-8"
+                class="mb-6"
                 *ngIf="showAlert"
                 [appearance]="'outline'"
                 [showIcon]="false"
@@ -38,43 +34,33 @@
                 {{alert.message}}
             </fuse-alert>
 
-            <!-- Sign in form -->
-            <form
-                class="mt-8"
-                [formGroup]="signInForm"
-                #signInNgForm="ngForm">
-
-                <!-- Email field -->
-                <mat-form-field class="w-full">
-                    <mat-label>Username</mat-label>
+            <form class="flex flex-col gap-5" [formGroup]="signInForm" #signInNgForm="ngForm" (ngSubmit)="signIn()">
+                <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                    <mat-label>ชื่อผู้ใช้งาน</mat-label>
                     <input
-                        id="email"
                         matInput
-                        placeholder="username"
-                        [formControlName]="'username'">
-                    <mat-error *ngIf="signInForm.get('username').hasError('required')" class="text-red-500">
-                        *Email address is required
+                        formControlName="importer_code"
+                        autocomplete="importer_code"
+                        placeholder="กรอกชื่อผู้ใช้งาน">
+                    <mat-error *ngIf="signInForm.get('importer_code')?.hasError('required')">
+                        กรุณากรอกชื่อผู้ใช้งาน
                     </mat-error>
-                    <!-- <mat-error *ngIf="signInForm.get('email').hasError('email')">
-                        Please enter a valid email address
-                    </mat-error> -->
                 </mat-form-field>
 
-                <!-- Password field -->
-                <mat-form-field class="w-full">
-                    <mat-label>Password</mat-label>
+                <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                    <mat-label>รหัสผ่าน</mat-label>
                     <input
-                        id="password"
                         matInput
-                        placeholder="password"
                         type="password"
-                        [formControlName]="'password'"
+                        formControlName="password"
+                        autocomplete="current-password"
+                        placeholder="กรอกรหัสผ่าน"
                         #passwordField>
                     <button
-                        mat-icon-button
                         type="button"
-                        (click)="passwordField.type === 'password' ? passwordField.type = 'text' : passwordField.type = 'password'"
-                        matSuffix>
+                        mat-icon-button
+                        matSuffix
+                        (click)="passwordField.type === 'password' ? passwordField.type = 'text' : passwordField.type = 'password'">
                         <mat-icon
                             class="icon-size-5"
                             *ngIf="passwordField.type === 'password'"
@@ -84,75 +70,41 @@
                             *ngIf="passwordField.type === 'text'"
                             [svgIcon]="'heroicons_solid:eye-slash'"></mat-icon>
                     </button>
-                    <mat-error class="text-red-500">
-                        *Password is required
+                    <mat-error>
+                        กรุณากรอกรหัสผ่าน
                     </mat-error>
                 </mat-form-field>
 
-                <!-- Actions -->
-                <!-- <div class="inline-flex items-center justify-between w-full mt-1.5">
-                    <mat-checkbox
-                        class="-ml-2"
-                        [color]="'warn'"
-                        [formControlName]="'rememberMe'">
-                        Remember me
+                <div class="flex flex-col justify-between gap-3 text-sm text-gray-600 sm:flex-row sm:items-center">
+                    <mat-checkbox color="primary" formControlName="rememberMe">
+                        จดจำฉันไว้ในระบบ
                     </mat-checkbox>
-                    <a
-                        class="text-md font-medium text-[#DF0B12] hover:underline"
-                        [routerLink]="['/forgot-password']">Forgot password?
-                    </a>
-                </div> -->
+                    <!-- <a routerLink="/forgot-password" class="text-primary-500 hover:underline">
+                        ลืมรหัสผ่าน?
+                    </a> -->
+                </div>
 
-                <!-- Submit button -->
-                <button color="primary"
-                    class="fuse-mat-button-large w-full mt-6 text-white"
+                <button
+                    type="submit"
                     mat-flat-button
-                    [disabled]="signInForm.disabled"
-                    (click)="signIn()">
-                    <span *ngIf="!signInForm.disabled">
-                        Login
-                    </span>
+                    color="primary"
+                    class="fuse-mat-button-large w-full"
+                    [disabled]="signInForm.disabled">
+                    <span *ngIf="!signInForm.disabled">เข้าสู่ระบบ</span>
                     <mat-progress-spinner
                         *ngIf="signInForm.disabled"
                         [diameter]="24"
-                        [mode]="'indeterminate'"></mat-progress-spinner>
+                        mode="indeterminate">
+                    </mat-progress-spinner>
                 </button>
-
-                <!-- Separator -->
-                <!-- <div class="flex items-center mt-8">
-                    <div class="flex-auto mt-px border-t"></div>
-                    <div class="mx-2 text-secondary">Or continue with</div>
-                    <div class="flex-auto mt-px border-t"></div>
-                </div> -->
-
-                <!-- Single sign-on buttons -->
-                <!-- <div class="flex items-center mt-8 space-x-4">
-                    <button
-                        class="flex-auto"
-                        type="button"
-                        mat-stroked-button>
-                        <mat-icon
-                            class="icon-size-5"
-                            [svgIcon]="'feather:facebook'"></mat-icon>
-                    </button>
-                    <button
-                        class="flex-auto"
-                        type="button"
-                        mat-stroked-button>
-                        <mat-icon
-                            class="icon-size-5"
-                            [svgIcon]="'feather:twitter'"></mat-icon>
-                    </button>
-                    <button
-                        class="flex-auto"
-                        type="button"
-                        mat-stroked-button>
-                        <mat-icon
-                            class="icon-size-5"
-                            [svgIcon]="'feather:github'"></mat-icon>
-                    </button>
-                </div> -->
             </form>
+
+            <div class="mt-6 text-center text-sm text-gray-600">
+                ยังไม่มีบัญชี?
+                <a routerLink="/register" class="font-medium text-primary-500 hover:underline">
+                    สมัครสมาชิก
+                </a>
+            </div>
         </div>
     </div>
 </div>

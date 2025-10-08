@@ -1,6 +1,158 @@
 :host {
-  display: block;
+    display: block;
 }
-mat-label {
-  font-weight: bold;
+
+.profile-container {
+    @apply m-4 flex flex-col gap-8 rounded-xl bg-card p-6 shadow-sm sm:p-10;
+}
+
+.profile-header {
+    @apply flex flex-col gap-6 border-b border-slate-200 pb-6 md:flex-row md:items-center md:justify-between;
+}
+
+.page-subtitle {
+    @apply text-sm font-medium uppercase tracking-wide text-primary-500;
+}
+
+.page-title {
+    @apply text-3xl font-semibold text-slate-900;
+}
+
+.badge-row {
+    @apply mt-3 flex flex-wrap gap-2;
+}
+
+.tag {
+    @apply inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-semibold;
+}
+
+.tag.neutral {
+    @apply bg-slate-100 text-slate-600;
+}
+
+.header-actions {
+    @apply flex items-center gap-3;
+}
+
+.header-actions a mat-icon {
+    @apply mr-2;
+}
+
+.content-card {
+    @apply flex flex-col gap-6;
+}
+
+.loading-state,
+.error-state,
+.empty-state {
+    @apply flex flex-col items-center gap-4 py-12 text-center text-slate-500;
+}
+
+.error-state mat-icon,
+.empty-state mat-icon {
+    @apply text-4xl text-slate-300;
+}
+
+.section-grid {
+    @apply grid grid-cols-1 gap-6 lg:grid-cols-2;
+}
+
+.info-card {
+    @apply flex flex-col gap-4 rounded-xl border border-slate-100 bg-white p-6 shadow-sm;
+}
+
+.info-card header h2 {
+    @apply text-lg font-semibold text-slate-800;
+}
+
+.info-list {
+    @apply grid grid-cols-1 gap-4 text-sm text-slate-600;
+}
+
+.info-list div {
+    @apply flex flex-col gap-1;
+}
+
+.info-list dt {
+    @apply text-xs font-semibold uppercase tracking-wide text-slate-400;
+}
+
+.info-list dd {
+    @apply text-sm font-medium text-slate-800;
+}
+
+.address-card .address-text {
+    @apply text-sm font-medium text-slate-700;
+}
+
+.detail-grid {
+    @apply grid grid-cols-1 gap-4 text-sm text-slate-700 md:grid-cols-2;
+}
+
+.detail-grid h3 {
+    @apply text-xs font-semibold uppercase tracking-wide text-slate-500;
+}
+
+.detail-grid p {
+    @apply mt-1 text-sm font-medium text-slate-800;
+}
+
+.shipping-header {
+    @apply flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between;
+}
+
+.shipping-header h2 {
+    @apply text-lg font-semibold text-slate-800;
+}
+
+.shipping-header .subtext {
+    @apply text-sm text-slate-500;
+}
+
+.badge-count {
+    @apply inline-flex h-8 min-w-8 items-center justify-center rounded-full bg-primary-50 px-3 text-sm font-semibold text-primary-600;
+}
+
+.shipping-grid {
+    @apply grid grid-cols-1 gap-4 md:grid-cols-2;
+}
+
+.shipping-card {
+    @apply flex flex-col gap-3 rounded-lg border border-slate-200 bg-white p-4 shadow-sm transition hover:border-primary-200 hover:shadow-md;
+}
+
+.shipping-card-default {
+    @apply border-primary-300 bg-primary-50/30;
+}
+
+.shipping-card__heading {
+    @apply flex items-start gap-3;
+}
+
+.icon-wrapper {
+    @apply flex h-12 w-12 items-center justify-center rounded-full bg-primary-50 text-primary-600;
+}
+
+.shipping-card__heading h3 {
+    @apply text-base font-semibold text-slate-800;
+}
+
+.default-pill {
+    @apply ml-2 inline-flex items-center rounded-full bg-primary-500 px-2 py-0.5 text-xs font-semibold text-white;
+}
+
+.shipping-phone {
+    @apply text-sm text-slate-500;
+}
+
+.shipping-address {
+    @apply text-sm font-medium text-slate-700 leading-relaxed;
+}
+
+.empty-shipping {
+    @apply flex flex-col items-center gap-3 py-8 text-center text-slate-500;
+}
+
+.empty-shipping mat-icon {
+    @apply text-4xl text-slate-300;
 }

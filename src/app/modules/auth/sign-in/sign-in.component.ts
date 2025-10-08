@@ -1,5 +1,5 @@
 import { messages } from './../../../mock-api/common/messages/data';
-import { NgIf } from '@angular/common';
+import { CommonModule, NgIf } from '@angular/common';
 import { ChangeDetectorRef, Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { FormsModule, NgForm, ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -14,19 +14,18 @@ import { FuseAlertComponent, FuseAlertType } from '@fuse/components/alert';
 import { AuthService } from 'app/core/auth/auth.service';
 
 @Component({
-    selector     : 'auth-sign-in',
-    templateUrl  : './sign-in.component.html',
+    selector: 'auth-sign-in',
+    templateUrl: './sign-in.component.html',
     encapsulation: ViewEncapsulation.None,
-    animations   : fuseAnimations,
-    standalone   : true,
-    imports      : [RouterLink, FuseAlertComponent, NgIf, FormsModule, ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatButtonModule, MatIconModule, MatCheckboxModule, MatProgressSpinnerModule],
+    animations: fuseAnimations,
+    standalone: true,
+    imports: [CommonModule, RouterLink, FuseAlertComponent, NgIf, FormsModule, ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatButtonModule, MatIconModule, MatCheckboxModule, MatProgressSpinnerModule],
 })
-export class AuthSignInComponent implements OnInit
-{
+export class AuthSignInComponent implements OnInit {
     @ViewChild('signInNgForm') signInNgForm: NgForm;
-
+    formFieldHelpers: string[] = ['fuse-mat-dense'];
     alert: { type: FuseAlertType; message: string } = {
-        type   : 'success',
+        type: 'success',
         message: '',
     };
     signInForm: UntypedFormGroup;
@@ -41,8 +40,7 @@ export class AuthSignInComponent implements OnInit
         private _formBuilder: UntypedFormBuilder,
         private _router: Router,
         private _cdr: ChangeDetectorRef
-    )
-    {
+    ) {
     }
 
     // -----------------------------------------------------------------------------------------------------
@@ -52,12 +50,13 @@ export class AuthSignInComponent implements OnInit
     /**
      * On init
      */
-    ngOnInit(): void
-    {
+    ngOnInit(): void {
         // Create the form
         this.signInForm = this._formBuilder.group({
-            username     : ['Admin', [Validators.required]],
-            password  : ['', Validators.required],
+            importer_code: ['', [Validators.required]],
+            password: ['', Validators.required],
+            device_no: [''],
+            notify_token: [''],
             rememberMe: [''],
         });
     }
@@ -69,11 +68,9 @@ export class AuthSignInComponent implements OnInit
     /**
      * Sign in
      */
-    signIn(): void
-    {
+    signIn(): void {
         // Return if the form is invalid
-        if ( this.signInForm.invalid )
-        {
+        if (this.signInForm.invalid) {
             return;
         }
 
@@ -86,8 +83,7 @@ export class AuthSignInComponent implements OnInit
         // Sign in
         this._authService.signIn(this.signInForm.value)
             .subscribe(
-                () =>
-                {
+                () => {
                     // Set the redirect url.
                     // The '/signed-in-redirect' is a dummy url to catch the request and redirect the user
                     // to the correct page after a successful sign in. This way, that url can be set via
@@ -98,8 +94,7 @@ export class AuthSignInComponent implements OnInit
                     this._router.navigateByUrl(redirectURL);
 
                 },
-                (response) =>
-                {
+                (response) => {
                     console.log('sign in:', response);
 
                     // Re-enable the form
@@ -109,15 +104,15 @@ export class AuthSignInComponent implements OnInit
                     this.signInNgForm.resetForm();
 
                     // Set the alert
-                    if (response.error.message == "username or password is not correct"){
+                    if (response.error.message == "username or password is not correct") {
                         this.alert = {
-                            type   : 'error',
+                            type: 'error',
                             message: 'Wrong email or password',
                             //message: response.error.message,
                         };
                     } else {
                         this.alert = {
-                            type   : 'error',
+                            type: 'error',
                             message: response.error.message,
                             //message: 'Wrong email or password',
                         };

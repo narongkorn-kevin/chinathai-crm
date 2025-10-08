@@ -1,0 +1,143 @@
+<div class="flex flex-col flex-auto min-w-0">
+    <div class="order-history-container">
+        <div class="flex flex-col gap-2">
+            <h1 class="text-2xl font-semibold text-slate-800">ประวัติการสั่งซื้อ</h1>
+            <p class="text-sm text-slate-500">
+                รายการคำสั่งซื้อทั้งหมดของคุณจะแสดงตามสถานะล่าสุด สามารถตรวจสอบรายละเอียดและการอัปเดตได้จากหน้านี้
+            </p>
+        </div>
+
+        <div class="status-bar">
+            <button
+                *ngFor="let group of statusGroups(); let i = index"
+                type="button"
+                class="status-chip"
+                [class.status-chip-active]="activeStatusIndex() === i"
+                (click)="selectStatus(i)">
+                <span class="font-medium">{{ getStatusLabel(group.status) }}</span>
+                <span class="status-count">{{ getStatusCount(group) }}</span>
+            </button>
+        </div>
+
+        <div class="content-card">
+            <div class="flex justify-center py-10" *ngIf="loading()">
+                <mat-progress-spinner diameter="42" mode="indeterminate"></mat-progress-spinner>
+            </div>
+
+            <div class="flex flex-col items-center gap-4 py-12" *ngIf="!loading() && errorMessage()">
+                <mat-icon svgIcon="heroicons_outline:exclamation-triangle" class="text-red-500"></mat-icon>
+                <p class="text-base font-medium text-slate-500">{{ errorMessage() }}</p>
+                <button mat-flat-button color="primary" (click)="reload()">
+                    ลองโหลดใหม่
+                </button>
+            </div>
+
+            <ng-container *ngIf="!loading() && !errorMessage()">
+                <ng-container *ngIf="getActiveGroup() as activeGroup">
+                    <ng-container *ngIf="activeGroup.orders?.length; else noOrders">
+                        <div class="flex flex-col gap-6">
+                            <div class="order-card" *ngFor="let order of activeGroup.orders">
+                                <div class="order-card__header">
+                                    <div>
+                                        <div class="flex items-center gap-2">
+                                            <span class="order-code">{{ order.code }}</span>
+                                            <span class="status-pill">
+                                                {{ getStatusLabel(order.status) }}
+                                            </span>
+                                        </div>
+                                        <div class="order-meta">
+                                            <span>วันที่สั่งซื้อ: {{ formatDate(order.date) }}</span>
+                                            <span>ช่องทางจัดส่ง: {{ order.shipping_type | titlecase }}</span>
+                                            <span>รูปแบบชำระเงิน: {{ order.payment_term === '1' ? 'ชำระครั้งเดียว' : 'แบ่งชำระ' }}</span>
+                                        </div>
+                                    </div>
+                                    <div class="text-right">
+                                        <p class="text-sm text-slate-500">ยอดรวม</p>
+                                        <p class="text-xl font-semibold text-primary-600">
+                                            ฿{{ formatCurrency(order.total_price) }}
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+                                    <div class="info-card">
+                                        <p class="info-card__label">ค่าขนส่งภายในจีน</p>
+                                        <p class="info-card__value">
+                                            {{ order.china_shipping_fee ? ('฿' + formatCurrency(order.china_shipping_fee)) : '-' }}
+                                        </p>
+                                    </div>
+                                    <div class="info-card">
+                                        <p class="info-card__label">เงินมัดจำ</p>
+                                        <p class="info-card__value">
+                                            {{ order.deposit_fee ? ('฿' + formatCurrency(order.deposit_fee)) : '-' }}
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <div class="order-items">
+                                    <div class="order-items__header">
+                                        <h3>สินค้าในคำสั่งซื้อ ({{ order.order_lists?.length || 0 }})</h3>
+                                    </div>
+                                    <div class="order-item" *ngFor="let item of order.order_lists">
+                                        <div class="order-item__image" *ngIf="item.product_image; else placeholder">
+                                            <img [src]="item.product_image" [alt]="item.product_name">
+                                        </div>
+                                        <ng-template #placeholder>
+                                            <div class="order-item__image placeholder">
+                                                <mat-icon svgIcon="heroicons_outline:photo" class="text-slate-400"></mat-icon>
+                                            </div>
+                                        </ng-template>
+
+                                        <div class="order-item__body">
+                                            <div class="flex flex-col gap-1">
+                                                <a
+                                                    class="item-name"
+                                                    *ngIf="item.product_url; else plainText"
+                                                    [href]="item.product_url"
+                                                    target="_blank"
+                                                    rel="noopener noreferrer">
+                                                    {{ item.product_name }}
+                                                </a>
+                                                <ng-template #plainText>
+                                                    <span class="item-name">{{ item.product_name }}</span>
+                                                </ng-template>
+                                                <p class="item-metadata">
+                                                    รหัสสินค้า: {{ item.product_code || '-' }}
+                                                </p>
+                                            </div>
+                                            <div class="order-item__meta">
+                                                <div>
+                                                    <p class="meta-label">จำนวน</p>
+                                                    <p class="meta-value">{{ item.product_qty }}</p>
+                                                </div>
+                                                <div>
+                                                    <p class="meta-label">ราคาต่อชิ้น</p>
+                                                    <p class="meta-value">฿{{ formatCurrency(item.product_price) }}</p>
+                                                </div>
+                                                <div>
+                                                    <p class="meta-label">รวม</p>
+                                                    <p class="meta-total">฿{{ formatCurrency(+item.product_price * item.product_qty) }}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </ng-container>
+                </ng-container>
+
+                <ng-template #noOrders>
+                    <div class="flex flex-col items-center gap-3 py-14 text-center text-slate-500">
+                        <mat-icon svgIcon="heroicons_outline:clipboard-document-list" class="text-4xl text-slate-300"></mat-icon>
+                        <p class="text-base font-medium">ยังไม่มีคำสั่งซื้อในสถานะนี้</p>
+                        <p class="text-sm">ทำรายการใหม่ได้ที่ปุ่มสั่งสินค้า</p>
+                        <a mat-flat-button color="primary" routerLink="/order-products/create">
+                            ไปหน้าสั่งสินค้า
+                        </a>
+                    </div>
+                </ng-template>
+            </ng-container>
+        </div>
+    </div>
+</div>

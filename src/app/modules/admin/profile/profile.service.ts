@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, map, tap } from 'rxjs';
+import { environment } from 'environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -61,14 +62,7 @@ export class ProfileService {
     return this.http.delete('/api/store/' + id)
   }
 
-  getProfile(id:number) {
-    return this.http.get(`/api/get_profile_user/${id}`).pipe(
-      tap((resp: any) => {
-        this._roles.next(resp);
-      }),
-    )
-  }
-  updateProfile(data: any) {
-    return this.http.post('/api/update_profile_user', data)
+  getProfile(id: number) {
+    return this.http.get(environment.apiUrl + `/api/member/${id}`);
   }
 }

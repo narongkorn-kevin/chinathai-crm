@@ -3,7 +3,6 @@ import {
     AfterViewInit,
     ChangeDetectionStrategy,
     Component,
-    ElementRef,
     OnInit,
     ViewChild,
 } from '@angular/core';
@@ -11,14 +10,10 @@ import { DataTablesModule } from 'angular-datatables';
 // import { PoService } from './po.service';
 import {
     catchError,
-    filter,
     map,
     Observable,
     of,
-    ReplaySubject,
-    Subject,
     switchMap,
-    takeUntil,
     throwError,
     timeout,
 } from 'rxjs';
@@ -31,7 +26,6 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatTabsModule } from '@angular/material/tabs';
-import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { OrderProductsService } from '../order-products.service';
 import { CdkMenuModule } from '@angular/cdk/menu';
 import { MatCheckboxModule } from '@angular/material/checkbox';
@@ -49,17 +43,53 @@ import { MatInputModule } from '@angular/material/input';
 import { LocationService } from 'app/location.service';
 import { MatSelectModule } from '@angular/material/select';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
-import { MatAutocompleteModule, MatAutocompleteTrigger } from '@angular/material/autocomplete';
 import { DialogProductComponent } from '../../dialog/dialog-product/dialog-product.component';
 import { DateTime } from 'luxon';
-import { DialogAddressComponent } from '../../member/dialog-address/dialog-address.component';
-import { DialogAddress } from '../../member/dialog-address/dialog-address';
 import { MatBadgeModule } from '@angular/material/badge';
 import { DialogProductComposeComponent } from '../../dialog/dialog-product-compose/dialog-product-compose.component';
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { TranslateTextPipe } from 'app/modules/shared/translate.pipe';
 import { TranslationService } from 'app/modules/shared/translate.service';
 import { MatTooltipModule } from '@angular/material/tooltip';
+
+type ShippingAddress = {
+    id?: number;
+    name?: string;
+    phone?: string;
+    address?: string;
+    province?: string;
+    district?: string;
+    sub_district?: string;
+    postal_code?: string;
+    province_code?: string;
+    district_code?: string;
+    sub_district_code?: string;
+    is_default?: boolean;
+    [key: string]: any;
+};
+
+type MemberProfile = {
+    id: number;
+    code: string;
+    importer_code: string;
+    fname: string;
+    lname: string;
+    phone: string;
+    email: string | null;
+    member_type: string;
+    gender?: string | null;
+    line_id?: string | null;
+    referrer?: string | null;
+    address?: string | null;
+    province?: string | null;
+    district?: string | null;
+    sub_district?: string | null;
+    postal_code?: string | null;
+    created_at?: string | null;
+    updated_at?: string | null;
+    ship_address?: ShippingAddress[] | null;
+    [key: string]: any;
+};
 
 @Component({
     selector: 'app-order-create',
@@ -73,7 +103,6 @@ import { MatTooltipModule } from '@angular/material/tooltip';
         MatDividerModule,
         MatIconModule,
         MatTabsModule,
-        MatTableModule,
         CdkMenuModule,
         MatCheckboxModule,
         FormsModule,
@@ -84,7 +113,6 @@ import { MatTooltipModule } from '@angular/material/tooltip';
         MatFormFieldModule,
         MatSelectModule,
         MatPaginatorModule,
-        MatAutocompleteModule,
         MatBadgeModule,
         TranslateTextPipe,
         MatTooltipModule
@@ -95,17 +123,9 @@ import { MatTooltipModule } from '@angular/material/tooltip';
     providers: [DatePipe, DecimalPipe],
 })
 export class OrderCreateComponent implements OnInit, AfterViewInit {
-    displayedColumns: string[] = [
-        'title',
-        'pic_url',
-        'price',
-        'detail_url',
-        'action',
-    ];
-    dataSource: MatTableDataSource<any>;
+    products: any[] = [];
     @ViewChild(MatPaginator) paginator!: MatPaginator;
     totalItems = 0; // ใช้เก็บจำนวน item ทั้งหมดจาก API
-    @ViewChild('customerInput') customerInput!: ElementRef<HTMLInputElement>;
     formFieldHelpers: string[] = ['fuse-mat-dense'];
 
     data: any;
@@ -113,6 +133,18 @@ export class OrderCreateComponent implements OnInit, AfterViewInit {
 
     // cart: IOrderProduct[] = [];
     cart: any[] = [];
+    memberLoading = false;
+    memberError: string | null = null;
+    memberData: MemberProfile | null = null;
+    shippingAddresses: ShippingAddress[] = [];
+    selectedAddressId: number | null = null;
+    selectedAddressRef: ShippingAddress | null = null;
+    private normalizeProducts(items: any): any[] {
+        if (!items) {
+            return [];
+        }
+        return Array.isArray(items) ? items : [items];
+    }
 
     provinces$: Observable<any>;
     districts$: Observable<any>;
@@ -121,15 +153,10 @@ export class OrderCreateComponent implements OnInit, AfterViewInit {
     form: FormGroup;
     search: FormControl = new FormControl('', []);
 
-    memberFilter = new FormControl('');
-    filterMember: ReplaySubject<any[]> = new ReplaySubject<any[]>(1);
-    members: any[] = [];
-    @ViewChild(MatAutocompleteTrigger) autocompleteTrigger!: MatAutocompleteTrigger;
     addOnServices: any[] = [];
 
     drawerOpened = false;
-
-    protected _onDestroy = new Subject<void>();
+    activeTabIndex = 0;
 
     constructor(
         private translocoService: TranslocoService,
@@ -150,23 +177,6 @@ export class OrderCreateComponent implements OnInit, AfterViewInit {
         this.provinces$ = this.locationService.getProvinces();
         this.districts$ = this.locationService.getDistricts();
         this.subdistricts$ = this.locationService.getSubdistricts();
-
-        this._service
-            .getMember()
-            .pipe(
-                map((resp: { data: any[] }) => ({
-                    ...resp,
-                    data: resp.data.map((e) => ({
-                        ...e,
-                        fullname: `(${e.code}) ${e.fname ?? ''} ${e.lname ?? ''}`,
-                    })),
-                }))
-            )
-            .subscribe((member: { data: any[] }) => {
-                this.members = member.data;
-
-                this.filterMember.next(this.members);
-            });
 
         this._service.getAddOnService().subscribe((resp: any) => {
             this.addOnServices = resp.data;
@@ -196,69 +206,172 @@ export class OrderCreateComponent implements OnInit, AfterViewInit {
             bill_vat: 'N',
         });
 
-        this.memberFilter.valueChanges
-            .pipe(takeUntil(this._onDestroy))
-            .subscribe(() => {
-                this._filterEmployee();
+        this.loadCurrentMember();
+    }
+
+    refreshMember(): void {
+        this.loadCurrentMember();
+    }
+
+    selectShippingAddress(address: ShippingAddress): void {
+        if (!address) {
+            return;
+        }
+        this.selectedAddressId = address.id ?? null;
+        this.selectedAddressRef = address;
+        this.applyShippingAddress(address);
+    }
+
+    isAddressSelected(address: ShippingAddress): boolean {
+        if (!address) {
+            return false;
+        }
+        if (this.selectedAddressRef && this.selectedAddressRef === address) {
+            return true;
+        }
+        const addressId = address.id ?? null;
+        return addressId !== null && addressId === this.selectedAddressId;
+    }
+
+    private loadCurrentMember(): void {
+        const storedUser = localStorage.getItem('user');
+
+        if (!storedUser) {
+            this.memberLoading = false;
+            this.memberError = 'ไม่พบข้อมูลผู้ใช้งาน กรุณาเข้าสู่ระบบใหม่';
+            this.memberData = null;
+            this.shippingAddresses = [];
+            this.clearShippingAddressSelection();
+            return;
+        }
+
+        let memberId: number | null = null;
+        try {
+            const parsed = JSON.parse(storedUser);
+            memberId = parsed?.id ?? null;
+        } catch (error) {
+            console.error('Failed to parse user from localStorage', error);
+        }
+
+        if (!memberId) {
+            this.memberLoading = false;
+            this.memberError = 'ไม่สามารถระบุผู้ใช้งานได้ กรุณาเข้าสู่ระบบใหม่';
+            this.memberData = null;
+            this.shippingAddresses = [];
+            this.clearShippingAddressSelection();
+            return;
+        }
+
+        this.memberLoading = true;
+        this.memberError = null;
+
+        this._service.getMemberById(memberId)
+            .pipe(map((resp: any) => resp?.data as MemberProfile))
+            .subscribe({
+                next: (data: MemberProfile) => {
+                    this.memberLoading = false;
+                    if (!data) {
+                        this.memberData = null;
+                        this.memberError = 'ไม่พบข้อมูลสมาชิก';
+                        this.shippingAddresses = [];
+                        this.clearShippingAddressSelection();
+                        return;
+                    }
+
+                    this.memberData = data;
+                    this.form.patchValue({
+                        member_id: data.id,
+                        importer_code: data.importer_code ?? '',
+                        phone: data.phone ?? '',
+                        email: data.email ?? '',
+                        address: data.address ?? '',
+                        province: data.province ?? '',
+                        district: data.district ?? '',
+                        sub_district: data.sub_district ?? '',
+                        postal_code: data.postal_code ?? '',
+                    }, { emitEvent: false });
+
+                    this.shippingAddresses = Array.isArray(data.ship_address) ? data.ship_address : [];
+                    this.selectedAddressRef = null;
+                    this.selectedAddressId = null;
+                    const defaultAddress =
+                        this.shippingAddresses.find((addr) => addr?.is_default) ??
+                        this.shippingAddresses[0] ??
+                        null;
+
+                    if (defaultAddress) {
+                        this.selectShippingAddress(defaultAddress);
+                    } else {
+                        this.clearShippingAddressSelection();
+                    }
+                },
+                error: (error) => {
+                    console.error('Error fetching member data', error);
+                    this.memberLoading = false;
+                    this.memberError = 'ไม่สามารถโหลดข้อมูลลูกค้าได้';
+                    this.memberData = null;
+                    this.shippingAddresses = [];
+                    this.clearShippingAddressSelection();
+                },
             });
     }
 
-    protected _filterEmployee() {
-        if (!this.members) {
-            return;
-        }
-
-        const search = this.memberFilter.value;
-
-        if (!search) {
-            this.filterMember.next(this.members.slice());
-            return;
-        }
-
-        // กรองข้อมูลโดยค้นหาใน firstname และ lastname
-        this.filterMember.next(
-            this.members.filter((item) => item.fullname.includes(search))
-        );
-    }
-
-    onSelectMember(event: any) {
-        if (!event) {
-            this.markInvalidMemberFilter();
-            console.log('No Approver Selected');
-            return;
-        }
-
-        const selectedData = event;
-
+    private applyShippingAddress(address: ShippingAddress): void {
         this.form.patchValue({
-            member_id: selectedData.id,
-            importer_code: selectedData.importer_code,
-            phone: selectedData.phone,
-        });
+            member_address_id: address.id ?? null,
+            address: address.address ?? '',
+            province: address.province ?? '',
+            province_code: address.province_code ?? '',
+            district: address.district ?? '',
+            district_code: address.district_code ?? '',
+            sub_district: address.sub_district ?? '',
+            sub_district_code: address.sub_district_code ?? '',
+            postal_code: address.postal_code ?? '',
+        }, { emitEvent: false });
 
-        this.memberFilter.setValue(selectedData.fullname);
-        this.openDialogMemberAddress(selectedData.id);
+        if (address.province) {
+            this.locationService.getProvinces().pipe(
+                map((provinces: any[]) => provinces.find((p: any) => p.provinceNameTh === address.province)),
+            ).subscribe((province) => {
+                if (province?.provinceCode) {
+                    this.locationService.getDistricts(province.provinceCode)
+                        .subscribe((districts) => {
+                            this.districts$ = of(districts);
+                        });
+                }
+            });
+        }
 
-    }
-
-    private markInvalidMemberFilter() {
-        if (this.memberFilter.invalid) {
-            this.memberFilter.markAsTouched();
+        if (address.district) {
+            this.locationService.getDistricts().pipe(
+                map((districts: any[]) => districts.find((d: any) => d.districtNameTh === address.district)),
+            ).subscribe((district) => {
+                if (district?.districtCode) {
+                    this.locationService.getSubdistricts(district.districtCode)
+                        .subscribe((subdistricts) => {
+                            this.subdistricts$ = of(subdistricts);
+                        });
+                }
+            });
         }
     }
 
-    private focusFirstEmptyInput() {
-        setTimeout(() => {
-            const emptyInput = Array.from(document.querySelectorAll('input'))
-                .find(input =>
-                    input instanceof HTMLInputElement &&
-                    !input.disabled &&
-                    input.offsetParent !== null &&
-                    !input.value
-                );
-            (emptyInput as HTMLElement)?.focus();
-        }, 0);
+    private clearShippingAddressSelection(): void {
+        this.selectedAddressId = null;
+        this.selectedAddressRef = null;
+        this.form.patchValue({
+            member_address_id: null,
+            address: '',
+            province: '',
+            province_code: '',
+            district: '',
+            district_code: '',
+            sub_district: '',
+            sub_district_code: '',
+            postal_code: '',
+        }, { emitEvent: false });
     }
+
 
     ngAfterViewInit() {
         // merge(this.paginator.page)
@@ -277,14 +390,14 @@ export class OrderCreateComponent implements OnInit, AfterViewInit {
         //         catchError(() => [])
         //     )
         //     .subscribe(data => {
-        //         this.dataSource = new MatTableDataSource(data);
+        //         this.products = data;
         //     });
 
         // ให้ paginator ทำงานต่อเมื่อมีข้อมูลแล้ว
         this.paginator.page
             .pipe(
                 switchMap(() => {
-                    if (!this.dataSource || this.totalItems === 0) {
+                    if (!this.products.length || this.totalItems === 0) {
                         return of([]); // ถ้ายังไม่มีข้อมูล ให้คืนค่า array ว่าง
                     }
                     return this._service.getCategory(
@@ -295,16 +408,19 @@ export class OrderCreateComponent implements OnInit, AfterViewInit {
                 }),
                 map((data: any) => {
                     this.totalItems = data?.item?.items?.total_results || 0;
-                    return data?.item?.items?.item || [];
+                    return this.normalizeProducts(data?.item?.items?.item);
                 }),
                 catchError(() => [])
             )
             .subscribe((data) => {
-                this.dataSource = new MatTableDataSource(data);
+                this.products = data;
             });
     }
 
     ngOnDestroy(): void { }
+    setActiveTab(index: number): void {
+        this.activeTabIndex = index;
+    }
 
     onProvinceChange() {
         const selectedProvince = this.form.get('province')?.value;
@@ -367,11 +483,15 @@ export class OrderCreateComponent implements OnInit, AfterViewInit {
             return;
         }
 
+        if (this.paginator) {
+            this.paginator.pageIndex = 0;
+        }
+
 
         this._service
             .getCategory(
                 this.search.value,
-                this.paginator.pageIndex + 1,
+                (this.paginator?.pageIndex ?? 0) + 1,
                 this.selectedService
             )
             .pipe(
@@ -381,16 +501,15 @@ export class OrderCreateComponent implements OnInit, AfterViewInit {
                         return [];
                     }
 
-                    this.totalItems = data.item.items.total_results; // ตั้งค่าจำนวนรายการทั้งหมด
-                    return data.item.items.item || [];
+                    this.totalItems = data?.item?.items?.total_results || 0; // ตั้งค่าจำนวนรายการทั้งหมด
+                    return this.normalizeProducts(data?.item?.items?.item);
                 }),
                 catchError(() => [])
             )
             .subscribe(
                 (data) => {
-                    this.dataSource = new MatTableDataSource(data);
-                    console.log(this.dataSource, 'data');
-
+                    this.products = data;
+                    console.log(this.products, 'data');
                 },
                 (error) => {
                     console.error('Error fetching data:', error);
@@ -482,83 +601,6 @@ export class OrderCreateComponent implements OnInit, AfterViewInit {
         }
     }
 
-    openDialogMemberAddress(id: any) {
-        this._service.getMemberById(id)
-            .pipe(map((resp: any) => resp?.data))
-            .subscribe({
-                next: (resp: any) => {
-                    const dialog = this.dialog.open(DialogAddressComponent, {
-                        width: '500px',
-                        data: {
-                            shipAddress: resp.ship_address
-                        }
-                    });
-                    dialog.afterClosed().subscribe((data: DialogAddress) => {
-                        if (data) {
-                            this.form.patchValue({
-                                member_address_id: data.id,
-                                address: data.address,
-                                province: data.province,
-                                // district: data.district,
-                                // sub_district: data.sub_district,
-                                // postal_code: data.postal_code,
-                            }, { emitEvent: false });
-
-                            this.locationService.getProvinces().pipe(
-                                map((provinces: any[]) => provinces.find((p: any) => p.provinceNameTh === data.province)),
-                            ).subscribe((province) => {
-                                this.locationService.getDistricts(province.provinceCode)
-                                    .subscribe((districts) => {
-                                        this.districts$ = of(districts);
-                                        this.form.patchValue({
-                                            district: data.district,
-                                        }, { emitEvent: false });
-
-                                        this.locationService.getDistricts().pipe(
-                                            map((districts: any[]) => districts.find((d: any) => d.districtNameTh === data.district)),
-                                        ).subscribe((district) => {
-                                            this.locationService.getSubdistricts(district.districtCode)
-                                                .subscribe((subdistricts) => {
-                                                    this.subdistricts$ = of(subdistricts);
-                                                    this.form.patchValue({
-                                                        sub_district: data.sub_district,
-                                                        postal_code: data.postal_code
-                                                    }, { emitEvent: false });
-                                                });
-                                        });
-                                    });
-                            });
-
-                            this.customerInput?.nativeElement.blur();
-                            // โฟกัสช่องอื่นแทน
-                            // 2. focus ช่อง input ถัดไปที่ยังว่าง
-                            setTimeout(() => {
-                                const emptyInput = Array.from(document.querySelectorAll('input'))
-                                    .find(input =>
-                                        input instanceof HTMLInputElement &&
-                                        !input.disabled &&
-                                        input.offsetParent !== null && // ไม่ถูกซ่อนไว้
-                                        input !== this.customerInput?.nativeElement &&
-                                        !input.value
-                                    );
-
-                                if (emptyInput) {
-                                    (emptyInput as HTMLElement).focus();
-
-                                    // 💡 simulate click หากจำเป็น (เช่นถ้ามี logic onClick)
-                                    emptyInput.click();
-                                }
-                            }, 0);
-                        }
-                    });
-                },
-                error: (err) => {
-                    console.error('Error fetching member by ID', err);
-                }
-            });
-
-    }
-
     removeFromCart(item: any): void {
         if (!Array.isArray(this.cart) || this.cart.length === 0) {
             return;
@@ -627,6 +669,9 @@ export class OrderCreateComponent implements OnInit, AfterViewInit {
 
                     return {
                         ...value,
+                        product_code: value?.product_code !== undefined && value?.product_code !== null
+                            ? String(value.product_code)
+                            : '',
                         options,                 // => [{ option_name, option_image, option_note }]
                         add_on_services: value.add_on_services ?? []
                     };

@@ -1,148 +1,201 @@
-import { data } from 'jquery';
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
-import { DataTablesModule } from 'angular-datatables';
-import { ProfileService} from './profile.service';
-import { MatDividerModule } from '@angular/material/divider';
+import { ChangeDetectionStrategy, Component, OnDestroy, OnInit, computed, inject, signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
+import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
-import { FilePickerModule } from 'ngx-awesome-uploader';
-import { MatMenuModule } from '@angular/material/menu';
-import { ToastrService } from 'ngx-toastr';
-import { FuseConfirmationService } from '@fuse/services/confirmation';
-import { MatDialog, MatDialogActions, MatDialogClose, MatDialogContent, MatDialogTitle } from '@angular/material/dialog';
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatRadioModule } from '@angular/material/radio';
-import { MatSelectModule } from '@angular/material/select';
-import { MatToolbarModule } from '@angular/material/toolbar';
-import { BranchComponent } from '../branch/page.component';
-import { ActivatedRoute } from '@angular/router';
-import { serialize } from 'object-to-formdata';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { RouterLink } from '@angular/router';
+import { ProfileService } from './profile.service';
+import { Subject, takeUntil } from 'rxjs';
+
+type MemberDetail = {
+    transport_thai_master_id?: number | null;
+    ever_imported_from_china?: string | null;
+    order_quantity?: string | null;
+    frequent_importer?: string | null;
+    need_transport_type?: string | null;
+    additional_requests?: string | null;
+    comp_name?: string | null;
+    comp_tax?: string | null;
+    comp_phone?: string | null;
+    cargo_name?: string | null;
+    cargo_website?: string | null;
+    cargo_image?: string | null;
+    order_quantity_in_thai?: string | null;
+    avaliable_time?: string | null;
+};
+
+type ShippingAddress = {
+    id?: number;
+    name?: string;
+    phone?: string;
+    address?: string;
+    province?: string;
+    district?: string;
+    sub_district?: string;
+    postal_code?: string;
+    is_default?: boolean;
+    [key: string]: any;
+};
+
+type MemberProfile = {
+    id: number;
+    code: string;
+    member_type: string;
+    importer_code: string;
+    fname: string;
+    lname: string;
+    phone: string;
+    birth_date: string | null;
+    gender: string | null;
+    referrer: string | null;
+    address: string | null;
+    province: string | null;
+    district: string | null;
+    sub_district: string | null;
+    postal_code: string | null;
+    email: string | null;
+    line_id: string | null;
+    created_at: string | null;
+    updated_at: string | null;
+    detail?: MemberDetail | null;
+    ship_address?: ShippingAddress[] | null;
+};
+
 @Component({
-    selector: 'app-page-store',
+    selector: 'app-profile',
     standalone: true,
     imports: [
         CommonModule,
-        DataTablesModule,
         MatButtonModule,
-        MatIconModule,
-        FilePickerModule,
-        MatMenuModule,
         MatDividerModule,
-        MatFormFieldModule,
-        MatInputModule,
-        FormsModule,
-        MatToolbarModule,
-        MatDialogTitle,
-        MatDialogContent,
-        MatDialogActions,
-        MatDialogClose,
-        MatSelectModule,
-        ReactiveFormsModule,
-        MatInputModule,
-        MatFormFieldModule,
-        MatRadioModule,
-        BranchComponent
+        MatIconModule,
+        MatProgressSpinnerModule,
+        RouterLink,
     ],
     templateUrl: './profile.component.html',
-    styleUrl: './profile.component.scss',
-    changeDetection: ChangeDetectionStrategy.Default,
+    styleUrls: ['./profile.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ProfileComponent implements OnInit {
-    form: FormGroup;
-    formFieldHelpers: string[] = ['fuse-mat-dense'];
-    store: any;
-    storeId: number
-    profile: any;
-    constructor(
-        private fuseConfirmationService: FuseConfirmationService,
-        private toastr: ToastrService,
-        public dialog: MatDialog,
-        private fb: FormBuilder,
-        public activatedRoute: ActivatedRoute,
-        public _service: ProfileService,
+export class ProfileComponent implements OnInit, OnDestroy {
+    private readonly profileService = inject(ProfileService);
+    private readonly destroy$ = new Subject<void>();
 
-    ) {
+    readonly loading = signal<boolean>(true);
+    readonly errorMessage = signal<string | null>(null);
+    readonly profile = signal<MemberProfile | null>(null);
+    readonly shippingAddresses = computed<ShippingAddress[]>(() => {
+        const data = this.profile();
+        if (!data?.ship_address) {
+            return [];
+        }
+        return Array.isArray(data.ship_address) ? data.ship_address : [];
+    });
 
-        this.storeId = this.activatedRoute.snapshot.params.id;
-        console.log(this.storeId)
-        this.form = this.fb.group({
-            fname: '',
-            lname: '',
-            phone: '',
-            email: '',
-            username: '',
-            password: '',
-        })
-    }
+    readonly fullName = computed(() => {
+        const data = this.profile();
+        if (!data) return '-';
+        return `${data.fname ?? ''} ${data.lname ?? ''}`.trim() || '-';
+    });
+
+    readonly fullAddress = computed(() => {
+        const data = this.profile();
+        if (!data) {
+            return '-';
+        }
+        const parts = [
+            data.address,
+            data.sub_district,
+            data.district,
+            data.province,
+            data.postal_code,
+        ].filter(Boolean);
+        return parts.length ? parts.join(' ') : '-';
+    });
+
     ngOnInit(): void {
-
         this.loadProfile();
-
     }
 
-	loadProfile():void {
-        // let id = localStorage.getItem('id');
-        let id = 2;
-		this._service.getProfile(id).subscribe((resp: any)=>{
-			this.profile = resp.data;
-            const [fname, ...lnameArr] = this.profile.name?.split(' ') ?? ['', ''];
-            const lname = lnameArr.join(' ');
-            this.form.patchValue({
-                ...this.profile,
-                fname,
-                lname
-              });
-		})
-	}
+    ngOnDestroy(): void {
+        this.destroy$.next();
+        this.destroy$.complete();
+    }
 
-    Submit() {
-        let formValue = this.form.value
-        const confirmation = this.fuseConfirmationService.open({
-            title: "ยืนยันการบันทึกข้อมูล",
-            icon: {
-                show: true,
-                name: "heroicons_outline:exclamation-triangle",
-                color: "primary"
-            },
-            actions: {
-                confirm: {
-                    show: true,
-                    label: "ยืนยัน",
-                    color: "primary"
+    reload(): void {
+        this.loadProfile();
+    }
+
+    private loadProfile(): void {
+        const storedUser = localStorage.getItem('user');
+        if (!storedUser) {
+            this.errorMessage.set('ไม่พบข้อมูลผู้ใช้งาน กรุณาเข้าสู่ระบบใหม่');
+            this.loading.set(false);
+            return;
+        }
+
+        let memberId: number | null = null;
+        try {
+            const parsed = JSON.parse(storedUser);
+            memberId = parsed?.id ?? null;
+        } catch (error) {
+            console.error('Failed to parse user from localStorage', error);
+        }
+
+        if (!memberId) {
+            this.errorMessage.set('ไม่สามารถระบุผู้ใช้งานได้ กรุณาเข้าสู่ระบบใหม่');
+            this.loading.set(false);
+            return;
+        }
+
+        this.loading.set(true);
+        this.errorMessage.set(null);
+
+        this.profileService
+            .getProfile(memberId)
+            .pipe(takeUntil(this.destroy$))
+            .subscribe({
+                next: (response: any) => {
+                    this.loading.set(false);
+                    const data = response?.data ?? null;
+                    if (!data) {
+                        this.profile.set(null);
+                        this.errorMessage.set('ไม่พบข้อมูลสมาชิก');
+                        return;
+                    }
+                    if (!Array.isArray(data.ship_address)) {
+                        data.ship_address = [];
+                    }
+                    this.profile.set(data);
                 },
-                cancel: {
-                    show: true,
-                    label: "ยกเลิก"
-                }
-            },
-            dismissible: false
-        })
-
-        confirmation.afterClosed().subscribe(
-            result => {
-                if (result == 'confirmed') {
-                    const formData = serialize({
-                        ...this.form.value,
-                        name: `${this.form.value.fname ?? ''} ${this.form.value.lname ?? ''}`.trim(),
-                        id: this?.profile?.id,
-                    });
-                    this._service.updateProfile(formData).subscribe({
-                        error: (err) => {
-                            this.toastr.error('ไม่สามารถบันทึกข้อมูลได้')
-                        },
-                        complete: () => {
-                            this.toastr.success('ดำเนินการแก้ไขข้อมูลสำเร็จ')
-                        },
-                    });
-                }
-            }
-        )
-    }
-    clear(){
-        this.form.reset();
+                error: (error) => {
+                    console.error('Failed to load profile', error);
+                    this.loading.set(false);
+                    this.errorMessage.set('ไม่สามารถโหลดข้อมูลโปรไฟล์ได้ในขณะนี้');
+                    this.profile.set(null);
+                },
+            });
     }
 
+    getMemberTypeColor(memberType: string | null | undefined): string {
+        if (!memberType) {
+            return 'bg-slate-100 text-slate-600';
+        }
+        if (memberType.includes('ตัวแทน')) {
+            return 'bg-purple-100 text-purple-600';
+        }
+        if (memberType.includes('นิติบุคคล')) {
+            return 'bg-blue-100 text-blue-600';
+        }
+        return 'bg-green-100 text-green-600';
+    }
+
+    hasDetail(detailKey: keyof MemberDetail): boolean {
+        const detail = this.profile()?.detail;
+        if (!detail) {
+            return false;
+        }
+        const value = detail[detailKey];
+        return value !== null && value !== undefined && value !== '';
+    }
 }

@@ -1,71 +1,215 @@
 <div class="flex flex-col flex-auto min-w-0">
-  <div class="flex-auto p-4 md:p-5 bg-card m-4  rounded-md">
-    <div class="w-full px-10 pt-5 pb-2.5 bg-white justify-between items-center flex">
-        <div class="flex flex-col">
-            <p class="md:text-2xl text-black font-bold tracking-tight leading-7 sm:leading-10 truncate">
-                แก้ไขข้อมูลส่วนตัว
-            </p>
+    <div class="profile-container">
+        <div class="profile-header">
+            <div>
+                <p class="page-subtitle">ข้อมูลบัญชีของคุณ</p>
+                <h1 class="page-title">{{ fullName() }}</h1>
+                <div class="badge-row" *ngIf="profile() as data">
+                    <span class="tag" [ngClass]="getMemberTypeColor(data.member_type)">
+                        {{ data.member_type || 'ไม่ระบุประเภทสมาชิก' }}
+                    </span>
+                    <span class="tag neutral">รหัสลูกค้า: {{ data.code || '-' }}</span>
+                    <span class="tag neutral">รหัสผู้ใช้งาน: {{ data.importer_code || '-' }}</span>
+                </div>
+            </div>
+            <div class="header-actions">
+                <a mat-flat-button color="primary" routerLink="/order-products/create">
+                    <mat-icon svgIcon="heroicons_outline:shopping-bag"></mat-icon>
+                    <span>สั่งสินค้า</span>
+                </a>
+            </div>
         </div>
-        <div class="flex items-center justify-end gap-2">
-            <button mat-flat-button [color]="'warn'" (click)="clear()">
-                <mat-icon [svgIcon]="'heroicons_solid:arrow-path-rounded-square'"></mat-icon>
-                <span class="ml-2">รีเซ็ต</span>
-            </button>
-            <button mat-flat-button [color]="'primary'" (click)="Submit()">
-                <span class="">บันทึก</span>
-            </button>
+
+        <div class="content-card">
+            <div class="loading-state" *ngIf="loading()">
+                <mat-progress-spinner diameter="42" mode="indeterminate"></mat-progress-spinner>
+            </div>
+
+            <div class="error-state" *ngIf="!loading() && errorMessage()">
+                <mat-icon svgIcon="heroicons_outline:exclamation-triangle"></mat-icon>
+                <p>{{ errorMessage() }}</p>
+                <button mat-flat-button color="primary" (click)="reload()">ลองอีกครั้ง</button>
+            </div>
+
+            <ng-container *ngIf="!loading() && !errorMessage() && profile() as data">
+                <div class="section-grid">
+                    <section class="info-card">
+                        <header>
+                            <h2>ข้อมูลติดต่อ</h2>
+                        </header>
+                        <mat-divider></mat-divider>
+                        <dl class="info-list">
+                            <div>
+                                <dt>ชื่อ - นามสกุล</dt>
+                                <dd>{{ fullName() }}</dd>
+                            </div>
+                            <div>
+                                <dt>อีเมล</dt>
+                                <dd>{{ data.email || '-' }}</dd>
+                            </div>
+                            <div>
+                                <dt>เบอร์โทรศัพท์</dt>
+                                <dd>{{ data.phone || '-' }}</dd>
+                            </div>
+                            <div>
+                                <dt>ไอดีไลน์</dt>
+                                <dd>{{ data.line_id || '-' }}</dd>
+                            </div>
+                            <div>
+                                <dt>เพศ</dt>
+                                <dd>{{ data.gender || '-' }}</dd>
+                            </div>
+                            <div>
+                                <dt>วันเกิด</dt>
+                                <dd>{{ data.birth_date || '-' }}</dd>
+                            </div>
+                        </dl>
+                    </section>
+
+                    <section class="info-card">
+                        <header>
+                            <h2>ข้อมูลสมาชิก</h2>
+                        </header>
+                        <mat-divider></mat-divider>
+                        <dl class="info-list">
+                            <div>
+                                <dt>รหัสลูกค้า</dt>
+                                <dd>{{ data.code || '-' }}</dd>
+                            </div>
+                            <div>
+                                <dt>รหัสผู้ใช้งาน</dt>
+                                <dd>{{ data.importer_code || '-' }}</dd>
+                            </div>
+                            <div>
+                                <dt>รหัสเซลล์</dt>
+                                <dd>{{ data.referrer || '-' }}</dd>
+                            </div>
+                            <div>
+                                <dt>วันที่สมัคร</dt>
+                                <dd>{{ data.created_at ? (data.created_at | date: 'dd MMM yyyy เวลา HH:mm') : '-' }}</dd>
+                            </div>
+                            <div>
+                                <dt>อัปเดตล่าสุด</dt>
+                                <dd>{{ data.updated_at ? (data.updated_at | date: 'dd MMM yyyy เวลา HH:mm') : '-' }}</dd>
+                            </div>
+                        </dl>
+                    </section>
+
+                    <section class="info-card address-card">
+                        <header>
+                            <h2>ที่อยู่สำหรับติดต่อ</h2>
+                        </header>
+                        <mat-divider></mat-divider>
+                        <p class="address-text">{{ fullAddress() }}</p>
+                    </section>
+                </div>
+
+                <section class="info-card" *ngIf="shippingAddresses().length > 0; else noShippingAddress">
+                    <header class="shipping-header">
+                        <div>
+                            <h2>ที่อยู่สำหรับจัดส่ง</h2>
+                            <p class="subtext">กำหนดที่อยู่ปลายทางสำหรับคำสั่งซื้อของคุณ</p>
+                        </div>
+                        <span class="badge-count">{{ shippingAddresses().length }}</span>
+                    </header>
+                    <mat-divider></mat-divider>
+                    <div class="shipping-grid">
+                        <article
+                            *ngFor="let address of shippingAddresses(); let i = index"
+                            class="shipping-card"
+                            [class.shipping-card-default]="address.is_default">
+                            <div class="shipping-card__heading">
+                                <div class="icon-wrapper">
+                                    <mat-icon svgIcon="heroicons_outline:map-pin"></mat-icon>
+                                </div>
+                                <div>
+                                    <h3>
+                                        {{ address.name || 'ผู้รับ #' + (i + 1) }}
+                                        <span *ngIf="address.is_default" class="default-pill">ที่อยู่หลัก</span>
+                                    </h3>
+                                    <p class="shipping-phone">{{ address.phone || '-' }}</p>
+                                </div>
+                            </div>
+                            <p class="shipping-address">
+                                {{ address.address || '-' }}<br>
+                                {{ address.sub_district || '-' }} {{ address.district || '-' }}<br>
+                                {{ address.province || '-' }} {{ address.postal_code || '-' }}
+                            </p>
+                        </article>
+                    </div>
+                </section>
+
+                <section class="info-card" *ngIf="data.detail">
+                    <header>
+                        <h2>ข้อมูลเพิ่มเติม</h2>
+                    </header>
+                    <mat-divider></mat-divider>
+                    <div class="detail-grid">
+                        <ng-container *ngIf="hasDetail('ever_imported_from_china')">
+                            <div>
+                                <h3>เคยนำเข้าจากจีน</h3>
+                                <p>{{ data.detail?.ever_imported_from_china }}</p>
+                            </div>
+                        </ng-container>
+                        <ng-container *ngIf="hasDetail('order_quantity')">
+                            <div>
+                                <h3>ปริมาณการสั่งซื้อ</h3>
+                                <p>{{ data.detail?.order_quantity }}</p>
+                            </div>
+                        </ng-container>
+                        <ng-container *ngIf="hasDetail('frequent_importer')">
+                            <div>
+                                <h3>ความถี่ในการสั่งซื้อ</h3>
+                                <p>{{ data.detail?.frequent_importer }}</p>
+                            </div>
+                        </ng-container>
+                        <ng-container *ngIf="hasDetail('need_transport_type')">
+                            <div>
+                                <h3>ประเภทการขนส่งที่ต้องการ</h3>
+                                <p>{{ data.detail?.need_transport_type }}</p>
+                            </div>
+                        </ng-container>
+                        <ng-container *ngIf="hasDetail('additional_requests')">
+                            <div class="lg:col-span-2">
+                                <h3>คำขอเพิ่มเติม</h3>
+                                <p>{{ data.detail?.additional_requests }}</p>
+                            </div>
+                        </ng-container>
+                        <ng-container *ngIf="hasDetail('comp_name') || hasDetail('comp_tax')">
+                            <div>
+                                <h3>ข้อมูลธุรกิจ</h3>
+                                <p>
+                                    <span *ngIf="data.detail?.comp_name">บริษัท: {{ data.detail?.comp_name }}</span>
+                                    <br *ngIf="data.detail?.comp_name && data.detail?.comp_tax">
+                                    <span *ngIf="data.detail?.comp_tax">เลขผู้เสียภาษี: {{ data.detail?.comp_tax }}</span>
+                                </p>
+                            </div>
+                        </ng-container>
+                    </div>
+                </section>
+            </ng-container>
+
+            <ng-template #noShippingAddress>
+                <section class="info-card">
+                    <header class="shipping-header">
+                        <div>
+                            <h2>ที่อยู่สำหรับจัดส่ง</h2>
+                            <p class="subtext">ยังไม่มีการบันทึกที่อยู่จัดส่ง</p>
+                        </div>
+                    </header>
+                    <mat-divider></mat-divider>
+                    <div class="empty-shipping">
+                        <mat-icon svgIcon="heroicons_outline:building-storefront"></mat-icon>
+                        <p>คุณยังไม่ได้เพิ่มที่อยู่จัดส่ง กรุณาติดต่อทีมงานเพื่ออัปเดตข้อมูล</p>
+                    </div>
+                </section>
+            </ng-template>
+
+            <div class="empty-state" *ngIf="!loading() && !errorMessage() && !profile()">
+                <mat-icon svgIcon="heroicons_outline:user-circle"></mat-icon>
+                <p>ยังไม่พบข้อมูลสมาชิกของคุณ</p>
+                <button mat-flat-button color="primary" (click)="reload()">ลองโหลดข้อมูลอีกครั้ง</button>
+            </div>
         </div>
     </div>
-    <div class="flex-auto p-4 md:p-5">
-      <div class="grid gap-4 w-full sm:grid-cols-1 md:grid-cols-1">
-        <form [formGroup]="form">
-          <div class="flex flex-col">
-            <div class="-mx-3 md:flex ">
-              <div class="md:w-full px-3">
-                <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
-                  <mat-label>ชื่อ</mat-label>
-                  <input matInput [placeholder]="'กรุณากรอกชื่อ'" formControlName="fname">
-                </mat-form-field>
-              </div>
-              <div class="md:w-full px-3">
-                <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
-                  <mat-label>นามสกุล</mat-label>
-                  <input matInput [placeholder]="'กรุณากรอกนามสกุล'" formControlName="lname">
-                </mat-form-field>
-              </div>
-            </div>
-            <div class="-mx-3 md:flex">
-              <div class="md:w-full px-3">
-                <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
-                  <mat-label>เบอร์โทร</mat-label>
-                  <input matInput [placeholder]="'กรอกเบอร์โทร'" formControlName="phone">
-                </mat-form-field>
-              </div>
-              <div class="md:w-full px-3">
-                <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
-                  <mat-label>อีเมล</mat-label>
-                  <input matInput [placeholder]="'กรุณากรอกอีเมล'" formControlName="email">
-                </mat-form-field>
-              </div>
-            </div>
-            <div class="-mx-3 md:flex">
-              <div class="md:w-full px-3">
-                <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
-                  <mat-label>ชื่อผู้ใช้</mat-label>
-                  <input matInput [placeholder]="'กรอกชื่อผู้ใช้'" formControlName="username">
-                </mat-form-field>
-              </div>
-              <div class="md:w-full px-3">
-                <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
-                  <mat-label>รหัสผ่าน</mat-label>
-                  <input matInput [placeholder]="'กรุณากรอกรหัสผ่าน'" formControlName="password">
-                </mat-form-field>
-              </div>
-            </div>
-          </div>
-        </form>
-      </div>
-    </div>
-  </div>
 </div>
-<!--<app-page-branch [storeId]="storeId"></app-page-branch>-->

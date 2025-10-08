@@ -1,0 +1,243 @@
+<div class="flex min-h-screen flex-col justify-center bg-gray-100 px-4 py-8 sm:px-6 lg:px-8">
+    <div class="mx-auto flex w-full max-w-5xl flex-col overflow-hidden rounded-2xl bg-white shadow-xl md:flex-row">
+        <div class="hidden w-full bg-gradient-to-br from-primary-500 to-primary-700 p-10 text-white md:flex md:w-2/5 md:flex-col md:justify-between">
+            <div>
+                <img class="w-50 h-auto" src="assets/images/logo/g-cargo-logo.png" alt="G-Cargo CRM logo">
+                <h2 class="mt-10 text-3xl font-semibold leading-tight">ยินดีต้อนรับสู่ G-Cargo</h2>
+                <p class="mt-4 text-sm text-gray-100/80">
+                    กรอกข้อมูลสำหรับการสมัครใช้งานระบบ เพียงไม่กี่ขั้นตอนก็สามารถเริ่มต้นจัดการบริการขนส่งได้ทันที
+                </p>
+            </div>
+            <div class="mt-10 text-sm text-gray-100/70">
+                รองรับการใช้งานผ่านทุกอุปกรณ์ ทั้งมือถือ แท็บเล็ต และเดสก์ท็อป เพื่อความสะดวกของคุณ
+            </div>
+        </div>
+
+        <div class="w-full p-6 sm:p-10 md:w-3/5">
+            <div class="mb-6 text-center md:text-left">
+                <h1 class="text-2xl font-semibold text-gray-900 sm:text-3xl">ลงทะเบียนสมาชิกใหม่</h1>
+                <p class="mt-2 text-sm text-gray-500">
+                    ช่องที่มีเครื่องหมาย * จำเป็นต้องกรอกให้ครบถ้วน
+                </p>
+            </div>
+
+            <form class="flex flex-col gap-6" [formGroup]="registerForm" (ngSubmit)="submit()">
+
+                <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+
+                    <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                        <mat-label>อีเมล </mat-label>
+                        <input matInput type="email" formControlName="email">
+                        <mat-error *ngIf="registerForm.get('email')?.hasError('required')">
+                            กรุณากรอกอีเมล
+                        </mat-error>
+                        <mat-error *ngIf="registerForm.get('email')?.hasError('email')">
+                            รูปแบบอีเมลไม่ถูกต้อง
+                        </mat-error>
+                    </mat-form-field>
+
+                    <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                        <mat-label>ชื่อผู้ใช้งาน (สำหรับล็อกอิน) </mat-label>
+                        <input matInput formControlName="importer_code" autocomplete="username">
+                        <mat-error *ngIf="registerForm.get('importer_code')?.hasError('required')">
+                            กรุณากรอกชื่อผู้ใช้งาน
+                        </mat-error>
+                    </mat-form-field>
+
+                    <mat-form-field [ngClass]="formFieldHelpers" class="w-full md:col-span-1">
+                        <mat-label>รหัสผ่าน </mat-label>
+                        <input
+                            matInput
+                            [type]="hidePassword ? 'password' : 'text'"
+                            formControlName="password"
+                            autocomplete="new-password">
+                        <button
+                            mat-icon-button
+                            matSuffix
+                            type="button"
+                            (click)="togglePassword('password')">
+                            <mat-icon *ngIf="hidePassword" svgIcon="heroicons_solid:eye"></mat-icon>
+                            <mat-icon *ngIf="!hidePassword" svgIcon="heroicons_solid:eye-slash"></mat-icon>
+                        </button>
+                        <mat-error *ngIf="registerForm.get('password')?.hasError('required')">
+                            กรุณากรอกรหัสผ่าน
+                        </mat-error>
+                        <mat-error *ngIf="registerForm.get('password')?.hasError('minlength')">
+                            รหัสผ่านต้องมีอย่างน้อย 6 ตัวอักษร
+                        </mat-error>
+                    </mat-form-field>
+
+                    <mat-form-field [ngClass]="formFieldHelpers" class="w-full md:col-span-1">
+                        <mat-label>ยืนยันรหัสผ่าน </mat-label>
+                        <input
+                            matInput
+                            [type]="hideConfirmPassword ? 'password' : 'text'"
+                            formControlName="confirmPassword"
+                            autocomplete="new-password">
+                        <button
+                            mat-icon-button
+                            matSuffix
+                            type="button"
+                            (click)="togglePassword('confirmPassword')">
+                            <mat-icon *ngIf="hideConfirmPassword" svgIcon="heroicons_solid:eye"></mat-icon>
+                            <mat-icon *ngIf="!hideConfirmPassword" svgIcon="heroicons_solid:eye-slash"></mat-icon>
+                        </button>
+                        <mat-error *ngIf="registerForm.get('confirmPassword')?.hasError('required')">
+                            กรุณายืนยันรหัสผ่าน
+                        </mat-error>
+                        <mat-error *ngIf="registerForm.hasError('mismatch')">
+                            รหัสผ่านไม่ตรงกัน
+                        </mat-error>
+                    </mat-form-field>
+
+                    <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                        <mat-label>ชื่อ </mat-label>
+                        <input matInput formControlName="fname" autocomplete="given-name">
+                        <mat-error *ngIf="registerForm.get('fname')?.hasError('required')">
+                            กรุณากรอกชื่อ
+                        </mat-error>
+                    </mat-form-field>
+
+                    <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                        <mat-label>นามสกุล </mat-label>
+                        <input matInput formControlName="lname" autocomplete="family-name">
+                        <mat-error *ngIf="registerForm.get('lname')?.hasError('required')">
+                            กรุณากรอกนามสกุล
+                        </mat-error>
+                    </mat-form-field>
+
+                    <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                        <mat-label>ไอดีไลน์</mat-label>
+                        <input matInput formControlName="line_id">
+                    </mat-form-field>
+
+                    <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                        <mat-label>เบอร์โทรศัพท์มือถือ </mat-label>
+                        <input matInput formControlName="phone" autocomplete="tel">
+                        <mat-error *ngIf="registerForm.get('phone')?.hasError('required')">
+                            กรุณากรอกเบอร์โทรศัพท์
+                        </mat-error>
+                    </mat-form-field>
+
+                    <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                        <mat-label>รหัสแนะนำ</mat-label>
+                        <input matInput formControlName="recommend_code">
+                    </mat-form-field>
+
+                    <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                        <mat-label>รหัสเซลล์</mat-label>
+                        <input matInput formControlName="referrer">
+                    </mat-form-field>
+
+                    <mat-form-field [ngClass]="formFieldHelpers" class="w-full md:col-span-2">
+                        <mat-label>รายละเอียดที่อยู่ในใบเสร็จ </mat-label>
+                        <textarea matInput rows="3" formControlName="address"></textarea>
+                        <mat-error *ngIf="registerForm.get('address')?.hasError('required')">
+                            กรุณากรอกรายละเอียดที่อยู่
+                        </mat-error>
+                    </mat-form-field>
+
+                    <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                        <mat-label>เลขประจำตัวผู้เสียภาษี </mat-label>
+                        <input matInput formControlName="tax_id">
+                        <mat-error *ngIf="registerForm.get('tax_id')?.hasError('required')">
+                            กรุณากรอกเลขประจำตัวผู้เสียภาษี
+                        </mat-error>
+                    </mat-form-field>
+
+                    <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                        <mat-label>เพศ </mat-label>
+                        <mat-select formControlName="gender">
+                            <mat-option value="ชาย">ชาย</mat-option>
+                            <mat-option value="หญิง">หญิง</mat-option>
+                            <mat-option value="ไม่ระบุ">ไม่ระบุ</mat-option>
+                        </mat-select>
+                        <mat-error *ngIf="registerForm.get('gender')?.hasError('required')">
+                            กรุณาเลือกเพศ
+                        </mat-error>
+                    </mat-form-field>
+
+                    <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                        <mat-label>จังหวัด </mat-label>
+                        <mat-select formControlName="province" (selectionChange)="onProvinceChange()">
+                            <mat-option *ngFor="let province of provinces" [value]="province.provinceNameTh">
+                                {{ province.provinceNameTh }}
+                            </mat-option>
+                        </mat-select>
+                        <mat-error *ngIf="registerForm.get('province')?.hasError('required')">
+                            กรุณาเลือกจังหวัด
+                        </mat-error>
+                    </mat-form-field>
+
+                    <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                        <mat-label>อำเภอ </mat-label>
+                        <mat-select
+                            formControlName="district"
+                            (selectionChange)="onDistrictChange()"
+                            [disabled]="!filteredDistricts.length">
+                            <mat-option *ngFor="let district of filteredDistricts" [value]="district.districtNameTh">
+                                {{ district.districtNameTh }}
+                            </mat-option>
+                        </mat-select>
+                        <mat-error *ngIf="registerForm.get('district')?.hasError('required')">
+                            กรุณาเลือกอำเภอ
+                        </mat-error>
+                    </mat-form-field>
+
+                    <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                        <mat-label>ตำบล </mat-label>
+                        <mat-select
+                            formControlName="sub_district"
+                            (selectionChange)="onSubDistrictChange()"
+                            [disabled]="!filteredSubdistricts.length">
+                            <mat-option *ngFor="let subdistrict of filteredSubdistricts" [value]="subdistrict.subdistrictNameTh">
+                                {{ subdistrict.subdistrictNameTh }}
+                            </mat-option>
+                        </mat-select>
+                        <mat-error *ngIf="registerForm.get('sub_district')?.hasError('required')">
+                            กรุณาเลือกตำบล
+                        </mat-error>
+                    </mat-form-field>
+
+                    <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                        <mat-label>รหัสไปรษณีย์ </mat-label>
+                        <input matInput formControlName="postal_code" readonly>
+                        <mat-error *ngIf="registerForm.get('postal_code')?.hasError('required')">
+                            กรุณาเลือกรหัสไปรษณีย์
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+
+                <div class="mt-2">
+                    <mat-checkbox formControlName="agreements">
+                        ฉันยอมรับและยืนยันเงื่อนไขการใช้งาน
+                    </mat-checkbox>
+                    <div class="mt-1 text-xs text-gray-500">
+                        ปุ่มบันทึกจะสามารถใช้งานได้เมื่อทำการยืนยันข้อตกลง
+                    </div>
+                </div>
+
+                <button
+                    mat-flat-button
+                    color="primary"
+                    class="fuse-mat-button-large w-full"
+                    type="submit"
+                    [disabled]="registerForm.invalid || isSubmitting">
+                    <span *ngIf="!isSubmitting">บันทึกการลงทะเบียน</span>
+                    <mat-progress-spinner
+                        *ngIf="isSubmitting"
+                        [diameter]="22"
+                        mode="indeterminate">
+                    </mat-progress-spinner>
+                </button>
+
+                <div class="text-center text-sm text-gray-500">
+                    มีบัญชีอยู่แล้ว?
+                    <a routerLink="/sign-in" class="text-primary-500 hover:underline">
+                        เข้าสู่ระบบ
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

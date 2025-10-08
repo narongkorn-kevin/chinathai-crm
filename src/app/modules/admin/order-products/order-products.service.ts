@@ -102,6 +102,10 @@ export class OrderProductsService {
         return this.http.get(environment.apiUrl + '/api/get_orders')
     }
 
+    getOrdersByMember(memberId: number) {
+        return this.http.get(environment.apiUrl + `/api/get_orders_by_member/${memberId}`);
+    }
+
     updateStatus(data: { status: string, orders: number[] }) {
         return this.http.post(environment.apiUrl + '/api/update_status_order', data)
     }

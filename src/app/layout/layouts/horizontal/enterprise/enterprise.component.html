@@ -15,7 +15,7 @@
             <div class="flex items-center h-20 pt-6 px-8">
                 <img
                     class="w-24"
-                    src="assets/images/logo/Logo_White.svg"
+                    src="assets/images/logo/g-cargo-logo.png"
                     alt="Logo image">
             </div>
         </ng-container>
@@ -35,7 +35,7 @@
                     <div class="flex items-center">
                         <img
                             class="w-24"
-                            src="assets/images/logo/Logo_White.svg"
+                            src="assets/images/logo/g-cargo-logo.png"
                             alt="Logo image">
                     </div>
                 </ng-container>
@@ -49,18 +49,13 @@
                 </ng-container>
                 <!-- Components -->
                 <div class="flex items-center pl-2 ml-auto space-x-0.5 sm:space-x-2">
-                    <languages></languages>
+                    <!-- <languages></languages> -->
                     <fuse-fullscreen class="hidden md:block"></fuse-fullscreen>
-                    <search [appearance]="'bar'"></search>
-                    <shortcuts></shortcuts>
-                    <messages></messages>
-                    <notifications></notifications>
-                    <button
-                        class="lg:hidden"
-                        mat-icon-button
-                        (click)="quickChat.toggle()">
-                        <mat-icon [svgIcon]="'heroicons_outline:chat-bubble-left-right'"></mat-icon>
-                    </button>
+                    <!-- <search [appearance]="'bar'"></search> -->
+                    <!-- <shortcuts></shortcuts> -->
+                    <!-- <messages></messages> -->
+                    <!-- <notifications></notifications> -->
+                  
                     <user></user>
                 </div>
             </div>
@@ -97,4 +92,4 @@
 </div>
 
 <!-- Quick chat -->
-<quick-chat #quickChat="quickChat"></quick-chat>
+<!-- <quick-chat #quickChat="quickChat"></quick-chat> -->

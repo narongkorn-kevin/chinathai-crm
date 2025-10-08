@@ -4,18 +4,34 @@
             <div class="flex flex-row justify-between pb-2 items-center">
                 <div class="flex flex-col">
                     <div class="flex space-x-2">
-                        <p
+                        <!-- <p
                             class="md:text-sm font-medium tracking-tight leading-7 sm:leading-10 truncate text-primary-500">
                             {{ 'order_products.order_create.title' | transloco }}
-                        </p>
+                        </p> -->
                     </div>
 
                     <div class="flex flex-row gap-4">
-                        <p
+                        <!-- <p
                             class="md:text-2xl text-primary-500 font-bold tracking-tight leading-7 sm:leading-10 truncate">
                             {{ 'order_products.order_create.add_item' | transloco }}
-                        </p>
+                        </p> -->
                     </div>
+                     <div class="mt-4 flex justify-center">
+                <div class="inline-flex rounded-full border border-slate-200 bg-white p-1 shadow-sm">
+                    <button type="button"
+                        class="rounded-full px-4 py-2 text-sm font-medium transition-colors duration-150"
+                        [ngClass]="activeTabIndex === 0 ? 'bg-primary-500 text-white shadow-sm' : 'text-slate-600 hover:text-primary-500'"
+                        (click)="setActiveTab(0)">
+                        {{ 'order_products.order_create.product_info' | transloco }}
+                    </button>
+                    <button type="button"
+                        class="rounded-full px-4 py-2 text-sm font-medium transition-colors duration-150"
+                        [ngClass]="activeTabIndex === 1 ? 'bg-primary-500 text-white shadow-sm' : 'text-slate-600 hover:text-primary-500'"
+                        (click)="setActiveTab(1)">
+                        {{ 'order_products.order_create.customer_info' | transloco }}
+                    </button>
+                </div>
+            </div>
                 </div>
                 <div class="flex flex-col md:flex-row gap-2">
                     <button type="button" [matBadge]="cart.length" matBadgePosition="above before" mat-flat-button
@@ -33,149 +49,180 @@
 
             <div class="border-b-2 w-full"></div>
 
-            <div class="flex flex-col mt-4">
+           
+
+            <div class="flex flex-col mt-4" *ngIf="activeTabIndex === 1">
                 <h3 class="text-2xl font-bold">{{ 'order_products.order_create.customer_info' | transloco }}</h3>
                 <div class="border-b-2 w-full my-4"></div>
-                <div class="flex-auto">
-                    <div class="flex flex-col md:flex mb-6">
-                        <div class="flex flex-row w-full gap-2">
-                            <mat-form-field [ngClass]="formFieldHelpers" class="w-full md:w-4/4">
-                                <mat-label>{{ 'order_products.order_create.fields.customer' | transloco }}</mat-label>
-                                <input matInput [formControl]="memberFilter" [matAutocomplete]="memberAutoComplete"
-                                    #customerInput [autocomplete]="'off'"
-                                    [placeholder]="'order_products.order_create.fields.customer_placeholder' | transloco" />
-                                <mat-autocomplete #memberAutoComplete="matAutocomplete" [autoActiveFirstOption]="true"
-                                    (optionSelected)="onSelectMember($event.option.value)">
-                                    <mat-option *ngFor="let item of filterMember | async" [value]="item">
-                                        {{item.fullname}}
-                                    </mat-option>
-                                </mat-autocomplete>
-                            </mat-form-field>
 
-                            <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
-                                <mat-label>{{ 'order_products.order_create.fields.importer_code' | transloco
-                                    }}</mat-label>
-                                <input matInput [formControlName]="'importer_code'">
-                            </mat-form-field>
-                        </div>
-                        <div class="flex flex-row w-full gap-2">
-                            <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
-                                <mat-label>{{ 'order_products.order_create.fields.address' | transloco }}</mat-label>
-                                <textarea matInput [formControlName]="'address'"></textarea>
-                            </mat-form-field>
-                        </div>
-                        <div class="w-full grid grid-flow-row grid-cols-2 gap-2">
-                            <div class="w-full">
-                                <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
-                                    <mat-label>{{ 'order_products.order_create.fields.province' | transloco
-                                        }}</mat-label>
-                                    <mat-select [formControlName]="'province'" (selectionChange)="onProvinceChange()">
-                                        <mat-option *ngFor="let province of provinces$ | async"
-                                            [value]="province.provinceNameTh">
-                                            {{ province.provinceNameTh }}
-                                        </mat-option>
-                                    </mat-select>
-                                </mat-form-field>
-                            </div>
-                            <div class="w-full">
-                                <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
-                                    <mat-label>{{ 'order_products.order_create.fields.district' | transloco
-                                        }}</mat-label>
-                                    <mat-select [formControlName]="'district'" (selectionChange)="onDistrictChange()">
-                                        <mat-option *ngFor="let district of districts$ | async"
-                                            [value]="district.districtNameTh">
-                                            {{ district.districtNameTh }}
-                                        </mat-option>
-                                    </mat-select>
-                                </mat-form-field>
-                            </div>
-
-                            <div class="w-full">
-                                <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
-                                    <mat-label>{{ 'order_products.order_create.fields.sub_district' | transloco
-                                        }}</mat-label>
-                                    <mat-select [formControlName]="'sub_district'"
-                                        (selectionChange)="onSubDistrictChange()">
-                                        <mat-option *ngFor="let subdistrict of subdistricts$ | async"
-                                            [value]="subdistrict.subdistrictNameTh">
-                                            {{ subdistrict.subdistrictNameTh }}
-                                        </mat-option>
-                                    </mat-select>
-                                </mat-form-field>
-                            </div>
-                            <div class="w-full">
-                                <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
-                                    <mat-label>{{ 'order_products.order_create.fields.postal_code' | transloco
-                                        }}</mat-label>
-                                    <input [formControlName]="'postal_code'" matInput
-                                        [placeholder]="'order_products.order_create.fields.postal_code' | transloco">
-                                </mat-form-field>
-                            </div>
-                        </div>
-                        <div class="flex flex-row w-full gap-2">
-                            <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
-                                <mat-label>{{ 'order_products.order_create.fields.phone' | transloco }}</mat-label>
-                                <input matInput [formControlName]="'phone'">
-                            </mat-form-field>
-                            <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
-                                <mat-label>{{ 'order_products.order_create.fields.email' | transloco }}</mat-label>
-                                <input matInput [formControlName]="'email'">
-                            </mat-form-field>
-                        </div>
-                        <div class="flex flex-row w-full gap-2">
-                            <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
-                                <mat-label>{{ 'order_products.order_create.fields.note' | transloco }}</mat-label>
-                                <textarea matInput [formControlName]="'note'"></textarea>
-                            </mat-form-field>
-                        </div>
-
-                        <div class="flex flex-col md:flex-row w-full gap-2">
-                            <mat-form-field class="w-full md:w-1/4" [ngClass]="formFieldHelpers">
-                                <mat-label>{{ 'order_products.order_create.fields.payment_term' | transloco
-                                    }}</mat-label>
-                                <mat-select [formControlName]="'payment_term'">
-                                    <mat-option value="1">{{
-                                        'order_products.order_create.fields.payment_options.single' | transloco
-                                        }}</mat-option>
-                                    <mat-option value="2">{{
-                                        'order_products.order_create.fields.payment_options.multiple' | transloco
-                                        }}</mat-option>
-                                </mat-select>
-                            </mat-form-field>
-                            <mat-form-field class="w-full md:w-1/4" [ngClass]="formFieldHelpers">
-                                <mat-label>{{ 'order_products.order_create.fields.shipping_type' | transloco
-                                    }}</mat-label>
-                                <mat-select [formControlName]="'shipping_type'">
-                                    <mat-option value="car">{{ 'order_products.order_create.fields.shipping_options.car'
-                                        | transloco
-                                        }}</mat-option>
-                                    <mat-option value="ship">{{
-                                        'order_products.order_create.fields.shipping_options.ship' | transloco
-                                        }}</mat-option>
-                                    <mat-option value="air">{{ 'order_products.order_create.fields.shipping_options.air'
-                                        | transloco
-                                        }}</mat-option>
-                                </mat-select>
-                            </mat-form-field>
-                            <mat-form-field class="w-full md:w-1/4" [ngClass]="formFieldHelpers">
-                                <mat-label>{{ 'order_products.order_create.fields.bill_vat_type' | transloco
-                                    }}</mat-label>
-                                <mat-select [formControlName]="'bill_vat'">
-                                    <mat-option value="Y">{{ 'order_products.order_create.fields.bill_vat.vat' |
-                                        transloco
-                                        }}</mat-option>
-                                    <mat-option value="N">{{ 'order_products.order_create.fields.bill_vat.non_vat' |
-                                        transloco
-                                        }}</mat-option>
-
-                                </mat-select>
-                            </mat-form-field>
-                        </div>
+                <div class="customer-info-wrapper">
+                    <div class="state-block" *ngIf="memberLoading">
+                        <mat-progress-spinner diameter="40" mode="indeterminate"></mat-progress-spinner>
+                        <p class="state-text">กำลังโหลดข้อมูลลูกค้า...</p>
                     </div>
+
+                    <div class="state-block error" *ngIf="!memberLoading && memberError">
+                        <mat-icon svgIcon="heroicons_outline:exclamation-triangle"></mat-icon>
+                        <p class="state-text">{{ memberError }}</p>
+                        <button mat-flat-button color="primary" type="button" (click)="refreshMember()">ลองอีกครั้ง</button>
+                    </div>
+
+                    <ng-container *ngIf="!memberLoading && !memberError">
+                        <ng-container *ngIf="memberData as data; else noMemberData">
+                            <div class="customer-overview">
+                                <section class="customer-card">
+                                    <header>
+                                        <h4>ข้อมูลลูกค้า</h4>
+                                        <p>ตรวจสอบรายละเอียดบัญชีก่อนดำเนินการสั่งซื้อ</p>
+                                    </header>
+                                    <mat-divider></mat-divider>
+                                    <dl class="customer-info-list">
+                                        <div>
+                                            <dt>ชื่อ - นามสกุล</dt>
+                                            <dd>{{ data.fname }} {{ data.lname }}</dd>
+                                        </div>
+                                        <div>
+                                            <dt>รหัสลูกค้า</dt>
+                                            <dd>{{ data.code || '-' }}</dd>
+                                        </div>
+                                        <div>
+                                            <dt>รหัสผู้ใช้งาน</dt>
+                                            <dd>{{ data.importer_code || '-' }}</dd>
+                                        </div>
+                                        <div>
+                                            <dt>เบอร์โทรศัพท์</dt>
+                                            <dd>{{ data.phone || '-' }}</dd>
+                                        </div>
+                                        <div>
+                                            <dt>อีเมล</dt>
+                                            <dd>{{ data.email || '-' }}</dd>
+                                        </div>
+                                        <div>
+                                            <dt>ไอดีไลน์</dt>
+                                            <dd>{{ data.line_id || '-' }}</dd>
+                                        </div>
+                                        <div>
+                                            <dt>ประเภทสมาชิก</dt>
+                                            <dd>{{ data.member_type || '-' }}</dd>
+                                        </div>
+                                        <div>
+                                            <dt>รหัสเซลล์</dt>
+                                            <dd>{{ data.referrer || '-' }}</dd>
+                                        </div>
+                                    </dl>
+                                </section>
+
+                                <section class="customer-card order-settings">
+                                    <header>
+                                        <h4>การตั้งค่าคำสั่งซื้อ</h4>
+                                        <p>กำหนดรูปแบบการชำระเงินและช่องทางจัดส่ง</p>
+                                    </header>
+                                    <mat-divider></mat-divider>
+                                    <div class="order-settings__grid">
+                                        <mat-form-field appearance="outline">
+                                            <mat-label>{{ 'order_products.order_create.fields.payment_term' | transloco }}</mat-label>
+                                            <mat-select [formControlName]="'payment_term'">
+                                                <mat-option value="1">
+                                                    {{ 'order_products.order_create.fields.payment_options.single' | transloco }}
+                                                </mat-option>
+                                                <mat-option value="2">
+                                                    {{ 'order_products.order_create.fields.payment_options.multiple' | transloco }}
+                                                </mat-option>
+                                            </mat-select>
+                                        </mat-form-field>
+                                        <mat-form-field appearance="outline">
+                                            <mat-label>{{ 'order_products.order_create.fields.shipping_type' | transloco }}</mat-label>
+                                            <mat-select [formControlName]="'shipping_type'">
+                                                <mat-option value="car">
+                                                    {{ 'order_products.order_create.fields.shipping_options.car' | transloco }}
+                                                </mat-option>
+                                                <mat-option value="ship">
+                                                    {{ 'order_products.order_create.fields.shipping_options.ship' | transloco }}
+                                                </mat-option>
+                                                <mat-option value="air">
+                                                    {{ 'order_products.order_create.fields.shipping_options.air' | transloco }}
+                                                </mat-option>
+                                            </mat-select>
+                                        </mat-form-field>
+                                        <mat-form-field appearance="outline">
+                                            <mat-label>{{ 'order_products.order_create.fields.bill_vat_type' | transloco }}</mat-label>
+                                            <mat-select [formControlName]="'bill_vat'">
+                                                <mat-option value="Y">
+                                                    {{ 'order_products.order_create.fields.bill_vat.vat' | transloco }}
+                                                </mat-option>
+                                                <mat-option value="N">
+                                                    {{ 'order_products.order_create.fields.bill_vat.non_vat' | transloco }}
+                                                </mat-option>
+                                            </mat-select>
+                                        </mat-form-field>
+                                    </div>
+                                    <mat-form-field appearance="outline" class="mt-4">
+                                        <mat-label>{{ 'order_products.order_create.fields.note' | transloco }}</mat-label>
+                                        <textarea matInput rows="3" formControlName="note"></textarea>
+                                    </mat-form-field>
+                                </section>
+                            </div>
+
+                            <section class="customer-card shipping-section">
+                                <header>
+                                    <div>
+                                        <h4>เลือกที่อยู่สำหรับจัดส่ง</h4>
+                                        <p>คลิกเลือกที่อยู่ที่จะใช้สำหรับคำสั่งซื้อครั้งนี้</p>
+                                    </div>
+                                    <span class="badge-count">{{ shippingAddresses.length }}</span>
+                                </header>
+                                <mat-divider></mat-divider>
+                                <ng-container *ngIf="shippingAddresses.length > 0; else shippingEmpty">
+                                    <div class="shipping-grid">
+                                        <button
+                                            type="button"
+                                            class="shipping-card"
+                                            [class.shipping-card-selected]="isAddressSelected(address)"
+                                            [class.shipping-card-default]="address.is_default"
+                                            *ngFor="let address of shippingAddresses; let i = index"
+                                            (click)="selectShippingAddress(address)">
+                                            <div class="shipping-card__heading">
+                                                <div class="icon-wrapper">
+                                                    <mat-icon svgIcon="heroicons_outline:map-pin"></mat-icon>
+                                                </div>
+                                                <div>
+                                                    <h5>
+                                                        {{ address.name || ('ผู้รับ #' + (i + 1)) }}
+                                                        <span *ngIf="address.is_default" class="default-pill">ที่อยู่หลัก</span>
+                                                    </h5>
+                                                    <p class="shipping-phone">{{ address.phone || '-' }}</p>
+                                                </div>
+                                            </div>
+                                            <p class="shipping-address">
+                                                {{ address.address || '-' }}<br>
+                                                {{ address.sub_district || '-' }} {{ address.district || '-' }}<br>
+                                                {{ address.province || '-' }} {{ address.postal_code || '-' }}
+                                            </p>
+                                        </button>
+                                    </div>
+                                </ng-container>
+                            </section>
+                        </ng-container>
+                    </ng-container>
+
+                    <ng-template #noMemberData>
+                        <div class="state-block error">
+                            <mat-icon svgIcon="heroicons_outline:user-circle"></mat-icon>
+                            <p class="state-text">ยังไม่พบข้อมูลลูกค้า</p>
+                            <button mat-flat-button color="primary" type="button" (click)="refreshMember()">ลองโหลดข้อมูลอีกครั้ง</button>
+                        </div>
+                    </ng-template>
+
+                    <ng-template #shippingEmpty>
+                        <div class="empty-shipping">
+                            <mat-icon svgIcon="heroicons_outline:building-storefront"></mat-icon>
+                            <p>ยังไม่มีการบันทึกที่อยู่จัดส่ง กรุณาติดต่อทีมงานเพื่ออัปเดตข้อมูล</p>
+                        </div>
+                    </ng-template>
                 </div>
             </div>
 
-            <div class="flex flex-col mt-4">
+            <div class="flex flex-col mt-4" *ngIf="activeTabIndex === 0">
                 <div class="flex justify-between items-center">
                     <h3 class="text-2xl font-bold">{{ 'order_products.order_create.product_info' | transloco }}</h3>
                     <button type="button" mat-flat-button class="!text-white" [color]="'primary'"
@@ -210,65 +257,61 @@
                     </button>
                 </div>
 
-                <div class="overflow-x-auto">
-                    <table mat-table [dataSource]="dataSource">
-                        <ng-container matColumnDef="title">
-                            <th mat-header-cell *matHeaderCellDef> {{ 'order_products.order_create.product_table.title'
-                                | transloco }}
-                            </th>
-                            <td mat-cell *matCellDef="let element"
-                                class="whitespace-normal break-words px-4 py-2 text-sm text-gray-700 text-left">
-                                <p class="font-medium text-black text-[13px] leading-5 mb-1">
-                                    {{ element?.title }}
-                                </p>
-                                <p class="text-[11px] text-slate-400 leading-4">
-                                    ({{ element?.title | translateText:'zh-CN':'th' | async }})
-                                </p>
-                            </td>
-                        </ng-container>
-                        <ng-container matColumnDef="pic_url">
-                            <th mat-header-cell *matHeaderCellDef> {{ 'order_products.order_create.product_table.image'
-                                | transloco }}
-                            </th>
-                            <td mat-cell *matCellDef="let element">
-                                <img *ngIf="element.pic_url" [src]="element.pic_url" alt="Product Image"
-                                    class="w-24 h-24">
-                            </td>
-                        </ng-container>
-
-                        <ng-container matColumnDef="price">
-                            <th mat-header-cell *matHeaderCellDef> {{ 'order_products.order_create.product_table.price'
-                                | transloco }} ¥
-                            </th>
-                            <td mat-cell *matCellDef="let element"> {{ element.price | number:'1.2-2' }} </td>
-                        </ng-container>
-
-                        <ng-container matColumnDef="detail_url">
-                            <th mat-header-cell *matHeaderCellDef> {{
-                                'order_products.order_create.product_table.details' | transloco }}
-                            </th>
-                            <td mat-cell *matCellDef="let element">
-                                <a *ngIf="element.detail_url" [href]="element.detail_url" target="_blank">{{
-                                    'order_products.order_create.product_table.view' | transloco }}</a>
-                            </td>
-                        </ng-container>
-
-                        <ng-container matColumnDef="action">
-                            <th mat-header-cell *matHeaderCellDef> {{ 'order_products.order_create.product_table.action'
-                                | transloco }}
-                            </th>
-                            <td mat-cell *matCellDef="let element">
-                                <button type="button" mat-button (click)="viewDetail(element.num_iid)">{{
-                                    'order_products.order_create.product_table.view_details' | transloco }}</button>
-                            </td>
-                        </ng-container>
-
-                        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-                        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-                    </table>
+                <div class="mt-6 w-full">
+                    <ng-container *ngIf="products?.length; else noProducts">
+                        <div class="grid gap-4 sm:grid-cols-4 2xl:grid-cols-4">
+                            <div *ngFor="let element of products"
+                                class="flex h-full flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition-all hover:shadow-md">
+                                <div class="relative h-52 w-full bg-slate-100">
+                                    <img *ngIf="element.pic_url && !element.imageError" [src]="element.pic_url"
+                                        alt="Product Image" class="h-full w-full object-cover"
+                                        (error)="onImageError(element)">
+                                    <div *ngIf="!element.pic_url || element.imageError"
+                                        class="flex h-full w-full items-center justify-center bg-slate-100">
+                                        <mat-icon class="text-5xl text-slate-300"
+                                            [svgIcon]="'heroicons_outline:photo'"></mat-icon>
+                                    </div>
+                                </div>
+                                <div class="flex flex-1 flex-col p-4">
+                                    <div>
+                                        <p class="text-base font-semibold text-gray-900 line-clamp-2">
+                                            {{ element?.title }}
+                                        </p>
+                                        <p class="mt-1 text-xs text-slate-500 line-clamp-2">
+                                            {{ element?.title | translateText:'zh-CN':'th' | async }}
+                                        </p>
+                                    </div>
+                                    <div class="mt-3 flex items-center justify-between">
+                                        <span class="text-lg font-semibold text-primary-500">
+                                            ¥ {{ element.price | number:'1.2-2' }}
+                                        </span>
+                                    </div>
+                                    <div class="mt-4 flex flex-col gap-2">
+                                        <a *ngIf="element.detail_url" [href]="element.detail_url" target="_blank"
+                                            rel="noopener"
+                                            class="inline-flex items-center justify-center rounded-lg border border-primary-200 px-3 py-2 text-sm font-medium text-primary-500 hover:bg-primary-50">
+                                            {{ 'order_products.order_create.product_table.view' | transloco }}
+                                        </a>
+                                        <button type="button" mat-flat-button color="primary"
+                                            (click)="viewDetail(element.num_iid)">
+                                            {{ 'order_products.order_create.product_table.view_details' | transloco }}
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </ng-container>
+                    <ng-template #noProducts>
+                        <div class="flex flex-col items-center justify-center rounded-2xl border border-dashed border-slate-200 bg-slate-50 py-12 text-center">
+                            <mat-icon class="mb-2 text-3xl text-slate-400"
+                                [svgIcon]="'heroicons_outline:information-circle'"></mat-icon>
+                            <p class="text-sm font-medium text-slate-500">ไม่พบรายการสินค้า</p>
+                        </div>
+                    </ng-template>
                 </div>
 
-                <mat-paginator [length]="totalItems" [pageSize]="20" showFirstLastButtons></mat-paginator>
+                <mat-paginator class="mt-6 rounded-xl border border-slate-200 bg-white"
+                    [length]="totalItems" [pageSize]="20" showFirstLastButtons></mat-paginator>
             </div>
         </form>
     </div>
