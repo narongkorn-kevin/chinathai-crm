@@ -12,11 +12,8 @@
         <!-- Navigation header hook -->
         <ng-container fuseVerticalNavigationContentHeader>
             <!-- Logo -->
-            <div class="flex items-center h-20 pt-6 px-8">
-                <img
-                    class="w-10"
-                    src="assets/images/logo/logo.png"
-                    alt="Logo image">
+            <div class="flex items-center h-20 pt-6 px-8 text-sm font-semibold uppercase tracking-wide text-white/80">
+                no image
             </div>
         </ng-container>
     </fuse-vertical-navigation>
@@ -37,16 +34,14 @@
                 <ng-container *ngIf="!isScreenSmall">
                     <div class="flex items-center mx-2 space-x-2">
                         <!-- Light version -->
-                        <img
-                            class="w-50 dark:hidden"
-                            src="assets/images/logo/logo.png"
-                            alt="Logo image">
+                        <div class="w-50 dark:hidden text-lg font-semibold uppercase tracking-wide text-gray-700">
+                            no image
+                        </div>
                             <!-- <p class="text-[#E00C13] font-bold">TEG CARGO +</p> -->
                         <!-- Dark version -->
-                        <img
-                            class="hidden dark:flex w-24"
-                            src="assets/images/logo/logo.png"
-                            alt="Logo image">
+                        <div class="hidden dark:flex w-24 text-lg font-semibold uppercase tracking-wide text-white/80">
+                            no image
+                        </div>
                     </div>
                 </ng-container>
                 <!-- Navigation toggle button -->
